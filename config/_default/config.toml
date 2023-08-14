@@ -1,0 +1,26 @@
+baseURL = "https://runtimeterror.dev"
+theme = [ "hugo-cloak-email", "hugo-notice", "risotto"]
+title = "runtimeterror"
+author = "ops"
+copyright = "© 2023 [runtimeterror](https://runtimeterror.dev)"
+paginate = 10
+languageCode = "en"
+DefaultContentLanguage = "en"
+enableInlineShortcodes = true
+
+# Automatically add content sections to main menu
+sectionPagesMenu = "main"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[permalinks]
+  posts = ":filename"
+
+[services]
+
+  [services.instagram]
+    disableInlineCSS = true
+
+  [services.twitter]
+    disableInlineCSS = true

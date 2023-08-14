@@ -1,0 +1,21 @@
+/* base16 runtimeterror
+ */
+
+:root {
+	--base00: #181818;  /* background */
+	--base01: #282828;  /* alt background */
+	--base02: #383838;  /* in-text backgrounds */
+	--base03: #585858;  /* muted text */
+	--base04: #959494;  /* alt foreground */
+	--base05: #d8d8d8;  /* foreground */
+	--base06: #e8e8e8;
+	--base07: #f8f8f8;
+	--base08: #ab4642;
+	--base09: #dc9656;
+	--base0A: #f7ca88;  /* highlights */
+	--base0B: #772a28;  /* primary accent */
+	--base0C: #661514;  /* active links */
+	--base0D: #c45a5a;  /* links */
+	--base0E: #ba8baf;
+	--base0F: #a16946;
+}

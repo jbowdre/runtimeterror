@@ -1,0 +1,27 @@
+noindex = false
+
+usePageBundles = true
+
+[theme]
+palette = "runtimeterror"
+
+# Sidebar: about/bio
+[about]
+title = "runtimeterror"
+description = "Better living through less-bad code."
+logo = "images/broken-computer.svg"
+
+# Sidebar: social links
+# Available icon sets:
+# * FontAwesome 6 <https://fontawesome.com/> ('fa-brands', 'fa-normal', or 'fa-solid' for brands)
+# * Academicons <https://jpswalsh.github.io/academicons> ('ai ai-')
+
+[[socialLinks]]
+icon = "fa-brands fa-github"
+title = "GitHub"
+url = "https://github.com/jbowdre"
+
+[[socialLinks]]
+icon = "fa-solid fa-envelope"
+title = "Email"
+url = "mailto:ops@runtimeterror.dev"

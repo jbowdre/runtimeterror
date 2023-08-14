@@ -1,0 +1,9 @@
+[submodule "themes/risotto"]
+	path = themes/risotto
+	url = https://github.com/joeroe/risotto.git
+[submodule "themes/hugo-notice"]
+	path = themes/hugo-notice
+	url = https://github.com/martignoni/hugo-notice.git
+[submodule "themes/hugo-cloak-email"]
+	path = themes/hugo-cloak-email
+	url = https://github.com/martignoni/hugo-cloak-email.git
