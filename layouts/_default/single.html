@@ -1,0 +1,40 @@
+{{ define "main" }}
+{{- $ageDays := div (sub now.Unix .Date.Unix) 86400 -}}
+    <header class="content__header">
+        <h1>{{ .Title | markdownify }}</h1>
+    </header>
+    {{ if .Params.toc }}
+    <aside>
+    </aside>
+    {{ end }}
+    {{- with .Param "lastmod" -}}
+      {{- $ageDays = div (sub now.Unix .Unix) 86400 -}}
+    {{- end -}}
+    {{- if and (gt $ageDays 365) (not .Params.timeless) -}}
+    <br>
+    <div class="notice note">
+      <p class="first notice-title"><span class="icon-notice baseline"><svg><use href="#note-notice"></use></svg></span>Technology keeps moving but this post has not.</p>
+      What you're about to read hasn't been updated in more than a year. The information may be out of date. Let me know if you see anything that needs fixing.
+    </div>
+    {{- end -}}
+    <div class="content__body">
+        {{ .Content }}
+    </div>
+    <footer class="content__footer"></footer>
+{{ end }}
+
+{{define "aside" }}
+    {{ if .Params.description }}<p>{{ .Params.description }}</p>{{ end }}
+    {{ if or (.Params.author) (.Params.date) }}
+        <p>
+            {{ if .Params.author }}By {{ .Params.author }}{{ if .Date }}, {{ end }}{{ end }}
+            {{ if .Date }}{{ .Date.Format "2006-01-02" }}{{ end }}
+        </p>
+    {{ end }}
+
+    {{ if and (.Params.toc) (.TableOfContents) }}
+	    <hr>
+	    On this page:
+	    {{ .TableOfContents }}
+    {{ end }}
+{{ end }}
