@@ -1,0 +1,120 @@
+/* Notice CSS Built on hugo-notice by Nicolas Martignoni: https://github.com/martignoni/hugo-notice */
+.notice {
+  --root-color: #444;
+  --root-background: #eff;
+  --title-color: #fff;
+  --title-background: #7bd;
+  --warning-title: #c33;
+  --warning-content: #fee;
+  --info-title: #fb7;
+  --info-content: #fec;
+  --note-title: #6be;
+  --note-content: #e7f2fa;
+  --tip-title: #5a5;
+  --tip-content: #efe;
+}
+
+@media (prefers-color-scheme: dark) {
+  .notice {
+    --root-color: #ddd;
+    --root-background: #eff;
+    --title-color: #fff;
+    --title-background: #7bd;
+    --warning-title: #800;
+    --warning-content: #400;
+    --info-title: #a50;
+    --info-content: #420;
+    --note-title: #069;
+    --note-content: #023;
+    --tip-title: #363;
+    --tip-content: #121;
+  }
+}
+
+body.dark .notice {
+  --root-color: #ddd;
+  --root-background: #eff;
+  --title-color: #fff;
+  --title-background: #7bd;
+  --warning-title: #800;
+  --warning-content: #400;
+  --info-title: #a50;
+  --info-content: #420;
+  --note-title: #069;
+  --note-content: #023;
+  --tip-title: #363;
+  --tip-content: #121;
+}
+
+.notice {
+  padding: 18px;
+  line-height: 24px;
+  margin-bottom: 24px;
+  border-radius: 4px;
+  color: var(--root-color);
+  background: var(--root-background);
+}
+
+.notice p:last-child {
+  margin-bottom: 0;
+}
+
+.notice-title {
+  margin: -18px -18px 12px;
+  padding: 4px 18px;
+  border-radius: 4px 4px 0 0;
+  font-weight: 700;
+  color: var(--title-color);
+  background: var(--title-background);
+}
+
+.notice.warning .notice-title {
+  background: var(--warning-title);
+}
+
+.notice.warning {
+  background: var(--warning-content);
+}
+
+.notice.info .notice-title {
+  background: var(--info-title);
+}
+
+.notice.info {
+  background: var(--info-content);
+}
+
+.notice.note .notice-title {
+  background: var(--note-title);
+}
+
+.notice.note {
+  background: var(--note-content);
+}
+
+.notice.tip .notice-title {
+  background: var(--tip-title);
+}
+
+.notice.tip {
+  background: var(--tip-content);
+}
+
+.icon-notice {
+  display: inline-flex;
+  align-self: center;
+  margin-right: 8px;
+}
+
+.icon-notice img,
+.icon-notice svg {
+  height: 1em;
+  width: 1em;
+  fill: currentColor;
+}
+
+.icon-notice img,
+.icon-notice.baseline svg {
+  top: 0.125em;
+  position: relative;
+}

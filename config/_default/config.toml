@@ -1,5 +1,5 @@
 baseURL = "https://runtimeterror.dev"
-theme = [ "hugo-cloak-email", "hugo-notice", "risotto"]
+theme = [ "hugo-cloak-email", "risotto"]
 title = "runtimeterror"
 author = "ops"
 copyright = "© 2023 [runtimeterror](https://runtimeterror.dev)"
