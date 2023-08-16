@@ -1,11 +1,26 @@
-# For hugo >= 0.60.0, enable inline HTML
-[goldmark.renderer]
-unsafe = true
+[goldmark]
+  [goldmark.renderer]
+    hardWraps = false
+    unsafe = true
+    xhtml = false
+  [goldmark.extensions]
+    typographer = false
 
+[highlight]
+  anchorLineNos = true
+  codeFences = true
+  guessSyntax = true
+  hl_Lines = ''
+  lineAnchors = ''
+  lineNos = true
+  lineNoStart = 1
+  lineNumbersInTable = false
+  noClasses = true
+  tabwidth = 2
 
 # Table of contents
 # Add toc = true to content front matter to enable
 [tableOfContents]
-  startLevel = 2
-  endLevel   = 3
-  ordered    = true
+  endLevel   = 5
+  ordered    = false
+  startLevel = 3
