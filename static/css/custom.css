@@ -118,3 +118,19 @@ body.dark .notice {
   top: 0.125em;
   position: relative;
 }
+
+
+/* override page max-width */
+.page {
+  max-width: 72rem;
+}
+
+
+/* logo tweaks */
+.page__logo {
+  color: var(--off-fg);
+}
+
+.page__logo-inner {
+  opacity: 0.80;
+}
