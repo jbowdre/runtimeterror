@@ -1,3 +1,18 @@
+/* override page max-width */
+.page {
+  max-width: 72rem;
+}
+
+
+/* logo tweaks */
+.page__logo {
+  color: var(--off-fg);
+}
+
+.page__logo-inner {
+  opacity: 0.80;
+}
+
 /* Notice CSS Built on hugo-notice by Nicolas Martignoni: https://github.com/martignoni/hugo-notice */
 .notice {
   --root-color: #444;
@@ -117,20 +132,4 @@ body.dark .notice {
 .icon-notice.baseline svg {
   top: 0.125em;
   position: relative;
-}
-
-
-/* override page max-width */
-.page {
-  max-width: 72rem;
-}
-
-
-/* logo tweaks */
-.page__logo {
-  color: var(--off-fg);
-}
-
-.page__logo-inner {
-  opacity: 0.80;
 }
