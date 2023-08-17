@@ -2,6 +2,8 @@ noindex = false
 
 usePageBundles = true
 
+mainSections = ["posts"]
+
 [theme]
 palette = "runtimeterror"
 
