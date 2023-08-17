@@ -24,11 +24,11 @@ tags:
   - tailscale
 comment: true # Disable comment if false.
 ---
-You might remember that I'm a [pretty big fan](/secure-networking-made-simple-with-tailscale/) of [Tailscale](https://tailscale.com), which makes it easy to connect your various devices together in a secure [tailnet](https://tailscale.com/kb/1136/tailnet/), or private network. Tailscale is super simple to set up on most platforms, but you'll need to [install it manually](https://tailscale.com/download/linux/static) if there isn't a prebuilt package for your system. 
+You might remember that I'm a [pretty big fan](/secure-networking-made-simple-with-tailscale/) of [Tailscale](https://tailscale.com), which makes it easy to connect your various devices together in a secure [tailnet](https://tailscale.com/kb/1136/tailnet/), or private network. Tailscale is super simple to set up on most platforms, but you'll need to [install it manually](https://tailscale.com/download/linux/static) if there isn't a prebuilt package for your system.
 
 Here's a condensed list of the [steps that I took to manually install Tailscale](/esxi-arm-on-quartz64/#installing-tailscale) on VMware's [Photon OS](https://github.com/vmware/photon), though the same (or similar) steps should also work on just about any other `systemd`-based system.
 
-1. Visit [https://pkgs.tailscale.com/stable/#static](https://pkgs.tailscale.com/stable/#static) to see the latest stable version for your system architecture, and copy the URL. For instance, I'll be using `https://pkgs.tailscale.com/stable/tailscale_1.34.1_arm64.tgz`. 
+1. Visit [https://pkgs.tailscale.com/stable/#static](https://pkgs.tailscale.com/stable/#static) to see the latest stable version for your system architecture, and copy the URL. For instance, I'll be using `https://pkgs.tailscale.com/stable/tailscale_1.34.1_arm64.tgz`.
 2. Download and extract it to the system:
 ```shell
 wget https://pkgs.tailscale.com/stable/tailscale_1.34.1_arm64.tgz
@@ -50,7 +50,7 @@ sudo systemctl start tailscaled
 
 From that point, just [`sudo tailscale up`](https://tailscale.com/kb/1080/cli/#up) like normal.
 
-{{% notice info "Updating Tailscale" %}}
+{{% notice note "Updating Tailscale" %}}
 Since Tailscale was installed outside of any package manager, it won't get updated automatically. When new versions are released you'll need to update it manually. To do that:
 1. Download and extract the new version.
 2. Install the `tailscale` and `tailscaled` binaries as described above (no need to install the service files again).

@@ -61,7 +61,7 @@ The [cluster deployment steps](/tanzu-community-edition-k8s-homelab/#management-
 | Base DN | `OU=LAB,DC=lab,DC=bowdre,DC=net` | DN for OU containing my users |
 | Filter | `(objectClass=group)` | |
 | Name Attribute | `cn` | Common Name |
-| User Attribute | `DN` | Distinguished Name (capitalization matters!) | 
+| User Attribute | `DN` | Distinguished Name (capitalization matters!) |
 | Group Attribute | `member:1.2.840.113556.1.4.1941:` | Used to enumerate which groups a user is a member of[^member] |
 
 And I'll copy the contents of the base64-encoded CA certificate I downloaded earlier and paste them into the Root CA Certificate field.
@@ -88,7 +88,7 @@ That `:` at the end of the line will cause problems down the road - specifically
 ```yaml
 userMatchers:
 - userAttr: DN
-  groupAttr: 
+  groupAttr:
     member:1.2.840.113556.1.4.1941: null
 ```
 
@@ -153,7 +153,7 @@ tkg-system   vsphere-csi            Reconcile succeeded   66s            11m
 
 ### Post-deployment tasks
 
-I've got a TCE cluster now but it's not quite ready for me to authenticate with my AD credentials just yet. 
+I've got a TCE cluster now but it's not quite ready for me to authenticate with my AD credentials just yet.
 
 #### Load Balancer deployment
 The [guide I'm following from the TCE site](https://tanzucommunityedition.io/docs/latest/vsphere-ldap-config/) assumes that I'm using NSX-ALB in my environment, but I'm not. So, [as before](/tanzu-community-edition-k8s-homelab/#deploying-kube-vip-as-a-load-balancer), I'll need to deploy [Scott Rosenberg's `kube-vip` Carvel package](https://github.com/vrabbi/tkgm-customizations):
@@ -207,7 +207,7 @@ This overlay will need to be inserted into the `pinniped-addon` secret which mea
 ❯ base64 -w 0 pinniped-supervisor-svc-overlay.yaml
 I0AgbG9hZCgi[...]==
 ```
-{{% notice info "Avoid newlines" %}}
+{{% notice note "Avoid newlines" %}}
 The `-w 0` / `--wrap=0` argument tells `base64` to *not* wrap the encoded lines after a certain number of characters. If you leave this off, the string will get a newline inserted every 76 characters, and those linebreaks would make the string a bit more tricky to work with. Avoid having to clean up the output afterwards by being more specific with the request up front!
 {{% /notice %}}
 
@@ -220,14 +220,14 @@ secret/tce-mgmt-pinniped-addon patched
 I can watch as the `pinniped-supervisor` and `dexsvc` services get updated with the new service type:
 ```bash
 ❯ kubectl get svc -A -w
-NAMESPACE               NAME                    TYPE            CLUSTER-IP       EXTERNAL-IP    PORT(S)           
-pinniped-supervisor     pinniped-supervisor     NodePort        100.65.185.82    <none>         443:31234/TCP     
-tanzu-system-auth       dexsvc                  NodePort        100.70.238.106   <none>         5556:30167/TCP    
-tkg-system              packaging-api           ClusterIP       100.65.185.94    <none>         443/TCP           
-tanzu-system-auth       dexsvc                  LoadBalancer    100.70.238.106   <pending>      443:30167/TCP     
-pinniped-supervisor     pinniped-supervisor     LoadBalancer    100.65.185.82    <pending>      443:31234/TCP     
-pinniped-supervisor     pinniped-supervisor     LoadBalancer    100.65.185.82    192.168.1.70   443:31234/TCP     
-tanzu-system-auth       dexsvc                  LoadBalancer    100.70.238.106   192.168.1.64   443:30167/TCP     
+NAMESPACE               NAME                    TYPE            CLUSTER-IP       EXTERNAL-IP    PORT(S)
+pinniped-supervisor     pinniped-supervisor     NodePort        100.65.185.82    <none>         443:31234/TCP
+tanzu-system-auth       dexsvc                  NodePort        100.70.238.106   <none>         5556:30167/TCP
+tkg-system              packaging-api           ClusterIP       100.65.185.94    <none>         443/TCP
+tanzu-system-auth       dexsvc                  LoadBalancer    100.70.238.106   <pending>      443:30167/TCP
+pinniped-supervisor     pinniped-supervisor     LoadBalancer    100.65.185.82    <pending>      443:31234/TCP
+pinniped-supervisor     pinniped-supervisor     LoadBalancer    100.65.185.82    192.168.1.70   443:31234/TCP
+tanzu-system-auth       dexsvc                  LoadBalancer    100.70.238.106   192.168.1.64   443:30167/TCP
 ```
 
 I'll also need to restart the `pinniped-post-deploy-job` job to account for the changes I just made; that's accomplished by simply deleting the existing job. After a few minutes a new job will be spawned automagically. I'll just watch for the new job to be created:
@@ -262,7 +262,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ```
 
-I have a group in Active Directory called `Tanzu-Admins` which contains a group called `vRA-Admins`, and that group contains my user account (`john`). It's a roundabout way of granting access for a single user in this case but it should help to confirm that nested group memberships are being enumerated properly. 
+I have a group in Active Directory called `Tanzu-Admins` which contains a group called `vRA-Admins`, and that group contains my user account (`john`). It's a roundabout way of granting access for a single user in this case but it should help to confirm that nested group memberships are being enumerated properly.
 
 Once applied, users within that group will be granted the `cluster-admin` role[^roles].
 
@@ -305,7 +305,7 @@ tce-mgmt-md-0-847db9ddc-5bwjs   Ready    <none>                 28h   v1.21.5+vm
 
 So I've now successfully logged in to the management cluster as a non-admin user with my Active Directory credentials. Excellent!
 
-[^roles]: You can read up on some other default user-facing roles [here](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles). 
+[^roles]: You can read up on some other default user-facing roles [here](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles).
 
 ### Sharing access
 To allow other users to log in this way, I'd need to give them a copy of the non-admin `kubeconfig`, which I can get by running `tanzu management-cluster config get --export-file tce-mgmt-config` to export it into a file named `tce-mgmt-config`. They could use [whatever method they like](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) to merge this in with their existing `kubeconfig`.
@@ -315,7 +315,7 @@ Other users hoping to work with a Tanzu Community Edition cluster will also need
 {{% /notice %}}
 
 ### Deploying a workload cluster
-At this point, I've only configured authentication for the management cluster - not the workload cluster. The TCE community docs cover what's needed to make this configuration available in the workload cluster as well [here](https://tanzucommunityedition.io/docs/latest/vsphere-ldap-config/#configuration-steps-on-the-workload-cluster). [As before](/tanzu-community-edition-k8s-homelab/#workload-cluster), I created the deployment YAML for the workload cluster by copying the management cluster's deployment YAML and changing the `CLUSTER_NAME` and `VSPHERE_CONTROL_PLANE_ENDPOINT` values accordingly. This time I also deleted all of the `LDAP_*` and `OIDC_*` lines, but made sure to preserve the `IDENTITY_MANAGEMENT_TYPE: ldap` one. 
+At this point, I've only configured authentication for the management cluster - not the workload cluster. The TCE community docs cover what's needed to make this configuration available in the workload cluster as well [here](https://tanzucommunityedition.io/docs/latest/vsphere-ldap-config/#configuration-steps-on-the-workload-cluster). [As before](/tanzu-community-edition-k8s-homelab/#workload-cluster), I created the deployment YAML for the workload cluster by copying the management cluster's deployment YAML and changing the `CLUSTER_NAME` and `VSPHERE_CONTROL_PLANE_ENDPOINT` values accordingly. This time I also deleted all of the `LDAP_*` and `OIDC_*` lines, but made sure to preserve the `IDENTITY_MANAGEMENT_TYPE: ldap` one.
 
 I was then able to deploy the workload cluster with:
 ```bash
@@ -417,7 +417,7 @@ dex-7bf4f5d4d9-k4jfl   1/1     Running   0          40h
 ```
 
 #### Clearing pinniped sessions
-I couldn't figure out an elegant way to log out so that I could try authenticating as a different user, but I did discover that information about authenticated sessions get stored in `~/.config/tanzu/pinniped/sessions.yaml`. The sessions expired after a while but until that happens I'm able to keep on interacting with `kubectl` - and not given an option to re-authenticate even if I wanted to. 
+I couldn't figure out an elegant way to log out so that I could try authenticating as a different user, but I did discover that information about authenticated sessions get stored in `~/.config/tanzu/pinniped/sessions.yaml`. The sessions expired after a while but until that happens I'm able to keep on interacting with `kubectl` - and not given an option to re-authenticate even if I wanted to.
 
 So in lieu of a handy logout option, I was able to remove the cached sessions by deleting the file:
 ```bash
@@ -427,4 +427,4 @@ rm ~/.config/tanzu/pinniped/sessions.yaml
 That let me use `kubectl get nodes` to trigger the authentication prompt again.
 
 ### Conclusion
-So this is a pretty basic walkthrough of how I set up my Tanzu Community Edition Kubernetes clusters for Active Directory authentication in my homelab. I feel like I've learned a lot more about TCE specifically and Kubernetes in general through this process, and I'm sure I'll learn more in the future as I keep experimenting with the setup. 
+So this is a pretty basic walkthrough of how I set up my Tanzu Community Edition Kubernetes clusters for Active Directory authentication in my homelab. I feel like I've learned a lot more about TCE specifically and Kubernetes in general through this process, and I'm sure I'll learn more in the future as I keep experimenting with the setup.

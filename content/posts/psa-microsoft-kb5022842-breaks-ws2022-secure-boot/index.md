@@ -22,7 +22,7 @@ tags:
   - powercli
 comment: true # Disable comment if false.
 ---
-{{% notice info "Fix available" %}}
+{{% notice note "Fix available" %}}
 VMware has released a fix for this problem in the form of [ESXi 7.0 Update 3k](https://docs.vmware.com/en/VMware-vSphere/7.0/rn/vsphere-esxi-70u3k-release-notes.html#resolvedissues):
 >  If you already face the issue, after patching the host to ESXi 7.0 Update 3k, just power on the affected Windows Server 2022 VMs. After you patch a host to ESXi 7.0 Update 3k, you can migrate a running Windows Server 2022 VM from a host of version earlier than ESXi 7.0 Update 3k, install KB5022842, and the VM boots properly without any additional steps required.
 {{% /notice %}}

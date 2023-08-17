@@ -31,8 +31,8 @@ And then I discovered [Tailscale](https://tailscale.com/), which is built on the
 
 There's already a great write-up (from the source!) on [How Tailscale Works](https://tailscale.com/blog/how-tailscale-works/), and it's really worth a read so I won't rehash it fully here. The tl;dr though is that Tailscale makes securely connecting remote systems incredibly easy, and it lets those systems connect with each other directly ("mesh") rather than needing traffic to go through a single VPN endpoint ("hub-and-spoke"). It uses a centralized coordination server to *coordinate* the complicated key exchanges needed for all members of a Tailscale network (a "[tailnet](https://tailscale.com/kb/1136/tailnet/)") to trust each other, and this removes the need for a human to manually edit configuration files on every existing device just to add a new one to the mix. Tailscale also leverages [magic :tada:](https://tailscale.com/blog/how-nat-traversal-works/) to allow Tailscale nodes to communicate with each other without having to punch holes in firewall configurations or forward ports or anything else tedious and messy. (And in case that the typical NAT traversal techniques don't work out, Tailscale created the Detoured Encrypted Routing Protocol (DERP[^derp]) to make sure Tailscale can still function seamlessly even on extremely restrictive networks that block UDP entirely or otherwise interfere with NAT traversal.)
 
-{{% notice info "Not a VPN Service" %}}
-It's a no-brainer solution for remote access, but it's important to note that Tailscale is not a VPN *service*; it won't allow you to internet anonymously or make it appear like you're connecting from a different country (unless you configure a Tailscale Exit Node hosted somewhere in The Cloud to do just that). 
+{{% notice note "Not a VPN Service" %}}
+It's a no-brainer solution for remote access, but it's important to note that Tailscale is not a VPN *service*; it won't allow you to internet anonymously or make it appear like you're connecting from a different country (unless you configure a Tailscale Exit Node hosted somewhere in The Cloud to do just that).
 {{% /notice %}}
 
 Tailscale's software is [open-sourced](https://github.com/tailscale) so you *could* host your own Tailscale control plane and web front end, but much of the appeal of Tailscale is how easy it is to set up and use. To that end, I'm using the Tailscale-hosted option. Tailscale offers a very generous free Personal tier which supports a single admin user, 20 connected devices, 1 subnet router, plus all of the bells and whistles, and the company also sells [Team, Business, and Enterprise plans](https://tailscale.com/pricing/) if you need more users, devices, subnet routers, or additional capabilities[^personal_pro].
@@ -49,7 +49,7 @@ This post will start there but then also expand some of the additional features 
 [^personal_pro]: There's also a reasonably-priced Personal Pro option which comes with 100 devices, 2 routers, and custom auth periods for $48/year. I'm using that since it's less than I was going to spend on WireGuard egress through GCP and I want to support the project in a small way.
 
 ### Getting started
-The first step in getting up and running with Tailscale is to sign up at [https://login.tailscale.com/start](https://login.tailscale.com/start). You'll need to use an existing Google, Microsoft, or GitHub account to sign up, which also lets you leverage the 2FA and other security protections already enabled on those accounts. 
+The first step in getting up and running with Tailscale is to sign up at [https://login.tailscale.com/start](https://login.tailscale.com/start). You'll need to use an existing Google, Microsoft, or GitHub account to sign up, which also lets you leverage the 2FA and other security protections already enabled on those accounts.
 
 Once you have a Tailscale account, you're ready to install the Tailscale client. The [download page](https://tailscale.com/download) outlines how to install it on various platforms, and also provides a handy-dandy one-liner to install it on Linux:
 
@@ -208,7 +208,7 @@ By default, Tailscale [expires each node's encryption keys every 180 days](https
 It's great that all my Tailscale machines can talk to each other directly by their respective Tailscale IP addresses, but who wants to keep up with IPs? I sure don't. Let's do some DNS. I'll start out by clicking on the [DNS](https://login.tailscale.com/admin/dns) tab in the admin console.
 ![The DNS options](dns_tab.png)
 
-I need to add a Global Nameserver before I can enable MagicDNS so I'll click on the appropriate button to enter in the *Tailscale IP*[^dns_ip] of my home DNS server (which is using [NextDNS](https://nextdns.io/) as the upstream resolver). 
+I need to add a Global Nameserver before I can enable MagicDNS so I'll click on the appropriate button to enter in the *Tailscale IP*[^dns_ip] of my home DNS server (which is using [NextDNS](https://nextdns.io/) as the upstream resolver).
 ![Adding a global name server](add_global_ns.png)
 
 I'll also enable the toggle to "Override local DNS" to make sure all queries from connected clients are going through this server (and thus extend the NextDNS protection to all clients without having to configure them individually).
@@ -219,7 +219,7 @@ I can also define search domains to be used for unqualified DNS queries by addin
 
 This will let me resolve hostnames when connected remotely to my lab without having to type the domain suffix (ex, `vcsa` versus `vcsa.lab.bowdre.net`).
 
-And, finally, I can click the "Enable MagicDNS" button to turn on the magic. This adds a new nameserver with a private Tailscale IP which will resolve Tailscale hostnames to their internal IP addresses. 
+And, finally, I can click the "Enable MagicDNS" button to turn on the magic. This adds a new nameserver with a private Tailscale IP which will resolve Tailscale hostnames to their internal IP addresses.
 
 ![MagicDNS Enabled!](magicdns.png)
 
@@ -237,7 +237,7 @@ I'm going to use three tags in my tailnet:
 2. `tag:cloud` to identify my cloud servers which will only have access to other cloud servers.
 3. `tag:client` to identify client-type devices which will be able to access all nodes in the tailnet.
 
-Before I can actually apply these tags to any of my machines, I first need to define `tagOwners` for each tag which will determine which users (in my organization of one) will be able to use the tags. This is done by editing the policy file available on the [Access Controls](https://login.tailscale.com/admin/acls) tab of the admin console. 
+Before I can actually apply these tags to any of my machines, I first need to define `tagOwners` for each tag which will determine which users (in my organization of one) will be able to use the tags. This is done by editing the policy file available on the [Access Controls](https://login.tailscale.com/admin/acls) tab of the admin console.
 
 This ACL file uses a format called [HuJSON](https://github.com/tailscale/hujson), which is basically JSON but with support for inline comments and with a bit of leniency when it comes to trailing commas. That makes a config file that is easy for both humans and computers to parse.
 
@@ -349,7 +349,7 @@ And that gets DNS working again for my cloud servers while still serving the res
       "ports": [
         "win01:53"
       ]
-    },      
+    },
     {
       // clients can access everything
       "action": "accept",

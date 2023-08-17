@@ -37,7 +37,7 @@ I've found that the easiest way to do this it to copy it to a datastore which is
 ![Offline bundle stored on the local datastore](bundle_on_datastore.png)
 
 ### 2. Power down VMs
-The host will need to be in maintenance mode in order to apply the upgrade, and since it's a standalone host it won't enter maintenance mode until all of its VMs have been stopped. This can be easily accomplished through the ESXi embedded host client. 
+The host will need to be in maintenance mode in order to apply the upgrade, and since it's a standalone host it won't enter maintenance mode until all of its VMs have been stopped. This can be easily accomplished through the ESXi embedded host client.
 
 ### 3. Place host in maintenance mode
 I can do that by SSH'ing to the host and running:
@@ -60,7 +60,7 @@ Name                          Vendor        Acceptance Level  Creation Time     
 ESXi-8.0.0-20513097-standard  VMware, Inc.  PartnerSupported  2022-09-23T18:59:28  2022-09-23T18:59:28
 ESXi-8.0.0-20513097-no-tools  VMware, Inc.  PartnerSupported  2022-09-23T18:59:28  2022-09-23T18:59:28
 ```
-{{% notice info "Absolute paths" %}}
+{{% notice note "Absolute paths" %}}
 When using the `esxcli` command to install software/updates, it's important to use absolute paths rather than relative paths. Otherwise you'll get errors and wind up chasing your tail for a while.
 {{% /notice %}}
 

@@ -172,7 +172,7 @@ As you can see, Swagger can really help to jump-start the exploration of a new A
 [^vracloud]: The online version is really intended for the vRealize Automation Cloud hosted solution. It can be a useful reference but some APIs are missing.
 [^password]: This request form is pure plaintext so you'd never have known that my password is actually `********` if I hadn't mentioned it. Whoops!
 #### HTTPie
-[HTTPie](https://httpie.io/) is a handy command-line utility optimized for interacting with web APIs. This will make things easier as I dig deeper. 
+[HTTPie](https://httpie.io/) is a handy command-line utility optimized for interacting with web APIs. This will make things easier as I dig deeper.
 
 Installing the [Debian package](https://httpie.io/docs/cli/debian-and-ubuntu) is a piece of ~~cake~~ _pie_[^pie]:
 ```shell
@@ -224,7 +224,7 @@ So now if I want to find out which images have been configured in vRA, I can ask
 ```shell
 https GET vra.lab.bowdre.net/iaas/api/images "Authorization: Bearer $token"
 ```
-{{% notice info "Request Items" %}}
+{{% notice note "Request Items" %}}
 Remember from above that HTTPie will automatically insert key/value pairs separated by a colon into the request header.
 {{% /notice %}}
 
@@ -305,7 +305,7 @@ And I'll get back some headers followed by an JSON object detailing the defined 
     "totalElements": 2
 }
 ```
-This doesn't give me the *name* of the regions, but I could use the `_links.region.href` data to quickly match up images which exist in a given region.[^foreshadowing] 
+This doesn't give me the *name* of the regions, but I could use the `_links.region.href` data to quickly match up images which exist in a given region.[^foreshadowing]
 
 You'll notice that HTTPie also prettifies the JSON response to make it easy for humans to parse. This is great for experimenting with requests against different API endpoints and getting a feel for what data can be found where. And firing off tests in HTTPie can be a lot quicker (and easier to format) than with other tools.
 
@@ -316,7 +316,7 @@ Now let's take what we've learned and see about implementing it as vRO actions.
 ### vRealize Orchestrator actions
 My immediate goal for this exercise is create a set of vRealize Orchestrator actions which take in a zone/location identifier from the Cloud Assembly request and return a list of images which are available for deployment there. I'll start with some utility actions to do the heavy lifting, and  then I'll be able to call them from other actions as things get more complicated/interesting. Before I can do that, though, I'll need to add the vRA instance as an HTTP REST endpoint in vRO.
 
-{{% notice info "This post brought to you by..." %}}
+{{% notice note "This post brought to you by..." %}}
 A lot of what follows was borrowed *heavily* from a [very helpful post by Oktawiusz Poranski over at Automate Clouds](https://automateclouds.com/2021/vrealize-automation-8-rest-api-how-to/) so be sure to check out that site for more great tips on working with APIs!
 {{% /notice %}}
 
@@ -342,7 +342,7 @@ I'm going to call this new Configuration `Endpoints` since I plan to use it for 
 
 ![Creating the new Configuration](config_element_2.png)
 
-I'll then click over to the **Variables** tab and create a new variable to store my vRA endpoint details; I'll call it `vRAHost`, and hit the *Type* dropdown and select **New Composite Type**. 
+I'll then click over to the **Variables** tab and create a new variable to store my vRA endpoint details; I'll call it `vRAHost`, and hit the *Type* dropdown and select **New Composite Type**.
 
 ![Creating the new variable](vrahost_variable_1.png)
 
@@ -377,7 +377,7 @@ I'll head into **Library > Actions** to create a new action inside my `com.virtu
 | `variableName` | `string` | Name of desired variable inside Configuration |
 
 ```javascript
-/*  
+/*
 JavaScript: getConfigValue action
     Inputs: path (string), configurationName (string), variableName (string)
     Return type: string
@@ -397,7 +397,7 @@ Next, I'll create another action in my `com.virtuallypotato.utility` module whic
 ![vraLogin action](vraLogin_action.png)
 
 ```javascript
-/*  
+/*
 JavaScript: vraLogin action
     Inputs: none
     Return type: string
@@ -429,7 +429,7 @@ I like to clean up after myself so I'm also going to create a `vraLogout` action
 | `token` | `string` | Auth token of the session to destroy |
 
 ```javascript
-/*  
+/*
 JavaScript: vraLogout action
     Inputs: token (string)
     Return type: string
@@ -447,7 +447,7 @@ System.debug("Terminated vRA API session: " + token);
 ```
 
 ##### `vraExecute` action
-My final "utility" action for this effort will run in between `vraLogin` and `vraLogout`, and it will handle making the actual API call and returning the results. This way I won't have to implement the API handler in every single action which needs to talk to the API - they can just call my new action, `vraExecute`.  
+My final "utility" action for this effort will run in between `vraLogin` and `vraLogout`, and it will handle making the actual API call and returning the results. This way I won't have to implement the API handler in every single action which needs to talk to the API - they can just call my new action, `vraExecute`.
 
 ![vraExecute action](vraExecute_action.png)
 
@@ -485,7 +485,7 @@ return responseContent;
 ```
 
 ##### Bonus: `vraTester` action
-That's it for the core utility actions - but wouldn't it be great to know that this stuff works before moving on to handling the request input? Enter `vraTester`! It will be handy to have an action I can test vRA REST requests in before going all-in on a solution. 
+That's it for the core utility actions - but wouldn't it be great to know that this stuff works before moving on to handling the request input? Enter `vraTester`! It will be handy to have an action I can test vRA REST requests in before going all-in on a solution.
 
 This action will:
 1. Call `vraLogin` to get an API token.
@@ -493,7 +493,7 @@ This action will:
 3. Call `vraLogout` to terminate the API session.
 4. Return the data so we can see if it worked.
 
-Other actions wanting to interact with the vRA REST API will follow the same basic formula, though with some more logic and capability baked in. 
+Other actions wanting to interact with the vRA REST API will follow the same basic formula, though with some more logic and capability baked in.
 
 Anyway, here's my first swing:
 ```JavaScript
@@ -685,7 +685,7 @@ I'll use the **Debug** button to test this action real quick-like, providing the
 It works! Well, at least when called directly. Let's see how it does when called from Cloud Assembly.
 
 ### Cloud Assembly request
-For now I'm really only testing using my new vRO actions so my Cloud Template is going to be pretty basic. I'm not even going to add any resources to the template; I don't even need it to be deployable. 
+For now I'm really only testing using my new vRO actions so my Cloud Template is going to be pretty basic. I'm not even going to add any resources to the template; I don't even need it to be deployable.
 
 ![Completely blank template](blank_template.png)
 
@@ -728,7 +728,7 @@ And I can use the **Test** button at the bottom of the Cloud Assembly template e
 It does!
 
 ### Conclusion
-This has been a very quick introduction on how to start pulling data from the vRA APIs, but it (hopefully) helps to consolidate all the knowledge and information I had to find when I started down this path - and maybe it will give you some ideas on how you can use this ability within your own vRA environment. 
+This has been a very quick introduction on how to start pulling data from the vRA APIs, but it (hopefully) helps to consolidate all the knowledge and information I had to find when I started down this path - and maybe it will give you some ideas on how you can use this ability within your own vRA environment.
 
 In the near future, I'll also have a post on how to do the same sort of things with the vCenter REST API, and I hope to follow that up with a deeper dive on all the tricks I've used to make my request forms as dynamic as possible with the absolute minimum of hardcoded data in the templates. Let me know in the comments if there are any particular use cases you'd like me to explore further.
 

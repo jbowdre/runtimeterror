@@ -25,7 +25,7 @@ tags:
   - vpn
 comment: true # Disable comment if false.
 ---
-{{% notice info "ESXi-ARM Fling v1.10 Update" %}}
+{{% notice note "ESXi-ARM Fling v1.10 Update" %}}
 On July 20, 2022, VMware released a [major update](https://blogs.vmware.com/arm/2022/07/20/1-10/) for the ESXi-ARM Fling. Among [other fixes and improvements](https://flings.vmware.com/esxi-arm-edition#changelog), this version enables **in-place ESXi upgrades** and [adds support for the Quartz64's **on-board NIC**](https://twitter.com/jmcwhatever/status/1549935971822706688). To update, I:
 1. Wrote the new ISO installer to another USB drive.
 2. Attached the installer drive to the USB hub, next to the existing ESXi drive.
@@ -225,7 +225,7 @@ The rest of the OVF deployment is basically just selecting the default options a
 #### Configuring Photon
 There are just a few things I'll want to configure on this VM before I move on to installing Tailscale, and I'll start out simply by logging in with the remote console.
 
-{{% notice info "Default credentials" %}}
+{{% notice note "Default credentials" %}}
 The default password for Photon's `root` user is `changeme`. You'll be forced to change that at first login.
 {{% /notice %}}
 

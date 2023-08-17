@@ -37,13 +37,13 @@ In the next couple of posts, I'll share the details of how I'm using Terraform t
 I have definitely learned a ton in the process (and still have a lot more to learn), but today I'll start by describing how I'm leveraging Packer to create a single VM template ready to enter service as a Kubernetes compute node.
 
 ## What's Packer, and why?
-[HashiCorp Packer](https://www.packer.io/) is a free open-source tool designed to create consistent, repeatable machine images. It's pretty killer as a part of a CI/CD pipeline to kick off new builds based on a schedule or code commits, but also works great for creating builds on-demand. Packer uses the [HashiCorp Configuration Language (HCL)](https://developer.hashicorp.com/packer/docs/templates/hcl_templates) to describe all of the properties of a VM build in a concise and readable format. 
+[HashiCorp Packer](https://www.packer.io/) is a free open-source tool designed to create consistent, repeatable machine images. It's pretty killer as a part of a CI/CD pipeline to kick off new builds based on a schedule or code commits, but also works great for creating builds on-demand. Packer uses the [HashiCorp Configuration Language (HCL)](https://developer.hashicorp.com/packer/docs/templates/hcl_templates) to describe all of the properties of a VM build in a concise and readable format.
 
-You might ask why I would bother with using a powerful tool like Packer if I'm just going to be building a single template. Surely I could just do that by hand, right? And of course, you'd be right - but using an Infrastructure as Code tool even for one-off builds has some pretty big advantages. 
+You might ask why I would bother with using a powerful tool like Packer if I'm just going to be building a single template. Surely I could just do that by hand, right? And of course, you'd be right - but using an Infrastructure as Code tool even for one-off builds has some pretty big advantages.
 
 - **It's fast.** Packer is able to build a complete VM (including pulling in all available OS and software updates) in just a few minutes, much faster than I could click through an installer on my own.
 - **It's consistent.** Packer will follow the exact same steps for every build, removing the small variations (and typos!) that would surely show up if I did the builds manually.
-- **It's great for testing changes.** Since Packer builds are so fast and consistent, it makes it incredibly easy to test changes as I go. I can be confident that the *only* changes between two builds will be the changes I deliberately introduced. 
+- **It's great for testing changes.** Since Packer builds are so fast and consistent, it makes it incredibly easy to test changes as I go. I can be confident that the *only* changes between two builds will be the changes I deliberately introduced.
 - **It's self-documenting.** The entire VM (and its guest OS) is described completely within the Packer HCL file(s), which I can review to remember which packages were installed, which user account(s) were created, what partition scheme was used, and anything else I might need to know.
 - **It supports change tracking.** A Packer build is just a set of HCL files so it's easy to sync them with a version control system like Git to track (and revert) changes as needed.
 
@@ -66,7 +66,7 @@ You can learn how to install Packer on other systems by following [this tutorial
 Packer will need a user account with sufficient privileges in the vSphere environment to be able to create and manage a VM. I'd recommend using an account dedicated to automation tasks, and assigning it the required privileges listed in [the `vsphere-iso` documentation](https://developer.hashicorp.com/packer/plugins/builders/vsphere/vsphere-iso#required-vsphere-privileges).
 
 ### Gather installation media
-My Kubernetes node template will use Ubuntu 20.04 LTS as the OS so I'll go ahead and download the [server installer ISO](https://releases.ubuntu.com/20.04.5/) and upload it to a vSphere datastore to make it available to Packer. 
+My Kubernetes node template will use Ubuntu 20.04 LTS as the OS so I'll go ahead and download the [server installer ISO](https://releases.ubuntu.com/20.04.5/) and upload it to a vSphere datastore to make it available to Packer.
 
 ## Template build
 After the OS is installed and minimimally configured, I'll need to add in Kubernetes components like `containerd`, `kubectl`, `kubelet`, and `kubeadm`, and then apply a few additional tweaks to get it fully ready.
@@ -101,11 +101,11 @@ After quite a bit of experimentation, I've settled on a preferred way to organiz
 └── variables.pkr.hcl
 ```
 
-- The `certs` folder holds the Base64-encoded PEM-formatted certificate of my [internal Certificate Authority](/ldaps-authentication-tanzu-community-edition/#prequisite) which will be automatically installed in the provisioned VM's trusted certificate store. 
+- The `certs` folder holds the Base64-encoded PEM-formatted certificate of my [internal Certificate Authority](/ldaps-authentication-tanzu-community-edition/#prequisite) which will be automatically installed in the provisioned VM's trusted certificate store.
 - The `data` folder stores files for [generating the `cloud-init` configuration](#user-datapkrtplhcl) that will automate the OS installation and configuration.
 - The `scripts` directory holds a [collection of scripts](#post_install_scripts) used for post-install configuration tasks. Sure, I could just use a single large script, but using a bunch of smaller ones helps keep things modular and easy to reuse elsewhere.
 - `variables.pkr.hcl` declares [all of the variables](#variablespkrhcl) which will be used in the Packer build, and sets the default values for some of them.
-- `ubuntu-k8s.auto.pkrvars.hcl` [assigns values](#ubuntu-k8sautopkrvarshcl) to those variables. This is where most of the user-facing options will be configured, such as usernames, passwords, and environment settings. 
+- `ubuntu-k8s.auto.pkrvars.hcl` [assigns values](#ubuntu-k8sautopkrvarshcl) to those variables. This is where most of the user-facing options will be configured, such as usernames, passwords, and environment settings.
 - `ubuntu-k8s.pkr.hcl` is where the [build process](#ubuntu-k8spkrhcl) is actually described.
 
 Let's quickly run through that build process, and then I'll back up and examine some other components in detail.
@@ -133,7 +133,7 @@ packer {
 As I mentioned above, I'll be using the official [`vsphere` plugin](https://github.com/hashicorp/packer-plugin-vsphere) to handle the provisioning on my vSphere environment. I'll also make use of the [`sshkey` plugin](https://github.com/ivoronin/packer-plugin-sshkey) to dynamically generate SSH keys for the build process.
 
 #### `data` block
-This section would be used for loading information from various data sources, but I'm only using it for the `sshkey` plugin (as mentioned above). 
+This section would be used for loading information from various data sources, but I'm only using it for the `sshkey` plugin (as mentioned above).
 ```text
 // BLOCK: data
 // Defines data sources.
@@ -178,7 +178,7 @@ locals {
 This block also makes use of the built-in [`templatefile()` function](https://developer.hashicorp.com/packer/docs/templates/hcl_templates/functions/file/templatefile) to insert build-specific variables into the `user-data` file for [`cloud-init`](https://cloud-init.io/) (more on that in a bit).
 
 #### `source` block
-The `source` block tells the `vsphere-iso` builder how to connect to vSphere, what hardware specs to set on the VM, and what to do with the VM once the build has finished (convert it to template, export it to OVF, and so on). 
+The `source` block tells the `vsphere-iso` builder how to connect to vSphere, what hardware specs to set on the VM, and what to do with the VM once the build has finished (convert it to template, export it to OVF, and so on).
 
 You'll notice that most of this is just mapping user-defined variables (with the `var.` prefix) to properties used by `vsphere-iso`:
 
@@ -233,7 +233,7 @@ source "vsphere-iso" "ubuntu-k8s" {
   cd_content                = local.data_source_content
   cd_label                  = var.cd_label
 
-  // Boot and Provisioning Settings 
+  // Boot and Provisioning Settings
   boot_order        = var.vm_boot_order
   boot_wait         = var.vm_boot_wait
   boot_command      = var.vm_boot_command
@@ -269,7 +269,7 @@ source "vsphere-iso" "ubuntu-k8s" {
   // OVF Export Settings
   dynamic "export" {
     for_each            = var.common_ovf_export_enabled == true ? [1] : []
-    content {     
+    content {
       name              = var.vm_name
       force             = var.common_ovf_export_overwrite
       options           = [
@@ -311,7 +311,7 @@ build {
     expect_disconnect   = true
     scripts             = var.pre_final_scripts
   }
-} 
+}
 ```
 
 So you can see that the `ubuntu-k8s.pkr.hcl` file primarily focuses on the structure and form of the build, and it's written in such a way that it can be fairly easily adapted for building other types of VMs. Very few things in this file would have to be changed since so many of the properties are derived from the variables.
@@ -721,7 +721,7 @@ variable "k8s_version" {
 The full `variables.pkr.hcl` can be viewed [here](https://github.com/jbowdre/vsphere-k8s/blob/main/packer/variables.pkr.hcl).
 
 ### `ubuntu-k8s.auto.pkrvars.hcl`
-Packer automatically knows to load variables defined in files ending in `*.auto.pkrvars.hcl`. Storing the variable values separately from the declarations in `variables.pkr.hcl` makes it easier to protect sensitive values. 
+Packer automatically knows to load variables defined in files ending in `*.auto.pkrvars.hcl`. Storing the variable values separately from the declarations in `variables.pkr.hcl` makes it easier to protect sensitive values.
 
 So I'll start by telling Packer what credentials to use for connecting to vSphere, and what vSphere resources to deploy to:
 ```text
@@ -829,7 +829,7 @@ ssh_keys                = [
 ]
 ```
 
-Finally, I'll create two lists of scripts that will be run on the VM once the OS install is complete. The `post_install_scripts` will be run immediately after the operating system installation. The `update-packages.sh` script will cause a reboot, and then the set of `pre_final_scripts` will do some cleanup and prepare the VM to be converted to a template. 
+Finally, I'll create two lists of scripts that will be run on the VM once the OS install is complete. The `post_install_scripts` will be run immediately after the operating system installation. The `update-packages.sh` script will cause a reboot, and then the set of `pre_final_scripts` will do some cleanup and prepare the VM to be converted to a template.
 
 The last bit of this file also designates the desired version of Kubernetes to be installed.
 ```text
@@ -860,7 +860,7 @@ k8s_version = "1.25.3"
 You can find an full example of this file [here](https://github.com/jbowdre/vsphere-k8s/blob/main/packer/ubuntu-k8s.example.pkrvars.hcl).
 
 ### `user-data.pkrtpl.hcl`
-Okay, so we've covered the Packer framework that creates the VM; now let's take a quick look at the `cloud-init` configuration that will allow the OS installation to proceed unattended. 
+Okay, so we've covered the Packer framework that creates the VM; now let's take a quick look at the `cloud-init` configuration that will allow the OS installation to proceed unattended.
 
 See the bits that look `${ like_this }`? Those place-holders will take input from the [`locals` block of `ubuntu-k8s.pkr.hcl`](#locals-block) mentioned above. So that's how all the OS properties will get set, including the hostname, locale, LVM partition layout, username, password, and SSH keys.
 
@@ -1054,7 +1054,7 @@ autoinstall:
         ssh_authorized_keys:
 %{ for ssh_key in ssh_keys ~}
           - ${ ssh_key }
-%{ endfor ~}    
+%{ endfor ~}
 %{ endif ~}
 ```
 
@@ -1071,7 +1071,7 @@ This simply holds up the process until the `/var/lib/cloud//instance/boot-finish
 ```shell
 #!/bin/bash -eu
 echo '>> Waiting for cloud-init...'
-while [ ! -f /var/lib/cloud/instance/boot-finished ]; do 
+while [ ! -f /var/lib/cloud/instance/boot-finished ]; do
   sleep 1
 done
 ```
@@ -1080,12 +1080,12 @@ done
 Next I clean up any network configs that may have been created during the install process:
 ```shell
 #!/bin/bash -eu
-if [ -f /etc/cloud/cloud.cfg.d/99-installer.cfg ]; then 
+if [ -f /etc/cloud/cloud.cfg.d/99-installer.cfg ]; then
   sudo rm /etc/cloud/cloud.cfg.d/99-installer.cfg
   echo 'Deleting subiquity cloud-init config'
 fi
 
-if [ -f /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg ]; then 
+if [ -f /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg ]; then
   sudo rm /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg
   echo 'Deleting subiquity cloud-init network config'
 fi
@@ -1245,10 +1245,10 @@ Lastly, let's do a final run of cleaning up logs, temporary files, and unique id
 # Prepare a VM to become a template.
 
 echo '>> Clearing audit logs...'
-sudo sh -c 'if [ -f /var/log/audit/audit.log ]; then 
-  cat /dev/null > /var/log/audit/audit.log 
+sudo sh -c 'if [ -f /var/log/audit/audit.log ]; then
+  cat /dev/null > /var/log/audit/audit.log
   fi'
-sudo sh -c 'if [ -f /var/log/wtmp ]; then 
+sudo sh -c 'if [ -f /var/log/wtmp ]; then
   cat /dev/null > /var/log/wtmp
   fi'
 sudo sh -c 'if [ -f /var/log/lastlog ]; then
@@ -1297,7 +1297,7 @@ Now that all the ducks are nicely lined up, let's give them some marching orders
 packer packer build -on-error=abort -force .
 ```
 
-{{% notice info "Flags" %}}
+{{% notice note "Flags" %}}
 The `-on-error=abort` option makes sure that the build will abort if any steps in the build fail, and `-force` tells Packer to delete any existing VMs/templates with the same name as the one I'm attempting to build.
 {{% /notice %}}
 

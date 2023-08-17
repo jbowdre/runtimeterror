@@ -13,14 +13,14 @@ tags:
 title: Integrating {php}IPAM with vRealize Automation 8
 ---
 
-In a [previous post](/vmware-home-lab-on-intel-nuc-9), I described some of the steps I took to stand up a homelab including vRealize Automation (vRA) on an Intel NUC 9. One of my initial goals for that lab was to use it for developing and testing a way for vRA to leverage [phpIPAM](https://phpipam.net/) for static IP assignments. The homelab worked brilliantly for that purpose, and those extra internal networks were a big help when it came to testing. I was able to deploy and configure a new VM to host the phpIPAM instance, install the [VMware vRealize Third-Party IPAM SDK](https://code.vmware.com/web/sdk/1.1.0/vmware-vrealize-automation-third-party-ipam-sdk) on my [Chromebook's Linux environment](/setting-up-linux-on-a-new-lenovo-chromebook-duet-bonus-arm64-complications), develop and build the integration component, import it to my vRA environment, and verify that deployments got addressed accordingly. 
+In a [previous post](/vmware-home-lab-on-intel-nuc-9), I described some of the steps I took to stand up a homelab including vRealize Automation (vRA) on an Intel NUC 9. One of my initial goals for that lab was to use it for developing and testing a way for vRA to leverage [phpIPAM](https://phpipam.net/) for static IP assignments. The homelab worked brilliantly for that purpose, and those extra internal networks were a big help when it came to testing. I was able to deploy and configure a new VM to host the phpIPAM instance, install the [VMware vRealize Third-Party IPAM SDK](https://code.vmware.com/web/sdk/1.1.0/vmware-vrealize-automation-third-party-ipam-sdk) on my [Chromebook's Linux environment](/setting-up-linux-on-a-new-lenovo-chromebook-duet-bonus-arm64-complications), develop and build the integration component, import it to my vRA environment, and verify that deployments got addressed accordingly.
 
 The resulting integration is available on Github [here](https://github.com/jbowdre/phpIPAM-for-vRA8). This was actually the second integration I'd worked on, having fumbled my way through a [Solarwinds integration](https://github.com/jbowdre/SWIPAMforvRA8) earlier last year. [VMware's documentation](https://docs.vmware.com/en/vRealize-Automation/8.3/Using-and-Managing-Cloud-Assembly/GUID-4A5A481C-FC45-47FB-A120-56B73EB28F01.html) on how to build these things is pretty good, but I struggled to find practical information on how a novice like me could actually go about developing the integration. So maybe these notes will be helpful to anyone seeking to write an integration for a different third-party IP Address Management solution.
 
 If you'd just like to import a working phpIPAM integration into your environment without learning how the sausage is made, you can grab my latest compiled package [here](https://github.com/jbowdre/phpIPAM-for-vRA8/releases/latest). You'll probably still want to look through Steps 0-2 to make sure your IPAM instance is set up similarly to mine.
 
 ### Step 0: phpIPAM installation and base configuration
-Before even worrying about the SDK, I needed to [get a phpIPAM instance ready](https://phpipam.net/documents/installation/). I started with a small (1vCPU/1GB RAM/16GB HDD) VM attached to my "Home" network (`192.168.1.0/24`). I installed Ubuntu 20.04.1 LTS, and then used [this guide](https://computingforgeeks.com/install-and-configure-phpipam-on-ubuntu-debian-linux/) to install phpIPAM. 
+Before even worrying about the SDK, I needed to [get a phpIPAM instance ready](https://phpipam.net/documents/installation/). I started with a small (1vCPU/1GB RAM/16GB HDD) VM attached to my "Home" network (`192.168.1.0/24`). I installed Ubuntu 20.04.1 LTS, and then used [this guide](https://computingforgeeks.com/install-and-configure-phpipam-on-ubuntu-debian-linux/) to install phpIPAM.
 
 Once phpIPAM was running and accessible via the web interface, I then used `openssl` to generate a self-signed certificate to be used for the SSL API connection:
 ```shell
@@ -49,7 +49,7 @@ I edited the apache config file to bind that new certificate on port 443, and to
         SSLCertificateKeyFile /etc/apache2/certificate/apache.key
 </VirtualHost>
 ```
-After restarting apache, I verified that hitting `http://ipam.lab.bowdre.net` redirected me to `https://ipam.lab.bowdre.net`, and that the connection was secured with the shiny new certificate. 
+After restarting apache, I verified that hitting `http://ipam.lab.bowdre.net` redirected me to `https://ipam.lab.bowdre.net`, and that the connection was secured with the shiny new certificate.
 
 Remember how I've got a "Home" network as well as [several internal networks](/vmware-home-lab-on-intel-nuc-9#networking) which only exist inside the lab environment? I dropped the phpIPAM instance on the Home network to make it easy to connect to, but it doesn't know how to talk to the internal networks where vRA will actually be deploying the VMs. So I added a static route to let it know that traffic to `172.16.0.0/16` would have to go through the Vyos router at `192.168.1.100`.
 
@@ -79,9 +79,9 @@ I then ran `sudo netplan apply` so the change would take immediate effect and co
 ```
 john@ipam:~$ sudo netplan apply
 john@ipam:~$ ip route
-default via 192.168.1.1 dev ens160 proto static 
-172.16.0.0/16 via 192.168.1.100 dev ens160 proto static metric 100 
-192.168.1.0/24 dev ens160 proto kernel scope link src 192.168.1.14 
+default via 192.168.1.1 dev ens160 proto static
+172.16.0.0/16 via 192.168.1.100 dev ens160 proto static metric 100
+192.168.1.0/24 dev ens160 proto kernel scope link src 192.168.1.14
 john@ipam:~$ ping 172.16.10.12
 PING 172.16.10.12 (172.16.10.12) 56(84) bytes of data.
 64 bytes from 172.16.10.12: icmp_seq=1 ttl=64 time=0.282 ms
@@ -106,7 +106,7 @@ Next, I went to the **Users** item on the left-hand menu to create a new user ac
 ![Creating vRA service account in phpIPAM](DiqyOlf5S.png)
 ![Creating vRA service account in phpIPAM](QoxVKC11t.png)
 
-The last step in configuring API access is to create an API key. This is done by clicking the **API** item on that left side menu and then selecting *Create API key*. I gave it the app ID `vra`, granted Read/Write permissions, and set the *App Security* option to "SSL with User token". 
+The last step in configuring API access is to create an API key. This is done by clicking the **API** item on that left side menu and then selecting *Create API key*. I gave it the app ID `vra`, granted Read/Write permissions, and set the *App Security* option to "SSL with User token".
 ![Generating the API key](-aPGJhSvz.png)
 
 Once we get things going, our API calls will authenticate with the username and password to get a token and bind that to the app ID.
@@ -115,7 +115,7 @@ Once we get things going, our API calls will authenticate with the username and 
 Our fancy new IPAM solution is ready to go - except for the whole bit about managing IPs. We need to tell it about the network segments we'd like it to manage. phpIPAM uses "Sections" to group subnets together, so we start by creating a new Section at **Administration > IP related management > Sections**. I named my new section `Lab`, and pretty much left all the default options. Be sure that the `Operators` group has read/write access to this section and the subnets we're going to create inside it!
 ![Creating a section to hold the subnets](6yo39lXI7.png)
 
-We should also go ahead and create a Nameserver set so that phpIPAM will be able to tell its clients (vRA) what server(s) to use for DNS. Do this at **Administration > IP related management > Nameservers**. I created a new entry called `Lab` and pointed it at my internal DNS server, `192.168.1.5`. 
+We should also go ahead and create a Nameserver set so that phpIPAM will be able to tell its clients (vRA) what server(s) to use for DNS. Do this at **Administration > IP related management > Nameservers**. I created a new entry called `Lab` and pointed it at my internal DNS server, `192.168.1.5`.
 ![Designating the nameserver](pDsEh18bx.png)
 
 Okay, we're finally ready to start entering our subnets at **Administration > IP related management > Subnets**. For each one, I entered the Subnet in CIDR format, gave it a useful description, and associated it with my `Lab` section. I expanded the *VLAN* dropdown and used the *Add new VLAN* option to enter the corresponding VLAN information, and also selected the Nameserver I had just created.
@@ -123,11 +123,11 @@ Okay, we're finally ready to start entering our subnets at **Administration > IP
 I also enabled the options ~~*Mark as pool*~~, *Check hosts status*, *Discover new hosts*, and *Resolve DNS names*.
 ![Subnet options](SR7oD0jsG.png)
 
-{{% notice info "Update" %}}
+{{% notice note "Update" %}}
 Since releasing this integration, I've learned that phpIPAM intends for the `isPool` field to identify networks where the entire range (including the subnet and broadcast addresses) are available for assignment. As a result, I no longer recommend using that field. Instead, consider [creating a custom field](https://github.com/jbowdre/phpIPAM-for-vRA8/blob/main/docs/custom_field.md) for tagging networks for vRA availability.
 {{% /notice %}}
 
-I then used the *Scan subnets for new hosts* button to run a discovery scan against the new subnet. 
+I then used the *Scan subnets for new hosts* button to run a discovery scan against the new subnet.
 ![Scanning for new hosts](4WQ8HWJ2N.png)
 
 The scan only found a single host, `172.16.20.1`, which is the subnet's gateway address hosted by the Vyos router. I used the pencil icon to edit the IP and mark it as the gateway:
@@ -182,7 +182,7 @@ Nice! Let's make it a bit more friendly:
 >>> subnets = subnets.json()['data']
 >>> for subnet in subnets:
 ...     print("Found subnet: " + subnet['description'])
-... 
+...
 Found subnet: Home Network
 Found subnet: 1610-Management
 Found subnet: 1620-Servers-1
@@ -192,7 +192,7 @@ Found subnet: 1640-Servers-3
 Found subnet: 1650-Servers-4
 Found subnet: 1660-Servers-5
 ```
-We're in business! 
+We're in business!
 
 Now that I know how to talk to phpIPAM via its RESP API, it's time to figure out how to get vRA to speak that language.
 
@@ -213,7 +213,7 @@ The README tells you to extract the .zip and make a simple modification to the `
     <user.id>1000</user.id>
 </properties>
 ```
-You can then kick off the build with `mvn package -PcollectDependencies -Duser.id=${UID}`, which will (eventually) spit out `./target/phpIPAM.zip`. You can then [import the package to vRA](https://docs.vmware.com/en/vRealize-Automation/8.3/Using-and-Managing-Cloud-Assembly/GUID-410899CA-1B02-4507-96AD-DFE622D2DD47.html) and test it against the `httpbin.org` hostname to validate that the build process works correctly. 
+You can then kick off the build with `mvn package -PcollectDependencies -Duser.id=${UID}`, which will (eventually) spit out `./target/phpIPAM.zip`. You can then [import the package to vRA](https://docs.vmware.com/en/vRealize-Automation/8.3/Using-and-Managing-Cloud-Assembly/GUID-410899CA-1B02-4507-96AD-DFE622D2DD47.html) and test it against the `httpbin.org` hostname to validate that the build process works correctly.
 
 You'll notice that the form includes fields for Username, Password, and Hostname; we'll also need to specify the API app ID. This can be done by editing `./src/main/resources/endpoint-schema.json`. I added an `apiAppId` field:
 ```json
@@ -292,7 +292,7 @@ You'll notice that the form includes fields for Username, Password, and Hostname
    }
 }
 ```
-{{% notice info "Update" %}}
+{{% notice note "Update" %}}
 Check out the [source on GitHub](https://github.com/jbowdre/phpIPAM-for-vRA8/blob/main/src/main/resources/endpoint-schema.json) to see how I adjusted the schema to support custom field input.
 {{% /notice %}}
 
@@ -359,12 +359,12 @@ try:
             "statusCode": "200"
         }
 ```
-You can view the full code [here](https://github.com/jbowdre/phpIPAM-for-vRA8/blob/main/src/main/python/validate_endpoint/source.py). 
+You can view the full code [here](https://github.com/jbowdre/phpIPAM-for-vRA8/blob/main/src/main/python/validate_endpoint/source.py).
 
 After completing each operation, run `mvn package -PcollectDependencies -Duser.id=${UID}` to build again, and then import the package to vRA again. This time, you'll see the new "API App ID" field on the form:
 ![Validating the new IPAM endpoint](bpx8iKUHF.png)
 
-Confirm that everything worked correctly by hopping over to the **Extensibility** tab, selecting **Action Runs** on the left, and changing the **User Runs** filter to say *Integration Runs*. 
+Confirm that everything worked correctly by hopping over to the **Extensibility** tab, selecting **Action Runs** on the left, and changing the **User Runs** filter to say *Integration Runs*.
 ![Extensibility action runs](e4PTJxfqH.png)
 Select the newest `phpIPAM_ValidateEndpoint` action and make sure it has a happy green *Completed* status. You can also review the Inputs to make sure they look like what you expected:
 ```json
@@ -381,7 +381,7 @@ Select the newest `phpIPAM_ValidateEndpoint` action and make sure it has a happy
     "hostName": "ipam.lab.bowdre.net",
     "properties": "[{\"prop_key\":\"phpIPAM.IPAM.apiAppId\",\"prop_value\":\"vra\"}]",
     "providerId": "301de00f-d267-4be2-8065-fabf48162dc1",
-``` 
+```
 And we can see that the Outputs reflect our successful result:
 ```json
 {
@@ -427,7 +427,7 @@ subnets = subnets.json()['data']
  ```
 I decided to add the extra `filter_by=isPool&filter_value=1` argument to the query so that it will only return subnets marked as a pool in phpIPAM. This way I can use phpIPAM for monitoring address usage on a much larger set of subnets while only presenting a handful of those to vRA.
 
-{{% notice info "Update" %}}
+{{% notice note "Update" %}}
 I now filter for networks identified by the designated custom field like so:
 ```python
     # Request list of subnets
@@ -444,7 +444,7 @@ I now filter for networks identified by the designated custom field like so:
 ```
 {{% /notice %}}
 
-Now is a good time to consult [that white paper](https://docs.vmware.com/en/VMware-Cloud-services/1.0/ipam_integration_contract_reqs.pdf) to confirm what fields I'll need to return to vRA. That lets me know that I'll need to return `ipRanges` which is a list of `IpRange` objects. `IpRange` requires `id`, `name`, `startIPAddress`, `endIPAddress`, `ipVersion`, and `subnetPrefixLength` properties. It can also accept `description`, `gatewayAddress`, and `dnsServerAddresses` properties, among others. Some of these properties are returned directly by the phpIPAM API, but others will need to be computed on the fly. 
+Now is a good time to consult [that white paper](https://docs.vmware.com/en/VMware-Cloud-services/1.0/ipam_integration_contract_reqs.pdf) to confirm what fields I'll need to return to vRA. That lets me know that I'll need to return `ipRanges` which is a list of `IpRange` objects. `IpRange` requires `id`, `name`, `startIPAddress`, `endIPAddress`, `ipVersion`, and `subnetPrefixLength` properties. It can also accept `description`, `gatewayAddress`, and `dnsServerAddresses` properties, among others. Some of these properties are returned directly by the phpIPAM API, but others will need to be computed on the fly.
 
 For instance, these are pretty direct matches:
 ```python
@@ -500,7 +500,7 @@ for subnet in subnets:
       ipRange['dnsServerAddresses'] = [server.strip() for server in str(subnet['nameservers']['namesrv1']).split(';')]
     except:
       ipRange['dnsServerAddresses'] = []
-    # try to get the address marked as the gateway in IPAM  
+    # try to get the address marked as the gateway in IPAM
     gw_req = requests.get(f"{subnet_uri}/{subnet['id']}/addresses/?filter_by=is_gateway&filter_value=1", headers=token, verify=cert)
     if gw_req.status_code == 200:
       gateway = gw_req.json()['data'][0]['ip']
@@ -515,7 +515,7 @@ return result
 ```
 The full code can be found [here](https://github.com/jbowdre/phpIPAM-for-vRA8/blob/main/src/main/python/get_ip_ranges/source.py). You may notice that I removed all the bits which were in the VMware-provided skeleton about paginating the results. I honestly wasn't entirely sure how to implement that, and I also figured that since I'm already limiting the results by the `is_pool` filter I shouldn't have a problem with the IPAM server returning an overwhelming number of IP ranges. That could be an area for future improvement though.
 
-In any case, it's time to once again use `mvn package -PcollectDependencies -Duser.id=${UID}` to fire off the build, and then import `phpIPAM.zip` into vRA. 
+In any case, it's time to once again use `mvn package -PcollectDependencies -Duser.id=${UID}` to fire off the build, and then import `phpIPAM.zip` into vRA.
 
 vRA runs the `phpIPAM_GetIPRanges` action about every ten minutes so keep checking back on the **Extensibility > Action Runs** view until it shows up. You can then select the action and review the Log to see which IP ranges got picked up:
 ```log
@@ -533,7 +533,7 @@ Note that it *did not* pick up my "Home Network" range since it wasn't set to be
 We can also navigate to **Infrastructure > Networks > IP Ranges** to view them in all their glory:
 ![Reviewing the discovered IP ranges](7_QI-Ti8g.png)
 
-You can then follow [these instructions](https://docs.vmware.com/en/vRealize-Automation/8.3/Using-and-Managing-Cloud-Assembly/GUID-410899CA-1B02-4507-96AD-DFE622D2DD47.html) to associate the external IP ranges with networks available for vRA deployments. 
+You can then follow [these instructions](https://docs.vmware.com/en/vRealize-Automation/8.3/Using-and-Managing-Cloud-Assembly/GUID-410899CA-1B02-4507-96AD-DFE622D2DD47.html) to associate the external IP ranges with networks available for vRA deployments.
 
 Next, we need to figure out how to allocate an IP.
 
@@ -618,7 +618,7 @@ payload = {
   'description': f'Reserved by vRA for {owner} at {datetime.now()}'
 }
 ```
-That timestamp will be handy when reviewing the reservations from the phpIPAM side of things. Be sure to add an appropriate `import datetime` statement at the top of this file, and include `datetime` in `requirements.txt`. 
+That timestamp will be handy when reviewing the reservations from the phpIPAM side of things. Be sure to add an appropriate `import datetime` statement at the top of this file, and include `datetime` in `requirements.txt`.
 
 So now we'll construct the URI and post the allocation request to phpIPAM. We tell it which `range_id` to use and it will return the first available IP.
 ```python
@@ -634,7 +634,7 @@ if allocate_req['success']:
     "ipAllocationId": allocation['id'],
     "ipRangeId": range_id,
     "ipVersion": "IPv" + str(version),
-     "ipAddresses": [allocate_req['data']] 
+     "ipAddresses": [allocate_req['data']]
    }
    logging.info(f"Successfully reserved {str(result['ipAddresses'])} for {vmName}.")
 else:

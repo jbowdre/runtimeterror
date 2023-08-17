@@ -38,7 +38,7 @@ I'll be deploying this on a cloud server with these specs:
 | --- | --- |
 | Shape | `VM.Standard.A1.Flex` |
 | Image | Ubuntu 22.04 |
-| CPU Count | 1 | 
+| CPU Count | 1 |
 | Memory (GB) | 6 |
 | Boot Volume (GB) | 50 |
 
@@ -65,7 +65,7 @@ When I bring up the Tailscale interface, I'll use the `--advertise-tags` flag to
 sudo tailscale up --advertise-tags "tag:cloud"
 ```
 
-[^tailnet]: [Tailscale's term](https://tailscale.com/kb/1136/tailnet/) for the private network which securely links Tailscale-connected devices. 
+[^tailnet]: [Tailscale's term](https://tailscale.com/kb/1136/tailnet/) for the private network which securely links Tailscale-connected devices.
 
 #### Install Docker
 Next I install Docker and `docker-compose`:
@@ -126,15 +126,15 @@ run-parts: executing /usr/share/netfilter-persistent/plugins.d/15-ip4tables save
 run-parts: executing /usr/share/netfilter-persistent/plugins.d/25-ip6tables save
 ```
 
-{{% notice info "Cloud Firewall" %}}
+{{% notice note "Cloud Firewall" %}}
 Of course I will also need to create matching rules in the cloud firewall, but I'm going not going to detail [those steps](/federated-matrix-server-synapse-on-oracle-clouds-free-tier/#firewall-configuration) again here. And since I've now got Tailscale up and running I can remove the pre-created rule to allow SSH access through the cloud firewall.
 {{% /notice %}}
 
 ### Install Gitea
-I'm now ready to move on with installing Gitea itself. 
+I'm now ready to move on with installing Gitea itself.
 
 #### Prepare `git` user
-I'll start with creating a `git` user. This account will be set as the owner of the data volume used by the Gitea container, but will also (perhaps more importantly) facilitate [SSH passthrough](https://docs.gitea.io/en-us/install-with-docker/#ssh-container-passthrough) into the container for secure git operations. 
+I'll start with creating a `git` user. This account will be set as the owner of the data volume used by the Gitea container, but will also (perhaps more importantly) facilitate [SSH passthrough](https://docs.gitea.io/en-us/install-with-docker/#ssh-container-passthrough) into the container for secure git operations.
 
 Here's where I create the account and also generate what will become the SSH key used by the git server:
 ```bash
@@ -153,8 +153,8 @@ When other users add their SSH public keys into Gitea's web UI, those will get a
 command="/usr/local/bin/gitea --config=/data/gitea/conf/app.ini serv key-1",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty <user pubkey>
 ```
 
-{{% notice info "Not just yet" %}}
-No users have added their keys to Gitea just yet so if you look at `/home/git/.ssh/authorized_keys` right now you won't see this extra line, but I wanted to go ahead and mention it to explain the next step. It'll show up later. I promise. 
+{{% notice note "Not just yet" %}}
+No users have added their keys to Gitea just yet so if you look at `/home/git/.ssh/authorized_keys` right now you won't see this extra line, but I wanted to go ahead and mention it to explain the next step. It'll show up later. I promise.
 {{% /notice %}}
 
 So I'll go ahead and create that extra command:
@@ -166,10 +166,10 @@ EOF
 sudo chmod +x /usr/local/bin/gitea
 ```
 
-So when I use a `git` command to interact with the server via SSH, the commands will get relayed into the Docker container on port 2222. 
+So when I use a `git` command to interact with the server via SSH, the commands will get relayed into the Docker container on port 2222.
 
 #### Create `docker-compose` definition
-That takes care of most of the prep work, so now I'm ready to create the `docker-compose.yaml` file which will tell Docker how to host Gitea. 
+That takes care of most of the prep work, so now I'm ready to create the `docker-compose.yaml` file which will tell Docker how to host Gitea.
 
 I'm going to place this in `/opt/gitea`:
 ```bash
@@ -251,7 +251,7 @@ services:
     volumes:
       - ./postgres:/var/lib/postgresql/data
 ```
-{{% notice info "Pin the PostgreSQL version" %}}
+{{% notice note "Pin the PostgreSQL version" %}}
 The format of PostgreSQL data changes with new releases, and that means that the data created by different major releases are not compatible. Unless you take steps to upgrade the data format, you'll have problems when a new major release of PostgreSQL arrives. Avoid the headache: pin this to a major version (as I did with `image: postgres:14` above) so you can upgrade on your terms.
 {{% /notice %}}
 
@@ -293,12 +293,12 @@ Starting Gitea is as simple as
 ```bash
 sudo docker-compose up -d
 ```
-which will spawn both the Gitea server as well as a `postgres` database to back it. 
+which will spawn both the Gitea server as well as a `postgres` database to back it.
 
 Gitea will be listening on port `3000`.... which isn't exposed outside of the VM it's running on so I can't actually do anything with it just yet. Let's see about changing that.
 
 ### Configure Caddy reverse proxy
-I've [written before](/federated-matrix-server-synapse-on-oracle-clouds-free-tier/#reverse-proxy-setup) about [Caddy server](https://caddyserver.com/) and how simple it makes creating a reverse proxy with automatic HTTPS. While Gitea does include [built-in HTTPS support](https://docs.gitea.io/en-us/https-setup/), configuring that to work within Docker seems like more work to me. 
+I've [written before](/federated-matrix-server-synapse-on-oracle-clouds-free-tier/#reverse-proxy-setup) about [Caddy server](https://caddyserver.com/) and how simple it makes creating a reverse proxy with automatic HTTPS. While Gitea does include [built-in HTTPS support](https://docs.gitea.io/en-us/https-setup/), configuring that to work within Docker seems like more work to me.
 
 #### Install Caddy
 So exactly how simple does Caddy make this? Well let's start with installing Caddy on the system:
@@ -334,13 +334,13 @@ sudo systemctl start caddy
 sudo systemctl restart caddy
 ```
 
-I found that the `restart` is needed to make sure that the config file gets loaded correctly. And after a moment or two, I can point my browser over to `https://git.bowdre.net` and see the default landing page, complete with a valid certificate. 
+I found that the `restart` is needed to make sure that the config file gets loaded correctly. And after a moment or two, I can point my browser over to `https://git.bowdre.net` and see the default landing page, complete with a valid certificate.
 
 ### Configure Gitea
 Now that Gitea is installed, I'll need to go through the initial configuration process to actually be able to use it. Fortunately most of this stuff was taken care of by all the environment variables I crammed into the the `docker-compose.yaml` file earlier. All I *really* need to do is create an administrative user:
 ![Initial configuration](initial_config.png)
 
-I can now press the friendly **Install Gitea** button, and after just a few seconds I'll be able to log in with that new administrator account. 
+I can now press the friendly **Install Gitea** button, and after just a few seconds I'll be able to log in with that new administrator account.
 
 #### Create user account
 I don't want to use that account for all my git actions though so I click on the menu at the top right and select the **Site Administration** option:
@@ -383,7 +383,7 @@ Hey - there's my public key, being preceded by the customized command I defined 
 ### Configure Fail2ban
 I'm already limiting this server's exposure by blocking inbound SSH (except for what's magically tunneled through Tailscale) at the Oracle Cloud firewall, but I still have to have TCP ports `80` and `443` open for the web interface. It would be nice if those web ports didn't get hammered with invalid login attempts.
 
-[Fail2ban](https://www.fail2ban.org/wiki/index.php/Main_Page) can help with that by monitoring log files for repeated authentication failures and then creating firewall rules to block the offender. 
+[Fail2ban](https://www.fail2ban.org/wiki/index.php/Main_Page) can help with that by monitoring log files for repeated authentication failures and then creating firewall rules to block the offender.
 
 Installing Fail2ban is simple:
 ```shell
@@ -428,7 +428,7 @@ bantime = 86400
 action = iptables-allports
 ```
 
-This configures Fail2ban to watch the log file (`logpath`) inside the data volume mounted to the Gitea container for messages which match the pattern I just configured (`gitea`). If a system fails to log in 5 times (`maxretry`) within 1 hour (`findtime`, in seconds) then the offending IP will be banned for 1 day (`bantime`, in seconds). 
+This configures Fail2ban to watch the log file (`logpath`) inside the data volume mounted to the Gitea container for messages which match the pattern I just configured (`gitea`). If a system fails to log in 5 times (`maxretry`) within 1 hour (`findtime`, in seconds) then the offending IP will be banned for 1 day (`bantime`, in seconds).
 
 Then I just need to enable and start Fail2ban:
 ```shell
@@ -484,7 +484,7 @@ And if I refresh the page in my browser, I'll see all that content which has jus
 ![Populated repo](populated_repo.png)
 
 ### Conclusion
-So now I've got a lightweight, web-enabled, personal git server running on a (free!) cloud server under my control. It's working brilliantly in conjunction with the community-maintained [obsidian-git](https://github.com/denolehov/obsidian-git) plugin for keeping my notes synced across my various computers. On Android, I'm leveraging the free [GitJournal](https://play.google.com/store/apps/details?id=io.gitjournal.gitjournal) app as a simple git client for pulling the latest changes (as described [on another blog I found](https://orth.uk/obsidian-sync/#clone-the-repo-on-your-android-phone-)). 
+So now I've got a lightweight, web-enabled, personal git server running on a (free!) cloud server under my control. It's working brilliantly in conjunction with the community-maintained [obsidian-git](https://github.com/denolehov/obsidian-git) plugin for keeping my notes synced across my various computers. On Android, I'm leveraging the free [GitJournal](https://play.google.com/store/apps/details?id=io.gitjournal.gitjournal) app as a simple git client for pulling the latest changes (as described [on another blog I found](https://orth.uk/obsidian-sync/#clone-the-repo-on-your-android-phone-)).
 
 
 

@@ -21,7 +21,7 @@ I wanted to try out the self-hosted setup, and I discovered that the [official d
 
 I then came across [this comment](https://www.reddit.com/r/Bitwarden/comments/8vmwwe/best_place_to_self_host_bitwarden/e1p2f71/) on Reddit which discussed in somewhat-vague terms the steps required to get BitWarden to run on the [free](https://cloud.google.com/free/docs/always-free-usage-limits#compute_name) `e2-micro` instance, and also introduced me to the community-built [vaultwarden](https://github.com/dani-garcia/vaultwarden) project which is specifically designed to run a BW-compatible server on resource-constrained hardware. So here are the steps I wound up taking to get this up and running.
 
-{{% notice info "bitwarden_rs -> vaultwarden"%}}
+{{% notice note "bitwarden_rs -> vaultwarden"%}}
 When I originally wrote this post back in September 2018, the containerized BitWarden solution was called `bitwarden_rs`. The project [has since been renamed](https://github.com/dani-garcia/vaultwarden/discussions/1642) to `vaultwarden`, and I've since moved to the hosted version of BitWarden. I have attempted to update this article to account for the change but have not personally tested this lately. Good luck, dear reader!
 {{% /notice %}}
 
@@ -57,7 +57,7 @@ $ sudo vi /etc/ddclient.conf
 4. `sudo vi /etc/default/ddclient` and make sure that `run_daemon="true"`:
 
 ```shell
-# Configuration for ddclient scripts 
+# Configuration for ddclient scripts
 # generated from debconf on Sat Sep  8 21:58:02 UTC 2018
 #
 # /etc/default/ddclient
@@ -66,7 +66,7 @@ $ sudo vi /etc/ddclient.conf
 # from package isc-dhcp-client) updates the systems IP address.
 run_dhclient="false"
 
-# Set to "true" if ddclient should be run every time a new ppp connection is 
+# Set to "true" if ddclient should be run every time a new ppp connection is
 # established. This might be useful, if you are using dial-on-demand.
 run_ipup="false"
 

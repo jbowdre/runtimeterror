@@ -15,7 +15,7 @@ title: 'vRA8 Custom Provisioning: Part Two'
 We [last left off this series](/vra8-custom-provisioning-part-one) after I'd set up vRA, performed a test deployment off of a minimal cloud template, and then enhanced the simple template to use vRA tags to let the user specify where a VM should be provisioned. But these VMs have kind of dumb names; right now, they're just getting named after the user who requests it + a random couple of digits, courtesy of a simple [naming template defined on the project's Provisioning page](https://docs.vmware.com/en/vRealize-Automation/8.3/Using-and-Managing-Cloud-Assembly/GUID-AD400ED7-EB3A-4D36-B9A7-81E100FB3003.html?hWord=N4IghgNiBcIHZgLYEs4HMQF8g):
 ![Naming template](zAF26KJnO.png)
 
-I could use this naming template to *almost* accomplish what I need from a naming solution, but I don't like that the numbers are random rather than an sequence (I want to deploy `server001` followed by `server002` rather than `server343` followed by `server718`). And it's not enough for me that a VM's name be unique just within the scope of vRA - the hostname should be unique across my entire environment. 
+I could use this naming template to *almost* accomplish what I need from a naming solution, but I don't like that the numbers are random rather than an sequence (I want to deploy `server001` followed by `server002` rather than `server343` followed by `server718`). And it's not enough for me that a VM's name be unique just within the scope of vRA - the hostname should be unique across my entire environment.
 
 So I'm going to have to get my hands dirty and develop a new solution using vRealize Orchestrator. For right now, it should create a name for a VM that fits a defined naming schema, while also ensuring that the name doesn't already exist within vSphere. (I'll add checks against Active Directory and DNS in the next post.)
 
@@ -30,7 +30,7 @@ For my environment, servers should be named like `BOW-DAPP-WEB001` where:
 So in vRA's custom naming template syntax, this could look something like:
 - `${site}-${environment}${function}-${application}${###}`
 
-Okay, this plan is coming together. 
+Okay, this plan is coming together.
 
 ### Adding more inputs to the cloud template
 I'll start by adding those fields as inputs on my cloud template.
@@ -202,10 +202,10 @@ Oh yeah, I need to create a thing that will take these naming elements, mash the
 ### Setting up vRO config elements
 When I first started looking for a naming solution, I found a [really handy blog post from Michael Poore](https://blog.v12n.io/custom-naming-in-vrealize-automation-8x-1/) that described his solution to doing custom naming. I wound up following his general approach but had to adapt it a bit to make the code work in vRO 8 and to add in the additional checks I wanted. So credit to Michael for getting me pointed in the right direction!
 
-I start by hopping over to the Orchestrator interface and navigating to the Configurations section. I'm going to create a new configuration folder named `CustomProvisioning` that will store all the Configuration Elements I'll use to configure my workflows on this project. 
+I start by hopping over to the Orchestrator interface and navigating to the Configurations section. I'm going to create a new configuration folder named `CustomProvisioning` that will store all the Configuration Elements I'll use to configure my workflows on this project.
 ![Configuration Folder](y7JKSxsqE.png)
 
-Defining certain variables within configurations separates those from the workflows themselves, making the workflows much more portable. That will allow me to transfer the same code between multiple environments (like my homelab and my lab environment at work) without having to rewrite a bunch of hardcoded values. 
+Defining certain variables within configurations separates those from the workflows themselves, making the workflows much more portable. That will allow me to transfer the same code between multiple environments (like my homelab and my lab environment at work) without having to rewrite a bunch of hardcoded values.
 
 Now I'll create a new configuration within the new folder. This will hold information about the naming schema so I name it `namingSchema`. In it, I create two strings to define the base naming format (up to the numbers on the end) and full name format (including the numbers). I define `baseFormat` and `nameFormat` as templates based on what I put together earlier.
 ![The namingSchema configuration](zLec-3X_D.png)
@@ -264,7 +264,7 @@ Going back to my VM Provisioning workflow, I drag an Action Element onto the can
 ![image.png](o8CgTjSYm.png)
 
 #### Event Broker Subscription
-And at this point I save the workflow. I'm not finished with it - not by a long shot! - but this is a great place to get the workflow plumbed up to vRA and run a quick test. So I go to the vRA interface, hit up the Extensibility tab, and create a new subscription. I name it "VM Provisioning" and set it to fire on the "Compute allocation" event, which will happen right before the VM starts getting created. I link in my VM Provisioning workflow, and also set this as a blocking execution so that no other/future workflows will run until this one completes. 
+And at this point I save the workflow. I'm not finished with it - not by a long shot! - but this is a great place to get the workflow plumbed up to vRA and run a quick test. So I go to the vRA interface, hit up the Extensibility tab, and create a new subscription. I name it "VM Provisioning" and set it to fire on the "Compute allocation" event, which will happen right before the VM starts getting created. I link in my VM Provisioning workflow, and also set this as a blocking execution so that no other/future workflows will run until this one completes.
 ![VM Provisioning subscription](IzaMb39C-.png)
 
 Alrighty, let's test this and see if it works. I head back to the Design tab and kick off another deployment.
@@ -317,11 +317,11 @@ It creates a new `requestProperties (Properties)` variable to store the limited 
 I'll also drop in a "Foreach Element" item, which will run a linked workflow once for each item in an input array (`originalNames (Array/string)` in this case). I haven't actually created that nested workflow yet so I'm going to skip selecting that for now.
 ![Nested workflow placeholder](UIafeShcv.png)
 
-The final step of this workflow will be to replace the existing contents of `resourceNames (Array/string)` with the new name. 
+The final step of this workflow will be to replace the existing contents of `resourceNames (Array/string)` with the new name.
 
 I'll do that with another scriptable task element, named `Apply new names`, which takes `inputProperties (Properties)` and `newNames (Array/string)` as inputs. It will return `resourceNames (Array/string)` as a *workflow output* back to vRA. vRA will see that `resourceNames` has changed and it will update the name of the deployed resource (the VM) accordingly.
 
-{{% notice info "Binding a workflow output" %}}
+{{% notice note "Binding a workflow output" %}}
 To easily create a new workflow output and bind it to a task's output, click the task's **Add New** option like usual:
 ![](add_new.png)
 Select **Output** at the top of the *New Variable* dialog and the complete the form with the other required details:
@@ -409,7 +409,7 @@ On the connection properties page, I unchecked the per-user connection in favor 
 After successful completion of the workflow, I can go to Administration > Inventory and confirm that the new endpoint is there:
 ![vCenter plugin endpoint](rUmGPdz2I.png)
 
-I've only got the one vCenter in my lab. At work, I've got multiple vCenters so I would need to repeat these steps to add each of them as an endpoint. 
+I've only got the one vCenter in my lab. At work, I've got multiple vCenters so I would need to repeat these steps to add each of them as an endpoint.
 
 #### Task: prepare vCenter SDK connection
 Anyway, back to my "Generate unique hostname" workflow, where I'll add another scriptable task to prepare the vCenter SDK connection. This one doesn't require any inputs, but will output an array of `VC:SdkConnection` objects:
@@ -468,7 +468,7 @@ for (var i in elements) {
     }
 }
 
-// Lookup hostnameBase and increment sequence value 
+// Lookup hostnameBase and increment sequence value
 try {
     var attribute = computerNames.getAttributeWithKey(hostnameBase);
     hostnameSeq = attribute.value;
@@ -517,7 +517,7 @@ System.log("No VM name conflicts found for " + candidateVmName)
 ```
 
 #### Conflict resolution
-So what happens if there *is* a naming conflict? This solution wouldn't be very flexible if it just gave up as soon as it encountered a problem. Fortunately, I planned for this - all I need to do in the event of a conflict is to run the `generate hostnameSeq & candidateVmName` task again to increment `hostnameSeq (Number)` by one, use that to create a new `candidateVmName (String)`, and then continue on with the checks. 
+So what happens if there *is* a naming conflict? This solution wouldn't be very flexible if it just gave up as soon as it encountered a problem. Fortunately, I planned for this - all I need to do in the event of a conflict is to run the `generate hostnameSeq & candidateVmName` task again to increment `hostnameSeq (Number)` by one, use that to create a new `candidateVmName (String)`, and then continue on with the checks.
 
 So far, all of the workflow elements have been connected with happy blue lines which show the flow when everything is going according to the plan. Remember that `errMsg (String)` from the last task? When that gets thrown, the flow will switch to follow an angry dashed red line (if there is one). After dropping a new scriptable task onto the canvas, I can click on the blue line connecting it to the previous item and then click the red X to make it go away.
 ![So long, Blue Line!](BOIwhMxKy.png)
@@ -552,7 +552,7 @@ System.log(" ***** Selecting [" + nextVmName + "] as the next VM name ***** ")
 ```
 
 #### Task: remove lock
-And we should also remove that lock that we created at the start of this workflow. 
+And we should also remove that lock that we created at the start of this workflow.
 ![Task: remove lock](BhBnBh8VB.png)
 
 ```js
@@ -570,14 +570,14 @@ Done! Well, mostly. Right now the workflow only actually releases the lock if it
 I can use a default error handler to capture an abort due to running out of possible names, release the lock (with an exact copy of the `remove lock` task), and return (failed) control back to the parent workflow.
 ![Default error handler](afDacKjVx.png)
 
-Because the error handler will only fire when the workflow has failed catastrophically, I'll want to make sure the parent workflow knows about it. So I'll set the end mode to "Error, throw an exception" and bind it to that `errMsg (String)` variable to communicate the problem back to the parent. 
+Because the error handler will only fire when the workflow has failed catastrophically, I'll want to make sure the parent workflow knows about it. So I'll set the end mode to "Error, throw an exception" and bind it to that `errMsg (String)` variable to communicate the problem back to the parent.
 ![End Mode](R9d8edeFP.png)
 
 #### Finalizing the VM Provisioning workflow
 When I had dropped the foreach workflow item into the VM Provisioning workflow earlier, I hadn't configured anything but the name. Now that the nested workflow is complete, I need to fill in the blanks:
 ![Generate unique hostname](F0IZHRj-J.png)
 
-So for each item in `originalNames (Array/string)`, this will run the workflow named `Generate unique hostname`. The input to the workflow will be `requestProperties (Properties)`, and the output will be `newNames (Array/string)`. 
+So for each item in `originalNames (Array/string)`, this will run the workflow named `Generate unique hostname`. The input to the workflow will be `requestProperties (Properties)`, and the output will be `newNames (Array/string)`.
 
 
 ### Putting it all together now
@@ -609,6 +609,6 @@ And, finally, I can go back to vRA and request a new VM and confirm that the nam
 It's so beautiful!
 
 ### Wrap-up
-At this point, I'm tired of typing and I'm sure you're tired of reading. In the next installment, I'll go over how I modify this workflow to also check for naming conflicts in Active Directory and DNS. That sounds like it should be pretty simple but, well, you'll see. 
+At this point, I'm tired of typing and I'm sure you're tired of reading. In the next installment, I'll go over how I modify this workflow to also check for naming conflicts in Active Directory and DNS. That sounds like it should be pretty simple but, well, you'll see.
 
 See you then!

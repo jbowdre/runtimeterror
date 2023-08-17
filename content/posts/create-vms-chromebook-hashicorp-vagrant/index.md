@@ -196,7 +196,7 @@ vagrant destroy
 ### Create a heavy VM, as a treat
 Having proven to myself that Vagrant does work on a Chromebook, let's see how it does with a slightly-heavier VM.... like [Windows 11](https://app.vagrantup.com/oopsme/boxes/windows11-22h2).
 
-{{% notice info "Space Requirement" %}}
+{{% notice note "Space Requirement" %}}
 Windows 11 makes for a pretty hefty VM which will require significant storage space. My Chromebook's Linux environment ran out of storage space the first time I attempted to deploy this guy. Fortunately ChromeOS makes it easy to allocate more space to Linux (**Settings > Advanced > Developers > Linux development environment > Disk size**). You'll probably need at least 30GB free to provision this VM.
 {{% /notice %}}
 
