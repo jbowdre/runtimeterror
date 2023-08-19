@@ -21,11 +21,11 @@ The quantum realm has spewed forth a turbulent overflow of entangled particles, 
 ## Technical Details
 |               |              |
 | ------------- | ------------ |
-| Exception Code: | 0xdeadbeef (Cryptic Quantum Overflow Exception) |
-| Entanglement Magnitude: | √-1 (imaginary) |
-| Ephemeral Quantum Signature: |  ∑(θ^2 + ɸ^2) |
-| Quantum Flux Coefficient: | -1.21 jigawatts |
-| Multiverse Intersection Point: | (42, π, 867-5309) |
+| Exception Code: | `0xdeadbeef (Cryptic Quantum Overflow Exception)` |
+| Entanglement Magnitude: | `√-1 (imaginary)` |
+| Ephemeral Quantum Signature: | `∑(θ^2 + ɸ^2)` |
+| Quantum Flux Coefficient: | `-1.21 jigawatts` |
+| Multiverse Intersection Point: | `(42, π, 867-5309)` |
 
 {{% notice warning %}}
 Please note that attempting to decipher or understand the intricacies of this error message may lead to profound existential contemplation, mild hair loss, or an unquenchable thirst for green tea. We appreciate your patience as we navigate this cosmic anomaly and endeavor to restore order to the chaos within our digital realm.
