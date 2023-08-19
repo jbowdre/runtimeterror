@@ -10,8 +10,24 @@ palette = "runtimeterror"
 # Sidebar: about/bio
 [about]
 title = "runtimeterror"
-description = "Better living through less-bad code."
 logo = "images/broken-computer.svg"
+taglines = [
+  "better living through less shitty code",
+  "bugs are like onions, they have layers",
+  "bugs, uh, find a way",
+  "creating new and exciting bugs",
+  "houston, we have a bug",
+  "i ain't afraid of no code",
+  "i see null pointers",
+  "i'm not a real programmer",
+  "keep your friends close, but your breakpoints closer",
+  "may the code be with you",
+  "ship things and breakfast",
+  "there's no place like localhost",
+  "tonight we test in prod",
+  "why did it have to be bugs",
+  "you can't handle the exception",
+]
 
 # Sidebar: social links
 # Available icon sets:

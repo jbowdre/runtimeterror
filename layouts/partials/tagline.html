@@ -1,0 +1,13 @@
+{{ with . }}
+<meta name="taglines" content="{{ .taglines | jsonify }}" />
+{{ end }}
+<script language="Javascript" type="text/javascript">
+  var taglines = JSON.parse(document.getElementsByTagName("meta")["taglines"].content);
+  function getTagline() {
+    var randIndex = Math.floor(Math.random() * taglines.length);
+    document.getElementById("tagline").innerHTML = taglines[randIndex];
+  }
+  console.log(taglines)
+  window.addEventListener("pageshow", getTagline);
+</script>
+<div id="tagline"></div>
