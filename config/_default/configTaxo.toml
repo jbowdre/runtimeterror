@@ -1,10 +1,6 @@
 timeout = 30000
 enableInlineShortcodes = true
 
-[taxonomies]
-  tag = "tags"
-  series = "series"
-
 [privacy]
 
   [privacy.vimeo]

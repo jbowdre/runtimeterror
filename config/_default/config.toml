@@ -24,3 +24,7 @@ sectionPagesMenu = "main"
 
   [services.twitter]
     disableInlineCSS = true
+
+[taxonomies]
+  tag = "tags"
+  series = "series"
