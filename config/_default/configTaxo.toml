@@ -2,7 +2,6 @@ timeout = 30000
 enableInlineShortcodes = true
 
 [taxonomies]
-category = "categories"
   tag = "tags"
   series = "series"
 
