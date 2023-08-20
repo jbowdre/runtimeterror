@@ -3,3 +3,9 @@
 #   name = "About"
 #   url = "/about/"
 #   weight = 10
+
+[[main]]
+  identifier = "tags"
+  name = "Tags"
+  url = "/tags/"
+  weight = 0
