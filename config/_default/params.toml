@@ -23,7 +23,7 @@ taglines = [
   "cannot access private member declared in class",
   "class/struct has no member named undefined",
   "connection reset by peer",
-  "converting caffeine to bugs which sometimes work",
+  "converting caffeine into code",
   "creating new and exciting bugs",
   "cyclic dependency detected",
   "destructor cannot be overloaded",
@@ -50,6 +50,8 @@ taglines = [
   "keep your friends close, but your breakpoints closer",
   "kernel panic - not syncing: attempted to kill init",
   "may the code be with you",
+  "mess with the test, fail like the rest",
+  "need input",
   "no such file or directory",
   "out of memory: kill process or sacrifice child",
   "permission denied (publickey)",
@@ -57,6 +59,7 @@ taglines = [
   "put that in your tar pipe and send it",
   "read-only file system",
   "resource temporarily unavailable",
+  "root is not in the sudoers file. this incident will be reported",
   "segmentation fault (core dumped)",
   "ship things and breakfast",
   "stale nfs file handle",
@@ -75,7 +78,6 @@ taglines = [
   "why did it have to be bugs",
   "write error: no space left on device",
   "you can't handle the exception",
-  "you're not in the sudoers file. this incident will be reported",
 ]
 
 # Sidebar: social links
