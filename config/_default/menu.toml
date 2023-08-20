@@ -5,7 +5,37 @@
 #   weight = 10
 
 [[main]]
+  identifier = "all_posts"
+  name = "all_posts"
+  url = "/posts/"
+  weight = -100
+
+[[main]]
   identifier = "tags"
   name = "Tags"
   url = "/tags/"
-  weight = 0
+  weight = 100
+
+[[main]]
+  identifier = "projects"
+  name = "Projects"
+  url = "/series/projects/"
+  weight = 1
+
+[[main]]
+  identifier = "tips"
+  name = "Tips"
+  url = "/series/tips/"
+  weight = 1
+
+[[main]]
+  identifier = "vra8"
+  name = "vRA 8"
+  url = "/series/vra8/"
+  weight = 1
+
+[[main]]
+  identifier = "scripts"
+  name = "Scripts"
+  url = "/series/scripts/"
+  weight = 1
