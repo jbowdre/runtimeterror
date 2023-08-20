@@ -9,7 +9,7 @@ DefaultContentLanguage = "en"
 enableInlineShortcodes = true
 
 # Automatically add content sections to main menu
-sectionPagesMenu = "main"
+# sectionPagesMenu = "main"
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
