@@ -1,8 +1,8 @@
 noindex = false
-
 usePageBundles = true
-
+description = "while (true) { bugs++; }"
 mainSections = ["posts"]
+fallBackOgImage = "images/broken-computer.svg"
 
 [theme]
 palette = "runtimeterror"
