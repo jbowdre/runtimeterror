@@ -1,8 +1,8 @@
 +++
-author = "ops"
 timeless = "true"
+title = "Error 0xdeadbeef"
 +++
-<h1 style="color: var(--base08)"> Error 0xdeadbeef: Quantum Entanglement Overflow Exception</h1>
+<h1 style="color: var(--base08)">Error 0xdeadbeef: Quantum Entanglement Overflow Exception</h1>
 
 The quantum realm has spewed forth a turbulent overflow of entangled particles, causing an unprecedented disruption in the fabric of our digital universe. Your innocuous request has inadvertently triggered this calamity, resulting in a cataclysmic violation of the space-time continuum. It seems the very laws of physics are in revolt, and we apologize for the cosmic inconvenience.
 
