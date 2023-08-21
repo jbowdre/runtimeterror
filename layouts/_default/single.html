@@ -20,6 +20,15 @@
     <div class="content__body">
         {{ .Content }}
     </div>
+    {{- $showComments := true }}
+    {{- if eq .Site.Params.comments false }}
+      {{- $showComments = false }}
+    {{- else if eq .Params.comments false }}
+      {{- $showComments = false }}
+    {{- end }}
+    {{- if ne $showComments false }}
+      {{- partial "comments" . }}
+    {{- end }}
     <footer class="content__footer"></footer>
 {{ end }}
 

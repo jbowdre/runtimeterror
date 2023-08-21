@@ -4,6 +4,12 @@ description = "while (true) { bugs++; }"
 mainSections = ["posts"]
 fallBackOgImage = "images/broken-computer.svg"
 
+# Comments
+comments = true
+utterancesRepo = "jbowdre/runtimeterror"
+utterancesIssueTerm = "title"
+utterancesTheme = "gruvbox-dark"
+
 [theme]
 palette = "runtimeterror"
 
