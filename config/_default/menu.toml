@@ -12,30 +12,30 @@
 
 [[main]]
   identifier = "tags"
-  name = "Tags"
+  name = "tags"
   url = "/tags/"
   weight = 100
 
 [[main]]
   identifier = "projects"
-  name = "Projects"
+  name = "projects"
   url = "/series/projects/"
   weight = 1
 
 [[main]]
   identifier = "tips"
-  name = "Tips"
+  name = "tips"
   url = "/series/tips/"
   weight = 1
 
 [[main]]
   identifier = "vra8"
-  name = "vRA 8"
+  name = "vra8"
   url = "/series/vra8/"
   weight = 1
 
 [[main]]
   identifier = "scripts"
-  name = "Scripts"
+  name = "scripts"
   url = "/series/scripts/"
   weight = 1
