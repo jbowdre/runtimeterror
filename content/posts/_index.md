@@ -1,5 +1,5 @@
 +++
 aliases = ["all_posts", "articles"]
-title = "All Posts"
+title = "Index of Posts"
 tags = ["index"]
 +++

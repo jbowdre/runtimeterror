@@ -5,8 +5,8 @@
 #   weight = 10
 
 [[main]]
-  identifier = "all_posts"
-  name = "all_posts"
+  identifier = "index"
+  name = "index"
   url = "/posts/"
   weight = -100
 
