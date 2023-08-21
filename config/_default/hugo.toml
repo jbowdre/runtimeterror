@@ -17,6 +17,26 @@ enableInlineShortcodes = true
 [permalinks]
   posts = ":filename"
 
+[privacy]
+
+  [privacy.vimeo]
+    disabled = false
+    simple = true
+
+  [privacy.twitter]
+    disabled = false
+    enableDNT = true
+    simple = true
+    disableInlineCSS = true
+
+  [privacy.instagram]
+    disabled = false
+    simple = true
+
+  [privacy.youtube]
+    disabled = false
+    privacyEnhanced = true
+
 [services]
 
   [services.instagram]
@@ -28,3 +48,4 @@ enableInlineShortcodes = true
 [taxonomies]
   tag = "tags"
   series = "series"
+
