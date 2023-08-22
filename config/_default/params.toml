@@ -7,7 +7,7 @@ numberOfFeaturedPosts = 5
 
 # Comments
 comments = true
-utterancesRepo = "jbowdre/blag-comments"
+utterancesRepo = "jbowdre/site-comments"
 utterancesIssueTerm = "og:title"
 utterancesTheme = "gruvbox-dark"
 
