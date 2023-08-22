@@ -41,7 +41,7 @@
         </p>
     {{ end }}
 
-    {{ if and (.Params.toc) (.TableOfContents) }}
+    {{ if and (.Params.toc) (gt .WordCount 400 ) (gt (len .TableOfContents) 180) (.TableOfContents) }}
 	    <hr>
 	    On this page:
 	    {{ .TableOfContents }}
