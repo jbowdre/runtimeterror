@@ -6,3 +6,8 @@
 
 [context.production]
   command = "hugo"
+
+[[redirects]]
+  from = "/*"
+  to = "/404/"
+  status = 404
