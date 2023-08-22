@@ -5,18 +5,6 @@
 #   weight = 10
 
 [[main]]
-  identifier = "index"
-  name = "index"
-  url = "/posts/"
-  weight = -100
-
-[[main]]
-  identifier = "tags"
-  name = "tags"
-  url = "/tags/"
-  weight = 100
-
-[[main]]
   identifier = "projects"
   name = "projects"
   url = "/series/projects/"
