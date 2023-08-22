@@ -1,0 +1,28 @@
+{{ $pages := .Pages }}
+{{ if .IsHome }}
+  {{ $pages = where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{ end }}
+<header class="content__header">
+{{ if .IsHome }}
+  <h1>72 75 6e 74 69 6d 65 74 65 72 72 6f 72 2e 64 65 76  |runtimeterror.dev|</h1>
+{{ else }}
+  <h1>{{ .Title | markdownify }}</h1>
+{{ end }}
+  {{ .Content }}
+</header>
+
+{{ range $pages }}
+<article class="post">
+  <header class="post__header">
+      <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
+      <p class="post__meta">
+          <span class="date">{{ .Date.Format "2 January 2006" }}</span>
+      </p>
+  </header>
+
+  <section class="post__summary">
+      {{ .Summary }}
+  </section>
+  <br>
+</article>
+{{ end }}
