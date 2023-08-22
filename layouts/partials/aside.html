@@ -1,0 +1,27 @@
+{{ if .Params.description }}<p>{{ .Params.description }}</p>{{ end }}
+{{ if or (.Params.author) (.Params.date) }}
+  <p>
+    {{ if .Params.author }}By {{ .Params.author }}{{ if .Date }}, {{ end }}{{ end }}
+    {{ if .Date }}{{ .Date.Format "2006-01-02" }}{{ end }}
+  </p>
+{{ end }}
+
+{{ if and (gt .WordCount 400 ) (gt (len .TableOfContents) 180) }}
+  <hr>
+  <h2>On this page</h2>
+  {{ .TableOfContents }}
+{{ end }}
+
+{{- $posts := where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
+{{- $featured := default 8 .Site.Params.numberOfFeaturedPosts }}
+{{- $featuredPosts := first $featured (where $posts "Params.featured" true)}}
+{{- with $featuredPosts }}
+<h2>Featured Posts</h2>
+<ul>
+  {{- range . }}
+  <li>
+    <a href="{{ .Permalink }}" title="{{ .Title }}">{{ .Title | markdownify }}</a>
+  </li>
+  {{- end }}
+</ul>
+{{- end }}
