@@ -4,12 +4,20 @@
     {{ if .Params.author }}By {{ .Params.author }}{{ if .Date }}, {{ end }}{{ end }}
     {{ if .Date }}{{ .Date.Format "2006-01-02" }}{{ end }}
   </p>
+  <p>
+  {{- with .Params.tags -}}
+    {{- range . }}
+      {{- $tag := urlize . -}}
+      [<a href='{{ absLangURL (printf "tags/%s" $tag) }}' title="{{ . }}">{{ . }}</a>]
+    {{- end }}
+  {{- end }}
+  </p>
 {{ end }}
-
 {{ if and (gt .WordCount 400 ) (gt (len .TableOfContents) 180) }}
   <hr>
   <h2>On this page</h2>
   {{ .TableOfContents }}
+  <hr>
 {{ end }}
 
 {{- $posts := where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
