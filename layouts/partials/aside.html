@@ -1,5 +1,5 @@
-{{ if .Params.description }}<p>{{ .Params.description }}</p>{{ end }}
-{{ if or (.Params.author) (.Params.date) }}
+{{ if or (.Params.description) (.Params.author) (.Params.date) }}
+  {{ if .Params.description }}<p>{{ .Params.description }}</p>{{ end }}
   <p>
     {{ if .Params.author }}By {{ .Params.author }}{{ if .Date }}, {{ end }}{{ end }}
     {{ if .Date }}{{ .Date.Format "2006-01-02" }}{{ end }}
