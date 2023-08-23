@@ -5,6 +5,8 @@ mainSections = ["posts"]
 fallBackOgImage = "images/broken-computer.svg"
 numberOfFeaturedPosts = 5
 
+indexTitle = ".-. ..- -. - .. -- . - . .-. .-. --- .-."
+
 # Comments
 comments = true
 utterancesRepo = "jbowdre/site-comments"
