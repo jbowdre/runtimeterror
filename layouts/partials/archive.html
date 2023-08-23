@@ -4,7 +4,7 @@
 {{ end }}
 <header class="content__header">
 {{ if .IsHome }}
-  <h1>72 75 6e 74 69 6d 65 74 65 72 72 6f 72 2e 64 65 76  |runtimeterror.dev|</h1>
+  <h1>{{ site.Params.indexTitle | markdownify }}</h1>
 {{ else }}
   <h1>{{ .Title | markdownify }}</h1>
 {{ end }}
