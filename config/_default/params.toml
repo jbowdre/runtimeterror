@@ -103,3 +103,7 @@ url = "https://github.com/jbowdre"
 icon = "fa-solid fa-envelope"
 title = "Email"
 url = "mailto:ops@runtimeterror.dev"
+
+[[socialLinks]]
+icon = "fa-solid fa-circle-user"
+url = "https://counter.social/@john_b"
