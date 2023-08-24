@@ -24,10 +24,13 @@ You can easily host your own [simplexmq server](https://github.com/simplex-chat/
 Just add these in the SimpleX app at **Settings > Network & servers > SMP servers > + Add server...**. Enable the option to use them for new connections, and they'll be added to the pool used for incoming messages in new conversations. If you want to use them immediately for existing conversations, go into each conversation's options menu and use the **Switch receiving address** option. You can also *disable* the option to use the default servers for new conversations if you only want messages to be routed through specific servers, but that does increase the likelikhood of concurrent conversations being routed the same way. More servers, more path options, less metadata in any one place.
 
 ![](/images/smp-vpota-to.png)
+
 `smp://kYx5LmVD9FMM8hJN4BQqL4WmeUNZn8ipXsX2UkBoiHE=@smp.vpota.to`
 
 ![](/images/smp1-vpota-to.png)
+
 `smp://TbUrGydawdVKID0Lvix14UkaN-WarFgqXx4kaEG8Trw=@smp1.vpota.to`
 
 ![](/images/smp2-vpota-to.png)
+
 `smp://tNfQisxTQ9MhKpFDTbx9RnjgWigtxF1a26jroy5-rR4=@smp2.vpota.to`
