@@ -5,6 +5,12 @@
 #   weight = 10
 
 [[main]]
+  identifier = "about"
+  name = "about"
+  url = "/about/"
+  weight = -100
+
+[[main]]
   identifier = "projects"
   name = "projects"
   url = "/series/projects/"
