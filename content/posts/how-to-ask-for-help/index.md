@@ -32,13 +32,13 @@ We need to understand what you're trying to ask before we can answer it, and can
 
 Once you've written your query, take the time to read back over it and make sure it makes sense. This is another chance to show us that you're serious about solving the problem.
 
-Your helpers aren't going to judge you for linguistic errors but such mistakes may make it difficult for them to understand your problem. If you're not comfortable writing in English, try using an online translation tool to help write your question. In that case, please also mention that you used a translation tool so that people know to be extra careful when reading your question.
+Your helpers aren't going to judge you for linguistic errors but such mistakes may make it difficult for them to understand your problem. If you're not comfortable writing in English, go ahead and post in your native language. There are plenty of tools that your helper can use to translate your message, and those will be much more effective if the original message is clearly written in the original language.
 
 ### Be Precise
 The more details you can provide about your problem, the better.
 
 - What system/device/application are you using? Be specific about the model and/or version.
-- What are the symptoms of the problem? Are there any error messages? If so, include those *in full*.
+- What are the symptoms of the problem? Are there any error messages? If so, include those *in full*. Screenshots can be a big help here.
 - When did the problem start? Is this a new problem or has it never worked? What (if anything) changed before the problem started?
 - What steps have you already taken to try and solve the problem? Don't say "I've tried everything" (which tells us nothing); tell us *exactly* what you've tried.
 - If your research yielded other reports of the same problem but no solution, include links to those reports.
@@ -46,7 +46,7 @@ The more details you can provide about your problem, the better.
 Share anything you think might be relevant up front. It's easier for us to skip over details we don't need than to have to go back and forth asking for more information.
 
 ### Describe the Symptoms, Not Your Guesses
-If you're not sure what's causing the problem, don't guess. Sharing a guess which isn't correct can lead people down the wrong path and waste everyone's time. Focus instead on accurately describing the symptoms and leave the diagnosis to the kind souls trying to help you.
+If you're not sure what's causing the problem, don't guess. Sharing a guess which isn't correct can lead people down the wrong path and waste everyone's time. Focus instead on accurately describing the symptoms and leave the diagnosis to the kind souls trying to help you. Also, don't say "I know it isn't _____" unless you can also tell us precisely why you think that.
 
 After all, if you knew exactly what was wrong then you probably wouldn't be asking for help in the first place.
 
