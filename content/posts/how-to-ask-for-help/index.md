@@ -54,9 +54,11 @@ After all, if you knew exactly what was wrong then you probably wouldn't be aski
 Similarly, when trying to accomplish a particular goal, share that goal rather than just focusing on the step you're trying to take. It's easy to get fixated on a small step (which may or may not be the correct one to take) and miss the better solution. Describe the Big Picture version of what you hope to do and let us help you figure out the best way to get there.
 
 ### Be Courteous
-Remember that you're asking for help, not demanding it, and that the people who will be helping you do so voluntarily. They're not getting paid for their time and are under no obligation to help you. Be polite and respectful of their time and effort.
+Remember that you're *asking* for help, not *demanding* it. In many cases, you'll be posting on a user-to-user support community staffed entirely by volunteers. They are under no obligation to help you and will happily disengage if you're abusive or rude. Be polite and respectful of their time and effort.
 
 Their replies to you may be terse or blunt. It's not because they are offended by your question, but rather because there are a lot of people asking for their help and they're trying to maximize their time. Assume that their responses are offered in good faith, just as they'll assume the same of you. Don't take offense, but also don't be afraid to ask for clarification if you don't understand something.
+
+Even if you are seeking help from a paid support team, remember that they are people too. Treat them with politeness and respect; not only is it the right way to interact with other humans, but it might keep them interested in helping you.
 
 ### Follow Up with Solution
 Once your problem has been solved (either based on the advice you received or on your own), please be sure to report back to let everyone know. If the solution was reached based on the help you received, politely thank those who assisted. If you fixed it by yourself, share how you did it so that others may benefit from your experience (and, again, thank those who offered their time and advice).
