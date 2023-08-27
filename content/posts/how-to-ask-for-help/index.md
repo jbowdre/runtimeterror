@@ -32,7 +32,7 @@ We need to understand what you're trying to ask before we can answer it, and can
 
 Once you've written your query, take the time to read back over it and make sure it makes sense. This is another chance to show us that you're serious about solving the problem.
 
-Your helpers aren't going to judge you for linguistic errors but such mistakes may make it difficult for them to understand your problem. If you're not comfortable writing in English, go ahead and post in your native language. There are plenty of tools that your helper can use to translate your message, and those will be much more effective if the original message is clearly written in the original language.
+Your helpers aren't going to judge you for linguistic errors but such mistakes may make it difficult for them to understand your problem. If you're not comfortable writing in English, go ahead and post in your native language using short sentences and correct punctuation. There are plenty of tools that your helper can use to translate your message, and those will be much more effective if the original message is written clearly in the original language.
 
 ### Be Precise
 The more details you can provide about your problem, the better.
