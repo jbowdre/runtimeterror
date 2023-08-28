@@ -1,7 +1,7 @@
 baseURL = "https://runtimeterror.dev"
-theme = ["hugo-cloak-email", "risotto"]
+theme = ["risotto"]
 title = "runtimeterror"
-author = "ops"
+author = "John Bowdre"
 copyright = "© 2018-2023 [runtimeterror](https://runtimeterror.dev)"
 paginate = 3
 languageCode = "en"
