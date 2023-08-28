@@ -7,7 +7,6 @@
     var randIndex = Math.floor(Math.random() * taglines.length);
     document.getElementById("tagline").innerHTML = taglines[randIndex];
   }
-  console.log(taglines)
   window.addEventListener("pageshow", getTagline);
 </script>
-<div id="tagline"></div>
+<div><code id="tagline"></code></div>
