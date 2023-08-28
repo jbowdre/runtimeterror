@@ -1,6 +1,7 @@
 ---
 title: How to Ask For Help
 date: 2023-08-26
+lastmod: 2023-08-28
 timeless: true
 description: There are no dumb questions - but there are smarter (and dumber) ways to ask them.
 featured: true
@@ -37,9 +38,10 @@ Your helpers aren't going to judge you for linguistic errors but such mistakes m
 ### Be Precise
 The more details you can provide about your problem, the better.
 
-- What system/device/application are you using? Be specific about the model and/or version.
+- What system/device/application are you using? Be specific about the model and/or version (and please don't just say "the latest version" - share the complete version number).
 - What are the symptoms of the problem? Are there any error messages? If so, include those *in full*. Screenshots can be a big help here.
 - When did the problem start? Is this a new problem or has it never worked? What (if anything) changed before the problem started?
+- What steps can we take to reproduce the problem? List the exact steps without any shortcuts.
 - What steps have you already taken to try and solve the problem? Don't say "I've tried everything" (which tells us nothing); tell us *exactly* what you've tried.
 - If your research yielded other reports of the same problem but no solution, include links to those reports.
 
