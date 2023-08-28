@@ -4,6 +4,7 @@ description = "while (true) { bugs++; }"
 mainSections = ["posts"]
 fallBackOgImage = "images/broken-computer.svg"
 numberOfFeaturedPosts = 5
+author = "John Bowdre"
 
 indexTitle = ".-. ..- -. - .. -- . - . .-. .-. --- .-."
 

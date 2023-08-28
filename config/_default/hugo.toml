@@ -1,7 +1,6 @@
 baseURL = "https://runtimeterror.dev"
-theme = ["risotto"]
+theme = "risotto"
 title = "runtimeterror"
-author = "John Bowdre"
 copyright = "© 2018-2023 [runtimeterror](https://runtimeterror.dev)"
 paginate = 3
 languageCode = "en"
