@@ -3,10 +3,11 @@
 {{ if or (.Params.description) (.Params.date) }}
   {{ if .Params.description }}<p>{{ .Params.description }}</p>{{ end }}
   <p>
-    {{ with $postDate }}<table><tr><td>Posted:</td><td>{{ . }}</td></tr>{{- if ne $postDate $updateDate }}<tr><td>Updated:</td><td>{{ $updateDate }}</td></tr>{{ end }}</table>{{ end }}
+    {{ with $postDate }}<table><tr><td>posted:</td><td>{{ . }}</td></tr>{{- if ne $postDate $updateDate }}<tr><td>updated:</td><td>{{ $updateDate }}</td></tr>{{ end }}</table>{{ end }}
   </p>
   <p>
   {{- with .Params.tags -}}
+    tags:<br>
     {{- range . }}
       {{- $tag := urlize . -}}
       [<a href='{{ absLangURL (printf "tags/%s" $tag) }}' title="{{ . }}">{{ . }}</a>]
