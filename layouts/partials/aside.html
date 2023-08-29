@@ -3,7 +3,7 @@
 {{ if or (.Params.description) (.Params.date) }}
   {{ if .Params.description }}<p>{{ .Params.description }}</p>{{ end }}
   <p>
-    {{ with $postDate }}{{ . }}{{ end }}{{- if ne $postDate $updateDate }} [{{ $updateDate }}]{{ end }}
+    {{ with $postDate }}<i class="fa-regular fa-note-sticky"></i>&nbsp;{{ . }}{{ end }}{{- if ne $postDate $updateDate }}<br><i class="fa-regular fa-pen-to-square"></i>&nbsp;{{ $updateDate }}{{ end }}
   </p>
   <p>
   {{- with .Params.tags -}}
