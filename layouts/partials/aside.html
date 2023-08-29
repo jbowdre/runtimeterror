@@ -1,8 +1,9 @@
-{{ if or (.Params.description) (.Params.author) (.Params.date) }}
+{{- $postDate := .Date.Format "2006-01-02" }}
+{{- $updateDate := .Lastmod.Format "2006-01-02" }}
+{{ if or (.Params.description) (.Params.date) }}
   {{ if .Params.description }}<p>{{ .Params.description }}</p>{{ end }}
   <p>
-    {{ if .Params.author }}By {{ .Params.author }}{{ if .Date }}, {{ end }}{{ end }}
-    {{ if .Date }}{{ .Date.Format "2006-01-02" }}{{ end }}
+    {{ with $postDate }}<table><tr><td>Posted:</td><td>{{ . }}</td></tr>{{- if ne $postDate $updateDate }}<tr><td>Updated:</td><td>{{ $updateDate }}</td></tr>{{ end }}</table>{{ end }}
   </p>
   <p>
   {{- with .Params.tags -}}

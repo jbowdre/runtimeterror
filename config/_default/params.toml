@@ -4,6 +4,7 @@ description = "while (true) { bugs++; }"
 mainSections = ["posts"]
 fallBackOgImage = "images/broken-computer.svg"
 numberOfFeaturedPosts = 5
+author = "John Bowdre"
 
 indexTitle = ".-. ..- -. - .. -- . - . .-. .-. --- .-."
 
@@ -21,16 +22,21 @@ palette = "runtimeterror"
 title = "runtimeterror"
 logo = "images/broken-computer.svg"
 taglines = [
+  "[ctrl] + [alt] + [defeat]",
   "[ESC]:q!",
+  "abandon all hope, ye who code here",
+  "all your bugs are belong to us",
   "array index out of bounds",
   "bad file descriptor",
   "better living through less shitty code",
   "broken pipe",
+  "buffering... and buffering... and buffering...",
   "bugs are like onions, they have layers",
   "bugs, uh, find a way",
   "calm that panicked kernel",
   "cannot access private member declared in class",
   "class/struct has no member named undefined",
+  "coding crimes",
   "connection reset by peer",
   "converting caffeine into code",
   "creating new and exciting bugs",
@@ -41,12 +47,17 @@ taglines = [
   "error: could not stat or open file",
   "expression has no effect",
   "file descriptor in bad state",
+  "floating in a sea of bugs",
   "from chatgpt with bugs",
   "from the creators of 'undefined is not a function'",
   "function does not return a value",
+  "glitches, hitches, and a lot of coffee",
+  "god wouldn't be up this late",
+  "hello world, hello bugs",
   "host key verification failed",
   "houston, we have a bug",
   "i ain't afraid of no code",
+  "i bet it looks glitchy in the dark",
   "i opened vi and i can't get out",
   "i see null pointers",
   "i'd tell you a udp joke but",
@@ -56,12 +67,14 @@ taglines = [
   "invalid assignment",
   "invalid option",
   "invalid username or password",
+  "it's not a bug, it's a feature in search of a use case",
   "keep your friends close, but your breakpoints closer",
   "kernel panic - not syncing: attempted to kill init",
   "may the code be with you",
   "mess with the test, fail like the rest",
   "need input",
   "no such file or directory",
+  "now where did i leave my null pointer...",
   "out of memory: kill process or sacrifice child",
   "permission denied (publickey)",
   "pointer arithmetic on non-pointer type",
@@ -69,6 +82,7 @@ taglines = [
   "read-only file system",
   "resource temporarily unavailable",
   "root is not in the sudoers file. this incident will be reported",
+  "seeking harmony in a symphony of bugs",
   "segmentation fault (core dumped)",
   "ship things and breakfast",
   "stale nfs file handle",
@@ -76,6 +90,7 @@ taglines = [
   "syntax error: unexpected end of file",
   "syntax error: unexpected token",
   "that's a layer 8 problem",
+  "the bug stops here",
   "the system is down",
   "there's no place like $HOME",
   "tonight we test in prod",
@@ -83,10 +98,14 @@ taglines = [
   "undefined reference to function",
   "unexpected token",
   "variable has already been declared",
+  "when in doubt, print it out",
+  "where there's code, there's bugs",
+  "while (bugs) { fix(); }",
   "while (true) { bugs++; }",
   "why did it have to be bugs",
   "write error: no space left on device",
   "you can't handle the exception",
+  "you gotta stop letting your mama test you, man",
 ]
 
 # Sidebar: social links
@@ -100,10 +119,16 @@ title = "GitHub"
 url = "https://github.com/jbowdre"
 
 [[socialLinks]]
+icon = "fa-solid fa-circle-user"
+title = "CounterSocial"
+url = "https://counter.social/@john_b"
+
+[[socialLinks]]
+icon = "fa-solid fa-comments"
+title = "SimpleX Chat"
+url = "https://runtimeterror.dev/simplex"
+
+[[socialLinks]]
 icon = "fa-solid fa-envelope"
 title = "Email"
 url = "mailto:ops@runtimeterror.dev"
-
-[[socialLinks]]
-icon = "fa-solid fa-circle-user"
-url = "https://counter.social/@john_b"
