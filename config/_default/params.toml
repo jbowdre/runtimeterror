@@ -57,6 +57,7 @@ taglines = [
   "host key verification failed",
   "houston, we have a bug",
   "i ain't afraid of no code",
+  "i bet it looks glitchy in the dark",
   "i opened vi and i can't get out",
   "i see null pointers",
   "i'd tell you a udp joke but",
@@ -104,6 +105,7 @@ taglines = [
   "why did it have to be bugs",
   "write error: no space left on device",
   "you can't handle the exception",
+  "you gotta stop letting your mama test you, man",
 ]
 
 # Sidebar: social links
