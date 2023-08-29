@@ -18,7 +18,7 @@
   <header class="post__header">
       <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
       <p class="post__meta">
-          <span class="date"><i class="fa-regular fa-note-sticky"></i>&nbsp;{{ $postDate }}{{- if ne $postDate $updateDate }} &nbsp; <i class="fa-regular fa-pen-to-square"></i>&nbsp;{{ $updateDate }}{{ end }}</span>
+          <span class="date">[{{- $postDate }}]{{- if ne $postDate $updateDate }}->[{{ $updateDate }}]{{ end }}</span>
       </p>
   </header>
 
