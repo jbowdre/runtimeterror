@@ -3,6 +3,8 @@
     {{ with .logo }}<img class="about__logo" src="{{ . | absURL }}" alt="Logo">{{ end }}
 <h1 class="about__title">{{ .title }}</h1>
 {{ partial "tagline.html" . }}
+<br>
+<i class="fa-regular fa-user"></i> {{ site.Params.Author }}
 </div>
 {{ end }}
 

@@ -1,8 +1,11 @@
 ---
 title: How to Ask For Help
 date: 2023-08-26
+lastmod: 2023-08-28
 timeless: true
 description: There are no dumb questions - but there are smarter (and dumber) ways to ask them.
+featured: true
+aliases: ["how2ask"]
 ---
 I spend a lot of my time and energy answering technical questions, both professionally and "for fun" as a way to scratch that troubleshooting itch. How a question is asked plays a big factor in how effectively I'll be able to answer it.
 
@@ -31,14 +34,15 @@ We need to understand what you're trying to ask before we can answer it, and can
 
 Once you've written your query, take the time to read back over it and make sure it makes sense. This is another chance to show us that you're serious about solving the problem.
 
-Your helpers aren't going to judge you for linguistic errors but such mistakes may make it difficult for them to understand your problem. If you're not comfortable writing in English, go ahead and post in your native language. There are plenty of tools that your helper can use to translate your message, and those will be much more effective if the original message is clearly written in the original language.
+Your helpers aren't going to judge you for linguistic errors but such mistakes may make it difficult for them to understand your problem. If you're not comfortable writing in English, go ahead and post in your native language using short sentences and correct punctuation. There are plenty of tools that your helper can use to translate your message, and those will be much more effective if the original message is written clearly in the original language.
 
 ### Be Precise
 The more details you can provide about your problem, the better.
 
-- What system/device/application are you using? Be specific about the model and/or version.
+- What system/device/application are you using? Be specific about the model and/or version (and please don't just say "the latest version" - share the complete version number).
 - What are the symptoms of the problem? Are there any error messages? If so, include those *in full*. Screenshots can be a big help here.
 - When did the problem start? Is this a new problem or has it never worked? What (if anything) changed before the problem started?
+- What steps can we take to reproduce the problem? List the exact steps without any shortcuts.
 - What steps have you already taken to try and solve the problem? Don't say "I've tried everything" (which tells us nothing); tell us *exactly* what you've tried.
 - If your research yielded other reports of the same problem but no solution, include links to those reports.
 

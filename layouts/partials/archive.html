@@ -12,11 +12,13 @@
 </header>
 
 {{ range $pages }}
+{{- $postDate := .Date.Format "2006-01-02" }}
+{{- $updateDate := .Lastmod.Format "2006-01-02" }}
 <article class="post">
   <header class="post__header">
       <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
       <p class="post__meta">
-          <span class="date">{{ .Date.Format "2 January 2006" }}</span>
+          <span class="date">["{{- $postDate }}"{{- if ne $postDate $updateDate }}, "{{ $updateDate }}"{{ end }}]</span>
       </p>
   </header>
 
