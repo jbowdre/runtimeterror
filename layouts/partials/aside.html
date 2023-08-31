@@ -7,7 +7,7 @@
   </p>
   <p>
   {{- with .Params.tags -}}
-    tags:<br>
+    <a href="/tags">tags</a>:<br>
     {{- range . }}
       {{- $tag := urlize . -}}
       [<a href='{{ absLangURL (printf "tags/%s" $tag) }}' title="{{ . }}">{{ . }}</a>]
