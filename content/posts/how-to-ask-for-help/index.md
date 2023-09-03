@@ -1,7 +1,7 @@
 ---
 title: How to Ask For Help
 date: 2023-08-26
-lastmod: 2023-08-28
+lastmod: 2023-08-31
 timeless: true
 description: There are no dumb questions - but there are smarter (and dumber) ways to ask them.
 featured: true
@@ -30,36 +30,38 @@ Not great: "Help! Upgrade failed!"
 Much better: "Upgrade to v2.0.1 failed with error code: 0x80004005"
 
 ### Use Correct Spelling and Grammar
-We need to understand what you're trying to ask before we can answer it, and can be hard to do if your question is loaded with typos and mistakes. It doesn't have to be perfect, but *please* make an effort.
+We need to understand what you're trying to ask before we can answer it, and that can be hard to do if your question is loaded with typos and mistakes. It doesn't have to be perfect, but *please* make an effort.
 
-Once you've written your query, take the time to read back over it and make sure it makes sense. This is another chance to show us that you're serious about solving the problem.
+Once you've written your query, take the time to read back over it and ensure it makes sense. This is another chance to show us that you're serious about solving the problem.
 
-Your helpers aren't going to judge you for linguistic errors but such mistakes may make it difficult for them to understand your problem. If you're not comfortable writing in English, go ahead and post in your native language using short sentences and correct punctuation. There are plenty of tools that your helper can use to translate your message, and those will be much more effective if the original message is written clearly in the original language.
+Your helpers aren't going to judge you for linguistic errors but such mistakes may make it difficult for them to understand your problem. If you're not comfortable writing in English, go ahead and post the question in your own language using short sentences and correct punctuation. There are plenty of tools that your helper can use to translate your message, and those will be much more effective if the message is written clearly in a language you know well.
 
 ### Be Precise
-The more details you can provide about your problem, the better.
+The more details you can provide about your problem, the better. The necessary details may vary depending on your problem or issue, but some questions to ask yourself might include:
 
 - What system/device/application are you using? Be specific about the model and/or version (and please don't just say "the latest version" - share the complete version number).
 - What are the symptoms of the problem? Are there any error messages? If so, include those *in full*. Screenshots can be a big help here.
 - When did the problem start? Is this a new problem or has it never worked? What (if anything) changed before the problem started?
-- What steps can we take to reproduce the problem? List the exact steps without any shortcuts.
-- What steps have you already taken to try and solve the problem? Don't say "I've tried everything" (which tells us nothing); tell us *exactly* what you've tried.
-- If your research yielded other reports of the same problem but no solution, include links to those reports.
+- What steps might someone take to reproduce the problem? List the complete steps without any shortcuts.
+- What steps have you already taken to troubleshoot or solve the problem? Don't say "I've tried everything" (which tells us nothing); tell us *exactly* what you've tried.
+- Did your research yield other reports of the same problem? Ifo so, include links to at least a few of those reports.
 
-Share anything you think might be relevant up front. It's easier for us to skip over details we don't need than to have to go back and forth asking for more information.
+Share *anything* you think might be relevant up front. It's easier (and quicker) for us to skip over details we don't need than to have to go back and forth asking for more information.
 
 ### Describe the Symptoms, Not Your Guesses
-If you're not sure what's causing the problem, don't guess. Sharing a guess which isn't correct can lead people down the wrong path and waste everyone's time. Focus instead on accurately describing the symptoms and leave the diagnosis to the kind souls trying to help you. Also, don't say "I know it isn't _____" unless you can also tell us precisely why you think that.
+If you're not sure what's causing the problem, don't guess. Sharing a guess which isn't correct can lead people down the wrong path and waste everyone's time. Focus instead on accurately describing the symptoms and leave the diagnosis to the kind souls trying to help you.
+
+Similarly, don't say "I know it isn't _____" unless you can also tell us *precisely* why you think that.
 
 After all, if you knew exactly what was wrong then you probably wouldn't be asking for help in the first place.
 
 ### Describe the Goal, Not the Step
-Similarly, when trying to accomplish a particular goal, share that goal rather than just focusing on the step you're trying to take. It's easy to get fixated on a small step (which may or may not be the correct one to take) and miss the better solution. Describe the Big Picture version of what you hope to do and let us help you figure out the best way to get there.
+When trying to accomplish a particular goal, share that goal rather than just focusing on the step you're stuck on. It's easy to get fixated on a small step (which may or may not be the correct one to take) and miss the better solution. Describe the Big Picture version of what you hope to do and let us help you figure out the best way to get there.
 
 ### Be Courteous
 Remember that you're *asking* for help, not *demanding* it. In many cases, you'll be posting on a user-to-user support community staffed entirely by volunteers. They are under no obligation to help you and will happily disengage if you're abusive or rude. Be polite and respectful of their time and effort.
 
-Their replies to you may be terse or blunt. It's not because they are offended by your question, but rather because there are a lot of people asking for their help and they're trying to maximize their time. Assume that their responses are offered in good faith, just as they'll assume the same of you. Don't take offense, but also don't be afraid to ask for clarification if you don't understand something.
+Their replies to you may be terse or blunt. It's not because they are offended by your question or insulted that you would ask it, but rather because there are a lot of people asking for their help and they're trying to maximize their time. Assume that their responses are offered in good faith, just as they'll assume the same of yours. Don't take offense, but also don't be afraid to ask for clarification if you don't understand something.
 
 Even if you are seeking help from a paid support team, remember that they are people too. Treat them with politeness and respect; not only is it the right way to interact with other humans, but it might keep them interested in helping you.
 
@@ -67,3 +69,4 @@ Even if you are seeking help from a paid support team, remember that they are pe
 Once your problem has been solved (either based on the advice you received or on your own), please be sure to report back to let everyone know. If the solution was reached based on the help you received, politely thank those who assisted. If you fixed it by yourself, share how you did it so that others may benefit from your experience (and, again, thank those who offered their time and advice).
 
 
+*Thank you for helping us help you help us all.*
