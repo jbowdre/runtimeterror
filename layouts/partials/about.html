@@ -4,10 +4,9 @@
 <h1 class="about__title">{{ .title }}</h1>
 {{ partial "tagline.html" . }}
 <br>
-<i class="fa-regular fa-user"></i> {{ site.Params.Author }}
+<a href="about"><i class="fa-regular fa-user"></i></a>&nbsp;<a href="/about">{{ site.Params.Author }}</a>
 </div>
 {{ end }}
-
 <ul class="aside__social-links">
     {{ range $item := .Site.Params.socialLinks }}
     <li>

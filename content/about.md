@@ -1,27 +1,32 @@
 +++
-title = "About"
-description = "Hugo, the world's fastest framework for building websites"
-date = "2019-02-28"
-aliases = ["about-us", "about-hugo", "contact"]
-author = "Hugo Authors"
-timeless = "true"
+title = "Hi, I'm John."
+description = "A brief introduction to me, this blog, and what you're likely to see here."
+timeless = true
 comments = false
 +++
+You've (somehow) managed to stumble upon my dark corner of the internet[^1].
 
-Written in Go, Hugo is an open source static site generator available under the [Apache Licence 2.0.](https://github.com/gohugoio/hugo/blob/master/LICENSE) Hugo supports TOML, YAML and JSON data file types, Markdown and HTML content files and uses shortcodes to add rich content. Other notable features are taxonomies, multilingual mode, image processing, custom output formats, HTML/CSS/JS minification and support for Sass SCSS workflows.
+![Me, +/- a few decades](/images/john.jpg)
 
-Hugo makes use of a variety of open source projects including:
+I've enjoyed programming since discovering I could alter variable values in [`GORILLA.BAS`](https://en.wikipedia.org/wiki/Gorillas_%28video_game%29) on my dad's work computer to imbue the thrown bananas with enough explosive power to level the entire city. I thought, "hey, that's neat," and then spent much of my childhood free time learning how *else* I could bend computers to my will.
 
-* https://github.com/yuin/goldmark
-* https://github.com/alecthomas/chroma
-* https://github.com/muesli/smartcrop
-* https://github.com/spf13/cobra
-* https://github.com/spf13/viper
+Once I grew up[^2], I found a career in system administration, and I leveraged my passion for coding to write scripts to help me manage systems more efficiently. While managing a global-scale VMware environment, I was tasked with implementing [vRealize Automation](/series/vra8) (now "Aria Automation"). I didn't realize it at the time, but that was the start of my DevOps transformation. I started to think about infrastructure-as-code, and began using [HashiCorp Packer](https://github.com/jbowdre/packer-vsphere-templates) and a CI/CD pipeline to automatically build fully-up-to-date VM templates on a weekly cadence.
 
-Hugo is ideal for blogs, corporate websites, creative portfolios, online magazines, single page applications or even a website with thousands of pages.
+I'm now part of a small platform engineering team within that same large corporation, focused on leveraging DevOps thinking and tools to help our internal customers modernize how they're operating IT, building code, and shipping products, while designing solutions to help them accomplish those goals. It's a great blending of my virtual infrastructure operations background, hobbyist development experience, and hunger for solving problems, and I enjoy solving interesting challenges at scale.
 
-Hugo is for people who want to hand code their own website without worrying about setting up complicated runtimes, dependencies and databases.
+On my off time, I tinker with new [projects](/series/projects) in my little homelab and share some of those adventures here. I also help out on Google's product support forums as a [Product Expert](https://productexperts.withgoogle.com/what-it-is), where I support Pixel phones, earbuds, and watches, as well as Chromebooks (primarily with Linux-related queries). Helping users troubleshoot their issues scratches my problem-solving itch, and it helps me learn more about the Google products I use.
 
-Websites built with Hugo are extremely fast, secure and can be deployed anywhere including, AWS, GitHub Pages, Heroku, Netlify and any other hosting provider.
+On weekends, I race my daily-driven 2014 Subaru BRZ in local [autocross events](https://www.youtube.com/playlist?list=PLwzr4uKY-x-EwCv-rWNGefdikuW6Oy9O_) or wrench on my 1974 Volkswagen Karmann Ghia.
 
-Learn more and contribute on [GitHub](https://github.com/gohugoio).
+And in the free time I have left, I game on my Steam Deck.
+
+See what I've been up to on:
+- [GitHub](https://github.com/jbowdre)
+- [CounterSocial](https://counter.social/@john_b)
+
+Securely chat with me via:
+- [SimpleX Chat](/simplex/)
+
+
+[^1]: Congrats? And also, *thank you.*
+[^2]: A bit. I'm still in the "fake it until you make" it phase of adulthood.
