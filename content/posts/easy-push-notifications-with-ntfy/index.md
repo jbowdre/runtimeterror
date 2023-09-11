@@ -58,7 +58,7 @@ services:
     restart: unless-stopped
 ```
 
-This config will create/mount folders in the working directory to store the ntfy cache and config
+This config will create/mount folders in the working directory to store the ntfy cache and config. It also maps `localhost:8080` to port `80` on the container, and enables a simple healthcheck against the ntfy health API endpoint. This will ensure that the service stays healthy.
 
 
 I can go ahead and bring it up:
