@@ -22,7 +22,7 @@ tags:
   - automation
   - kubernetes
   - containers
-  - iaac
+  - iac
   - packer
 comment: true # Disable comment if false.
 ---
