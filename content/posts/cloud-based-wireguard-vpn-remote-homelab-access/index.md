@@ -14,6 +14,7 @@ tags:
 - automation
 - networking
 - security
+- selfhosting
 title: Cloud-hosted WireGuard VPN for remote homelab access
 featured: false
 ---
@@ -28,11 +29,11 @@ It's a pretty slick setup, if I do say so myself. Anyway, this post will discuss
 ### WireGuard Concepts, in Brief
 WireGuard does things a bit differently from other VPN solutions I've used in the past. For starters, there aren't any user accounts to manage, and in fact users don't really come into the picture at all. WireGuard also doesn't really distinguish between _client_ and _server_; the devices on both ends of a tunnel connection are _peers_, and they use the same software package and very similar configurations. Each WireGuard peer is configured with a virtual network interface with a private IP address used for the tunnel network, and a configuration file tells it which tunnel IP(s) will be used by the other peer(s). Each peer has its own cryptographic _private_ key, and the other peers get a copy of the corresponding _public_ key added to their configuration so that all the peers can recognize each other and encrypt/decrypt traffic appropriately. This mapping of peer addresses to public keys facilitates what WireGuard calls [Cryptokey Routing](https://www.wireguard.com/#cryptokey-routing).
 
-Once the peers are configured, all it takes is bringing up the WireGuard virtual interface on each peer to establish the tunnel and start passing secure traffic. 
+Once the peers are configured, all it takes is bringing up the WireGuard virtual interface on each peer to establish the tunnel and start passing secure traffic.
 
 You can read a lot more fascinating details about how this all works back on the [WireGuard homepage](https://www.wireguard.com/#conceptual-overview) (and even more in this [protocol description](https://www.wireguard.com/protocol/)) but this at least covers the key points I needed to grok prior to a successful initial deployment.
 
-For my hybrid cloud solution, I also leaned heavily upon [this write-up of a WireGuard Site-to-Site configuration](https://gist.github.com/insdavm/b1034635ab23b8839bf957aa406b5e39) for how to get traffic flowing between my on-site environment, cloud-hosted WireGuard server, and "Road Warrior" client devices, and drew from [this documentation on implementing WireGuard in GCP](https://github.com/agavrel/wireguard_google_cloud) as well. The [VyOS documentation for configuring the built-in WireGuard interface](https://docs.vyos.io/en/latest/configuration/interfaces/wireguard.html) was also quite helpful to me. 
+For my hybrid cloud solution, I also leaned heavily upon [this write-up of a WireGuard Site-to-Site configuration](https://gist.github.com/insdavm/b1034635ab23b8839bf957aa406b5e39) for how to get traffic flowing between my on-site environment, cloud-hosted WireGuard server, and "Road Warrior" client devices, and drew from [this documentation on implementing WireGuard in GCP](https://github.com/agavrel/wireguard_google_cloud) as well. The [VyOS documentation for configuring the built-in WireGuard interface](https://docs.vyos.io/en/latest/configuration/interfaces/wireguard.html) was also quite helpful to me.
 
 Okay, enough background; let's get this thing going.
 
@@ -54,9 +55,9 @@ The other defaults are fine, but I'll holding off on clicking the friendly blue 
 ![Instance creation advanced settings](20211028_instance_advanced_settings.png)
 
 ##### Network Configuration
-Expanding the **Networking** section of the request form lets me add a new `wireguard` network tag, which will make it easier to target the instance with a firewall rule later. I also want to enable the _IP Forwarding_ option so that the instance will be able to do router-like things. 
+Expanding the **Networking** section of the request form lets me add a new `wireguard` network tag, which will make it easier to target the instance with a firewall rule later. I also want to enable the _IP Forwarding_ option so that the instance will be able to do router-like things.
 
-By default, the new instance will get assigned a public IP address that I can use to access it externally - but this address is _ephemeral_ so it will change periodically. Normally I'd overcome this by [using ddclient to manage its dynamic DNS record](/bitwarden-password-manager-self-hosted-on-free-google-cloud-instance#configure-dynamic-dns), but (looking ahead) [VyOS's WireGuard interface configuration](https://docs.vyos.io/en/latest/configuration/interfaces/wireguard.html#interface-configuration) unfortunately only supports connecting to an IP rather than a hostname. That means I'll need to reserve a _static_ IP address for my instance. 
+By default, the new instance will get assigned a public IP address that I can use to access it externally - but this address is _ephemeral_ so it will change periodically. Normally I'd overcome this by [using ddclient to manage its dynamic DNS record](/bitwarden-password-manager-self-hosted-on-free-google-cloud-instance#configure-dynamic-dns), but (looking ahead) [VyOS's WireGuard interface configuration](https://docs.vyos.io/en/latest/configuration/interfaces/wireguard.html#interface-configuration) unfortunately only supports connecting to an IP rather than a hostname. That means I'll need to reserve a _static_ IP address for my instance.
 
 I can do that by clicking on the _Default_ network interface to expand the configuration. While I'm here, I'll first change the **Network Service Tier** from _Premium_ to _Standard_ to save a bit of money on network egress fees. _(This might be a good time to mention that while the compute instance itself is free, I will have to spend [about $3/mo for the public IP](https://cloud.google.com/vpc/network-pricing#:~:text=internal%20IP%20addresses.-,External%20IP%20address%20pricing,-You%20are%20charged), as well as [$0.085/GiB for internet egress via the Standard tier](https://cloud.google.com/vpc/network-pricing#:~:text=or%20Cloud%20Interconnect.-,Standard%20Tier%20pricing,-Egress%20pricing%20is) (versus [$0.12/GiB on the Premium tier](https://cloud.google.com/vpc/network-pricing#:~:text=Premium%20Tier%20pricing)). So not entirely free, but still pretty damn cheap for a cloud-hosted VPN that I control completely.)_
 
@@ -74,14 +75,14 @@ Okay, now that I've got my keys, I can click the **Add Item** button and paste i
 
 ![Security configuration](20211027_security_settings.png)
 
-And that's it for the pre-deploy configuration! Time to hit **Create** to kick it off. 
+And that's it for the pre-deploy configuration! Time to hit **Create** to kick it off.
 
 ![Do it!](20211027_creation_time.png)
 
 The instance creation will take a couple of minutes but I can go ahead and get the firewall sorted while I wait.
 
-#### Firewall 
-Google Cloud's default firewall configuration will let me reach my new server via SSH without needing to configure anything, but I'll need to add a new rule to allow the WireGuard traffic. I do this by going to **VPC > Firewall** and clicking the button at the top to **[Create Firewall Rule](https://console.cloud.google.com/networking/firewalls/add)**. I give it a name (`allow-wireguard-ingress`), select the rule target by specifying the `wireguard` network tag I had added to the instance, and set the source range to `0.0.0.0/0`. I'm going to use the default WireGuard port so select the _udp:_ checkbox and enter `51820`. 
+#### Firewall
+Google Cloud's default firewall configuration will let me reach my new server via SSH without needing to configure anything, but I'll need to add a new rule to allow the WireGuard traffic. I do this by going to **VPC > Firewall** and clicking the button at the top to **[Create Firewall Rule](https://console.cloud.google.com/networking/firewalls/add)**. I give it a name (`allow-wireguard-ingress`), select the rule target by specifying the `wireguard` network tag I had added to the instance, and set the source range to `0.0.0.0/0`. I'm going to use the default WireGuard port so select the _udp:_ checkbox and enter `51820`.
 
 ![Firewall rule creation](20211027_firewall.png)
 
@@ -89,7 +90,7 @@ I'll click **Create** and move on.
 
 #### WireGuard Server Setup
 Once the **Compute Engine > Instances** [page](https://console.cloud.google.com/compute/instances) indicates that the instance is ready, I can make a note of the listed public IP and then log in via SSH:
-```sh 
+```sh
 ssh -i ~/.ssh/id_25519_wireguard {PUBLIC_IP}
 ```
 
@@ -140,7 +141,7 @@ Then I can use the `wg genkey` command to generate the server's private key, sav
 wg genkey | tee server.key | wg pubkey > server.pub
 ```
 
-As I mentioned earlier, WireGuard will create a virtual network interface using an internal network to pass traffic between the WireGuard peers. By convention, that interface is `wg0` and it draws its configuration from a file in `/etc/wireguard` named `wg0.conf`. I could create a configuration file with a different name and thus wind up with a different interface name as well, but I'll stick with tradition to keep things easy to follow. 
+As I mentioned earlier, WireGuard will create a virtual network interface using an internal network to pass traffic between the WireGuard peers. By convention, that interface is `wg0` and it draws its configuration from a file in `/etc/wireguard` named `wg0.conf`. I could create a configuration file with a different name and thus wind up with a different interface name as well, but I'll stick with tradition to keep things easy to follow.
 
 The format of the interface configuration file will need to look something like this:
 ```
@@ -236,7 +237,7 @@ save
 
 I can check the status of WireGuard on VyOS (and view the public key!) like so:
 ```sh
-$ show interfaces wireguard wg0 summary 
+$ show interfaces wireguard wg0 summary
 interface: wg0
   public key: {VYOS_PUBLIC_KEY}
   private key: (hidden)
@@ -259,7 +260,7 @@ PublicKey = {VYOS_PUBLIC_KEY}
 AllowedIPs = 10.200.200.2/32, 192.168.1.0/24, 172.16.0.0/16
 ```
 
-This time, I'm telling WireGuard that the new peer has IP `10.200.200.2` but that it should also get traffic destined for the `192.168.1.0/24` and `172.16.0.0/16` networks, my home and lab networks. Again, the `AllowedIPs` parameter is used for WireGuard's Cryptokey Routing so that it can keep track of which traffic goes to which peers (and which key to use for encryption). 
+This time, I'm telling WireGuard that the new peer has IP `10.200.200.2` but that it should also get traffic destined for the `192.168.1.0/24` and `172.16.0.0/16` networks, my home and lab networks. Again, the `AllowedIPs` parameter is used for WireGuard's Cryptokey Routing so that it can keep track of which traffic goes to which peers (and which key to use for encryption).
 
 After saving the file, I can either restart WireGuard by bringing the interface down and back up (`wg-quick down wg0 && wg-quick up wg0`), or I can reload it on the fly with:
 ```sh
@@ -452,7 +453,7 @@ wg syncconf wg0 <(wg-quick strip wg0)
 
 Back in the `clients/` directory, I can use `qrencode` to render the phone configuration file (keys and all!) as a QR code:
 ```sh
-qrencode -t ansiutf8 < phone1.conf 
+qrencode -t ansiutf8 < phone1.conf
 ```
 ![QR code config](20211028_qrcode_config.png)
 
@@ -489,7 +490,7 @@ Profile: VPN on Strange WiFi
     A1: Tasker Function [
          Function: WireGuardSetTunnel(true,wireguard-gcp) ]
         If [ %TRUSTED_WIFI !Set ]
-     
+
     Exit Task: DisconnectVPN
     A1: Tasker Function [
          Function: WireGuardSetTunnel(false,wireguard-gcp) ]
@@ -499,5 +500,5 @@ Profile: VPN on Strange WiFi
 _Automagic!_
 
 #### Other Peers
-Any additional peers that need to be added in the future will likely follow one of the above processes. The steps are always to generate the peer's key pair, use the private key to populate the `[Interface]` portion of the peer's config, configure the `[Peer]` section with the _public_ key, allowed IPs, and endpoint address of the peer it will be connecting to, and then to add the new peer's _public_ key and internal WireGuard IP to a new `[Peer]` section of the existing peer's config. 
+Any additional peers that need to be added in the future will likely follow one of the above processes. The steps are always to generate the peer's key pair, use the private key to populate the `[Interface]` portion of the peer's config, configure the `[Peer]` section with the _public_ key, allowed IPs, and endpoint address of the peer it will be connecting to, and then to add the new peer's _public_ key and internal WireGuard IP to a new `[Peer]` section of the existing peer's config.
 

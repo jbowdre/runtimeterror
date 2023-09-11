@@ -9,10 +9,11 @@ tags:
 - containers
 - networking
 - security
+- selfhosting
 title: AdGuard Home in Docker on Photon OS
 ---
 
-I was recently introduced to [AdGuard Home](https://adguard.com/en/adguard-home/overview.html) by way of its very slick [Home Assistant Add-On](https://github.com/hassio-addons/addon-adguard-home/blob/main/adguard/DOCS.md). Compared to the relatively-complicated [Pi-hole](https://pi-hole.net/) setup that I had implemented several months back, AdGuard Home was *much* simpler to deploy (particularly since I basically just had to click the "Install" button from the Home Assistant add-ons manage). It also has a more modern UI with options arranged more logically (to me, at least), and it just feels easier to use overall. It worked great for a time... until my Home Assistant instance crashed, taking down AdGuard Home (and my internet access) with it. Maybe bundling these services isn't the best move. 
+I was recently introduced to [AdGuard Home](https://adguard.com/en/adguard-home/overview.html) by way of its very slick [Home Assistant Add-On](https://github.com/hassio-addons/addon-adguard-home/blob/main/adguard/DOCS.md). Compared to the relatively-complicated [Pi-hole](https://pi-hole.net/) setup that I had implemented several months back, AdGuard Home was *much* simpler to deploy (particularly since I basically just had to click the "Install" button from the Home Assistant add-ons manage). It also has a more modern UI with options arranged more logically (to me, at least), and it just feels easier to use overall. It worked great for a time... until my Home Assistant instance crashed, taking down AdGuard Home (and my internet access) with it. Maybe bundling these services isn't the best move.
 
 I'd like to use AdGuard Home, but the system it runs on needs to be rock-solid. With that in mind, I thought it might be fun to instead run AdGuard Home in a Docker container on a VM running VMware's container-optimized [Photon OS](https://github.com/vmware/photon), primarily because I want an excuse to play more with Docker and Photon (but also the thing I just mentioned about stability). So here's what it took to get that running.
 
@@ -56,7 +57,7 @@ DHCP=no
 IPv6AcceptRA=no
 ```
 
-I set the required permissions on my new network configuration file with `chmod 644 /etc/systemd/network/10-static-en.network` and then restarted `networkd` with `systemctl restart systemd-networkd`. 
+I set the required permissions on my new network configuration file with `chmod 644 /etc/systemd/network/10-static-en.network` and then restarted `networkd` with `systemctl restart systemd-networkd`.
 
 I then ran `networkctl` a couple of times until the `eth0` interface went fully green, and did an `ip a` to confirm that the address had been applied.
 ![Verifying networking](qOw7Ysj3O.png)
@@ -95,7 +96,7 @@ systemctl restart systemd-resolved
 ```
 
 ### Deploy AdGuard Home container
-Okay, now for the fun part. 
+Okay, now for the fun part.
 
 I create a directory for AdGuard to live in, and then create a `docker-compose.yaml` therein:
 ```shell
@@ -158,9 +159,9 @@ AdGuard Home ships with pretty sensible defaults so there's not really a huge ne
 
 
 ### Getting requests to AdGuard Home
-Normally, you'd tell your Wifi router what DNS server you want to use, and it would relay that information to the connected DHCP clients. Google Wifi is a bit funny, in that it wants to function as a DNS proxy for the network. When you configure a custom DNS server for Google Wifi, it still tells the DHCP clients to send the requests to the router, and the router then forwards the queries on to the configured DNS server. 
+Normally, you'd tell your Wifi router what DNS server you want to use, and it would relay that information to the connected DHCP clients. Google Wifi is a bit funny, in that it wants to function as a DNS proxy for the network. When you configure a custom DNS server for Google Wifi, it still tells the DHCP clients to send the requests to the router, and the router then forwards the queries on to the configured DNS server.
 
-I already have Google Wifi set up to use my Windows DC (at `192.168.1.5`) for DNS. That lets me easily access systems on my internal `lab.bowdre.net` domain without having to manually configure DNS, and the DC forwards resolution requests it can't handle on to the upstream (internet) DNS servers. 
+I already have Google Wifi set up to use my Windows DC (at `192.168.1.5`) for DNS. That lets me easily access systems on my internal `lab.bowdre.net` domain without having to manually configure DNS, and the DC forwards resolution requests it can't handle on to the upstream (internet) DNS servers.
 
 To easily insert my AdGuard Home instance into the flow, I pop in to my Windows DC and configure the AdGuard Home address (`192.168.1.2`) as the primary DNS forwarder. The DC will continue to handle internal resolutions, and anything it can't handle will now get passed up the chain to AdGuard Home. And this also gives me a bit of a failsafe, in that queries will fail back to the previously-configured upstream DNS if AdGuard Home doesn't respond within a few seconds.
 ![Setting AdGuard Home as a forwarder](bw09OXG7f.png)

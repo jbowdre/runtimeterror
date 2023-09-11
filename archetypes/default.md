@@ -44,6 +44,7 @@ tags:
   - rest
   - salt
   - security
+  - selfhosting
   - serverless
   - shell
   - tasker
