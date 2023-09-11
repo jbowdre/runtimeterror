@@ -20,6 +20,7 @@ tags:
   - docker
   - cloud
   - tailscale
+  - selfhosting
 comment: true # Disable comment if false.
 ---
 I recently started using [Obsidian](https://obsidian.md/) for keeping notes, tracking projects, and just generally organizing all the information that would otherwise pass into my brain and then fall out the other side. Unlike other similar solutions which operate entirely in *The Cloud*, Obsidian works with Markdown files stored in a local folder[^sync], which I find to be very attractive. Not only will this allow me to easily transfer my notes between apps if I find something I like better than Obsidian, but it also opens the door to using `git` to easily back up all this important information.
