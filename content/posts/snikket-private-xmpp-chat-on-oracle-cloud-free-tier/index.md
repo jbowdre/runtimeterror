@@ -21,6 +21,7 @@ tags:
   - docker
   - containers
   - chat
+  - selfhosting
 comment: true # Disable comment if false.
 ---
 **Non-technical users deserve private communications, too.**
