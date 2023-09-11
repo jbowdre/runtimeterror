@@ -10,10 +10,11 @@ tags:
 - cloud
 - containers
 - chat
+- selfhosting
 title: Federated Matrix Server (Synapse) on Oracle Cloud's Free Tier
 ---
 
-I've heard a lot lately about how generous [Oracle Cloud's free tier](https://www.oracle.com/cloud/free/) is, particularly when [compared with the free offerings](https://github.com/cloudcommunity/Cloud-Service-Providers-Free-Tier-Overview) from other public cloud providers. Signing up for an account was fairly straight-forward, though I did have to wait a few hours for an actual human to call me on an actual telephone to verify my account. Once in, I thought it would be fun to try building my own [Matrix](https://matrix.org/) homeserver to really benefit from the network's decentralized-but-federated model for secure end-to-end encrypted communications. 
+I've heard a lot lately about how generous [Oracle Cloud's free tier](https://www.oracle.com/cloud/free/) is, particularly when [compared with the free offerings](https://github.com/cloudcommunity/Cloud-Service-Providers-Free-Tier-Overview) from other public cloud providers. Signing up for an account was fairly straight-forward, though I did have to wait a few hours for an actual human to call me on an actual telephone to verify my account. Once in, I thought it would be fun to try building my own [Matrix](https://matrix.org/) homeserver to really benefit from the network's decentralized-but-federated model for secure end-to-end encrypted communications.
 
 There are two primary projects for Matrix homeservers: [Synapse](https://github.com/matrix-org/synapse/) and [Dendrite](https://github.com/matrix-org/dendrite). Dendrite is the newer, more efficient server, but it's not quite feature complete. I'll be using Synapse for my build to make sure that everything works right off the bat, and I will be running the server in a Docker container to make it (relatively) easy to replace if I feel more comfortable about Dendrite in the future.
 
@@ -38,7 +39,7 @@ Now I can finally click the blue **Create Instance** button at the bottom of the
 ![Logged in!](5PD1H7b1O.png)
 
 ### DNS setup
-According to [Oracle's docs](https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingpublicIPs.htm), the public IP assigned to my instance is mine until I terminate the instance. It should even remain assigned if I stop or restart the instance, just as long as I don't delete the virtual NIC attached to it.  So I'll skip the [`ddclient`-based dynamic DNS configuration I've used in the past](/bitwarden-password-manager-self-hosted-on-free-google-cloud-instance#configure-dynamic-dns) and instead go straight to my registrar's DNS management portal and create a new `A` record for `matrix.bowdre.net` with the instance's public IP. 
+According to [Oracle's docs](https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingpublicIPs.htm), the public IP assigned to my instance is mine until I terminate the instance. It should even remain assigned if I stop or restart the instance, just as long as I don't delete the virtual NIC attached to it.  So I'll skip the [`ddclient`-based dynamic DNS configuration I've used in the past](/bitwarden-password-manager-self-hosted-on-free-google-cloud-instance#configure-dynamic-dns) and instead go straight to my registrar's DNS management portal and create a new `A` record for `matrix.bowdre.net` with the instance's public IP.
 
 While I'm managing DNS, it might be good to take a look at the requirements for [federating my new server](https://github.com/matrix-org/synapse/blob/master/docs/federate.md#setting-up-federation) with the other Matrix servers out there. I'd like for users identities on my server to be identified by the `bowdre.net` domain (`@user:bowdre.net`) rather than the full `matrix.bowdre.net` FQDN (`@user:matrix.bowdre.net` is kind of cumbersome). The standard way to do this to leverage [`.well-known` delegation](https://github.com/matrix-org/synapse/blob/master/docs/delegate.md#well-known-delegation), where the URL at `http://bowdre.net/.well-known/matrix/server` would return a JSON structure telling other Matrix servers how to connect to mine:
 ```json
@@ -47,7 +48,7 @@ While I'm managing DNS, it might be good to take a look at the requirements for 
 }
 ```
 
-I don't *currently* have another server already handling requests to `bowdre.net`, so for now I'll add another `A` record with the same public IP address to my DNS configuration. Requests for both `bowdre.net` and `matrix.bowdre.net` will reach the same server instance, but those requests will be handled differently. More on that later. 
+I don't *currently* have another server already handling requests to `bowdre.net`, so for now I'll add another `A` record with the same public IP address to my DNS configuration. Requests for both `bowdre.net` and `matrix.bowdre.net` will reach the same server instance, but those requests will be handled differently. More on that later.
 
 An alternative to this `.well-known` delegation would be to use [`SRV` DNS record delegation](https://github.com/matrix-org/synapse/blob/master/docs/delegate.md#srv-dns-record-delegation) to accomplish the same thing. I'd create an `SRV` record for `_matrix._tcp.bowdre.net` with the data `0 10 8448 matrix.bowdre.net` (priority=`0`, weight=`10`, port=`8448`, target=`matrix.bowdre.net`) which would again let other Matrix servers know where to send the federation traffic for my server. This approach has an advantage of not needing to make any changes on the `bowdre.net` web server, but it would require the delegated `matrix.bowdre.net` server to *also* [return a valid certificate for `bowdre.net`](https://matrix.org/docs/spec/server_server/latest#:~:text=If%20the%20/.well-known%20request%20resulted,present%20a%20valid%20certificate%20for%20%3Chostname%3E.). Trying to get a Let's Encrypt certificate for a server name that doesn't resolve authoritatively in DNS sounds more complicated than I want to get into with this project, so I'll move forward with my plan to use the `.well-known` delegation instead.
 
@@ -68,17 +69,17 @@ The *Ingress Rules* section lists the existing inbound firewall exceptions, whic
 I want this to apply to traffic from any source IP so I enter the CIDR `0.0.0.0/0`, and I enter the *Destination Port Range* as `80,443`. I also add a brief description and click **Add Ingress Rules**.
 ![Adding an ingress rule](2fbKJc5Y6.png)
 
-Success! My new ingress rules appear at the bottom of the list. 
+Success! My new ingress rules appear at the bottom of the list.
 ![New rules added](s5Y0rycng.png)
 
 That gets traffic from the internet and to my instance, but the OS is still going to drop the traffic at its own firewall. I'll need to work with `iptables` to change that. (You typically use `ufw` to manage firewalls more easily on Ubuntu, but it isn't included on this minimal image and seemed to butt heads with `iptables` when I tried adding it. I eventually decided it was better to just interact with `iptables` directly). I'll start by listing the existing rules on the `INPUT` chain:
 ```
 $ sudo iptables -L INPUT --line-numbers
 Chain INPUT (policy ACCEPT)
-num  target     prot opt source               destination         
+num  target     prot opt source               destination
 1    ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
-2    ACCEPT     icmp --  anywhere             anywhere            
-3    ACCEPT     all  --  anywhere             anywhere            
+2    ACCEPT     icmp --  anywhere             anywhere
+3    ACCEPT     all  --  anywhere             anywhere
 4    ACCEPT     udp  --  anywhere             anywhere             udp spt:ntp
 5    ACCEPT     tcp  --  anywhere             anywhere             state NEW tcp dpt:ssh
 6    REJECT     all  --  anywhere             anywhere             reject-with icmp-host-prohibited
@@ -94,10 +95,10 @@ And then I'll confirm that the order is correct:
 ```
 $ sudo iptables -L INPUT --line-numbers
 Chain INPUT (policy ACCEPT)
-num  target     prot opt source               destination         
+num  target     prot opt source               destination
 1    ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
-2    ACCEPT     icmp --  anywhere             anywhere            
-3    ACCEPT     all  --  anywhere             anywhere            
+2    ACCEPT     icmp --  anywhere             anywhere
+3    ACCEPT     all  --  anywhere             anywhere
 4    ACCEPT     udp  --  anywhere             anywhere             udp spt:ntp
 5    ACCEPT     tcp  --  anywhere             anywhere             state NEW tcp dpt:ssh
 6    ACCEPT     tcp  --  anywhere             anywhere             state NEW tcp dpt:https
@@ -204,7 +205,7 @@ sudo apt update
 sudo apt install caddy
 ```
 
-Then I just need to put my configuration into the default `Caddyfile`, including the required `.well-known` delegation piece from earlier. 
+Then I just need to put my configuration into the default `Caddyfile`, including the required `.well-known` delegation piece from earlier.
 ```
 $ sudo vi /etc/caddy/Caddyfile
 matrix.bowdre.net {
@@ -253,7 +254,7 @@ Browsing to `https://matrix.bowdre.net` shows a blank page - but a valid and tru
 The `.well-known` URL also returns the expected JSON:
 ![.well-known](6IRPHhr6u.png)
 
-And trying to hit anything else at `https://bowdre.net` brings me right back here. 
+And trying to hit anything else at `https://bowdre.net` brings me right back here.
 
 And again, the config to do all this (including getting valid certs for two server names!) is just 11 lines long. Caddy is seriously and magically cool.
 
@@ -335,15 +336,15 @@ $ docker run -it --rm \
 
 Unable to find image 'matrixdotorg/synapse:latest' locally
 latest: Pulling from matrixdotorg/synapse
-69692152171a: Pull complete 
-66a3c154490a: Pull complete 
-3e35bdfb65b2: Pull complete 
-f2c4c4355073: Pull complete 
-65d67526c337: Pull complete 
-5186d323ad7f: Pull complete 
-436afe4e6bba: Pull complete 
-c099b298f773: Pull complete 
-50b871f28549: Pull complete 
+69692152171a: Pull complete
+66a3c154490a: Pull complete
+3e35bdfb65b2: Pull complete
+f2c4c4355073: Pull complete
+65d67526c337: Pull complete
+5186d323ad7f: Pull complete
+436afe4e6bba: Pull complete
+c099b298f773: Pull complete
+50b871f28549: Pull complete
 Digest: sha256:5ccac6349f639367fcf79490ed5c2377f56039ceb622641d196574278ed99b74
 Status: Downloaded newer image for matrixdotorg/synapse:latest
 Creating log config /data/bowdre.net.log.config
@@ -408,7 +409,7 @@ Now I can fire up my [Matrix client of choice](https://element.io/get-started)),
 ### Wrap-up
 And that's it! I now have my own Matrix server, and I can use my new account for secure chats with Matrix users on any other federated homeserver. It works really well for directly messaging other individuals, and also for participating in small group chats. The server *does* kind of fall on its face if I try to join a massively-populated (like 500+ users) room, but I'm not going to complain about that too much on a free-tier server.
 
-All in, I'm pretty pleased with how this little project turned out, and I learned quite a bit along the way. I'm tremendously impressed by Caddy's power and simplicity, and I look forward to using it more in future projects. 
+All in, I'm pretty pleased with how this little project turned out, and I learned quite a bit along the way. I'm tremendously impressed by Caddy's power and simplicity, and I look forward to using it more in future projects.
 
 ### Update: Updating
 After a while, it's probably a good idea to update both the Ubntu server and the Synapse container running on it. Updating the server itself is as easy as:
