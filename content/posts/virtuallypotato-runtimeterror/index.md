@@ -1,12 +1,12 @@
 ---
 title: "virtuallypotato -> runtimeterror"
-date: 2023-09-12
-# lastmod: 2023-09-12
+date: 2023-09-13
+# lastmod: 2023-09-13
 timeless: true
 draft: true
 description: "This blog has migrated from virtuallypotato.com to runtimeterror.dev."
 featured: true
-toc: true
+toc: false
 comment: true
 tags:
   - meta
