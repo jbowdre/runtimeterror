@@ -3,7 +3,7 @@ title: "ESXi ARM Edition on the Quartz64 SBC" # Title of the blog post.
 date: 2022-04-23 # Date of post creation.
 lastmod: 2022-12-14
 description: "Getting started with the experimental ESXi Arm Edition fling to run a VMware hypervisor on the PINE64 Quartz64 single-board computer, and installing a Tailscale node on Photon OS to facilitate improved remote access to my home network." # Description used for search engine.
-featured: true # Sets if post is a featured post, making appear on the home page side bar.
+featured: false # Sets if post is a featured post, making appear on the home page side bar.
 draft: false # Sets whether to render this page. Draft of true will not be rendered.
 toc: true # Controls if a table of contents should be generated for first-level links automatically.
 usePageBundles: true
