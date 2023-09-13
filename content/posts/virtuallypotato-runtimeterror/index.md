@@ -24,9 +24,9 @@ That (unfortunately) means that I won't be posting much (if at all) about VMware
 
 I decided to migrate, rebrand, and re-theme my blog to reflect this change in focus. Virtually Potato used a [theme heavily inspired by VMware design language](https://github.com/chipzoller/hugo-clarity), and I don't think it's a great fit for the current (and future) content anymore. It was also a very feature-rich theme which provided a lot of capability but made it a bit tricky to modify/maintain my personal tweaks. The new Runtime Terror[^pun] site uses a [more minimal theme](https://github.com/joeroe/risotto) which takes cues from terminals and markdown formatting. It's also simpler and thus easier for me to tweak. I've done a lot of that already and anticipating doing a bit more in the coming weeks, but I wanted to go ahead and make this thing "live" for now.
 
-I've copied all content from the old site (including post comments), and set things up so that all existing links should seamlessly redirect. Hopefully that will make for a pretty easy transition.
+I've copied all content from the old site (including post comments), and set things up so that all existing links should seamlessly redirect. Hopefully that will make for a pretty easy transition, but please add a comment if you see anything that's not quite working right.
 
-Thanks for sticking with me.
+Stay buggy.
 
 
 [^vra8]: I had a lot of cool things I wanted to explore/document with vRA8 and I'm sad that I won't get to "complete" this series. I no longer run a vRA8 instance in my homelab (it's a resource hog and I needed the RAM for other things) though so I don't anticipate revisiting this.
