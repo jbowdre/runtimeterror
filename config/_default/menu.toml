@@ -17,13 +17,13 @@
   weight = 1
 
 [[main]]
-  identifier = "vra8"
-  name = "vra8"
-  url = "/series/vra8/"
-  weight = 1
-
-[[main]]
   identifier = "scripts"
   name = "scripts"
   url = "/series/scripts/"
   weight = 1
+
+[[main]]
+  identifier = "virtuallypotato"
+  name = "whereis virtuallypotato"
+  url = "/virtuallypotato-runtimeterror/"
+  weight = 100
