@@ -21,3 +21,9 @@
   name = "scripts"
   url = "/series/scripts/"
   weight = 1
+
+[[main]]
+  identifier = "virtuallypotato"
+  name = "whereis virtuallypotato"
+  url = "/virtuallypotato-runtimeterror/"
+  weight = 100
