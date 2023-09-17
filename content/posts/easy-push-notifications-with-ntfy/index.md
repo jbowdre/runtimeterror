@@ -27,7 +27,7 @@ Wouldn't it be great if there was a simple way to send a notification to your ph
 
 I thought it sounded pretty compelling - and *then* I noticed that [ntfy's docs](https://docs.ntfy.sh/install/) made it sound really easy to self-host the server component, which would give me a bit more control and peace of mind.
 
-{{% notice tip "Topics are public" %}}
+{{% notice note "Topics are public" %}}
 Ntfy leverages uses a [pub-sub](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) approach, and (by default) all topics are public. This means that anyone can write to or read from any topic, which makes it important to use a topic name that others aren't likely to guess.
 
 Self-hosting lets you [define ACLs](https://docs.ntfy.sh/config/#access-control) to protect sensitive topics.
