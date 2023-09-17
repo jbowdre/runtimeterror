@@ -1,9 +1,9 @@
 ---
 title: "Easy Push Notifications With ntfy.sh"
-date: 2023-09-11
-# lastmod: 2023-09-11
+date: 2023-09-17
+# lastmod: 2023-09-17
 draft: true
-description: "Deploying and configuring a self-hosted pub-sub notification handler, getting another server to send a notifcation when it boots, and integrating the notification handler in Home Assistant."
+description: "Deploying and configuring a self-hosted pub-sub notification handler, getting another server to send a notifcation when it boots, and integrating the notification handler into Home Assistant."
 featured: false
 toc: true
 comment: true
@@ -20,9 +20,7 @@ tags:
   - selfhosting
   - shell
 ---
-
 ### The Pitch
-
 Wouldn't it be great if there was a simple way to send a notification to your phone(s) with a simple `curl` call? Then you could get notified when a script completes, or a server reboots, a user logs in to a system, or a sensor connected to Home Assistant changes state. How great would that be??
 
 [ntfy.sh](https://ntfy.sh) (pronounced *notify*) provides just that. It's an [open-source](https://github.com/binwiederhier/ntfy), easy-to-use, HTTP-based notification service, and it can notify using mobile apps for Android ([Play](https://play.google.com/store/apps/details?id=io.heckel.ntfy) or [F-Droid](https://f-droid.org/en/packages/io.heckel.ntfy/)) or iOS ([App Store](https://apps.apple.com/us/app/ntfy/id1625396347)) or a [web app](https://ntfy.sh/app).
@@ -39,9 +37,7 @@ Self-hosting lets you [define ACLs](https://docs.ntfy.sh/config/#access-control)
 So let's take it for a spin!
 
 ### The Setup
-I'm going to use the [Docker setup](https://docs.ntfy.sh/install/#docker) on an existing cloud server and use [Caddy](https://caddyserver.com/) as a reverse proxy.[^caddy] I'll also configure ntfy to require authentication so that randos (hi!) won't be able to harass me with notifications.
-
-[^caddy]: I'm a big fan of Caddy. It may not be quite as capable/flexible as `nginx` but I love how simple it makes most configurations. Using Caddy in this will will not only enable HTTPS for the new web service but will also automatically obtain/renew LetsEncrypt certs so that I don't even have to think about it.
+I'm going to use the [Docker setup](https://docs.ntfy.sh/install/#docker) on a small cloud server and use [Caddy](https://caddyserver.com/) as a reverse proxy. I'll also configure ntfy to require authentication so that randos (*hi!*) won't be able to harass me with notifications.
 
 #### Ntfy in Docker
 So I'll start by creating a new directory at `/opt/ntfy/` to hold the goods, and create a compose config.
@@ -78,7 +74,7 @@ services:
     restart: unless-stopped
 ```
 
-This config will create/mount folders in the working directory to store the ntfy cache and config. It also maps `localhost:2586` to port `80` on the container, and enables a simple healthcheck against the ntfy health API endpoint. This will ensure that the service stays healthy.
+This config will create/mount folders in the working directory to store the ntfy cache and config. It also maps `localhost:2586` to port `80` on the container, and enables a simple healthcheck against the ntfy health API endpoint. This will ensure that the container will be automatically restarted if it stops working.
 
 
 I can go ahead and bring it up:
@@ -208,7 +204,7 @@ $ curl -H "Authorization: Bearer tk_mm8o6cwxmox11wrnh8miehtivxk7m" \
 ![Authenticated notification](authenticated_notification.png)
 
 
-### Use Cases
+### The Use Case
 Pushing notifications from the command line is neat, but how can I use this to actually make my life easier? Let's knock out quick quick configurations for a couple of the use cases I pitched at the top of the post: alerting me when a server has booted, and handling Home Assistant notifications in a better way.
 
 #### Notify on Boot
@@ -238,7 +234,7 @@ $ /usr/local/bin/ntfy_push.sh "Script Test" "This is a test from the magic scrip
 
 ![Script test](script_test.png)
 
-#### Wrapper for Specific Message
+##### Wrapper for Specific Message
 I don't know an easy way to tell a systemd service definition to pass arguments to a command, so I'll use a quick wrapper script to pass in the notification details:
 
 `/usr/local/bin/ntfy_boot_complete.sh`:
@@ -255,7 +251,7 @@ And this one should be executable as well:
 ```shell
 $ chmod +x /usr/local/bin/ntfy_boot_complete.sh
 ```
-#### Service Definition
+##### Service Definition
 Finally I can create and register the service definition so that the script will run at each system boot.
 
 `/etc/systemd/system/ntfy_boot_complete.service`:
@@ -281,7 +277,13 @@ And I can test it by rebooting my server. I should get a push notification short
 
 Nice! Now I won't have to continually ping a server to see if it's finished rebooting yet.
 
-### Home Assistant
+#### Home Assistant
+I've been using [Home Assistant](https://www.home-assistant.io/) for years, but have never been completely happy with the notifications built into the mobile app. Each instance of the app registers itself as a different notification endpoint, and it can become kind of cumbersome to keep those updated in the Home Assistant configuration.
+
+Enabling ntfy as a notification handler is pretty straight-forward, and it will allow me to receive alerts on all my various devices without even needing to have the Home Assistant app installed.
+
+##### Notify Configuration
+I'll add ntfy to Home Assistant by using the [RESTful Notifications](https://www.home-assistant.io/integrations/notify.rest/) integration. For that, I just need to update my instance's `configuration.yaml` to configure the connection.
 
 `configuration.yaml`:
 ```yaml
@@ -289,32 +291,41 @@ notify:
   - name: ntfy
     platform: rest
     method: POST_JSON
-    authentication: basic
-    username: writer
-    password: $PASSWORD
+    headers:
+      Authorization: !secret ntfy_token
     data:
-      topic: ping
+      topic: home_assistant
     title_param_name: title
     message_param_name: message
-    resource: https://ntfy.example.com
+    resource: https://ntfy.runtimeterror.dev
 ```
 
-`automations.yaml`:
+The `Authorization` line references a secret stored in `secrets.yaml`:
 ```yaml
-- alias: Water Leak Detection
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.water_6
-    - binary_sensor.water_3
-    - binary_sensor.water_5
-    from: 'off'
-    to: 'on'
-  condition: []
-  action:
-  - service: notify.ntfy
-    data:
-      title: Leak detected!
-      message: '{{ trigger.to_state.attributes.friendly_name }} detected.'
+ntfy_token: Bearer tk_mm8o6cwxmox11wrnh8miehtivxk7m
 ```
+
+After reloading the Home Assistant configuration, I can use **Developer Tools > Services** to send a test notification:
+
+![Home Assistant Test Send](ha_test_send.png)
+
+![Home Assistant Test Receive](ha_test_receive.png)
+
+
+##### Automation Configuration
+I'll use the Home Assistant UI to push a notification through ntfy if any of my three water leak sensors switch from `Dry` to `Wet`:
+
+![Home Assistant Automation Notify](ha_automation_notify.png)
+
+The business end of this is the service call at the end:
+```yaml
+service: notify.ntfy
+data:
+  title: Leak detected!
+  message: "{{ trigger.to_state.attributes.friendly_name }} detected."
+```
+
+### The Wrap-up
+That was pretty easy, right? It didn't take a lot of effort to set up a self-hosted notification server that can be triggered by a simple authenticated HTTP POST, and now my brain is fired up thinking about all the other ways I can use this to stay informed about what's happening on my various systems.
+
+Maybe my notes can help you get started with ntfy.sh, and I hope you'll let me know in the comments if you come up with any other killer use cases. Thanks for reading.
