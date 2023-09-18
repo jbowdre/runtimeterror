@@ -6,20 +6,20 @@
     {{ if .Params.date }}<table><tr><td>posted:</td><td>{{ $postDate }}</td></tr>{{- if ne $postDate $updateDate }}<tr><td>updated:</td><td>{{ $updateDate }}</td></tr>{{ end }}</table>{{ end }}
   </p>
   <p>
+  {{ if and (gt .WordCount 400 ) (gt (len .TableOfContents) 180) }}
+    <h2>On this page</h2>
+    {{ .TableOfContents }}
+    <hr>
+  {{ end }}
   {{- with .Params.tags -}}
     <a href="/tags">tags</a>:<br>
     {{- range . }}
       {{- $tag := urlize . -}}
       [<a href='{{ absLangURL (printf "tags/%s" $tag) }}' title="{{ . }}">{{ . }}</a>]
     {{- end }}
+    <hr>
   {{- end }}
   </p>
-  <hr>
-{{ end }}
-{{ if and (gt .WordCount 400 ) (gt (len .TableOfContents) 180) }}
-  <h2>On this page</h2>
-  {{ .TableOfContents }}
-  <hr>
 {{ end }}
 
 {{ if isset .Params "series" }}
