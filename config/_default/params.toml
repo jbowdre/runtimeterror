@@ -5,7 +5,7 @@ mainSections = ["posts"]
 fallBackOgImage = "images/broken-computer.svg"
 numberOfFeaturedPosts = 5
 numberOfRelatedPosts = 5
-author = "codesplice"
+author = "jbowdre"
 
 indexTitle = ".-. ..- -. - .. -- . - . .-. .-. --- .-."
 
