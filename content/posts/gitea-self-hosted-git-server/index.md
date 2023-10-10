@@ -16,6 +16,7 @@ thumbnail: "gitea-logo.png" # Sets thumbnail image appearing inside card on home
 codeLineNumbers: false # Override global value for showing of line numbers within code block.
 series: Projects
 tags:
+  - caddy
   - linux
   - docker
   - cloud
