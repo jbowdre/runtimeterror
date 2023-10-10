@@ -22,6 +22,7 @@ tags:
   - containers
   - chat
   - selfhosting
+  - caddy
 comment: true # Disable comment if false.
 ---
 **Non-technical users deserve private communications, too.**

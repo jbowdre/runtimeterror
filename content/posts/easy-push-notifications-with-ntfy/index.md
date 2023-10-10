@@ -11,6 +11,7 @@ tags:
   - android
   - api
   - automation
+  - caddy
   - containers
   - docker
   - homeassistant

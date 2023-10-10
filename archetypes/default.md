@@ -15,6 +15,7 @@ tags:
   - api
   - automation
   - availability
+  - caddy
   - certs
   - chat
   - chrome
