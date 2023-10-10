@@ -48,6 +48,7 @@ tags:
   - selfhosting
   - serverless
   - shell
+  - tailscale
   - tasker
   - terraform
   - vmware
