@@ -23,6 +23,7 @@ tags:
   - linux
   - networking
   - security
+  - tailscale
 comment: true # Disable comment if false.
 ---
 Not all that long ago, I shared about a [somewhat-complicated WireGuard VPN setup](/cloud-based-wireguard-vpn-remote-homelab-access/) that I had started using to replace my previous OpenVPN solution. I raved about WireGuard's speed, security, and flexible (if complex) Cryptokey Routing, but adding and managing peers with WireGuard is a fairly manual (and tedious) process. And while I thought I was pretty clever for using a WireGuard peer in GCP to maintain a secure tunnel into my home network without having to punch holes through my firewall, routing all my traffic through The Cloud wasn't really optimal[^egress_fees].
