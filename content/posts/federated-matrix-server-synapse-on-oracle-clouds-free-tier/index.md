@@ -5,6 +5,7 @@ thumbnail: 2xe34VJym.png
 usePageBundles: true
 lastmod: "2021-09-17"
 tags:
+- caddy
 - docker
 - linux
 - cloud

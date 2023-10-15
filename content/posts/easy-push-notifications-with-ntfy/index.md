@@ -11,6 +11,7 @@ tags:
   - android
   - api
   - automation
+  - caddy
   - containers
   - docker
   - homeassistant
@@ -20,7 +21,7 @@ tags:
   - shell
 ---
 ### The Pitch
-Wouldn't it be great if there was a simple way to send a notification to your phone(s) with a simple `curl` call? Then you could get notified when a script completes, or a server reboots, a user logs in to a system, or a sensor connected to Home Assistant changes state. How great would that be??
+Wouldn't it be great if there was a simple way to send a notification to your phone(s) with just a `curl` call? Then you could get notified when a script completes, a server reboots, a user logs in to a system, or a sensor connected to Home Assistant changes state. How great would that be??
 
 [ntfy.sh](https://ntfy.sh) (pronounced *notify*) provides just that. It's an [open-source](https://github.com/binwiederhier/ntfy), easy-to-use, HTTP-based notification service, and it can notify using mobile apps for Android ([Play](https://play.google.com/store/apps/details?id=io.heckel.ntfy) or [F-Droid](https://f-droid.org/en/packages/io.heckel.ntfy/)) or iOS ([App Store](https://apps.apple.com/us/app/ntfy/id1625396347)) or a [web app](https://ntfy.sh/app).
 
