@@ -15,6 +15,7 @@ tags:
   - api
   - automation
   - availability
+  - caddy
   - certs
   - chat
   - chrome
@@ -47,6 +48,7 @@ tags:
   - selfhosting
   - serverless
   - shell
+  - tailscale
   - tasker
   - terraform
   - vmware
