@@ -11,12 +11,12 @@
   codeFences = true
   guessSyntax = true
   hl_Lines = ''
-  lineAnchors = ''
-  lineNos = true
+  lineNos = false
   lineNoStart = 1
   lineNumbersInTable = false
-  noClasses = true
+  noClasses = false
   tabwidth = 2
+  style = 'monokai'
 
 # Table of contents
 # Add toc = true to content front matter to enable
