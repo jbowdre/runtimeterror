@@ -37,43 +37,43 @@ You're ready to roll once the Terminal opens and gives you a prompt:
 ![Hello, Penguin!](0-h1flLZs.png)
 
 Your first action should be to go ahead and install any patches:
-```shell
+```command
 sudo apt update
 sudo apt upgrade
 ```
 
 ### Zsh, Oh My Zsh, and powerlevel10k theme
 I've been really getting into this shell setup recently so let's go on and make things comfortable before we move on too much further. Getting `zsh` is straight forward:
-```shell
+```command
 sudo apt install zsh
 ```
 Go ahead and launch `zsh` (by typing '`zsh`') and go through the initial setup wizard to configure preferences for things like history, completion, and other settings. I leave history on the defaults, enable the default completion options, switch the command-line editor to `vi`-style, and enable both `autocd` and `appendhistory`. Once you're back at the (new) `penguin%` prompt we can move on to installing the [Oh My Zsh plugin framework](https://github.com/ohmyzsh/ohmyzsh).
 
 Just grab the installer script like so:
-```shell
+```command
 wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
 ```
 Review it if you'd like (and you should! *Always* review code before running it!!), and then execute it:
-```shell
+```command
 sh install.sh
 ```
 When asked if you'd like to change your default shell to `zsh` now, **say no**. This is because it will prompt for your password, but you probably don't have a password set on your brand-new Linux (Beta) account and that just makes things complicated. We'll clear this up later, but for now just check out that slick new prompt:
 ![Oh my!](8q-WT0AyC.png)
 
 Oh My Zsh is pretty handy because you can easily enable [additional plugins](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins) to make your prompt behave exactly the way you want it to. Let's spruce it up even more with the [powerlevel10k theme](https://github.com/romkatv/powerlevel10k)!
-```shell
+```command
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 ```
 Now we just need to edit `~/.zshrc` to point to the new theme:
-```shell
+```command
 sed -i s/^ZSH_THEME=.\*$/ZSH_THEME='"powerlevel10k\/powerlevel10k"'/ ~/.zshrc
 ```
 We'll need to launch another instance of `zsh` for the theme change to take effect so first lets go ahead and manually set `zsh` as our default shell. We can use `sudo` to get around the whole "don't have a password set" inconvenience:
-```shell
+```command
 sudo chsh -s /bin/zsh [username]
 ```
 Now close out the terminal and open it again, and you should be met by the powerlevel10k configurator which will walk you through getting things set up:
-![pwerlevel10k configurator](K1ScSuWcg.png)
+![powerlevel10k configurator](K1ScSuWcg.png)
 
 This theme is crazy-configurable, but fortunately the configurator wizard does a great job of helping you choose the options that work best for you.
 I pick the Classic prompt style, Unicode character set, Dark prompt color, 24-hour time, Angled separators, Sharp prompt heads, Flat prompt tails, 2-line prompt height, Dotted prompt connection, Right prompt frame, Sparse prompt spacing, Fluent prompt flow, Enabled transient prompt, Verbose instant prompt, and (finally) Yes to apply the changes.
@@ -82,7 +82,7 @@ Looking good!
 
 ### Visual Studio Code
 I'll need to do some light development work so VS Code is next on the hit list. You can grab the installer [here](https://code.visualstudio.com/Download#) or just copy/paste the following to stay in the Terminal. Definitely be sure to get the arm64 version!
-```shell
+```command
 curl -L https://aka.ms/linux-arm64-deb > code_arm64.deb
 sudo apt install ./code_arm64.deb
 ```
@@ -104,7 +104,7 @@ Once you connect the phone to Linux, check the phone to approve the debugging co
 I'm working on setting up a [VMware homelab on an Intel NUC 9](https://twitter.com/johndotbowdre/status/1317558182936563714) so being able to automate things with PowerCLI will be handy.
 
 PowerShell for ARM is still in an early stage so while [it is supported](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.2#support-for-arm-processors) it must be installed manually. Microsoft has instructions for installing PowerShell from binary archives [here](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.2#linux), and I grabbed the latest `-linux-arm64.tar.gz` release I could find [here](https://github.com/PowerShell/PowerShell/releases).
-```shell
+```command
 curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.5/powershell-7.2.0-preview.5-linux-arm64.tar.gz
 sudo mkdir -p /opt/microsoft/powershell/7
 sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7
@@ -124,7 +124,7 @@ Woot!
 The Linux (Beta) environment consists of a hardened virtual machine (named `termina`) running an LXC Debian container (named `penguin`). Know what would be even more fun? Let's run some other containers inside our container!
 
 The docker installation has a few prerequisites:
-```shell
+```command-session
 sudo apt install \
     apt-transport-https \
     ca-certificates \
@@ -133,18 +133,18 @@ sudo apt install \
     software-properties-common
 ```
 Then we need to grab the Docker repo key:
-```shell
+```command
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
 ```
 And then we can add the repo:
-```shell
+```command-session
 sudo add-apt-repository \
    "deb [arch=arm64] https://download.docker.com/linux/debian \
    $(lsb_release -cs) \
    stable"
 ```
 And finally update the package cache and install `docker` and its friends:
-```shell
+```command
 sudo apt update
 sudo apt install docker-ce docker-ce-cli containerd.io
 ```
@@ -163,13 +163,13 @@ So while I can use the Duet for designing 3D models, I won't be able to actually
 I came across [a Reddit post](https://www.reddit.com/r/Crostini/comments/jnbqv3/successfully_running_jupyter_notebook_on_samsung/) today describing how to install `conda` and get a Jupyter Notebook running on arm64 so I had to give it a try. It actually wasn't that bad!
 
 The key is to grab the appropriate version of [conda Miniforge](https://github.com/conda-forge/miniforge), make it executable, and run the installer:
-```shell
+```command
 wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-aarch64.sh
 chmod +x Miniforge3-Linux-aarch64.sh
 ./Miniforge3-Linux-aarch64.sh
 ```
 Exit the terminal and relaunch it, and then install Jupyter:
-```shell
+```command
 conda install -c conda-forge notebook
 ```
 

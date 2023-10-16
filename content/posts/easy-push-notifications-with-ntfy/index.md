@@ -42,13 +42,13 @@ I'm going to use the [Docker setup](https://docs.ntfy.sh/install/#docker) on a s
 #### Ntfy in Docker
 So I'll start by creating a new directory at `/opt/ntfy/` to hold the goods, and create a compose config.
 
-```shell
-$ sudo mkdir -p /opt/ntfy
-$ sudo vim /opt/ntfy/docker-compose.yml
+```command
+sudo mkdir -p /opt/ntfy
+sudo vim /opt/ntfy/docker-compose.yml
 ```
 
-`/opt/ntfy/docker-compose.yml`:
-```yaml
+```yaml {linenos=true}
+# /opt/ntfy/docker-compose.yml
 version: "2.3"
 
 services:
@@ -78,8 +78,8 @@ This config will create/mount folders in the working directory to store the ntfy
 
 
 I can go ahead and bring it up:
-```shell
-$ sudo docker-compose up -d
+```command-session
+sudo docker-compose up -d
 Creating network "ntfy_default" with the default driver
 Pulling ntfy (binwiederhier/ntfy:)...
 latest: Pulling from binwiederhier/ntfy
@@ -92,8 +92,8 @@ Creating ntfy ... done
 
 #### Caddy Reverse Proxy
 I'll also want to add [the following](https://docs.ntfy.sh/config/#nginxapache2caddy) to my Caddy config:
-`/etc/caddy/Caddyfile`:
-```
+```caddyfile {linenos=true}
+# /etc/caddy/Caddyfile
 ntfy.runtimeterror.dev, http://ntfy.runtimeterror.dev {
   reverse_proxy localhost:2586
 
@@ -109,8 +109,8 @@ ntfy.runtimeterror.dev, http://ntfy.runtimeterror.dev {
 ```
 
 And I'll restart Caddy to apply the config:
-```shell
-$ sudo systemctl restart caddy
+```command
+sudo systemctl restart caddy
 ```
 
 Now I can point my browser to `https://ntfy.runtimeterror.dev` and see the web interface:
@@ -121,8 +121,8 @@ I can subscribe to a new topic:
 ![Subscribing to a public topic](subscribe_public_topic.png)
 
 And publish a message to it:
-```shell
-$ curl -d "Hi" https://ntfy.runtimeterror.dev/testy
+```command-session
+curl -d "Hi" https://ntfy.runtimeterror.dev/testy
 {"id":"80bUl6cKwgBP","time":1694981305,"expires":1695024505,"event":"message","topic":"testy","message":"Hi"}
 ```
 
@@ -134,16 +134,16 @@ Which will then show up as a notification in my browser:
 So now I've got my own ntfy server, and I've verified that it works for unauthenticated notifications. I don't really want to operate *anything* on the internet without requiring authentication, though, so I'm going to configure ntfy to prevent unauthenticated reads and writes.
 
 I'll start by creating a `server.yml` config file which will be mounted into the container. This config will specify where to store the user database and switch the default ACL to `deny-all`:
-`/opt/ntfy/etc/ntfy/server.yml`:
 ```yaml
+# /opt/ntfy/etc/ntfy/server.yml
 auth-file: "/var/lib/ntfy/user.db"
 auth-default-access: "deny-all"
 base-url: "https://ntfy.runtimeterror.dev"
 ```
 
 I can then restart the container, and try again to subscribe to the same (or any other topic):
-```shell
-$ sudo docker-compose down && sudo docker-compose up -d
+```command
+sudo docker-compose down && sudo docker-compose up -d
 
 ```
 
@@ -151,31 +151,35 @@ Now I get prompted to log in:
 ![Login prompt](login_required.png)
 
 I'll need to use the ntfy CLI to create/manage entries in the user DB, and that means first grabbing a shell inside the container:
-```shell
-$ sudo docker exec -it ntfy /bin/sh
+```command
+sudo docker exec -it ntfy /bin/sh
 ```
 
 For now, I'm going to create three users: one as an administrator, one as a "writer", and one as a "reader". I'll be prompted for a password for each:
-```shell
-$ ntfy user add --role=admin administrator
+```command-session
+ntfy user add --role=admin administrator
 user administrator added with role admin
-$ ntfy user add writer
+```
+```command-session
+ntfy user add writer
 user writer added with role user
-$ ntfy user add reader
+```
+```command-session
+ntfy user add reader
 user reader added with role user
 ```
 
 The admin user has global read+write access, but right now the other two can't do anything. Let's make it so that `writer` can write to all topics, and `reader` can read from all topics:
-```shell
-$ ntfy access writer '*' write
-$ ntfy access reader '*' read
+```command
+ntfy access writer '*' write
+ntfy access reader '*' read
 ```
 
 I could lock these down further by selecting specific topic names instead of `'*'` but this will do fine for now.
 
 Let's go ahead and verify the access as well:
-```shell
-$ ntfy access
+```command-session
+ntfy access
 user administrator (role: admin, tier: none)
 - read-write access to all topics (admin role)
 user reader (role: user, tier: none)
@@ -188,16 +192,16 @@ user * (role: anonymous, tier: none)
 ```
 
 While I'm at it, I also want to configure an access token to be used with the `writer` account. I'll be able to use that instead of username+password when publishing messages.
-```shell
-$ ntfy token add writer
+```command-session
+ntfy token add writer
 token tk_mm8o6cwxmox11wrnh8miehtivxk7m created for user writer, never expires
 ```
 
 I can go back to the web, subscribe to the `testy` topic again using the `reader` credentials, and then test sending an authenticated notification with `curl`:
-```shell
-$ curl -H "Authorization: Bearer tk_mm8o6cwxmox11wrnh8miehtivxk7m" \
-  -d "Once more, with auth!" \
-  https://ntfy.runtimeterror.dev/testy
+```command-session
+curl -H "Authorization: Bearer tk_mm8o6cwxmox11wrnh8miehtivxk7m" \
+    -d "Once more, with auth!" \
+    https://ntfy.runtimeterror.dev/testy
 {"id":"0dmX9emtehHe","time":1694987274,"expires":1695030474,"event":"message","topic":"testy","message":"Once more, with auth!"}
 ```
 
@@ -227,9 +231,9 @@ curl \
 Note that I'm using a new topic name now: `server_alerts`. Topics are automatically created when messages are posted to them. I just need to make sure to subscribe to the topic in the web UI (or mobile app) so that I can receive these notifications.
 
 Okay, now let's make it executable and then give it a quick test:
-```shell
-$ chmod +x /usr/local/bin/ntfy_push.sh
-$ /usr/local/bin/ntfy_push.sh "Script Test" "This is a test from the magic script I just wrote."
+```command
+chmod +x /usr/local/bin/ntfy_push.sh
+/usr/local/bin/ntfy_push.sh "Script Test" "This is a test from the magic script I just wrote."
 ```
 
 ![Script test](script_test.png)
@@ -248,14 +252,14 @@ MESSAGE="System boot complete"
 ```
 
 And this one should be executable as well:
-```shell
-$ chmod +x /usr/local/bin/ntfy_boot_complete.sh
+```command
+chmod +x /usr/local/bin/ntfy_boot_complete.sh
 ```
 ##### Service Definition
 Finally I can create and register the service definition so that the script will run at each system boot.
 
 `/etc/systemd/system/ntfy_boot_complete.service`:
-```
+```cfg
 [Unit]
 After=network.target
 
@@ -266,7 +270,7 @@ ExecStart=/usr/local/bin/ntfy_boot_complete.sh
 WantedBy=default.target
 ```
 
-```shell
+```command
 sudo systemctl daemon-reload
 sudo systemctl enable --now ntfy_boot_complete.service
 ```
@@ -285,8 +289,8 @@ Enabling ntfy as a notification handler is pretty straight-forward, and it will 
 ##### Notify Configuration
 I'll add ntfy to Home Assistant by using the [RESTful Notifications](https://www.home-assistant.io/integrations/notify.rest/) integration. For that, I just need to update my instance's `configuration.yaml` to configure the connection.
 
-`configuration.yaml`:
-```yaml
+```yaml {linenos=true}
+# configuration.yaml
 notify:
   - name: ntfy
     platform: rest
@@ -302,6 +306,7 @@ notify:
 
 The `Authorization` line references a secret stored in `secrets.yaml`:
 ```yaml
+# secrets.yaml
 ntfy_token: Bearer tk_mm8o6cwxmox11wrnh8miehtivxk7m
 ```
 

@@ -11,7 +11,7 @@ tags:
 title: Virtually Potato migrated to GitHub Pages!
 ---
 
-After a bit less than a year of hosting my little technical blog with [Hashnode](https://hashnode.com), I spent a few days [migrating the content](/script-to-update-image-embed-links-in-markdown-files) over to a new format hosted with [GitHub Pages](https://pages.github.com/). 
+After a bit less than a year of hosting my little technical blog with [Hashnode](https://hashnode.com), I spent a few days [migrating the content](/script-to-update-image-embed-links-in-markdown-files) over to a new format hosted with [GitHub Pages](https://pages.github.com/).
 
 ![Party!](20210720-party.gif)
 
@@ -25,36 +25,36 @@ I knew about GitHub Pages, but had never seriously looked into it. Once I did, t
 I found that the quite-popular [Minimal Mistakes](https://mademistakes.com/work/minimal-mistakes-jekyll-theme/) theme for Jekyll offers a [remote theme starter](https://github.com/mmistakes/mm-github-pages-starter/generate) that can be used to quickly get things going. I just used that generator to spawn a new repository in my GitHub account ([`jbowdre.github.io`](https://github.com/jbowdre/jbowdre.github.io)). And that was it - I had a starter GitHub Pages-hosted Jekyll-powered static site with an elegant theme applied. I could even make changes to the various configuration and sample post files, point any browser to `https://jbowdre.github.io`, and see the results almost immediately. I got to work digging through the lengthy [configuration documentation](https://mmistakes.github.io/minimal-mistakes/docs/configuration/) to start making the site my own, like [connecting with my custom domain](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site) and enabling [GitHub Issue-based comments](https://github.com/apps/utterances).
 
 #### Working locally
-A quick `git clone` operation was sufficient to create a local copy of my new site in my Lenovo Chromebook Duet's [Linux environment](/setting-up-linux-on-a-new-lenovo-chromebook-duet-bonus-arm64-complications). That lets me easily create and edit Markdown posts or configuration files with VS Code, commit them to the local copy of the repo, and then push them back to GitHub when I'm ready to publish the changes. 
+A quick `git clone` operation was sufficient to create a local copy of my new site in my Lenovo Chromebook Duet's [Linux environment](/setting-up-linux-on-a-new-lenovo-chromebook-duet-bonus-arm64-complications). That lets me easily create and edit Markdown posts or configuration files with VS Code, commit them to the local copy of the repo, and then push them back to GitHub when I'm ready to publish the changes.
 
 In order to view the local changes, I needed to install Jekyll locally as well. I started by installing Ruby and other prerequisites:
-```shell
+```command
 sudo apt-get install ruby-full build-essential zlib1g-dev
 ```
 
 I added the following to my `~/.zshrc` file so that the gems would be installed under my home directory rather than somewhere more privileged:
-```shell
+```command
 export GEM_HOME="$HOME/gems"
 export PATH="$HOME/gems/bin:$PATH"
 ```
 
-And then ran `source ~/.zshrc` so the change would take immediate effect. 
+And then ran `source ~/.zshrc` so the change would take immediate effect.
 
 I could then install Jekyll:
-```shell
+```command
 gem install jekyll bundler
 ```
 
 I then `cd`ed to the local repo and ran `bundle install` to also load up the components specified in the repo's `Gemfile`.
 
 And, finally, I can run this to start up the local Jekyll server instance:
-```shell
-❯ bundle exec jekyll serve -l --drafts
+```command-session
+bundle exec jekyll serve -l --drafts
 Configuration file: /home/jbowdre/projects/jbowdre.github.io/_config.yml
             Source: /home/jbowdre/projects/jbowdre.github.io
        Destination: /home/jbowdre/projects/jbowdre.github.io/_site
  Incremental build: enabled
-      Generating... 
+      Generating...
       Remote Theme: Using theme mmistakes/minimal-mistakes
        Jekyll Feed: Generating feed for posts
    GitHub Metadata: No GitHub API authentication could be found. Some fields may be missing or have incorrect data.
@@ -71,4 +71,4 @@ And there it is!
 ### `git push` time
 Alright that's enough rambling for now. I'm very happy with this new setup, particularly with the automatically-generated Table of Contents to help folks navigate some of my longer posts. (I can't believe I was having to piece those together manually in this blog's previous iteration!)
 
-I'll continue to make some additional tweaks in the coming weeks but for now I'll `git push` this post and get back to documenting my never-ending [vRA project](/series/vra8). 
+I'll continue to make some additional tweaks in the coming weeks but for now I'll `git push` this post and get back to documenting my never-ending [vRA project](/series/vra8).

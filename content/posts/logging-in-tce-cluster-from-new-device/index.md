@@ -24,7 +24,7 @@ comment: true # Disable comment if false.
 When I [set up my Tanzu Community Edition environment](/tanzu-community-edition-k8s-homelab/), I did so from a Linux VM since the containerized Linux environment on my Chromebook doesn't support the `kind` bootstrap cluster used for the deployment. But now that the Kubernetes cluster is up and running, I'd like to be able to connect to it directly without the aid of a jumpbox. How do I get the appropriate cluster configuration over to my Chromebook?
 
 The Tanzu CLI actually makes that pretty easy - once I figured out the appropriate incantation. I just needed to use the `tanzu management-cluster kubeconfig get` command on my Linux VM to export the `kubeconfig` of my management (`tce-mgmt`) cluster to a file:
-```shell
+```command
 tanzu management-cluster kubeconfig get --admin --export-file tce-mgmt-kubeconfig.yaml
 ```
 
@@ -32,8 +32,8 @@ I then used `scp` to pull the file from the VM into my local Linux environment, 
 
 Now I'm ready to import the configuration locally with `tanzu login` on my Chromebook:
 
-```shell
-❯ tanzu login --kubeconfig ~/projects/tanzu-homelab/tanzu-setup/tce-mgmt-kubeconfig.yaml --context tce-mgmt-admin@tce-mgmt --name tce-mgmt
+```command-session
+tanzu login --kubeconfig ~/projects/tanzu-homelab/tanzu-setup/tce-mgmt-kubeconfig.yaml --context tce-mgmt-admin@tce-mgmt --name tce-mgmt
 ✔  successfully logged in to management cluster using the kubeconfig tce-mgmt
 ```
 
@@ -42,12 +42,13 @@ Pass in the full path to the exported kubeconfig file. This will help the Tanzu 
 {{% /notice %}}
 
 Even though that's just importing the management cluster it actually grants access to both the management and workload clusters:
-```shell
-❯ tanzu cluster list
+```command-session
+tanzu cluster list
   NAME      NAMESPACE  STATUS   CONTROLPLANE  WORKERS  KUBERNETES        ROLES   PLAN
   tce-work  default    running  1/1           1/1      v1.21.2+vmware.1  <none>  dev
-
-❯ tanzu cluster get tce-work
+```
+```command-session
+tanzu cluster get tce-work
   NAME      NAMESPACE  STATUS   CONTROLPLANE  WORKERS  KUBERNETES        ROLES
   tce-work  default    running  1/1           1/1      v1.21.2+vmware.1  <none>
 ℹ
@@ -62,8 +63,9 @@ NAME                                                         READY  SEVERITY  RE
 └─Workers
   └─MachineDeployment/tce-work-md-0
     └─Machine/tce-work-md-0-687444b744-crc9q                 True                     24h
-
-❯ tanzu management-cluster get
+```
+```command-session
+tanzu management-cluster get
   NAME      NAMESPACE   STATUS   CONTROLPLANE  WORKERS  KUBERNETES        ROLES
   tce-mgmt  tkg-system  running  1/1           1/1      v1.21.2+vmware.1  management
 
@@ -90,24 +92,26 @@ Providers:
 ```
 
 And I can then tell `kubectl` about the two clusters:
-```shell
-❯ tanzu management-cluster kubeconfig get tce-mgmt --admin
+```command-session
+tanzu management-cluster kubeconfig get tce-mgmt --admin
 Credentials of cluster 'tce-mgmt' have been saved
 You can now access the cluster by running 'kubectl config use-context tce-mgmt-admin@tce-mgmt'
-
-❯ tanzu cluster kubeconfig get tce-work --admin
+```
+```command-session
+tanzu cluster kubeconfig get tce-work --admin
 Credentials of cluster 'tce-work' have been saved
 You can now access the cluster by running 'kubectl config use-context tce-work-admin@tce-work'
 ```
 
 And sure enough, there are my contexts:
-```shell
-❯ kubectl config get-contexts
+```command-session
+kubectl config get-contexts
 CURRENT   NAME                      CLUSTER    AUTHINFO         NAMESPACE
           tce-mgmt-admin@tce-mgmt   tce-mgmt   tce-mgmt-admin
 *         tce-work-admin@tce-work   tce-work   tce-work-admin
-
-❯ kubectl get nodes -o wide
+```
+```command-session
+kubectl get nodes -o wide
 NAME                             STATUS   ROLES                  AGE   VERSION            INTERNAL-IP     EXTERNAL-IP     OS-IMAGE                 KERNEL-VERSION   CONTAINER-RUNTIME
 tce-work-control-plane-vc2pb     Ready    control-plane,master   23h   v1.21.2+vmware.1   192.168.1.132   192.168.1.132   VMware Photon OS/Linux   4.19.198-1.ph3   containerd://1.4.6
 tce-work-md-0-687444b744-crc9q   Ready    <none>                 23h   v1.21.2+vmware.1   192.168.1.133   192.168.1.133   VMware Photon OS/Linux   4.19.198-1.ph3   containerd://1.4.6

@@ -30,20 +30,20 @@ Here's a condensed list of the [steps that I took to manually install Tailscale]
 
 1. Visit [https://pkgs.tailscale.com/stable/#static](https://pkgs.tailscale.com/stable/#static) to see the latest stable version for your system architecture, and copy the URL. For instance, I'll be using `https://pkgs.tailscale.com/stable/tailscale_1.34.1_arm64.tgz`.
 2. Download and extract it to the system:
-```shell
+```command
 wget https://pkgs.tailscale.com/stable/tailscale_1.34.1_arm64.tgz
 tar xvf tailscale_1.34.1_arm64.tgz
 cd tailscale_1.34.1_arm64/
 ```
 3. Install the binaries and service files:
-```shell
+```command
 sudo install -m 755 tailscale /usr/bin/
 sudo install -m 755 tailscaled /usr/sbin/
 sudo install -m 644 systemd/tailscaled.defaults /etc/default/tailscaled
 sudo install -m 644 systemd/tailscaled.service /usr/lib/systemd/system/
 ```
 4. Start the service:
-```shell
+```command
 sudo systemctl enable tailscaled
 sudo systemctl start tailscaled
 ```

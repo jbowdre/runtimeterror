@@ -54,7 +54,7 @@ The first step in getting up and running with Tailscale is to sign up at [https:
 
 Once you have a Tailscale account, you're ready to install the Tailscale client. The [download page](https://tailscale.com/download) outlines how to install it on various platforms, and also provides a handy-dandy one-liner to install it on Linux:
 
-```bash
+```command
 curl -fsSL https://tailscale.com/install.sh | sh
 ```
 
@@ -71,8 +71,8 @@ There are also Tailscale apps available for [iOS](https://tailscale.com/download
 #### Basic `tailscale up`
 Running `sudo tailscale up` then reveals the next step:
 
-```bash
-❯ sudo tailscale up
+```command-session
+sudo tailscale up
 
 To authenticate, visit:
 
@@ -83,7 +83,7 @@ I can copy that address into a browser and I'll get prompted to log in to my Tai
 
 That was pretty easy, right? But what about if I can't easily get to a web browser from the terminal session on a certain device? No worries, `tailscale up` has a flag for that:
 
-```bash
+```command
 sudo tailscale up --qr
 ```
 
@@ -93,28 +93,28 @@ That will convert the URL to a QR code that I can scan from my phone.
 There are a few additional flags that can be useful under certain situations:
 
 - `--advertise-exit-node` to tell the tailnet that this could be used as an exit node for internet traffic
-```bash
+```command
 sudo tailscale up --advertise-exit-node
 ```
 - `--advertise-routes` to let the node perform subnet routing functions to provide connectivity to specified local subnets
-```bash
+```command
 sudo tailscale up --advertise-routes "192.168.1.0/24,172.16.0.0/16"
 ```
 - `--advertise-tags`[^tags] to associate the node with certain tags for ACL purposes (like `tag:home` to identify stuff in my home network and `tag:cloud` to label external cloud-hosted resources)
-```bash
+```command
 sudo tailscale up --advertise-tags "tag:cloud"
 ```
 - `--hostname` to manually specific a hostname to use within the tailnet
-```bash
+```command
 sudo tailscale up --hostname "tailnode"
 ```
 - `--shields-up` to block incoming traffic
-```bash
+```command
 sudo tailscale up --shields-up
 ```
 
 These flags can also be combined with each other:
-```bash
+```command
 sudo tailscale up --hostname "tailnode" --advertise-exit-node --qr
 ```
 
@@ -122,14 +122,14 @@ sudo tailscale up --hostname "tailnode" --advertise-exit-node --qr
 
 #### Sidebar: Tailscale on VyOS
 Getting Tailscale on [my VyOS virtual router](/vmware-home-lab-on-intel-nuc-9/#vyos) was unfortunately a little more involved than [leveraging the built-in WireGuard capability](/cloud-based-wireguard-vpn-remote-homelab-access/#configure-vyos-router-as-wireguard-peer). I found the [vyos-tailscale](https://github.com/DMarby/vyos-tailscale) project to help with building a customized VyOS installation ISO with the `tailscaled` daemon added in. I was then able to copy the ISO over to my VyOS instance and install it as if it were a [standard upgrade](https://docs.vyos.io/en/latest/installation/update.html). I could then bring up the interface, advertise my home networks, and make it available as an exit node with:
-```bash
+```command
 sudo tailscale up --advertise-exit-node --advertise-routes "192.168.1.0/24,172.16.0.0/16"
 ```
 
 #### Other `tailscale` commands
 Once there are a few members, I can use the `tailscale status` command to see a quick overview of the tailnet:
-```bash
-❯ tailscale status
+```command-session
+tailscale status
 100.115.115.39  deb01                john@        linux   -
 100.118.115.69  ipam                 john@        linux   -
 100.116.90.109  johns-iphone         john@        iOS     -
@@ -145,8 +145,8 @@ Without doing any other configuration beyond just installing Tailscale and conne
 
 `tailscale ping` lets me check the latency between two Tailscale nodes at the Tailscale layer; the first couple of pings will likely be delivered through a nearby DERP server until the NAT traversal magic is able to kick in:
 
-```bash
-❯ tailscale ping snikket
+```command-session
+tailscale ping snikket
 pong from snikket (100.75.110.50) via DERP(nyc) in 34ms
 pong from snikket (100.75.110.50) via DERP(nyc) in 35ms
 pong from snikket (100.75.110.50) via DERP(nyc) in 35ms
@@ -155,8 +155,8 @@ pong from snikket (100.75.110.50) via [PUBLIC_IP]:41641 in 23ms
 
 The `tailscale netcheck` command will give me some details about my local Tailscale node, like whether it's able to pass UDP traffic, which DERP server is the closest, and the latency to all Tailscale DERP servers:
 
-```bash
-❯ tailscale netcheck
+```command-session
+tailscale netcheck
 
 Report:
         * UDP: true
@@ -244,7 +244,7 @@ This ACL file uses a format called [HuJSON](https://github.com/tailscale/hujson)
 
 I'm going to start by creating a group called `admins` and add myself to that group. This isn't strictly necessary since I am the only user in the organization, but I feel like it's a nice practice anyway. Then I'll add the `tagOwners` section to map each tag to its owner, the new group I just created:
 
-```json
+```json {linenos=true}
 {
   "groups": {
     "group:admins": ["john@example.com"],
@@ -276,7 +276,7 @@ Each ACL rule consists of four named parts:
 4. `ports` - a list of destinations (and optional ports).
 
 So I'll add this to the top of my policy file:
-```json
+```json {linenos=true}
 {
   "acls": [
     {
@@ -305,7 +305,7 @@ Earlier I configured Tailscale to force all nodes to use my home DNS server for 
 2. Add a new ACL rule to allow DNS traffic to reach the DNS server from the cloud.
 
 Option 2 sounds better to me so that's what I'm going to do. Instead of putting an IP address directly into the ACL rule I'd rather use a hostname, and unfortunately the Tailscale host names aren't available within ACL rule declarations. But I can define a host alias in the policy to map a friendly name to the IP:
-```json
+```json {linenos=true}
 {
   "hosts": {
     "win01": "100.124.116.125"
@@ -314,7 +314,7 @@ Option 2 sounds better to me so that's what I'm going to do. Instead of putting 
 ```
 
 And I can then create a new rule for `"users": ["tag:cloud"]` to add an exception for `win01:53`:
-```json
+```json {linenos=true}
 {
   "acls": [
     {
@@ -331,7 +331,7 @@ And I can then create a new rule for `"users": ["tag:cloud"]` to add an exceptio
 
 And that gets DNS working again for my cloud servers while still serving the results from my NextDNS configuration. Here's the complete policy configuration:
 
-```json
+```json {linenos=true}
 {
   "acls": [
     {

@@ -12,7 +12,7 @@ title: VMware Home Lab on Intel NUC 9
 featured: false
 ---
 
-I picked up an Intel NUC 9 Extreme kit a few months back (thanks, VMware!) and have been slowly tinkering with turning it into an extremely capable self-contained home lab environment. I'm pretty happy with where things sit right now so figured it was about time to start documenting and sharing what I've done. 
+I picked up an Intel NUC 9 Extreme kit a few months back (thanks, VMware!) and have been slowly tinkering with turning it into an extremely capable self-contained home lab environment. I'm pretty happy with where things sit right now so figured it was about time to start documenting and sharing what I've done.
 
 ![But boy would I love some more RAM](SIDah-Lag.png)
 
@@ -26,7 +26,7 @@ I picked up an Intel NUC 9 Extreme kit a few months back (thanks, VMware!) and h
 The NUC runs ESXi 7.0u1 and currently hosts the following:
 - vCenter Server 7.0u1
 - Windows 2019 domain controller
--  [VyOS router](https://vyos.io/) 
+-  [VyOS router](https://vyos.io/)
 - [Home Assistant OS 5.9](https://www.home-assistant.io/hassio/installation/)
 - vRealize Lifecycle Manager 8.2
 - vRealize Identity Manager 3.3.2
@@ -41,7 +41,7 @@ The NUC connects to my home network through its onboard gigabit Ethernet interfa
 
 I used the Chromebook Recovery Utility to write the ESXi installer ISO to *another* USB drive (how-to [here](/burn-an-iso-to-usb-with-the-chromebook-recovery-utility)), inserted that bootable drive to a port on the front of the NUC, and booted the NUC from the drive. Installing ESXi 7.0u1 was as easy as it could possibly be. All hardware was automatically detected and the appropriate drivers loaded. Once the host booted up, I used the DCUI to configure a static IP address (`192.168.1.11`). I then shut down the NUC, disconnected the keyboard and monitor, and moved it into the cabinet where it will live out its headless existence.
 
-I was then able to point my web browser to `https://192.168.1.11/ui/` to log in to the host and get down to business. First stop: networking. For now, I only need a single standard switch (`vSwitch0`) with two portgroups: one for the host's vmkernel interface, and the other for the VMs (including the nested ESXi appliances) that are going to run directly on this physical host. The one "gotcha" when working with a nested environment is that you'll need to edit the virtual switch's security settings to "Allow promiscuous mode" and "Allow forged transmits" (for reasons described [here](https://williamlam.com/2013/11/why-is-promiscuous-mode-forged.html)). 
+I was then able to point my web browser to `https://192.168.1.11/ui/` to log in to the host and get down to business. First stop: networking. For now, I only need a single standard switch (`vSwitch0`) with two portgroups: one for the host's vmkernel interface, and the other for the VMs (including the nested ESXi appliances) that are going to run directly on this physical host. The one "gotcha" when working with a nested environment is that you'll need to edit the virtual switch's security settings to "Allow promiscuous mode" and "Allow forged transmits" (for reasons described [here](https://williamlam.com/2013/11/why-is-promiscuous-mode-forged.html)).
 ![Allowing promiscuous mode and forged transmits](w0HeFSi7Q.png)
 
 I created a single datastore to span the entirety of that 1TB NVMe drive. The nested ESXi hosts will use VMDKs stored here to provide storage to the nested VMs.
@@ -77,7 +77,7 @@ My home network uses the generic `192.168.1.0/24` address space, with internet r
 Of course, not everything that I'm going to deploy in the lab will need to be accessible from outside the lab environment. This goes for obvious things like the vMotion and vSAN networks of the nested ESXi hosts, but it will also be useful to have internal networks that can be used by VMs provisioned by vRA. So I'll be creating these networks:
 
 | VLAN ID | Network | Purpose |
-| ---- | ---- | ---- | 
+| ---- | ---- | ---- |
 | 1610 | `172.16.10.0/24` | Management |
 | 1620 | `172.16.20.0/24` | Servers-1 |
 | 1630 | `172.16.30.0/24` | Servers-2 |
@@ -85,7 +85,7 @@ Of course, not everything that I'm going to deploy in the lab will need to be ac
 | 1699 | `172.16.99.0/24` | vMotion |
 
 #### vSwitch1
-I'll start by adding a second vSwitch to the physical host. It doesn't need a physical adapter assigned since this switch will be for internal traffic. I create two port groups: one tagged for the VLAN 1610 Management traffic, which will be useful for attaching VMs on the physical host to the internal network; and the second will use VLAN 4095 to pass all VLAN traffic to the nested ESXi hosts. And again, this vSwitch needs to have its security policy set to allow Promiscuous Mode and Forged Transmits. I also set the vSwitch to support an MTU of 9000 so I can use Jumbo Frames on the vMotion and vSAN networks. 
+I'll start by adding a second vSwitch to the physical host. It doesn't need a physical adapter assigned since this switch will be for internal traffic. I create two port groups: one tagged for the VLAN 1610 Management traffic, which will be useful for attaching VMs on the physical host to the internal network; and the second will use VLAN 4095 to pass all VLAN traffic to the nested ESXi hosts. And again, this vSwitch needs to have its security policy set to allow Promiscuous Mode and Forged Transmits. I also set the vSwitch to support an MTU of 9000 so I can use Jumbo Frames on the vMotion and vSAN networks.
 
 ![Second vSwitch](7aNJa2Hlm.png)
 
@@ -94,15 +94,14 @@ Wouldn't it be great if the VMs that are going to be deployed on those `1610`, `
 
 After logging in to the VM, I entered the router's configuration mode:
 
-```shell
-vyos@vyos:~$ configure
+```command-session
+configure
 [edit]
-vyos@vyos# 
 ```
 
-I then started with setting up the interfaces - `eth0` for the `192.168.1.0/24` network, `eth1` on the trunked portgroup, and a number of VIFs on `eth1` to handle the individual VLANs I'm interested in using. 
+I then started with setting up the interfaces - `eth0` for the `192.168.1.0/24` network, `eth1` on the trunked portgroup, and a number of VIFs on `eth1` to handle the individual VLANs I'm interested in using.
 
-```shell
+```commandroot
 set interfaces ethernet eth0 address '192.168.1.8/24'
 set interfaces ethernet eth0 description 'Outside'
 set interfaces ethernet eth1 mtu '9000'
@@ -123,7 +122,7 @@ set interfaces ethernet eth1 vif 1699 mtu '9000'
 
 I also set up NAT for the networks that should be routable:
 
-```shell
+```commandroot
 set nat source rule 10 outbound-interface 'eth0'
 set nat source rule 10 source address '172.16.10.0/24'
 set nat source rule 10 translation address 'masquerade'
@@ -140,7 +139,7 @@ set protocols static route 0.0.0.0/0 next-hop 192.168.1.1
 
 And I configured DNS forwarding:
 
-```shell
+```commandroot
 set service dns forwarding allow-from '0.0.0.0/0'
 set service dns forwarding domain 10.16.172.in-addr.arpa. server '192.168.1.5'
 set service dns forwarding domain 20.16.172.in-addr.arpa. server '192.168.1.5'
@@ -154,7 +153,7 @@ set service dns forwarding name-server '192.168.1.1'
 
 Finally, I also configured VyOS's DHCP server so that I won't have to statically configure the networking for VMs deployed from vRA:
 
-```shell
+```commandroot
 set service dhcp-server shared-network-name SCOPE_10_MGMT authoritative
 set service dhcp-server shared-network-name SCOPE_10_MGMT subnet 172.16.10.0/24 default-router '172.16.10.1'
 set service dhcp-server shared-network-name SCOPE_10_MGMT subnet 172.16.10.0/24 dns-server '192.168.1.5'
@@ -212,8 +211,8 @@ I migrated the physical NICs and `vmk0` to the new dvSwitch, and then created ne
 
 I then ssh'd into the hosts and used `vmkping` to make sure they could talk to each other over these interfaces. I changed the vMotion interface to use the vMotion TCP/IP stack so needed to append the `-S vmotion` flag to the command:
 
-```shell
-[root@esxi01:~] vmkping -I vmk1 172.16.98.22
+```commandroot-session
+vmkping -I vmk1 172.16.98.22
 PING 172.16.98.22 (172.16.98.22): 56 data bytes
 64 bytes from 172.16.98.22: icmp_seq=0 ttl=64 time=0.243 ms
 64 bytes from 172.16.98.22: icmp_seq=1 ttl=64 time=0.260 ms
@@ -222,8 +221,9 @@ PING 172.16.98.22 (172.16.98.22): 56 data bytes
 --- 172.16.98.22 ping statistics ---
 3 packets transmitted, 3 packets received, 0% packet loss
 round-trip min/avg/max = 0.243/0.255/0.262 ms
-
-[root@esxi01:~] vmkping -I vmk2 172.16.99.22 -S vmotion
+```
+```commandroot-session
+vmkping -I vmk2 172.16.99.22 -S vmotion
 PING 172.16.99.22 (172.16.99.22): 56 data bytes
 64 bytes from 172.16.99.22: icmp_seq=0 ttl=64 time=0.202 ms
 64 bytes from 172.16.99.22: icmp_seq=1 ttl=64 time=0.312 ms
@@ -253,7 +253,7 @@ Anyhoo, each of these VMs will need to be resolvable in DNS so I started by crea
 |`idm.lab.bowdre.net`|`192.168.1.41`|
 |`vra.lab.bowdre.net`|`192.168.1.42`|
 
-I then attached the installer ISO to my Windows VM and ran through the installation from there. 
+I then attached the installer ISO to my Windows VM and ran through the installation from there.
 ![vRealize Easy Installer](42n3aMim5.png)
 
 Similar to the vCenter deployment process, this one prompts you for all the information it needs up front and then takes care of everything from there. That's great news because this is a pretty long deployment; it took probably two hours from clicking the final "Okay, do it" button to being able to log in to my shiny new vRealize Automation environment.

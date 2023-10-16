@@ -21,20 +21,20 @@ tags:
   - python
 comment: true # Disable comment if false.
 ---
-VMware vCenter does wonders for abstracting away the layers of complexity involved in managing a large virtual infrastructure, but when something goes wrong it can be challenging to find exactly where the problem lies. And it can be even harder to proactively address potential issues before they occur. 
+VMware vCenter does wonders for abstracting away the layers of complexity involved in managing a large virtual infrastructure, but when something goes wrong it can be challenging to find exactly where the problem lies. And it can be even harder to proactively address potential issues before they occur.
 
 Fortunately there's a super-handy utility which can making diagnosing vCenter significantly easier, and it comes in the form of the [vSphere Diagnostic Tool Fling](https://flings.vmware.com/vsphere-diagnostic-tool). VDT is a Python script which can be run directly on a vCenter Server appliance (version 6.5 and newer) to quickly check for problems and misconfigurations affecting:
 - vCenter Basic Info
 - Lookup Service
 - Active Directory
-- vCenter Certificates 
+- vCenter Certificates
 - Core Files
 - Disk Health
-- vCenter DNS 
-- vCenter NTP 
-- vCenter Port 
-- Root Account 
-- vCenter Services 
+- vCenter DNS
+- vCenter NTP
+- vCenter Port
+- Root Account
+- vCenter Services
 - VCHA
 
 For any problems which are identified, VDT will provide simple instructions and/or links to Knowledge Base articles for more detailed instructions on how to proceed with resolving the issues. Sounds pretty useful, right? And yet, somehow, I keep forgetting that VDT is a thing. So here's a friendly reminder to myself of how to obtain and use VDT to fix vSphere woes. Let's get started.
@@ -54,29 +54,31 @@ This needs to be run directly on the vCenter appliance so you'll need to copy th
 
 
 Once that's done, just execute this on your local workstation to copy the `.zip` from your `~/Downloads/` folder to the VCSA's `/tmp/` directory:
-```shell
+```command
 scp ~/Downloads/vdt-v1.1.4.zip root@vcsa.lab.bowdre.net:/tmp/
 ```
 
 ### 3. Extract
 Now pop back over to an SSH session to the VCSA, extract the `.zip`, and get ready for action:
-```shell
-root@VCSA [ ~ ]# cd /tmp
-
-root@VCSA [ /tmp ]# unzip vdt-v1.1.4.zip
+```commandroot
+cd /tmp
+```
+```commandroot-session
+unzip vdt-v1.1.4.zip
 Archive:  vdt-v1.1.4.zip
 3557676756cffd658fd61aab5a6673269104e83c
   creating: vdt-v1.1.4/
   ...
   inflating: vdt-v1.1.4/vdt.py
-
-root@VCSA [ /tmp ]# cd vdt-v1.1.4/
+```
+```commandroot
+cd vdt-v1.1.4/
 ```
 
 ### 4. Execute
 Now for the fun part:
-```shell
-root@VCSA [ /tmp/vdt-v1.1.4 ]# python vdt.py
+```commandroot-session
+python vdt.py
 _________________________
    RUNNING PULSE CHECK
 
@@ -165,7 +167,7 @@ at your discretion to reduce the size of log bundles.
 ```
 Those core files can be useful for investigating specific issues, but holding on to them long-term doesn't really do much good. _After checking to be sure I don't need them_, I can get rid of them all pretty easily like so:
 
-```shell
+```commandroot
 find /storage/core/ -name "core.*" -type f -mtime +3 -exec rm {} \;
 ```
 
@@ -185,7 +187,7 @@ Oh yeah, let's turn that back on with `systemctl start ntpd`.
 ```
 That's a good thing to know. I'll [take care of that](https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.vcenter.configuration.doc/GUID-48BAF973-4FD3-4FF3-B1B6-5F7286C9B59A.html) while I'm thinking about it.
 
-```shell
+```commandroot
 chage -M -1 -E -1 root
 ```
 
@@ -256,4 +258,4 @@ RESULT: [PASS]
 All better!
 
 ### Conclusion
-The vSphere Diagnostic Tool makes a great addition to your arsenal of troubleshooting skills and utilities. It makes it easy to troubleshoot errors which might occur in your vSphere environment, as well as to uncover dormant issues which could cause serious problems in the future. 
+The vSphere Diagnostic Tool makes a great addition to your arsenal of troubleshooting skills and utilities. It makes it easy to troubleshoot errors which might occur in your vSphere environment, as well as to uncover dormant issues which could cause serious problems in the future.

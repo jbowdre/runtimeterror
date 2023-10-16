@@ -27,13 +27,13 @@ Add-WindowsCapability -online -name Rsat.Dns.Tools~~~~0.0.1.0
 ```
 
 Instead of using a third-party SSH server, I'll use the OpenSSH Server that's already available in Windows 10 (1809+) and Server 2019:
-```powershell 
+```powershell
 # Install OpenSSH Server
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 ```
 
 I'll also want to set it so that the default shell upon SSH login is PowerShell (rather than the standard Command Prompt) so that I can have easy access to those DNS cmdlets:
-```powershell 
+```powershell
 # Set PowerShell as the default Shell (for access to DNS cmdlets)
 New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force
 ```
@@ -45,13 +45,13 @@ Add-LocalGroupMember -Group Administrators -Member "lab\vra"
 ```
 
 And I'll modify the OpenSSH configuration so that only members of that Administrators group are permitted to log into the server via SSH:
-```powershell 
+```powershell
 # Restrict SSH access to members in the local Administrators group
 (Get-Content "C:\ProgramData\ssh\sshd_config") -Replace "# Authentication:", "$&`nAllowGroups Administrators" | Set-Content "C:\ProgramData\ssh\sshd_config"
 ```
 
 Finally, I'll start the `sshd` service and set it to start up automatically:
-```powershell 
+```powershell
 # Start service and set it to automatic
 Set-Service -Name sshd -StartupType Automatic -Status Running
 ```
@@ -59,13 +59,13 @@ Set-Service -Name sshd -StartupType Automatic -Status Running
 #### A quick test
 At this point, I can log in to the server via SSH and confirm that I can create and delete records in my DNS zone:
 ```powershell
-$ ssh vra@win02.lab.bowdre.net
-vra@win02.lab.bowdre.net's password: 
+ssh vra@win02.lab.bowdre.net
+vra@win02.lab.bowdre.net's password:
 
 Windows PowerShell
 Copyright (C) Microsoft Corporation. All rights reserved.
 
-PS C:\Users\vra> Add-DnsServerResourceRecordA -ComputerName win01.lab.bowdre.net -Name testy -ZoneName lab.bowdre.net -AllowUpdateAny -IPv4Address 172.16.99.99       
+PS C:\Users\vra> Add-DnsServerResourceRecordA -ComputerName win01.lab.bowdre.net -Name testy -ZoneName lab.bowdre.net -AllowUpdateAny -IPv4Address 172.16.99.99
 
 PS C:\Users\vra> nslookup testy
 Server:  win01.lab.bowdre.net
@@ -111,7 +111,7 @@ resources:
 ```
 
 So here's the complete cloud template that I've been working on:
-```yaml
+```yaml {linenos=true}
 formatVersion: 1
 inputs:
   site:
@@ -245,7 +245,7 @@ That should take care of the front-end changes. Now for the back-end stuff: I ne
 
 
 ### The vRO solution
-I will be adding the DNS action on to my existing "VM Post-Provisioning" workflow (described [here](/adding-vm-notes-and-custom-attributes-with-vra8), which gets triggered after the VM has been successfully deployed. 
+I will be adding the DNS action on to my existing "VM Post-Provisioning" workflow (described [here](/adding-vm-notes-and-custom-attributes-with-vra8), which gets triggered after the VM has been successfully deployed.
 
 #### Configuration Element
 But first, I'm going to go to the **Assets > Configurations** section of the Orchestrator UI and create a new Configuration Element to store variables related to the SSH host and DNS configuration.
@@ -258,7 +258,7 @@ And then I create the following variables:
 
 | Variable | Value | Type |
 | --- | --- | --- |
-| `sshHost` | `win02.lab.bowdre.net` | string | 
+| `sshHost` | `win02.lab.bowdre.net` | string |
 | `sshUser` | `vra` | string |
 | `sshPass` | `*****` | secureString |
 | `dnsServer` | `[win01.lab.bowdre.net]` | Array/string |
@@ -280,7 +280,7 @@ Now we're ready for the good part: inserting a new scriptable task into the work
 ![Task inputs](20210809_task_inputs.png)
 
 And here's the JavaScript for the task:
-```js
+```js {linenos=true}
 // JavaScript: Create DNS Record task
 //    Inputs: inputProperties (Properties), dnsServers (Array/string), sshHost (string), sshUser (string), sshPass (secureString), supportedDomains (Array/string)
 //    Outputs: None
@@ -312,7 +312,7 @@ if (staticDns == "true" && supportedDomains.indexOf(dnsDomain) >= 0) {
                 System.log("Successfully created DNS record!")
                 // make a note that it was successful so we don't repeat this unnecessarily
                 created = true;
-            } 
+            }
         }
     }
     sshSession.disconnect()
@@ -341,7 +341,7 @@ The schema will include a single scriptable task:
 
 And it's going to be *pretty damn similar* to the other one:
 
-```js
+```js {linenos=true}
 // JavaScript: Delete DNS Record task
 //    Inputs: inputProperties (Properties), dnsServers (Array/string), sshHost (string), sshUser (string), sshPass (secureString), supportedDomains (Array/string)
 //    Outputs: None
@@ -373,7 +373,7 @@ if (staticDns == "true" && supportedDomains.indexOf(dnsDomain) >= 0) {
                 System.log("Successfully deleted DNS record!")
                 // make a note that it was successful so we don't repeat this unnecessarily
                 deleted = true;
-            } 
+            }
         }
     }
     sshSession.disconnect()
@@ -396,9 +396,9 @@ Once the deployment completes, I go back into vRO, find the most recent item in 
 ![Workflow success!](20210813_workflow_success.png)
 
 And I can run a quick query to make sure that name actually resolves:
-```shell
-❯ dig +short bow-ttst-xxx023.lab.bowdre.net A
-172.16.30.10   
+```command-session
+dig +short bow-ttst-xxx023.lab.bowdre.net A
+172.16.30.10
 ```
 
 It works!
@@ -410,9 +410,9 @@ Again, I'll check the **Workflow Runs** in vRO to see that the deprovisioning ta
 ![VM Deprovisioning workflow](20210813_workflow_deletion.png)
 
 And I can `dig` a little more to make sure the name doesn't resolve anymore:
-```shell
-❯ dig +short bow-ttst-xxx023.lab.bowdre.net A
-      
+```command-session
+dig +short bow-ttst-xxx023.lab.bowdre.net A
+
 ```
 
 It *really* works!

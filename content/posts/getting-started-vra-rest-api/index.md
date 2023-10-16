@@ -44,7 +44,7 @@ After hitting **Execute**, the Swagger UI will populate the *Responses* section 
 ![curl request format](login_controller_3.png)
 
 So I could easily replicate this using the `curl` utility by just copying and pasting the following into a shell:
-```shell
+```command-session
 curl -X 'POST' \
   'https://vra.lab.bowdre.net/csp/gateway/am/api/login' \
   -H 'accept: */*' \
@@ -175,7 +175,7 @@ As you can see, Swagger can really help to jump-start the exploration of a new A
 [HTTPie](https://httpie.io/) is a handy command-line utility optimized for interacting with web APIs. This will make things easier as I dig deeper.
 
 Installing the [Debian package](https://httpie.io/docs/cli/debian-and-ubuntu) is a piece of ~~cake~~ _pie_[^pie]:
-```shell
+```command
 curl -SsL https://packages.httpie.io/deb/KEY.gpg | sudo apt-key add -
 sudo curl -SsL -o /etc/apt/sources.list.d/httpie.list https://packages.httpie.io/deb/httpie.list
 sudo apt update
@@ -183,8 +183,8 @@ sudo apt install httpie
 ```
 
 Once installed, running `http` will give me a quick overview of how to use this new tool:
-```shell {hl_lines=[3]}
-; http
+```command-session
+http
 usage:
     http [METHOD] URL [REQUEST_ITEM ...]
 
@@ -198,12 +198,12 @@ HTTPie cleverly interprets anything passed after the URL as a [request item](htt
 > Each request item is simply a key/value pair separated with the following characters: `:` (headers), `=` (data field, e.g., JSON, form), `:=` (raw data field), `==` (query parameters), `@` (file upload).
 
 So my earlier request for an authentication token becomes:
-```shell
+```command
 https POST vra.lab.bowdre.net/csp/gateway/am/api/login username='vra' password='********' domain='lab.bowdre.net'
 ```
 {{% notice tip "Working with Self-Signed Certificates" %}}
 If your vRA endpoint is using a self-signed or otherwise untrusted certificate, pass the HTTPie option `--verify=no` to ignore certificate errors:
-```
+```command
 https --verify=no POST [URL] [REQUEST_ITEMS]
 ```
 {{% /notice %}}
@@ -211,17 +211,17 @@ https --verify=no POST [URL] [REQUEST_ITEMS]
 Running that will return a bunch of interesting headers but I'm mainly interested in the response body:
 ```json
 {
-    "cspAuthToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjI4NDY0MjAzMzA2NDQwMTQ2NDQifQ.eyJpc3MiOiJDTj1QcmVsdWRlIElkZW50aXR5IFNlcnZpY2UsT1U9Q01CVSxPPVZNd2FyZSxMPVNvZmlhLFNUPVNvZmlhLEM9QkciLCJpYXQiOjE2NTQwMjQw[...]HBOQQwEepXTNAaTv9gWMKwvPzktmKWyJFmC64FGomRyRyWiJMkLy3xmvYQERwxaDj_15-ErjC6F3c2mV1qIqES2oZbEpjxar16ZVSPshIaOoWRXe5uZB21tkuwVMgZuuwgmpliG_JBa1Y6Oh0FZBbI7o0ERro9qOW-s2npz4Csv5FwcXt0fa4esbXXIKINjqZMh9NDDb23bUabSag"
+  "cspAuthToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjI4NDY0MjAzMzA2NDQwMTQ2NDQifQ.eyJpc3MiOiJDTj1QcmVsdWRlIElkZW50aXR5IFNlcnZpY2UsT1U9Q01CVSxPPVZNd2FyZSxMPVNvZmlhLFNUPVNvZmlhLEM9QkciLCJpYXQiOjE2NTQwMjQw[...]HBOQQwEepXTNAaTv9gWMKwvPzktmKWyJFmC64FGomRyRyWiJMkLy3xmvYQERwxaDj_15-ErjC6F3c2mV1qIqES2oZbEpjxar16ZVSPshIaOoWRXe5uZB21tkuwVMgZuuwgmpliG_JBa1Y6Oh0FZBbI7o0ERro9qOW-s2npz4Csv5FwcXt0fa4esbXXIKINjqZMh9NDDb23bUabSag"
 }
 ```
 
 There's the auth token[^token] that I'll need for subsequent requests. I'll store that in a variable so that it's easier to wield:
-```shell
+```command
 token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjI4NDY0MjAzMzA2NDQwMTQ2NDQifQ.eyJpc3MiOiJDTj1QcmVsdWRlIElkZW50aXR5IFNlcnZpY2UsT1U9Q01CVSxPPVZNd2FyZSxMPVNvZmlhLFNUPVNvZmlhLEM9QkciLCJpYXQiOjE2NTQwMjQw[...]HBOQQwEepXTNAaTv9gWMKwvPzktmKWyJFmC64FGomRyRyWiJMkLy3xmvYQERwxaDj_15-ErjC6F3c2mV1qIqES2oZbEpjxar16ZVSPshIaOoWRXe5uZB21tkuwVMgZuuwgmpliG_JBa1Y6Oh0FZBbI7o0ERro9qOW-s2npz4Csv5FwcXt0fa4esbXXIKINjqZMh9NDDb23bUabSag
 ```
 
 So now if I want to find out which images have been configured in vRA, I can ask:
-```shell
+```command
 https GET vra.lab.bowdre.net/iaas/api/images "Authorization: Bearer $token"
 ```
 {{% notice note "Request Items" %}}
@@ -229,80 +229,80 @@ Remember from above that HTTPie will automatically insert key/value pairs separa
 {{% /notice %}}
 
 And I'll get back some headers followed by an JSON object detailing the defined image mappings broken up by region:
-```json {hl_lines=[11,14,37,40,53,56]}
+```json {linenos=true,hl_lines=[11,14,37,40,53,56]}
 {
-    "content": [
-        {
-            "_links": {
-                "region": {
-                    "href": "/iaas/api/regions/3617c011-39db-466e-a7f3-029f4523548f"
-                }
-            },
-            "externalRegionId": "Datacenter:datacenter-39056",
-            "mapping": {
-                "Photon 4": {
-                    "_links": {
-                        "region": {
-                            "href": "/iaas/api/regions/3617c011-39db-466e-a7f3-029f4523548f"
-                        }
-                    },
-                    "cloudConfig": "",
-                    "constraints": [],
-                    "description": "photon-arm",
-                    "externalId": "50023810-ae56-3c58-f374-adf6e0645886",
-                    "externalRegionId": "Datacenter:datacenter-39056",
-                    "id": "8885e87d8a5898cf12b5abc3e5c715e5a65f7179",
-                    "isPrivate": false,
-                    "name": "photon-arm",
-                    "osFamily": "LINUX"
-                }
-            }
-        },
-        {
-            "_links": {
-                "region": {
-                    "href": "/iaas/api/regions/c0d2a662-9ee5-4a27-9a9e-e92a72668136"
-                }
-            },
-            "externalRegionId": "Datacenter:datacenter-1001",
-            "mapping": {
-                "Photon 4": {
-                    "_links": {
-                        "region": {
-                            "href": "/iaas/api/regions/c0d2a662-9ee5-4a27-9a9e-e92a72668136"
-                        }
-                    },
-                    "cloudConfig": "",
-                    "constraints": [],
-                    "description": "photon",
-                    "externalId": "50028cf1-88b8-52e8-58a1-b8354d4207b0",
-                    "externalRegionId": "Datacenter:datacenter-1001",
-                    "id": "d417648249e9740d7561188fa2a3a3ab4e8ccf85",
-                    "isPrivate": false,
-                    "name": "photon",
-                    "osFamily": "LINUX"
-                },
-                "Windows Server 2019": {
-                    "_links": {
-                        "region": {
-                            "href": "/iaas/api/regions/c0d2a662-9ee5-4a27-9a9e-e92a72668136"
-                        }
-                    },
-                    "cloudConfig": "",
-                    "constraints": [],
-                    "description": "ws2019",
-                    "externalId": "500235ad-1022-fec3-8ad1-00433beee103",
-                    "externalRegionId": "Datacenter:datacenter-1001",
-                    "id": "7e05f4e57ac55135cf7a7f8b951aa8ccfcc335d8",
-                    "isPrivate": false,
-                    "name": "ws2019",
-                    "osFamily": "WINDOWS"
-                }
-            }
+  "content": [
+    {
+      "_links": {
+        "region": {
+          "href": "/iaas/api/regions/3617c011-39db-466e-a7f3-029f4523548f"
         }
-    ],
-    "numberOfElements": 2,
-    "totalElements": 2
+      },
+      "externalRegionId": "Datacenter:datacenter-39056",
+      "mapping": {
+        "Photon 4": {
+          "_links": {
+            "region": {
+              "href": "/iaas/api/regions/3617c011-39db-466e-a7f3-029f4523548f"
+            }
+          },
+          "cloudConfig": "",
+          "constraints": [],
+          "description": "photon-arm",
+          "externalId": "50023810-ae56-3c58-f374-adf6e0645886",
+          "externalRegionId": "Datacenter:datacenter-39056",
+          "id": "8885e87d8a5898cf12b5abc3e5c715e5a65f7179",
+          "isPrivate": false,
+          "name": "photon-arm",
+          "osFamily": "LINUX"
+        }
+      }
+    },
+    {
+      "_links": {
+        "region": {
+          "href": "/iaas/api/regions/c0d2a662-9ee5-4a27-9a9e-e92a72668136"
+        }
+      },
+      "externalRegionId": "Datacenter:datacenter-1001",
+      "mapping": {
+        "Photon 4": {
+          "_links": {
+            "region": {
+              "href": "/iaas/api/regions/c0d2a662-9ee5-4a27-9a9e-e92a72668136"
+            }
+          },
+          "cloudConfig": "",
+          "constraints": [],
+          "description": "photon",
+          "externalId": "50028cf1-88b8-52e8-58a1-b8354d4207b0",
+          "externalRegionId": "Datacenter:datacenter-1001",
+          "id": "d417648249e9740d7561188fa2a3a3ab4e8ccf85",
+          "isPrivate": false,
+          "name": "photon",
+          "osFamily": "LINUX"
+        },
+        "Windows Server 2019": {
+          "_links": {
+            "region": {
+              "href": "/iaas/api/regions/c0d2a662-9ee5-4a27-9a9e-e92a72668136"
+            }
+          },
+          "cloudConfig": "",
+          "constraints": [],
+          "description": "ws2019",
+          "externalId": "500235ad-1022-fec3-8ad1-00433beee103",
+          "externalRegionId": "Datacenter:datacenter-1001",
+          "id": "7e05f4e57ac55135cf7a7f8b951aa8ccfcc335d8",
+          "isPrivate": false,
+          "name": "ws2019",
+          "osFamily": "WINDOWS"
+        }
+      }
+    }
+  ],
+  "numberOfElements": 2,
+  "totalElements": 2
 }
 ```
 This doesn't give me the *name* of the regions, but I could use the `_links.region.href` data to quickly match up images which exist in a given region.[^foreshadowing]
@@ -376,7 +376,7 @@ I'll head into **Library > Actions** to create a new action inside my `com.virtu
 | `configurationName` | `string` | Name of Configuration |
 | `variableName` | `string` | Name of desired variable inside Configuration |
 
-```javascript
+```javascript {linenos=true}
 /*
 JavaScript: getConfigValue action
     Inputs: path (string), configurationName (string), variableName (string)
@@ -396,7 +396,7 @@ Next, I'll create another action in my `com.virtuallypotato.utility` module whic
 
 ![vraLogin action](vraLogin_action.png)
 
-```javascript
+```javascript {linenos=true}
 /*
 JavaScript: vraLogin action
     Inputs: none
@@ -428,7 +428,7 @@ I like to clean up after myself so I'm also going to create a `vraLogout` action
 |:--- |:--- |:--- |
 | `token` | `string` | Auth token of the session to destroy |
 
-```javascript
+```javascript {linenos=true}
 /*
 JavaScript: vraLogout action
     Inputs: token (string)
@@ -458,7 +458,7 @@ My final "utility" action for this effort will run in between `vraLogin` and `vr
 |`uri`|`string`|Path to API controller (`/iaas/api/flavor-profiles`)|
 |`content`|`string`|Any additional data to pass with the request|
 
-```javascript
+```javascript {linenos=true}
 /*
 JavaScript: vraExecute action
     Inputs: token (string), method (string), uri (string), content (string)
@@ -496,7 +496,7 @@ This action will:
 Other actions wanting to interact with the vRA REST API will follow the same basic formula, though with some more logic and capability baked in.
 
 Anyway, here's my first swing:
-```JavaScript
+```JavaScript {linenos=true}
 /*
 JavaScript: vraTester action
     Inputs: none
@@ -513,7 +513,7 @@ Pretty simple, right? Let's see if it works:
 ![vraTester action](vraTester_action.png)
 
 It did! Though that result is a bit hard to parse visually, so I'm going to prettify it a bit:
-```json {hl_lines=[17,35,56,74]}
+```json {linenos=true,hl_lines=[17,35,56,74]}
 [
   {
     "tags": [],
@@ -609,7 +609,7 @@ This action will basically just repeat the call that I tested above in `vraTeste
 
 ![vraGetZones action](vraGetZones_action.png)
 
-```javascript
+```javascript {linenos=true}
 /*
 JavaScript: vraGetZones action
     Inputs: none
@@ -639,7 +639,7 @@ Oh, and the whole thing is wrapped in a conditional so that the code only execut
 |:--- |:--- |:--- |
 | `zoneName` | `string` | The name of the Zone selected in the request form |
 
-```javascript
+```javascript {linenos=true}
 /* JavaScript: vraGetImages action
     Inputs: zoneName (string)
     Return type: array/string
@@ -708,7 +708,7 @@ Next I'll repeat the same steps to create a new `image` input. This time, though
 ![Binding the input](image_input.png)
 
 The full code for my template now looks like this:
-```yaml
+```yaml {linenos=true}
 formatVersion: 1
 inputs:
   zoneName:

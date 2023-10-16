@@ -24,21 +24,23 @@ comment: true # Disable comment if false.
 It's super handy when a Linux config file is loaded with comments to tell you precisely how to configure the thing, but all those comments can really get in the way when you're trying to review the current configuration.
 
 Next time, instead of scrolling through page after page of lengthy embedded explanations, just use:
-```shell
+```command
 egrep -v "^\s*(#|$)" $filename
 ```
 
 For added usefulness, I alias this command to `ccat` (which my brain interprets as "commentless cat") in [my `~/.zshrc`](https://github.com/jbowdre/dotfiles/blob/main/zsh/.zshrc):
-```shell
+```command
 alias ccat='egrep -v "^\s*(#|$)"'
 ```
 
 Now instead of viewing all 75 lines of a [mostly-default Vagrantfile](/create-vms-chromebook-hashicorp-vagrant), I just see the 7 that matter:
-```shell
-; wc -l Vagrantfile
+```command-session
+wc -l Vagrantfile
 75 Vagrantfile
+```
 
-; ccat Vagrantfile
+```command-session
+ccat Vagrantfile
 Vagrant.configure("2") do |config|
   config.vm.box = "oopsme/windows11-22h2"
   config.vm.provider :libvirt do |libvirt|
@@ -46,8 +48,10 @@ Vagrant.configure("2") do |config|
     libvirt.memory = 4096
   end
 end
+```
 
-; ccat Vagrantfile | wc -l
+```command-session
+ccat Vagrantfile | wc -l
 7
 ```
 
