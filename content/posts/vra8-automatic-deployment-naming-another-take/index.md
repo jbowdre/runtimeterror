@@ -25,7 +25,7 @@ So this will generate a name that looks something like `[user]_[catalog_item]_[s
 That does mean that I'll need to add another vRO call, but I can set this up so that it only gets triggered once, when the form loads, instead of refreshing each time the inputs change.
 
 So I hop over to vRO and create a new action, which I call `getTimestamp`. It doesn't require any inputs, and returns a single string. Here's the code:
-```js
+```js {linenos=true}
 //  JavaScript: getTimestamp action
 //    Inputs: None
 //    Returns: result (String)

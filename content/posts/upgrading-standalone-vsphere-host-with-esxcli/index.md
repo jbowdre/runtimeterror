@@ -41,19 +41,19 @@ The host will need to be in maintenance mode in order to apply the upgrade, and 
 
 ### 3. Place host in maintenance mode
 I can do that by SSH'ing to the host and running:
-```shell
+```commandroot
 esxcli system maintenanceMode set -e true
 ```
 
 And can confirm that it happened with:
-```shell
+```commandroot-session
 esxcli system maintenanceMode get
 Enabled
 ```
 
 ### 4. Identify the profile name
 Because this is an *upgrade* from one major release to another rather than a simple *update*, I need to know the name of the profile which will be applied. I can identify that with:
-```shell
+```commandroot-session
 esxcli software sources profile list -d /vmfs/volumes/nuchost-local/_Patches/VMware-ESXi-8.0-20513097-depot.zip
 Name                          Vendor        Acceptance Level  Creation Time        Modification Time
 ----------------------------  ------------  ----------------  -------------------  -----------------
@@ -68,13 +68,12 @@ In this case, I'll use the `ESXi-8.0.0-20513097-standard` profile.
 
 ### 5. Install the upgrade
 Now for the moment of truth:
-```shell
-esxcli software profile update -d /vmfs/volumes/nuchost-local/_Patches/VMware-ESXi-8.0-2051309
-7-depot.zip -p ESXi-8.0.0-20513097-standard
+```commandroot
+esxcli software profile update -d /vmfs/volumes/nuchost-local/_Patches/VMware-ESXi-8.0-20513097-depot.zip -p ESXi-8.0.0-20513097-standard
 ```
 
 When it finishes (successfully), it leaves a little message that the update won't be complete until the host is rebooted, so I'll go ahead and do that as well:
-```shell
+```commandroot
 reboot
 ```
 

@@ -12,7 +12,7 @@ tags:
   - meta
 ---
 
-```shell
+```command
 cp -a virtuallypotato.com runtimeterror.dev
 rm -rf virtuallypotato.com
 ln -s virtuallypotato.com runtimeterror.dev

@@ -48,9 +48,9 @@ site
             └── third-post-image-4.png
 ```
 
-So the article contents go under `site/content/post/` in a file called `name-of-article.md`. Each article may embed image (or other file types), and those get stored in `site/static/images/post/` and referenced like `![Image for first post](/images/post/first-post-image-1.png)`. When Hugo builds a site, it processes the stuff under the `site/content/` folder to render the Markdown files into browser-friendly HTML pages but it _doesn't_ process anything in the `site/static/` folder; that's treated as static content and just gets dropped as-is into the resulting site. 
+So the article contents go under `site/content/post/` in a file called `name-of-article.md`. Each article may embed image (or other file types), and those get stored in `site/static/images/post/` and referenced like `![Image for first post](/images/post/first-post-image-1.png)`. When Hugo builds a site, it processes the stuff under the `site/content/` folder to render the Markdown files into browser-friendly HTML pages but it _doesn't_ process anything in the `site/static/` folder; that's treated as static content and just gets dropped as-is into the resulting site.
 
-It's functional, but things can get pretty messy when you've got a bunch of image files and are struggling to keep track of which images go with which post. 
+It's functional, but things can get pretty messy when you've got a bunch of image files and are struggling to keep track of which images go with which post.
 
 Like I mentioned earlier, Hugo's Page Bundles group a page's resources together in one place. Each post gets its own folder under `site/content/` and then all of the other files it needs to reference can get dropped in there too. With Page Bundles, the folder tree looks like this:
 
@@ -78,25 +78,25 @@ site
         └── logo.png
 ```
 
-Images and other files are now referenced in the post directly like `![Image for post 1](/first-post-image-1.png)`, and this makes it a lot easier to keep track of which images go with which post. And since the files aren't considered to be static anymore, Page Bundles enables Hugo to perform certain [Image Processing tasks](https://gohugo.io/content-management/image-processing/) when the site gets built. 
+Images and other files are now referenced in the post directly like `![Image for post 1](/first-post-image-1.png)`, and this makes it a lot easier to keep track of which images go with which post. And since the files aren't considered to be static anymore, Page Bundles enables Hugo to perform certain [Image Processing tasks](https://gohugo.io/content-management/image-processing/) when the site gets built.
 
 Anyway, I wanted to start using Page Bundles but didn't want to have to manually go through all my posts to move the images and update the paths so I spent a few minutes cobbling together a quick script to help me out. It's pretty similar to the one I created to help [migrate images from Hashnode to my Jekyll site](/script-to-update-image-embed-links-in-markdown-files/) last time around - and, like that script, it's not pretty, polished, or flexible in the least, but it did the trick for me.
 
-This one needs to be run from one step above the site root (`../site/` in the example above), and it gets passed the relative path to a post (`site/content/posts/first-post.md`). From there, it will create a new folder with the same name (`site/content/posts/first-post/`) and move the post into there while renaming it to `index.md` (`site/content/posts/first-post/index.md`). 
+This one needs to be run from one step above the site root (`../site/` in the example above), and it gets passed the relative path to a post (`site/content/posts/first-post.md`). From there, it will create a new folder with the same name (`site/content/posts/first-post/`) and move the post into there while renaming it to `index.md` (`site/content/posts/first-post/index.md`).
 
-It then looks through the newly-relocated post to find all the image embeds. It moves the image files into the post directory, and then updates the post to point to the new image locations. 
+It then looks through the newly-relocated post to find all the image embeds. It moves the image files into the post directory, and then updates the post to point to the new image locations.
 
 Next it updates the links for any thumbnail images mentioned in the front matter post metadata. In most of my past posts, I reused an image already embedded in the post as the thumbnail so those files would already be moved by the time the script gets to that point. For the few exceptions, it also needs to move those image files over as well.
 
 Lastly, it changes the `usePageBundles` flag from `false` to `true` so that Hugo knows what we've done.
 
-```bash
+```bash {linenos=true}
 #!/bin/bash
-# Hasty script to convert a given standard Hugo post (where the post content and 
+# Hasty script to convert a given standard Hugo post (where the post content and
 # images are stored separately) to a Page Bundle (where the content and images are
-# stored together in the same directory). 
+# stored together in the same directory).
 #
-# Run this from the directory directly above the site root, and provide the relative 
+# Run this from the directory directly above the site root, and provide the relative
 # path to the existing post that needs to be converted.
 #
 # Usage: ./convert-to-pagebundle.sh vpotato/content/posts/hello-hugo.md

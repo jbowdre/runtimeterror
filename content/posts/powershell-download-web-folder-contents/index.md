@@ -23,7 +23,7 @@ comment: true # Disable comment if false.
 We've been working lately to use [HashiCorp Packer](https://www.packer.io/) to standardize and automate our VM template builds, and we found a need to pull in all of the contents of a specific directory on an internal web server. This would be pretty simple for Linux systems using `wget -r`, but we needed to find another solution for our Windows builds.
 
 A coworker and I cobbled together a quick PowerShell solution which will download the files within a specified web URL to a designated directory (without recreating the nested folder structure):
-```powershell
+```powershell {linenos=true}
 $outputdir = 'C:\Scripts\Download\'
 $url = 'https://win01.lab.bowdre.net/stuff/files/'
 
@@ -38,7 +38,7 @@ $WebResponse.Links | Select-Object -ExpandProperty href -Skip 1 | ForEach-Object
     $baseUrl = $url.split('/')                                      # ['https', '', 'win01.lab.bowdre.net', 'stuff', 'files']
     $baseUrl = $baseUrl[0,2] -join '//'                             # 'https://win01.lab.bowdre.net'
     $fileUrl  = '{0}{1}' -f $baseUrl.TrimEnd('/'), $_               # 'https://win01.lab.bowdre.net/stuff/files/filename.ext'
-    Invoke-WebRequest -Uri $fileUrl -OutFile $filePath 
+    Invoke-WebRequest -Uri $fileUrl -OutFile $filePath
 }
 ```
 

@@ -74,8 +74,8 @@ Success! My new ingress rules appear at the bottom of the list.
 ![New rules added](s5Y0rycng.png)
 
 That gets traffic from the internet and to my instance, but the OS is still going to drop the traffic at its own firewall. I'll need to work with `iptables` to change that. (You typically use `ufw` to manage firewalls more easily on Ubuntu, but it isn't included on this minimal image and seemed to butt heads with `iptables` when I tried adding it. I eventually decided it was better to just interact with `iptables` directly). I'll start by listing the existing rules on the `INPUT` chain:
-```
-$ sudo iptables -L INPUT --line-numbers
+```command-session
+sudo iptables -L INPUT --line-numbers
 Chain INPUT (policy ACCEPT)
 num  target     prot opt source               destination
 1    ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
@@ -87,14 +87,14 @@ num  target     prot opt source               destination
 ```
 
 Note the `REJECT all` statement at line `6`. I'll need to insert my new `ACCEPT` rules for ports `80` and `443` above that implicit deny all:
-```
+```command
 sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
 sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
 ```
 
 And then I'll confirm that the order is correct:
-```
-$ sudo iptables -L INPUT --line-numbers
+```command-session
+sudo iptables -L INPUT --line-numbers
 Chain INPUT (policy ACCEPT)
 num  target     prot opt source               destination
 1    ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
@@ -108,8 +108,8 @@ num  target     prot opt source               destination
 ```
 
 I can use `nmap` running from my local Linux environment to confirm that I can now reach those ports on the VM. (They're still "closed" since nothing is listening on the ports yet, but the connections aren't being rejected.)
-```
-$ nmap -Pn matrix.bowdre.net
+```command-session
+nmap -Pn matrix.bowdre.net
 Starting Nmap 7.70 ( https://nmap.org ) at 2021-06-27 12:49 CDT
 Nmap scan report for matrix.bowdre.net(150.136.6.180)
 Host is up (0.086s latency).
@@ -126,15 +126,15 @@ Nmap done: 1 IP address (1 host up) scanned in 8.44 seconds
 Cool! Before I move on, I'll be sure to make the rules persistent so they'll be re-applied whenever `iptables` starts up:
 
 Make rules persistent:
-```
-$ sudo netfilter-persistent save
+```command-session
+sudo netfilter-persistent save
 run-parts: executing /usr/share/netfilter-persistent/plugins.d/15-ip4tables save
 run-parts: executing /usr/share/netfilter-persistent/plugins.d/25-ip6tables save
 ```
 
 ### Reverse proxy setup
 I had initially planned on using `certbot` to generate Let's Encrypt certificates, and then reference the certs as needed from an `nginx` or Apache reverse proxy configuration. While researching how the [proxy would need to be configured to front Synapse](https://github.com/matrix-org/synapse/blob/master/docs/reverse_proxy.md), I found this sample `nginx` configuration:
-```conf
+```nginx {linenos=true}
 server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
@@ -159,7 +159,7 @@ server {
 ```
 
 And this sample Apache one:
-```conf
+```apache {linenos=true}
 <VirtualHost *:443>
     SSLEngine on
     ServerName matrix.example.com
@@ -185,7 +185,7 @@ And this sample Apache one:
 ```
 
 I also found this sample config for another web server called [Caddy](https://caddyserver.com):
-```
+```caddy {linenos=true}
 matrix.example.com {
   reverse_proxy /_matrix/* http://localhost:8008
   reverse_proxy /_synapse/client/* http://localhost:8008
@@ -198,7 +198,7 @@ example.com:8448 {
 
 One of these looks much simpler than the other two. I'd never heard of Caddy so I did some quick digging, and I found that it would actually [handle the certificates entirely automatically](https://caddyserver.com/docs/automatic-https) - in addition to having a much easier config. [Installing Caddy](https://caddyserver.com/docs/install#debian-ubuntu-raspbian) wasn't too bad, either:
 
-```sh
+```command
 sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo apt-key add -
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
@@ -207,18 +207,18 @@ sudo apt install caddy
 ```
 
 Then I just need to put my configuration into the default `Caddyfile`, including the required `.well-known` delegation piece from earlier.
-```
-$ sudo vi /etc/caddy/Caddyfile
+```caddy {linenos=true}
+# /etc/caddy/Caddyfile
 matrix.bowdre.net {
-        reverse_proxy /_matrix/* http://localhost:8008
-        reverse_proxy /_synapse/client/* http://localhost:8008
+  reverse_proxy /_matrix/* http://localhost:8008
+  reverse_proxy /_synapse/client/* http://localhost:8008
 }
 
 bowdre.net {
-        route {
-                respond /.well-known/matrix/server `{"m.server": "matrix.bowdre.net:443"}`
-                redir https://virtuallypotato.com
-        }
+  route {
+    respond /.well-known/matrix/server `{"m.server": "matrix.bowdre.net:443"}`
+    redir https://virtuallypotato.com
+  }
 }
 ```
 There's a lot happening in that 11-line `Caddyfile`, but it's not complicated by any means. The `matrix.bowdre.net` section is pretty much exactly yanked from the sample config, and it's going to pass any requests that start like `matrix.bowdre.net/_matrix/` or `matrix.bowdre.net/_synapse/client/` through to the Synapse server listening locally on port `8008`. Caddy will automatically request and apply a Let's Encrypt or ZeroSSL cert for any server names spelled out in the config - very slick!
@@ -228,15 +228,15 @@ I set up the `bowdre.net` section to return the appropriate JSON string to tell 
 (I wouldn't need that section at all if I were using a separate web server for `bowdre.net`; instead, I'd basically just add that `respond /.well-known/matrix/server` line to that other server's config.)
 
 Now to enable the `caddy` service, start it, and restart it so that it loads the new config:
-```
+```command
 sudo systemctl enable caddy
 sudo systemctl start caddy
 sudo systemctl restart caddy
 ```
 
 If I repeat my `nmap` scan from earlier, I'll see that the HTTP and HTTPS ports are now open. The server still isn't actually serving anything on those ports yet, but at least it's listening.
-```
-$ nmap -Pn matrix.bowdre.net
+```command-session
+nmap -Pn matrix.bowdre.net
 Starting Nmap 7.70 ( https://nmap.org ) at 2021-06-27 13:44 CDT
 Nmap scan report for matrix.bowdre.net (150.136.6.180)
 Host is up (0.034s latency).
@@ -265,56 +265,58 @@ Okay, let's actually serve something up now.
 #### Docker setup
 Before I can get on with [deploying Synapse in Docker](https://hub.docker.com/r/matrixdotorg/synapse), I first need to [install Docker](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) on the system:
 
-```sh
+```command-session
 sudo apt-get install \
     apt-transport-https \
     ca-certificates \
     curl \
     gnupg \
     lsb-release
-
+```
+```command
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-
+```
+```command-session
 echo \
-  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
+    "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+    $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+```command
 sudo apt update
-
 sudo apt install docker-ce docker-ce-cli containerd.io
 ```
 
 I'll also [install Docker Compose](https://docs.docker.com/compose/install/#install-compose):
-```sh
+```command
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 
 And I'll add my `ubuntu` user to the `docker` group so that I won't have to run every docker command with `sudo`:
-```
+```command
 sudo usermod -G docker -a ubuntu
 ```
 
 I'll log out and back in so that the membership change takes effect, and then test both `docker` and `docker-compose` to make sure they're working:
-```
-$ docker --version
+```command-session
+docker --version
 Docker version 20.10.7, build f0df350
-
-$ docker-compose --version
+```
+```command-session
+docker-compose --version
 docker-compose version 1.29.2, build 5becea4c
 ```
 
 #### Synapse setup
 Now I'll make a place for the Synapse installation to live, including a `data` folder that will be mounted into the container:
-```
+```command
 sudo mkdir -p /opt/matrix/synapse/data
 cd /opt/matrix/synapse
 ```
 
 And then I'll create the compose file to define the deployment:
-```yaml
-$ sudo vi docker-compose.yml
+```yaml {linenos=true}
+# /opt/matrix/synapse/docker-compose.yaml
 services:
   synapse:
     container_name: "synapse"
@@ -328,8 +330,8 @@ services:
 
 Before I can fire this up, I'll need to generate an initial configuration as [described in the documentation](https://hub.docker.com/r/matrixdotorg/synapse). Here I'll specify the server name that I'd like other Matrix servers to know mine by (`bowdre.net`):
 
-```sh
-$ docker run -it --rm \
+```command-session
+docker run -it --rm \
     -v "/opt/matrix/synapse/data:/data" \
     -e SYNAPSE_SERVER_NAME=bowdre.net \
     -e SYNAPSE_REPORT_STATS=yes \
@@ -373,15 +375,15 @@ so that I can create a user account without fumbling with the CLI. I'll be sure 
 There are a bunch of other useful configurations that can be made here, but these will do to get things going for now.
 
 Time to start it up:
-```
-$ docker-compose up -d
+```command-session
+docker-compose up -d
 Creating network "synapse_default" with the default driver
 Creating synapse ... done
 ```
 
 And use `docker ps` to confirm that it's running:
-```
-$ docker ps
+```command-session
+docker ps
 CONTAINER ID   IMAGE                  COMMAND       CREATED          STATUS                    PORTS                                          NAMES
 573612ec5735   matrixdotorg/synapse   "/start.py"   25 seconds ago   Up 23 seconds (healthy)   8009/tcp, 127.0.0.1:8008->8008/tcp, 8448/tcp   synapse
 ```
@@ -400,6 +402,7 @@ And I can view the JSON report at the bottom of the page to confirm that it's co
     "m.server": "matrix.bowdre.net:443",
     "CacheExpiresAt": 0
   },
+}
 ```
 
 Now I can fire up my [Matrix client of choice](https://element.io/get-started)), specify my homeserver using its full FQDN, and [register](https://app.element.io/#/register) a new user account:
@@ -414,15 +417,13 @@ All in, I'm pretty pleased with how this little project turned out, and I learne
 
 ### Update: Updating
 After a while, it's probably a good idea to update both the Ubntu server and the Synapse container running on it. Updating the server itself is as easy as:
-```sh
+```command
 sudo apt update
 sudo apt upgrade
-# And, if needed:
-sudo reboot
 ```
 
 Here's what I do to update the container:
-```sh
+```bash
 # Move to the working directory
 cd /opt/matrix/synapse
 # Pull a new version of the synapse image

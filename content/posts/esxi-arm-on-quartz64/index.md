@@ -85,7 +85,7 @@ Let's start with the gear (hardware and software) I needed to make this work:
 The very first task is to write the required firmware image (download [here](https://github.com/jaredmcneill/quartz64_uefi/releases)) to a micro SD card. I used a 64GB card that I had lying around but you could easily get by with a *much* smaller one; the firmware image is tiny, and the card can't be used for storing anything else. Since I'm doing this on a Chromebook, I'll be using the [Chromebook Recovery Utility (CRU)](https://chrome.google.com/webstore/detail/chromebook-recovery-utili/pocpnlppkickgojjlmhdmidojbmbodfm) for writing the images to external storage as described [in another post](/burn-an-iso-to-usb-with-the-chromebook-recovery-utility/).
 
 After downloading [`QUARTZ64_EFI.img.gz`](https://github.com/jaredmcneill/quartz64_uefi/releases/download/2022-07-20/QUARTZ64_EFI.img.gz), I need to get it into a format recognized by CRU and, in this case, that means extracting the gzipped archive and then compressing the `.img` file into a standard `.zip`:
-```
+```command
 gunzip QUARTZ64_EFI.img.gz
 zip QUARTZ64_EFI.img.zip QUARTZ64_EFI.img
 ```
@@ -98,7 +98,7 @@ I can then write it to the micro SD card by opening CRU, clicking on the gear ic
 I'll also need to prepare the ESXi installation media (download [here](https://customerconnect.vmware.com/downloads/get-download?downloadGroup=ESXI-ARM)). For that, I'll be using a 256GB USB drive. Due to the limited storage options on the Quartz64, I'll be installing ESXi onto the same drive I use to boot the installer so, in this case, the more storage the better. By default, ESXi 7.0 will consume up to 128GB for the new `ESX-OSData` partition; whatever is leftover will be made available as a VMFS datastore. That could be problematic given the unavailable/flaky USB support of the Quartz64. (While you *can* install ESXi onto a smaller drive, down to about ~20GB, the lack of additional storage on this hardware makes it pretty important to take advantage of as much space as you can.)
 
 In any case, to make the downloaded `VMware-VMvisor-Installer-7.0-20133114.aarch64.iso` writeable with CRU all I need to do is add `.bin` to the end of the filename:
-```
+```command
 mv VMware-VMvisor-Installer-7.0-20133114.aarch64.iso{,.bin}
 ```
 
@@ -201,12 +201,12 @@ As I mentioned earlier, my initial goal is to deploy a Tailscale node on my new 
 
 #### Deploying Photon OS
 VMware provides Photon in a few different formats, as described on the [download page](https://github.com/vmware/photon/wiki/Downloading-Photon-OS). I'm going to use the "OVA with virtual hardware v13 arm64" version so I'll kick off that download of `photon_uefi.ova`. I'm actually going to download that file straight to my `deb01` Linux VM:
-```shell
+```command
 wget https://packages.vmware.com/photon/4.0/Rev2/ova/photon_uefi.ova
 ```
 and then spawn a quick Python web server to share it out:
-```shell
-❯ python3 -m http.server
+```command-session
+python3 -m http.server
 Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 ```
 
@@ -232,12 +232,12 @@ The default password for Photon's `root` user is `changeme`. You'll be forced to
 ![First login, and the requisite password change](first_login.png)
 
 Now that I'm in, I'll set the hostname appropriately:
-```bash
+```commandroot
 hostnamectl set-hostname pho01
 ```
 
 For now, the VM pulled an IP from DHCP but I would like to configure that statically instead. To do that, I'll create a new interface file:
-```bash
+```commandroot-session
 cat > /etc/systemd/network/10-static-en.network << "EOF"
 
 [Match]
@@ -251,7 +251,8 @@ DHCP = no
 IPForward = yes
 
 EOF
-
+```
+```commandroot
 chmod 644 /etc/systemd/network/10-static-en.network
 systemctl restart systemd-networkd
 ```
@@ -259,21 +260,23 @@ systemctl restart systemd-networkd
 I'm including `IPForward = yes` to [enable IP forwarding](https://tailscale.com/kb/1104/enable-ip-forwarding/) for Tailscale.
 
 With networking sorted, it's probably a good idea to check for and apply any available updates:
-```bash
+```commandroot
 tdnf update -y
 ```
 
 I'll also go ahead and create a normal user account (with sudo privileges) for me to use:
-```bash
+```commandroot
 useradd -G wheel -m john
 passwd john
 ```
 
 Now I can use SSH to connect to the VM and ditch the web console:
-```bash
-❯ ssh pho01.lab.bowdre.net
+```command-session
+ssh pho01.lab.bowdre.net
 Password:
-john@pho01 [ ~ ]$ sudo whoami
+```
+```command-session
+sudo whoami
 
 We trust you have received the usual lecture from the local System
 Administrator. It usually boils down to these three things:
@@ -292,43 +295,44 @@ Looking good! I'll now move on to the justification[^justification] for this ent
 #### Installing Tailscale
 If I *weren't* doing this on hard mode, I could use Tailscale's [install script](https://tailscale.com/download) like I do on every other Linux system. Hard mode is what I do though, and the installer doesn't directly support Photon OS. I'll instead consult the [manual install instructions](https://tailscale.com/download/linux/static) which tell me to download the appropriate binaries from [https://pkgs.tailscale.com/stable/#static](https://pkgs.tailscale.com/stable/#static). So I'll grab the link for the latest `arm64` build and pull the down to the VM:
 
-```bash
+```command
 curl https://pkgs.tailscale.com/stable/tailscale_1.22.2_arm64.tgz --output tailscale_arm64.tgz
 ```
 
 Then I can unpack it:
-```bash
+```command
 sudo tdnf install tar
 tar xvf tailscale_arm64.tgz
 cd tailscale_1.22.2_arm64/
 ```
 
 So I've got the `tailscale` and `tailscaled` binaries as well as some sample service configs in the `systemd` directory:
-```bash
-john@pho01 [ ~/tailscale_1.22.2_arm64 ]$
-.:
+```command-session
+ls
 total 32288
 drwxr-x--- 2 john users     4096 Mar 18 02:44 systemd
 -rwxr-x--- 1 john users 12187139 Mar 18 02:44 tailscale
 -rwxr-x--- 1 john users 20866538 Mar 18 02:44 tailscaled
-
-./systemd:
+```
+```command-session
+ls ./systemd
 total 8
 -rw-r----- 1 john users 287 Mar 18 02:44 tailscaled.defaults
 -rw-r----- 1 john users 674 Mar 18 02:44 tailscaled.service
 ```
 
 Dealing with the binaries is straight-forward. I'll drop them into `/usr/bin/` and `/usr/sbin/` (respectively) and set the file permissions:
-```bash
+```command
 sudo install -m 755 tailscale /usr/bin/
 sudo install -m 755 tailscaled /usr/sbin/
 ```
 
 Then I'll descend to the `systemd` folder and see what's up:
-```bash
-john@pho01 [ ~/tailscale_1.22.2_arm64/ ]$ cd systemd/
-
-john@pho01 [ ~/tailscale_1.22.2_arm64/systemd ]$ cat tailscaled.defaults
+```command
+cd systemd/
+```
+```command-session
+cat tailscaled.defaults
 # Set the port to listen on for incoming VPN packets.
 # Remote nodes will automatically be informed about the new port number,
 # but you might want to configure this in order to set external firewall
@@ -337,8 +341,9 @@ PORT="41641"
 
 # Extra flags you might want to pass to tailscaled.
 FLAGS=""
-
-john@pho01 [ ~/tailscale_1.22.2_arm64/systemd ]$ cat tailscaled.service
+```
+```command-session
+cat tailscaled.service
 [Unit]
 Description=Tailscale node agent
 Documentation=https://tailscale.com/kb/
@@ -366,23 +371,23 @@ WantedBy=multi-user.target
 ```
 
 `tailscaled.defaults` contains the default configuration that will be referenced by the service, and `tailscaled.service` tells me that it expects to find it at `/etc/defaults/tailscaled`. So I'll copy it there and set the perms:
-```bash
+```command
 sudo install -m 644 tailscaled.defaults /etc/defaults/tailscaled
 ```
 
 `tailscaled.service` will get dropped in `/usr/lib/systemd/system/`:
-```bash
+```command
 sudo install -m 644 tailscaled.service /usr/lib/systemd/system/
 ```
 
 Then I'll enable the service and start it:
-```bash
+```command
 sudo systemctl enable tailscaled.service
 sudo systemctl start tailscaled.service
 ```
 
 And finally log in to Tailscale, including my `tag:home` tag for [ACL purposes](/secure-networking-made-simple-with-tailscale/#acls) and a route advertisement for my home network so that my other Tailscale nodes can use this one to access other devices as well:
-```bash
+```command
 sudo tailscale up --advertise-tags "tag:home" --advertise-route "192.168.1.0/24"
 ```
 
@@ -408,7 +413,6 @@ Now I can remotely access the VM (and thus my homelab!) from any of my other Tai
 
 ### Conclusion
 I actually received the Quartz64 waay back on March 2nd, and it's taken me until this week to get all the pieces in place and working the way I wanted.
-{{< tweet user="johndotbowdre" id="1499194756148125701" >}}
 
 As is so often the case, a lot of time and effort would have been saved if I had RTFM'd[^rtfm] before diving in to the deep end. I definitely hadn't anticipated all the limitations that would come with the Quartz64 SBC before ordering mine. Now that it's done, though, I'm pretty pleased with the setup, and I feel like I learned quite a bit along the way. I keep reminding myself that this is still a very new hardware platform. I'm excited to see how things improve with future development efforts.
 

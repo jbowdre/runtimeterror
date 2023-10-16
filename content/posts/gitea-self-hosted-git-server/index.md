@@ -50,7 +50,7 @@ I've described the [process of creating a new instance on OCI in a past post](/f
 
 ### Prepare the server
 Once the server's up and running, I go through the usual steps of applying any available updates:
-```bash
+```command
 sudo apt update
 sudo apt upgrade
 ```
@@ -58,12 +58,12 @@ sudo apt upgrade
 #### Install Tailscale
 And then I'll install Tailscale using their handy-dandy bootstrap script:
 
-```bash
+```command
 curl -fsSL https://tailscale.com/install.sh | sh
 ```
 
 When I bring up the Tailscale interface, I'll use the `--advertise-tags` flag to identify the server with an [ACL tag](https://tailscale.com/kb/1068/acl-tags/). ([Within my tailnet](/secure-networking-made-simple-with-tailscale/#acls)[^tailnet], all of my other clients are able to connect to devices bearing the `cloud` tag but `cloud` servers can only reach back to other devices for performing DNS lookups.)
-```bash
+```command
 sudo tailscale up --advertise-tags "tag:cloud"
 ```
 
@@ -72,12 +72,16 @@ sudo tailscale up --advertise-tags "tag:cloud"
 #### Install Docker
 Next I install Docker and `docker-compose`:
 
-```bash
+```command
 sudo apt install ca-certificates curl gnupg lsb-release
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+```
+```command-session
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+```command
 sudo apt update
 sudo apt install docker-ce docker-ce-cli containerd.io docker-compose docker-compose-plugin
 ```
@@ -85,8 +89,8 @@ sudo apt install docker-ce docker-ce-cli containerd.io docker-compose docker-com
 #### Configure firewall
 This server automatically had an iptables firewall rule configured to permit SSH access. For Gitea, I'll also need to configure HTTP/HTTPS access. [As before](/federated-matrix-server-synapse-on-oracle-clouds-free-tier/#firewall-configuration), I need to be mindful of the explicit `REJECT all` rule at the bottom of the `INPUT` chain:
 
-```bash
-$ sudo iptables -L INPUT --line-numbers
+```command-session
+sudo iptables -L INPUT --line-numbers
 Chain INPUT (policy ACCEPT)
 num  target     prot opt source               destination
 1    ts-input   all  --  anywhere             anywhere
@@ -99,15 +103,15 @@ num  target     prot opt source               destination
 ```
 
 So I'll insert the new rules at line 6:
-```bash
+```command
 sudo iptables -L INPUT --line-numbers
 sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
 sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
 ```
 
 And confirm that it did what I wanted it to:
-```bash
-$ sudo iptables -L INPUT --line-numbers
+```command-session
+sudo iptables -L INPUT --line-numbers
 Chain INPUT (policy ACCEPT)
 num  target     prot opt source               destination
 1    ts-input   all  --  anywhere             anywhere
@@ -122,8 +126,8 @@ num  target     prot opt source               destination
 ```
 
 That looks good, so let's save the new rules:
-```bash
-$ sudo netfilter-persistent save
+```command-session
+sudo netfilter-persistent save
 run-parts: executing /usr/share/netfilter-persistent/plugins.d/15-ip4tables save
 run-parts: executing /usr/share/netfilter-persistent/plugins.d/25-ip6tables save
 ```
@@ -139,19 +143,19 @@ I'm now ready to move on with installing Gitea itself.
 I'll start with creating a `git` user. This account will be set as the owner of the data volume used by the Gitea container, but will also (perhaps more importantly) facilitate [SSH passthrough](https://docs.gitea.io/en-us/install-with-docker/#ssh-container-passthrough) into the container for secure git operations.
 
 Here's where I create the account and also generate what will become the SSH key used by the git server:
-```bash
+```command
 sudo useradd -s /bin/bash -m git
 sudo -u git ssh-keygen -t ecdsa -C "Gitea Host Key"
 ```
 
 The `git` user's SSH public key gets added as-is directly to that user's `authorized_keys` file:
-```bash
+```command
 sudo -u git cat /home/git/.ssh/id_ecdsa.pub | sudo -u git tee -a /home/git/.ssh/authorized_keys
 sudo -u git chmod 600 /home/git/.ssh/authorized_keys
 ```
 
 When other users add their SSH public keys into Gitea's web UI, those will get added to `authorized_keys` with a little something extra: an alternate command to perform git actions instead of just SSH ones:
-```
+```cfg
 command="/usr/local/bin/gitea --config=/data/gitea/conf/app.ini serv key-1",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty <user pubkey>
 ```
 
@@ -160,11 +164,13 @@ No users have added their keys to Gitea just yet so if you look at `/home/git/.s
 {{% /notice %}}
 
 So I'll go ahead and create that extra command:
-```bash
+```command-session
 cat <<"EOF" | sudo tee /usr/local/bin/gitea
 #!/bin/sh
 ssh -p 2222 -o StrictHostKeyChecking=no git@127.0.0.1 "SSH_ORIGINAL_COMMAND=\"$SSH_ORIGINAL_COMMAND\" $0 $@"
 EOF
+```
+```command
 sudo chmod +x /usr/local/bin/gitea
 ```
 
@@ -174,26 +180,26 @@ So when I use a `git` command to interact with the server via SSH, the commands 
 That takes care of most of the prep work, so now I'm ready to create the `docker-compose.yaml` file which will tell Docker how to host Gitea.
 
 I'm going to place this in `/opt/gitea`:
-```bash
+```command
 sudo mkdir -p /opt/gitea
 cd /opt/gitea
 ```
 
 And I want to be sure that my new `git` user owns the `./data` directory which will be where the git contents get stored:
-```bash
+```command
 sudo mkdir data
 sudo chown git:git -R data
 ```
 
 Now to create the file:
-```bash
+```command
 sudo vi docker-compose.yaml
 ```
 
 The basic contents of the file came from the [Gitea documentation for Installation with Docker](https://docs.gitea.io/en-us/install-with-docker/), but I also included some (highlighted) additional environment variables based on the [Configuration Cheat Sheet](https://docs.gitea.io/en-us/config-cheat-sheet/):
 
 `docker-compose.yaml`:
-```yaml {hl_lines=["12-13","19-31",38,43]}
+```yaml {linenos=true,hl_lines=["12-13","19-31",38,43]}
 version: "3"
 
 networks:
@@ -292,7 +298,7 @@ With the config in place, I'm ready to fire it up:
 
 #### Start containers
 Starting Gitea is as simple as
-```bash
+```command
 sudo docker-compose up -d
 ```
 which will spawn both the Gitea server as well as a `postgres` database to back it.
@@ -305,7 +311,7 @@ I've [written before](/federated-matrix-server-synapse-on-oracle-clouds-free-tie
 #### Install Caddy
 So exactly how simple does Caddy make this? Well let's start with installing Caddy on the system:
 
-```bash
+```command
 sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
@@ -315,12 +321,12 @@ sudo apt install caddy
 
 #### Configure Caddy
 Configuring Caddy is as simple as creating a Caddyfile:
-```bash
+```command
 sudo vi /etc/caddy/Caddyfile
 ```
 
 Within that file, I tell it which fully-qualified domain name(s) I'd like it to respond to (and manage SSL certificates for), as well as that I'd like it to function as a reverse proxy and send the incoming traffic to the same port `3000` that used by the Docker container:
-```
+```caddy
 git.bowdre.net {
         reverse_proxy localhost:3000
 }
@@ -330,7 +336,7 @@ That's it. I don't need to worry about headers or ACME configurations or anythin
 
 #### Start Caddy
 All that's left at this point is to start up Caddy:
-```bash
+```command
 sudo systemctl enable caddy
 sudo systemctl start caddy
 sudo systemctl restart caddy
@@ -357,25 +363,26 @@ And then I can log out and log back in with my new non-admin identity!
 
 #### Add SSH public key
 Associating a public key with my new Gitea account will allow me to easily authenticate my pushes from the command line. I can create a new SSH public/private keypair by following [GitHub's instructions](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent):
-```shell
+```command
 ssh-keygen -t ed25519 -C "user@example.com"
 ```
 
 I'll view the contents of the public key - and go ahead and copy the output for future use:
-```
-; cat ~/.ssh/id_ed25519.pub
+```command-session
+cat ~/.ssh/id_ed25519.pub
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF5ExSsQfr6pAFBEZ7yx0oljSnpnOixvp8DS26STcx2J user@example.com
 ```
 
 Back in the Gitea UI, I'll click the user menu up top and select **Settings**, then the *SSH / GPG Keys* tab, and click the **Add Key** button:
+
 ![User menu](user_menu.png)
 ![Adding a public key](add_key.png)
 
 I can give the key a name and then paste in that public key, and then click the lower **Add Key** button to insert the new key.
 
 To verify that the SSH passthrough magic I [configured earlier](#prepare-git-user) is working, I can take a look at `git`'s `authorized_keys` file:
-```shell{hl_lines=3}
-; sudo tail -2 /home/git/.ssh/authorized_keys
+```command-session
+sudo tail -2 /home/git/.ssh/authorized_keys
 # gitea public key
 command="/usr/local/bin/gitea --config=/data/gitea/conf/app.ini serv key-3",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,no-user-rc,restrict ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF5ExSsQfr6pAFBEZ7yx0oljSnpnOixvp8DS26STcx2J user@example.com
 ```
@@ -388,7 +395,7 @@ I'm already limiting this server's exposure by blocking inbound SSH (except for 
 [Fail2ban](https://www.fail2ban.org/wiki/index.php/Main_Page) can help with that by monitoring log files for repeated authentication failures and then creating firewall rules to block the offender.
 
 Installing Fail2ban is simple:
-```shell
+```command
 sudo apt update
 sudo apt install fail2ban
 ```
@@ -404,22 +411,22 @@ Specifically, I'll want to watch `log/gitea.log` for messages like the following
 ```
 
 So let's create that filter:
-```shell
+```command
 sudo vi /etc/fail2ban/filter.d/gitea.conf
 ```
-`/etc/fail2ban/filter.d/gitea.conf`:
-```
+```cfg
+# /etc/fail2ban/filter.d/gitea.conf
 [Definition]
 failregex =  .*(Failed authentication attempt|invalid credentials).* from <HOST>
 ignoreregex =
 ```
 
 Next I create the jail, which tells Fail2ban what to do:
-```shell
+```command
 sudo vi /etc/fail2ban/jail.d/gitea.conf
 ```
-`/etc/fail2ban/jail.d/gitea.conf`:
-```
+```cfg
+# /etc/fail2ban/jail.d/gitea.conf
 [gitea]
 enabled = true
 filter = gitea
@@ -433,14 +440,14 @@ action = iptables-allports
 This configures Fail2ban to watch the log file (`logpath`) inside the data volume mounted to the Gitea container for messages which match the pattern I just configured (`gitea`). If a system fails to log in 5 times (`maxretry`) within 1 hour (`findtime`, in seconds) then the offending IP will be banned for 1 day (`bantime`, in seconds).
 
 Then I just need to enable and start Fail2ban:
-```shell
+```command
 sudo systemctl enable fail2ban
 sudo systemctl start fail2ban
 ```
 
 To verify that it's working, I can deliberately fail to log in to the web interface and watch `/var/log/fail2ban.log`:
-```shell
-; sudo tail -f /var/log/fail2ban.log
+```command-session
+sudo tail -f /var/log/fail2ban.log
 2022-07-17 21:52:26,978 fail2ban.filter         [36042]: INFO    [gitea] Found ${MY_HOME_IP}| - 2022-07-17 21:52:26
 ```
 
@@ -470,10 +477,10 @@ The real point of this whole exercise was to sync my Obsidian vault to a Git ser
 Once it's created, the new-but-empty repository gives me instructions on how I can interact with it. Note that the SSH address uses the special `git.tadpole-jazz.ts.net` Tailscale domain name which is only accessible within my tailnet.
 
 
-![Emtpy repository](empty_repo.png)
+![Empty repository](empty_repo.png)
 
 Now I can follow the instructions to initialize my local Obsidian vault (stored at `~/obsidian-vault/`) as a git repository and perform my initial push to Gitea:
-```shell
+```command
 cd ~/obsidian-vault/
 git init
 git add .

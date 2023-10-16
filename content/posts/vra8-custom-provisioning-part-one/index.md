@@ -47,7 +47,7 @@ Since each of my hosts only has 100GB of datastore and my Windows template speci
 I created a few Flavor Mappings ranging from `micro` (1vCPU|1GB RAM) to `giant` (8vCPU|16GB) but for this resource-constrained lab I'll stick mostly to the `micro`, `tiny` (1vCPU|2GB), and `small` (2vCPU|2GB) sizes.
 ![T-shirt size Flavor Mappings](lodJlc8Hp.png)
 
-And I created an Image Mapping named `ws2019` which points to a Windows Server 2019 Core template I have stored in my lab's Content Library (cleverly-named "LABrary" for my own amusement). 
+And I created an Image Mapping named `ws2019` which points to a Windows Server 2019 Core template I have stored in my lab's Content Library (cleverly-named "LABrary" for my own amusement).
 ![Windows Server Image Mapping](6k06ySON7.png)
 
 And with that, my vRA infrastructure is ready for testing a *very* basic deployment.
@@ -57,7 +57,7 @@ Now it's time to leave the Infrastructure tab and visit the Design one, where I'
 ![My first Cloud Template!](RtMljqM9x.png)
 
 VMware's got a [pretty great document](https://docs.vmware.com/en/vRealize-Automation/8.3/Using-and-Managing-Cloud-Assembly/GUID-6BA1DA96-5C20-44BF-9C81-F8132B9B4872.html#list-of-input-properties-2) describing the syntax for these input properties, plus a lot of it is kind of self-explanatory. Let's step through this real quick:
-```yaml
+```yaml {linenos=true}
 formatVersion: 1
 inputs:
   # Image Mapping
@@ -69,11 +69,11 @@ inputs:
         const: ws2019
     default: ws2019
 ```
-`formatVersion` is always gonna be 1 so we'll skip right past that. 
+`formatVersion` is always gonna be 1 so we'll skip right past that.
 
 The first input is going to ask the user to select the desired Operating System for this deployment. The `oneOf` type will be presented as a dropdown (with only one option in this case, but I'll leave it this way for future flexibility); the user will see the friendly "Windows Server 2019" `title` which is tied to the `ws2019` `const` value. For now, I'll also set the `default` value of the field so I don't have to actually click the dropdown each time I test the deployment.
 
-```yaml
+```yaml {linenos=true}
   # Flavor Mapping
   size:
     title: Resource Size
@@ -92,7 +92,7 @@ Now I'm asking the user to pick the t-shirt size of the VM. These will correspon
 
 The `resources` section is where the data from the inputs gets applied to the deployment:
 
-```yaml
+```yaml {linenos=true}
 resources:
   Cloud_vSphere_Machine_1:
     type: Cloud.vSphere.Machine
@@ -112,7 +112,7 @@ So I'm connecting the selected `input.image` to the Image Mapping configured in 
 
 All together now:
 
-```yaml
+```yaml {linenos=true}
 formatVersion: 1
 inputs:
   # Image Mapping
@@ -180,7 +180,7 @@ And I can pop over to the IPAM interface to confirm that the IP has been marked 
 Fantastic! But one of my objectives from earlier was to let the user control where a VM gets provisioned. Fortunately it's pretty easy to implement thanks to vRA 8's use of tags.
 
 ### Using tags for resource placement
-Just about every entity within vRA 8 can have tags applied to it, and you can leverage those tags in some pretty creative and useful ways. For now, I'll start by applying tags to my compute resources; I'll use `comp:bow` for the "BOW Cluster" and `comp:dre` for the "DRE Cluster". 
+Just about every entity within vRA 8 can have tags applied to it, and you can leverage those tags in some pretty creative and useful ways. For now, I'll start by applying tags to my compute resources; I'll use `comp:bow` for the "BOW Cluster" and `comp:dre` for the "DRE Cluster".
 ![Compute tags](oz1IAp-i0.png)
 
 I'll also use the `net:bow` and `net:dre` tags to logically divide up the networks between my sites:
@@ -188,7 +188,7 @@ I'll also use the `net:bow` and `net:dre` tags to logically divide up the networ
 
 I can now add an input to the Cloud Template so the user can pick which site they need to deploy to:
 
-```yaml
+```yaml {linenos=true}
 inputs:
   # Datacenter location
   site:
@@ -204,7 +204,7 @@ I'm using the `enum` option now instead of `oneOf` since the site names shouldn'
 
 And then I'll add some `constraints` to the `resources` section, making use of the `to_lower` function from the [cloud template expression syntax](https://docs.vmware.com/en/vRealize-Automation/8.3/Using-and-Managing-Cloud-Assembly/GUID-12F0BC64-6391-4E5F-AA48-C5959024F3EB.html) to automatically convert the selected site name from all-caps to lowercase so it matches the appropriate tag:
 
-```yaml
+```yaml {linenos=true}
 resources:
   Cloud_vSphere_Machine_1:
     type: Cloud.vSphere.Machine
