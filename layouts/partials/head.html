@@ -21,3 +21,10 @@
 
 <!-- cabin analytics -->
 <script async defer src="https://scripts.withcabin.com/hello.js"></script>
+
+{{ if (findRE "<pre" .Content 1) }}
+  {{ $syntax := resources.Get "css/syntax.css" | minify }}
+  <link href="{{ $syntax.RelPermalink }}" rel="stylesheet">
+  {{ $copyCss := resources.Get "css/code-copy-button.css" | minify }}
+  <link href="{{ $copyCss.RelPermalink }}" rel="stylesheet">
+{{ end }}

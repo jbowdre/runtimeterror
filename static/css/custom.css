@@ -1,5 +1,3 @@
-@import 'syntax.css';
-
 /* override page max-width */
 .page {
   max-width: 72rem;
