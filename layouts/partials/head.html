@@ -23,8 +23,8 @@
 <script async defer src="https://scripts.withcabin.com/hello.js"></script>
 
 {{ if (findRE "<pre" .Content 1) }}
-  {{ $syntax := resources.Get "css/syntax.css" | minify }}
+  {{ $syntax := resources.Get "css/torchlight.css" | minify }}
   <link href="{{ $syntax.RelPermalink }}" rel="stylesheet">
-  {{ $copyCss := resources.Get "css/code-copy-button.css" | minify }}
-  <link href="{{ $copyCss.RelPermalink }}" rel="stylesheet">
+  <!-- {{ $copyCss := resources.Get "css/code-copy-button.css" | minify }}
+  <link href="{{ $copyCss.RelPermalink }}" rel="stylesheet"> -->
 {{ end }}

@@ -6,18 +6,6 @@
   [goldmark.extensions]
     typographer = false
 
-[highlight]
-  anchorLineNos = true
-  codeFences = true
-  guessSyntax = true
-  hl_Lines = ''
-  lineNos = false
-  lineNoStart = 1
-  lineNumbersInTable = false
-  noClasses = false
-  tabwidth = 2
-  style = 'monokai'
-
 # Table of contents
 # Add toc = true to content front matter to enable
 [tableOfContents]

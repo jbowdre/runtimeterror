@@ -34,7 +34,7 @@ Once the VM is created, I power it on and hop into the web console. The default 
 ### Configure Networking
 My next step was to configure a static IP address by creating `/etc/systemd/network/10-static-en.network` and entering the following contents:
 
-```cfg {linenos=true}
+```ini
 [Match]
 Name=eth0
 
@@ -48,12 +48,12 @@ By the way, that `192.168.1.5` address is my Windows DC/DNS server that I use fo
 
 I also disabled DHCP by setting `DHCP=no` in `/etc/systemd/network/99-dhcp-en.network`:
 
-```cfg {linenos=true}
+```ini
 [Match]
 Name=e*
 
 [Network]
-DHCP=no
+DHCP=no # [tl! highlight]
 IPv6AcceptRA=no
 ```
 
@@ -70,27 +70,27 @@ Now that I'm in, I run `tdnf update` to make sure the VM is fully up to date.
 ### Install docker-compose
 Photon OS ships with Docker preinstalled, but I need to install `docker-compose` on my own to simplify container deployment. Per the [install instructions](https://docs.docker.com/compose/install/#install-compose), I run:
 
-```commandroot
-curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+```shell
+curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose # [tl! .cmd_root:1]
 chmod +x /usr/local/bin/docker-compose
 ```
 
 And then verify that it works:
-```commandroot-session
-docker-compose --version
-docker-compose version 1.29.2, build 5becea4c
+```shell
+docker-compose --version # [tl! .cmd_root]
+docker-compose version 1.29.2, build 5becea4c # [tl! .cmd_return]
 ```
 
 I'll also want to enable and start Docker:
-```commandroot
-systemctl enable docker
+```shell
+systemctl enable docker # [tl! .cmd_root:1]
 systemctl start docker
 ```
 
 ### Disable DNSStubListener
 By default, the `resolved` daemon is listening on `127.0.0.53:53` and will prevent docker from binding to that port. Fortunately it's [pretty easy](https://github.com/pi-hole/docker-pi-hole#installing-on-ubuntu) to disable the `DNSStubListener` and free up the port:
-```commandroot
-sed -r -i.orig 's/#?DNSStubListener=yes/DNSStubListener=no/g' /etc/systemd/resolved.conf
+```shell
+sed -r -i.orig 's/#?DNSStubListener=yes/DNSStubListener=no/g' /etc/systemd/resolved.conf # [tl! .cmd_root:2]
 rm /etc/resolv.conf && ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
 systemctl restart systemd-resolved
 ```
@@ -99,14 +99,15 @@ systemctl restart systemd-resolved
 Okay, now for the fun part.
 
 I create a directory for AdGuard to live in, and then create a `docker-compose.yaml` therein:
-```commandroot
-mkdir ~/adguard
+```shell
+mkdir ~/adguard # [tl! .cmd_root:2]
 cd ~/adguard
 vi docker-compose.yaml
 ```
 
 And I define the container:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 version: "3"
 
 services:
@@ -133,9 +134,9 @@ services:
 
 Then I can fire it up with `docker-compose up --detach`:
 
-```commandroot-session
-docker-compose up --detach
-Creating network "adguard_default" with the default driver
+```shell
+docker-compose up --detach # [tl! .cmd_root]
+Creating network "adguard_default" with the default driver # [tl! .cmd_return:start]
 Pulling adguard (adguard/adguardhome:latest)...
 latest: Pulling from adguard/adguardhome
 339de151aab4: Pull complete
@@ -144,7 +145,7 @@ latest: Pulling from adguard/adguardhome
 bfad96428d01: Pull complete
 Digest: sha256:de7d791b814560663fe95f9812fca2d6dd9d6507e4b1b29926cc7b4a08a676ad
 Status: Downloaded newer image for adguard/adguardhome:latest
-Creating adguard ... done
+Creating adguard ... done # [tl! .cmd_return:end]
 ```
 
 

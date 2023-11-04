@@ -135,7 +135,7 @@ body.dark .notice {
 }
 
 /* Insert prompt char ::before on every line in command codeblocks */
-.command .line {display: inherit;}
+/* .command .line {display: inherit;}
 .command .line::before {
   color: var(--base07);
   content: "$ ";
@@ -145,12 +145,12 @@ body.dark .notice {
 .commandroot .line::before {
   color: var(--base08);
   content: "# ";
-}
+} */
 
 /* Insert prompt char ::before on first line in cmd-session codeblocks
 (These are useful for showing returned values from commands)
 */
-.command-session .line {display: inherit;}
+/* .command-session .line {display: inherit;}
 .command-session code::before {
   color: var(--base07);
   content: "$ ";
@@ -160,5 +160,5 @@ body.dark .notice {
 .commandroot-session code::before {
   color: var(--base08);
   content: "# ";
-}
+} */
 
