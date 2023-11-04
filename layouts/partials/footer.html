@@ -4,6 +4,6 @@
 <br><a target="_blank" href="https://github.com/jbowdre/runtimeterror">View source</a>.</p>
 
 {{ if (findRE "<pre" .Content 1) }}
-  {{ $jsCopy := resources.Get "js/code-copy-button.js" | minify }}
-  <script src="{{ $jsCopy.RelPermalink }}"></script>
+  <!-- {{ $jsCopy := resources.Get "js/code-copy-button.js" | minify }}
+  <script src="{{ $jsCopy.RelPermalink }}"></script> -->
 {{ end }}
