@@ -135,15 +135,15 @@ services:
 Then I can fire it up with `docker-compose up --detach`:
 
 ```shell
-docker-compose up --detach # [tl! .cmd_root]
+docker-compose up --detach # [tl! .cmd_root focus:start]
 Creating network "adguard_default" with the default driver # [tl! .cmd_return:start]
 Pulling adguard (adguard/adguardhome:latest)...
-latest: Pulling from adguard/adguardhome
+latest: Pulling from adguard/adguardhome  # [tl! focus:end]
 339de151aab4: Pull complete
 4db4be09618a: Pull complete
 7e918e810e4e: Pull complete
 bfad96428d01: Pull complete
-Digest: sha256:de7d791b814560663fe95f9812fca2d6dd9d6507e4b1b29926cc7b4a08a676ad
+Digest: sha256:de7d791b814560663fe95f9812fca2d6dd9d6507e4b1b29926cc7b4a08a676ad # [tl! focus:3]
 Status: Downloaded newer image for adguard/adguardhome:latest
 Creating adguard ... done # [tl! .cmd_return:end]
 ```
