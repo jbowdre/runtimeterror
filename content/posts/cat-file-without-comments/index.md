@@ -24,35 +24,35 @@ comment: true # Disable comment if false.
 It's super handy when a Linux config file is loaded with comments to tell you precisely how to configure the thing, but all those comments can really get in the way when you're trying to review the current configuration.
 
 Next time, instead of scrolling through page after page of lengthy embedded explanations, just use:
-```command
-egrep -v "^\s*(#|$)" $filename
+```shell
+egrep -v "^\s*(#|$)" $filename # [tl! .cmd]
 ```
 
 For added usefulness, I alias this command to `ccat` (which my brain interprets as "commentless cat") in [my `~/.zshrc`](https://github.com/jbowdre/dotfiles/blob/main/zsh/.zshrc):
-```command
+```shell
 alias ccat='egrep -v "^\s*(#|$)"'
 ```
 
 Now instead of viewing all 75 lines of a [mostly-default Vagrantfile](/create-vms-chromebook-hashicorp-vagrant), I just see the 7 that matter:
-```command-session
-wc -l Vagrantfile
-75 Vagrantfile
+```shell
+wc -l Vagrantfile # [tl! .cmd]
+75 Vagrantfile # [tl! .nocopy]
 ```
 
-```command-session
-ccat Vagrantfile
-Vagrant.configure("2") do |config|
+```shell
+ccat Vagrantfile # [tl! .cmd]
+Vagrant.configure("2") do |config| # [tl! .nocopy:start]
   config.vm.box = "oopsme/windows11-22h2"
   config.vm.provider :libvirt do |libvirt|
     libvirt.cpus = 4
     libvirt.memory = 4096
   end
-end
+end # [tl! .nocopy:end]
 ```
 
-```command-session
-ccat Vagrantfile | wc -l
-7
+```shell
+ccat Vagrantfile | wc -l # [tl! .cmd]
+7 # [tl! .nocopy]
 ```
 
 Nice!

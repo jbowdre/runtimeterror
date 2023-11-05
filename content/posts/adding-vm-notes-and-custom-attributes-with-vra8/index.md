@@ -21,7 +21,7 @@ I'll start this by adding a few new inputs to the cloud template in Cloud Assemb
 
 I'm using a basic regex on the `poc_email` field to make sure that the user's input is *probably* a valid email address in the format `[some string]@[some string].[some string]`.
 
-```yaml {linenos=true}
+```yaml
 inputs:
 [...]
   description:
@@ -36,8 +36,8 @@ inputs:
   poc_email:
     type: string
     title: Point of Contact Email
-    default: jack.shephard@virtuallypotato.com
-    pattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
+    default: username@example.com
+    pattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$' # [tl! highlight]
   ticket:
     type: string
     title: Ticket/Request Number
@@ -46,17 +46,18 @@ inputs:
 ```
 
 I'll also need to add these to the `resources` section of the template so that they will get passed along with the deployment properties.
+
 ![New resource properties](N7YllJkxS.png)
 
 I'm actually going to combine the `poc_name` and `poc_email` fields into a single `poc` string.
 
-```yaml {linenos=true}
+```yaml
 resources:
   Cloud_vSphere_Machine_1:
     type: Cloud.vSphere.Machine
     properties:
       <...>
-      poc: '${input.poc_name + " (" + input.poc_email + ")"}'
+      poc: '${input.poc_name + " (" + input.poc_email + ")"}' # [tl! highlight]
       ticket: '${input.ticket}'
       description: '${input.description}'
       <...>
@@ -80,7 +81,8 @@ The first thing this workflow needs to do is parse `inputProperties (Properties)
 ![Get VM Object action](5ATk99aPW.png)
 
 The script for this task is fairly straightforward:
-```js {linenos=true}
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: Get VM Object
 //    Inputs: inputProperties (Properties)
 //    Outputs: vm (VC:VirtualMachine)
@@ -99,7 +101,8 @@ The first part of the script creates a new VM config spec, inserts the descripti
 
 The second part uses a built-in action to set the `Point of Contact` and `Ticket` custom attributes accordingly.
 
-```js {linenos=true}
+```javascript
+// torchlight! {"lineNumbers": true}
 // Javascript: Set Notes
 //    Inputs: vm (VC:VirtualMachine), inputProperties (Properties)
 //    Outputs: None
@@ -112,7 +115,7 @@ var spec = new VcVirtualMachineConfigSpec()
 spec.annotation = notes
 vm.reconfigVM_Task(spec)
 
-System.getModule("com.vmware.library.vc.customattribute").setOrCreateCustomField(vm,"Point of Contact", poc)
+System.getModule("com.vmware.library.vc.customattribute").setOrCreateCustomField(vm,"Point of Contact", poc) // [tl! highlight:2]
 System.getModule("com.vmware.library.vc.customattribute").setOrCreateCustomField(vm,"Ticket", ticket)
 ```
 

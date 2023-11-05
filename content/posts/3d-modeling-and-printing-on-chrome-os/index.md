@@ -30,24 +30,24 @@ I settled on using [FreeCAD](https://www.freecadweb.org/) for parametric modelin
 
 #### FreeCAD
 Installing FreeCAD is as easy as:
-```command
-sudo apt update
+```shell
+sudo apt update # [tl! .cmd:2]
 sudo apt install freecad
 ```
 But launching `/usr/bin/freecad` caused me some weird graphical defects which rendered the application unusable. I found that I needed to pass the `LIBGL_DRI3_DISABLE=1` environment variable to eliminate these glitches:
-```command
-env 'LIBGL_DRI3_DISABLE=1' /usr/bin/freecad &
+```shell
+env 'LIBGL_DRI3_DISABLE=1' /usr/bin/freecad & # [tl! .cmd]
 ```
 To avoid having to type that every time I wished to launch the app, I inserted this line at the bottom of my `~/.bashrc` file:
-```command
+```shell
 alias freecad="env 'LIBGL_DRI3_DISABLE=1' /usr/bin/freecad &"
 ```
 To be able to start FreeCAD from the Chrome OS launcher with that environment variable intact, edit it into the `Exec` line of the `/usr/share/applications/freecad.desktop` file:
-```command
-sudo vi /usr/share/applications/freecad.desktop
+```shell
+sudo vi /usr/share/applications/freecad.desktop # [tl! .cmd]
 ```
 
-```cfg {linenos=true}
+```ini
 [Desktop Entry]
 Version=1.0
 Name=FreeCAD
@@ -56,7 +56,7 @@ Comment=Feature based Parametric Modeler
 Comment[de]=Feature-basierter parametrischer Modellierer
 GenericName=CAD Application
 GenericName[de]=CAD-Anwendung
-Exec=env LIBGL_DRI3_DISABLE=1 /usr/bin/freecad %F
+Exec=env LIBGL_DRI3_DISABLE=1 /usr/bin/freecad %F # [tl! focus]
 Path=/usr/lib/freecad
 Terminal=false
 Type=Application
@@ -75,16 +75,16 @@ Now that you've got a model, be sure to [export it as an STL mesh](https://wiki.
 Cura isn't available from the default repos so you'll need to download the AppImage from https://github.com/Ultimaker/Cura/releases/tag/4.7.1. You can do this in Chrome and then use the built-in File app to move the file into your 'My Files > Linux Files' directory. Feel free to put it in a subfolder if you want to keep things organized - I stash all my AppImages in `~/Applications/`.
 
 To be able to actually execute the AppImage you'll need to adjust the permissions with 'chmod +x':
-```command
-chmod +x ~/Applications/Ultimaker_Cura-4.7.1.AppImage
+```shell
+chmod +x ~/Applications/Ultimaker_Cura-4.7.1.AppImage # [tl! .cmd]
 ```
 You can then start up the app by calling the file directly:
-```command
-~/Applications/Ultimaker_Cura-4.7.1.AppImage &
+```shell
+~/Applications/Ultimaker_Cura-4.7.1.AppImage & # [tl! .cmd]
 ```
 AppImages don't automatically appear in the Chrome OS launcher so you'll need to create its `.desktop` file. You can do this manually if you want, but I found it a lot easier to leverage `menulibre`:
-```command
-sudo apt update && sudo apt install menulibre
+```shell
+sudo apt update && sudo apt install menulibre # [tl! .cmd:2]
 menulibre
 ```
 Just plug in the relevant details (you can grab the appropriate icon [here](https://github.com/Ultimaker/Cura/blob/master/icons/cura-128.png)), hit the filing cabinet Save icon, and you should then be able to search for Cura from the Chrome OS launcher.

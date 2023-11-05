@@ -29,7 +29,8 @@ I found a great script [here](https://github.com/alpacacode/Homebrewn-Scripts/bl
 When I cobbled together this script I was primarily targeting the Enterprise Linux (RHEL, CentOS) systems that I work with in my environment, and those happened to have MBR partition tables. This script would need to be modified a bit to work with GPT partitions like you might find on Ubuntu.
 {{% /notice %}}
 
-```shell {linenos=true}
+```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash
 # This will attempt to automatically detect the LVM logical volume where / is mounted and then
 # expand the underlying physical partition, LVM physical volume, LVM volume group, LVM logical
