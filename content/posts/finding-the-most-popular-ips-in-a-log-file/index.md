@@ -14,40 +14,41 @@ I found myself with a sudden need for parsing a Linux server's logs to figure ou
 
 ### Find IP-ish strings
 This will get you all occurrences of things which look vaguely like IPv4 addresses:
-```command
-grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' ACCESS_LOG.TXT
+```shell
+grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' ACCESS_LOG.TXT # [tl! .cmd]
 ```
 (It's not a perfect IP address regex since it would match things like `987.654.321.555` but it's close enough for my needs.)
 
 ### Filter out `localhost`
 The log likely include a LOT of traffic to/from `127.0.0.1` so let's toss out `localhost` by piping through `grep -v "127.0.0.1"` (`-v` will do an inverse match - only return results which *don't* match the given expression):
-```command
-grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' ACCESS_LOG.TXT | grep -v "127.0.0.1"
+```shell
+grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' ACCESS_LOG.TXT | grep -v "127.0.0.1" # [tl! .cmd]
 ```
 
 ### Count up the duplicates
 Now we need to know how many times each IP shows up in the log. We can do that by passing the output through `uniq -c` (`uniq` will filter for unique entries, and the `-c` flag will return a count of how many times each result appears):
-```command
-grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' ACCESS_LOG.TXT | grep -v "127.0.0.1" | uniq -c
+```shell
+grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' ACCESS_LOG.TXT | grep -v "127.0.0.1" | uniq -c # [tl! .cmd]
 ```
 
 ### Sort the results
 We can use `sort` to sort the results. `-n` tells it sort based on numeric rather than character values, and `-r` reverses the list so that the larger numbers appear at the top:
-```command
-grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' ACCESS_LOG.TXT | grep -v "127.0.0.1" | uniq -c | sort -n -r
+```shell
+grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' ACCESS_LOG.TXT | grep -v "127.0.0.1" | uniq -c | sort -n -r # [tl! .cmd]
 ```
 
 ### Top 5
 And, finally, let's use `head -n 5` to only get the first five results:
-```command
-grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' ACCESS_LOG.TXT | grep -v "127.0.0.1" | uniq -c | sort -n -r | head -n 5
+```shell
+grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' ACCESS_LOG.TXT | grep -v "127.0.0.1" | uniq -c | sort -n -r | head -n 5  # [tl! .cmd]
 ```
 
 ### Bonus round!
 You know how old log files get rotated and compressed into files like `logname.1.gz`? I *very* recently learned that there are versions of the standard Linux text manipulation tools which can work directly on compressed log files, without having to first extract the files. I'd been doing things the hard way for years - no longer, now that I know about `zcat`, `zdiff`, `zgrep`, and `zless`!
 
 So let's use a `for` loop to iterate through 20 of those compressed logs, and use `date -r [filename]` to get the timestamp for each log as we go:
-```command
-for i in {1..20}; do date -r ACCESS_LOG.$i.gz; zgrep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' \ACCESS_LOG.log.$i.gz | grep -v "127.0.0.1" | uniq -c | sort -n -r | head -n 5; done
+```shell
+for i in {1..20}; do date -r ACCESS_LOG.$i.gz; zgrep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' \ # [tl! .cmd]
+  ACCESS_LOG.log.$i.gz | grep -v "127.0.0.1" | uniq -c | sort -n -r | head -n 5; done
 ```
 Nice!

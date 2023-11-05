@@ -39,9 +39,9 @@ ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verif
 ```
 
 Further, attempting to pull down that URL with `curl` also failed:
-```commandroot-session
-curl https://vra.lab.bowdre.net/csp/gateway/am/api/auth/discovery
-curl: (60) SSL certificate problem: self signed certificate in certificate chain
+```shell
+curl https://vra.lab.bowdre.net/csp/gateway/am/api/auth/discovery # [tl! .cmd]
+curl: (60) SSL certificate problem: self signed certificate in certificate chain # [tl! .nocopy:5]
 More details here: https://curl.se/docs/sslcerts.html
 
 curl failed to verify the legitimacy of the server and therefore could not
@@ -61,20 +61,21 @@ So here's what I did to get things working in my homelab:
 ![Exporting the self-signed CA cert](20211105_export_selfsigned_ca.png)
 2. Open the file in a text editor, and copy the contents into a new file on the SSC appliance. I used `~/vra.crt`.
 3. Append the certificate to the end of the system `ca-bundle.crt`:
-```commandroot
-cat <vra.crt >> /etc/pki/tls/certs/ca-bundle.crt
+```shell
+cat <vra.crt >> /etc/pki/tls/certs/ca-bundle.crt # [tl! .cmd]
 ```
 4. Test that I can now `curl` from vRA without a certificate error:
-```commandroot-session
-curl https://vra.lab.bowdre.net/csp/gateway/am/api/auth/discovery
-{"timestamp":1636139143260,"type":"CLIENT_ERROR","status":"400 BAD_REQUEST","error":"Bad Request","serverMessage":"400 BAD_REQUEST \"Required String parameter 'state' is not present\""}
+```curl
+curl https://vra.lab.bowdre.net/csp/gateway/am/api/auth/discovery # [tl! .cmd]
+{"timestamp":1636139143260,"type":"CLIENT_ERROR","status":"400 BAD_REQUEST","error":"Bad Request","serverMessage":"400 BAD_REQUEST \"Required String parameter 'state' is not present\""} # [tl! .nocopy]
 ```
 5. Edit `/usr/lib/systemd/system/raas.service` to update the service definition so it will look to the `ca-bundle.crt` file by adding
-```cfg
+```ini
 Environment=REQUESTS_CA_BUNDLE=/etc/pki/tls/certs/ca-bundle.crt
 ```
 above the `ExecStart` line:
-```cfg {linenos=true,hl_lines=16}
+```ini
+# torchlight! {"lineNumbers": true}
 # /usr/lib/systemd/system/raas.service
 [Unit]
 Description=The SaltStack Enterprise API Server
@@ -90,15 +91,15 @@ RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
 PermissionsStartOnly=true
 ExecStartPre=/bin/sh -c 'systemctl set-environment FIPS_MODE=$(/opt/vmware/bin/ovfenv -q --key fips-mode)'
 ExecStartPre=/bin/sh -c 'systemctl set-environment NODE_TYPE=$(/opt/vmware/bin/ovfenv -q --key node-type)'
-Environment=REQUESTS_CA_BUNDLE=/etc/pki/tls/certs/ca-bundle.crt
+Environment=REQUESTS_CA_BUNDLE=/etc/pki/tls/certs/ca-bundle.crt # [tl! focus]
 ExecStart=/usr/bin/raas
 TimeoutStopSec=90
 [Install]
 WantedBy=multi-user.target
 ```
 6. Stop and restart the `raas` service:
-```command
-systemctl daemon-reload
+```shell
+systemctl daemon-reload # [tl! .cmd:2]
 systemctl stop raas
 systemctl start raas
 ```
@@ -110,8 +111,8 @@ systemctl start raas
 The steps for doing this at work with an enterprise CA were pretty similar, with just slightly-different steps 1 and 2:
 1. Access the enterprise CA and download the CA chain, which came in `.p7b` format.
 2. Use `openssl` to extract the individual certificates:
-```command
-openssl pkcs7 -inform PEM -outform PEM -in enterprise-ca-chain.p7b -print_certs > enterprise-ca-chain.pem
+```shell
+openssl pkcs7 -inform PEM -outform PEM -in enterprise-ca-chain.p7b -print_certs > enterprise-ca-chain.pem # [tl! .cmd]
 ```
 Copy it to the SSC appliance, and then pick up with Step 3 above.
 
