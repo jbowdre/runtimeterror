@@ -16,10 +16,18 @@ function createCopyButton(highlightDiv) {
 document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
 
 async function copyCodeToClipboard(button, highlightDiv) {
-  // Need to get just the last-child of each .line element to avoid copying the line numbers
-  const nodeListToCopy = highlightDiv.querySelectorAll(":last-child > .chroma > code > .line > :last-child");
-  // Reduce the nodeList to a string of text with each line separated by a newline
-  const codeToCopy = Array.from(nodeListToCopy).reduce((accumulator, line) => accumulator + line.innerText, "");
+  // capture all code lines in the selected block which aren't classed `cmd_return`
+  let codeToCopy = highlightDiv.querySelectorAll(":last-child > .torchlight > code > .line:not(.cmd_return)");
+  // now remove the first-child of each line which has class `line-number`
+  codeToCopy = Array.from(codeToCopy).reduce((accumulator, line) => {
+    if (line.firstChild.className != "line-number") {
+      return accumulator + line.innerText + "\n"; }
+    else {
+      return accumulator + Array.from(line.children).filter(
+        (child) => child.className != "line-number").reduce(
+          (accumulator, child) => accumulator + child.innerText, "") + "\n";
+    }
+  }, "");
   try {
     var result = await navigator.permissions.query({ name: "clipboard-write" });
     if (result.state == "granted" || result.state == "prompt") {
