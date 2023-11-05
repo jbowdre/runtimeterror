@@ -67,8 +67,8 @@ Anyway, after switching to the cheaper Standard tier I can click on the **Extern
 
 ##### Security Configuration
 The **Security** section lets me go ahead and upload an SSH public key that I can then use for logging into the instance once it's running. Of course, that means I'll first need to generate a key pair for this purpose:
-```command
-ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_wireguard
+```shell
+ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_wireguard # [tl! .cmd]
 ```
 
 Okay, now that I've got my keys, I can click the **Add Item** button and paste in the contents of `~/.ssh/id_ed25519_wireguard.pub`.
@@ -90,63 +90,64 @@ I'll click **Create** and move on.
 
 #### WireGuard Server Setup
 Once the **Compute Engine > Instances** [page](https://console.cloud.google.com/compute/instances) indicates that the instance is ready, I can make a note of the listed public IP and then log in via SSH:
-```command
-ssh -i ~/.ssh/id_25519_wireguard {PUBLIC_IP}
+```shell
+ssh -i ~/.ssh/id_25519_wireguard {PUBLIC_IP} # [tl! .cmd]
 ```
 
 ##### Preparation
 And, as always, I'll first make sure the OS is fully updated before doing anything else:
-```command
-sudo apt update
+```shell
+sudo apt update # [tl! .cmd:1]
 sudo apt upgrade
 ```
 
 Then I'll install `ufw` to easily manage the host firewall, `qrencode` to make it easier to generate configs for mobile clients, `openresolv` to avoid [this issue](https://superuser.com/questions/1500691/usr-bin-wg-quick-line-31-resolvconf-command-not-found-wireguard-debian/1500896), and `wireguard` to, um, guard the wires:
-```command
-sudo apt install ufw qrencode openresolv wireguard
+```shell
+sudo apt install ufw qrencode openresolv wireguard # [tl! .cmd]
 ```
 
 Configuring the host firewall with `ufw` is very straight forward:
 ```shell
-# First, SSH:
-sudo ufw allow 22/tcp
-# and WireGuard:
-sudo ufw allow 51820/udp
-# Then turn it on:
-sudo ufw enable
+# First, SSH: # [tl! .nocopy]
+sudo ufw allow 22/tcp # [tl! .cmd]
+# and WireGuard: # [tl! .nocopy]
+sudo ufw allow 51820/udp # [tl! .cmd]
+# Then turn it on: # [tl! .nocopy]
+sudo ufw enable # [tl! .cmd]
 ```
 
 The last preparatory step is to enable packet forwarding in the kernel so that the instance will be able to route traffic between the remote clients and my home network (once I get to that point). I can configure that on-the-fly with:
-```command
-sudo sysctl -w net.ipv4.ip_forward=1
+```shell
+sudo sysctl -w net.ipv4.ip_forward=1 # [tl! .cmd]
 ```
 
 To make it permanent, I'll edit `/etc/sysctl.conf` and uncomment the same line:
-```command
-sudo vi /etc/sysctl.conf
+```shell
+sudo vi /etc/sysctl.conf # [tl! .cmd]
 ```
-```cfg
+```ini
 # Uncomment the next line to enable packet forwarding for IPv4
 net.ipv4.ip_forward=1
 ```
 
 ##### WireGuard Interface Config
 I'll switch to the root user, move into the `/etc/wireguard` directory, and issue `umask 077` so that the files I'm about to create will have a very limited permission set (to be accessible by root, and _only_ root):
-```command
-sudo -i
-cd /etc/wireguard
+```shell
+sudo -i # [tl! .cmd]
+cd /etc/wireguard # [tl! .cmd_root:1]
 umask 077
 ```
 
 Then I can use the `wg genkey` command to generate the server's private key, save it to a file called `server.key`, pass it through `wg pubkey` to generate the corresponding public key, and save that to `server.pub`:
-```command
-wg genkey | tee server.key | wg pubkey > server.pub
+```shell
+wg genkey | tee server.key | wg pubkey > server.pub # [tl! .cmd_root]
 ```
 
 As I mentioned earlier, WireGuard will create a virtual network interface using an internal network to pass traffic between the WireGuard peers. By convention, that interface is `wg0` and it draws its configuration from a file in `/etc/wireguard` named `wg0.conf`. I could create a configuration file with a different name and thus wind up with a different interface name as well, but I'll stick with tradition to keep things easy to follow.
 
 The format of the interface configuration file will need to look something like this:
-```cfg
+```ini
+# torchlight! {"lineNumbers": true}
 [Interface]     # this section defines the local WireGuard interface
 Address =       # CIDR-format IP address of the virtual WireGuard interface
 ListenPort =    # WireGuard listens on this port for incoming traffic (randomized if not specified)
@@ -164,7 +165,8 @@ AllowedIPs =    # which IPs will be routed to this peer
 There will be a single `[Interface]` section in each peer's configuration file, but they may include multiple `[Peer]` sections. For my config, I'll use the `10.200.200.0/24` network for WireGuard, and let this server be `10.200.200.1`, the VyOS router in my home lab `10.200.200.2`, and I'll assign IPs to the other peers from there. I found a note that Google Cloud uses an MTU size of `1460` bytes so that's what I'll set on this end. I'm going to configure WireGuard to use the VyOS router as the DNS server, and I'll specify my internal `lab.bowdre.net` search domain. Finally, I'll leverage the `PostUp` and `PostDown` directives to enable and disable NAT so that the server will be able to forward traffic between networks for me.
 
 So here's the start of my GCP WireGuard server's `/etc/wireguard/wg0.conf`:
-```cfg
+```ini
+# torchlight! {"lineNumbers": true}
 # /etc/wireguard/wg0.conf
 [Interface]
 Address = 10.200.200.1/24
@@ -177,25 +179,25 @@ PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING 
 ```
 
 I don't have any other peers ready to add to this config yet, but I can go ahead and bring up the interface all the same. I'm going to use the `wg-quick` wrapper instead of calling `wg` directly since it simplifies a bit of the configuration, but first I'll need to enable the `wg-quick@{INTERFACE}` service so that it will run automatically at startup:
-```command
-systemctl enable wg-quick@wg0
+```shell
+systemctl enable wg-quick@wg0 # [tl! .cmd_root:1]
 systemctl start wg-quick@wg0
 ```
 
 I can now bring up the interface with `wg-quick up wg0` and check the status with `wg show`:
-```commandroot-session
-wg-quick up wg0
-[#] ip link add wg0 type wireguard
+```shell
+wg-quick up wg0 # [tl! .cmd_root]
+[#] ip link add wg0 type wireguard # [tl! .nocopy:start]
 [#] wg setconf wg0 /dev/fd/63
 [#] ip -4 address add 10.200.200.1/24 dev wg0
 [#] ip link set mtu 1460 up dev wg0
 [#] resolvconf -a wg0 -m 0 -x
-[#] iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o ens4 -j MASQUERADE; ip6tables -A FORWARD -i wg0 -j ACCEPT; ip6tables -t nat -A POSTROUTING -o ens4 -j MASQUERADE
+[#] iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o ens4 -j MASQUERADE; ip6tables -A FORWARD -i wg0 -j ACCEPT; ip6tables -t nat -A POSTROUTING -o ens4 -j MASQUERADE # [tl! .nocopy:end]
 ```
 
-```commandroot-session
-root@wireguard:~# wg show
-interface: wg0
+```shell
+wg show # [tl! .cmd_root]
+interface: wg0 # [tl! .nocopy:3]
   public key: {GCP_PUBLIC_IP}
   private key: (hidden)
   listening port: 51820
@@ -205,45 +207,45 @@ I'll come back here once I've got a peer config to add.
 
 ### Configure VyoS Router as WireGuard Peer
 Comparatively, configuring WireGuard on VyOS is a bit more direct. I'll start by entering configuration mode and generating and binding a key pair for this interface:
-```commandroot
-configure
+```shell
+configure # [tl! .cmd_root:1]
 run generate pki wireguard key-pair install interface wg0
 ```
 
 And then I'll configure the rest of the options needed for the interface:
-```commandroot
-set interfaces wireguard wg0 address '10.200.200.2/24'
+```shell
+set interfaces wireguard wg0 address '10.200.200.2/24' # [tl! .cmd_root:start]
 set interfaces wireguard wg0 description 'VPN to GCP'
 set interfaces wireguard wg0 peer wireguard-gcp address '{GCP_PUBLIC_IP}'
 set interfaces wireguard wg0 peer wireguard-gcp allowed-ips '0.0.0.0/0'
 set interfaces wireguard wg0 peer wireguard-gcp persistent-keepalive '25'
 set interfaces wireguard wg0 peer wireguard-gcp port '51820'
-set interfaces wireguard wg0 peer wireguard-gcp public-key '{GCP_PUBLIC_KEY}'
+set interfaces wireguard wg0 peer wireguard-gcp public-key '{GCP_PUBLIC_KEY}' # [tl! .cmd_root:end]
 ```
 
 Note that this time I'm allowing all IPs (`0.0.0.0/0`) so that this WireGuard interface will pass traffic intended for any destination (whether it's local, remote, or on the Internet). And I'm specifying a [25-second `persistent-keepalive` interval](https://www.wireguard.com/quickstart/#nat-and-firewall-traversal-persistence) to help ensure that this NAT-ed tunnel stays up even when it's not actively passing traffic - after all, I'll need the GCP-hosted peer to be able to initiate the connection so I can access the home network remotely.
 
 While I'm at it, I'll also add a static route to ensure traffic for the WireGuard tunnel finds the right interface:
-```commandroot
-set protocols static route 10.200.200.0/24 interface wg0
+```shell
+set protocols static route 10.200.200.0/24 interface wg0 # [tl! .cmd_root]
 ```
 
 And I'll add the new `wg0` interface as a listening address for the VyOS DNS forwarder:
-```commandroot
-set service dns forwarding listen-address '10.200.200.2'
+```shell
+set service dns forwarding listen-address '10.200.200.2' # [tl! .cmd_root]
 ```
 
 I can use the `compare` command to verify the changes I've made, and then apply and save the updated config:
-```commandroot
-compare
+```shell
+compare # [tl! .cmd_root:2]
 commit
 save
 ```
 
 I can check the status of WireGuard on VyOS (and view the public key!) like so:
-```commandroot-session
-show interfaces wireguard wg0 summary
-interface: wg0
+```shell
+show interfaces wireguard wg0 summary # [tl! .cmd_root]
+interface: wg0 # [tl! .nocopy:start]
   public key: {VYOS_PUBLIC_KEY}
   private key: (hidden)
   listening port: 43543
@@ -252,13 +254,13 @@ peer: {GCP_PUBLIC_KEY}
   endpoint: {GCP_PUBLIC_IP}:51820
   allowed ips: 0.0.0.0/0
   transfer: 0 B received, 592 B sent
-  persistent keepalive: every 25 seconds
+  persistent keepalive: every 25 seconds # [tl! .nocopy:end]
 ```
 
 See? That part was much easier to set up! But it doesn't look like it's actually passing traffic yet... because while the VyOS peer has been configured with the GCP peer's public key, the GCP peer doesn't know anything about the VyOS peer yet.
 
 So I'll copy `{VYOS_PUBLIC_KEY}` and SSH back to the GCP instance to finish that configuration. Once I'm there, I can edit `/etc/wireguard/wg0.conf` as root and add in a new `[Peer]` section at the bottom, like this:
-```cfg
+```ini
 [Peer]
 # VyOS
 PublicKey = {VYOS_PUBLIC_KEY}
@@ -268,17 +270,17 @@ AllowedIPs = 10.200.200.2/32, 192.168.1.0/24, 172.16.0.0/16
 This time, I'm telling WireGuard that the new peer has IP `10.200.200.2` but that it should also get traffic destined for the `192.168.1.0/24` and `172.16.0.0/16` networks, my home and lab networks. Again, the `AllowedIPs` parameter is used for WireGuard's Cryptokey Routing so that it can keep track of which traffic goes to which peers (and which key to use for encryption).
 
 After saving the file, I can either restart WireGuard by bringing the interface down and back up (`wg-quick down wg0 && wg-quick up wg0`), or I can reload it on the fly with:
-```command
-sudo -i
-wg syncconf wg0 <(wg-quick strip wg0)
+```shell
+sudo -i # [tl! .cmd]
+wg syncconf wg0 <(wg-quick strip wg0) # [tl! .cmd_root]
 ```
 
 (I can't just use `wg syncconf wg0` directly since `/etc/wireguard/wg0.conf` includes the `PostUp`/`PostDown` commands which can only be parsed by the `wg-quick` wrapper, so I'm using `wg-quick strip {INTERFACE}` to grab the contents of the config file, remove the problematic bits, and then pass what's left to the `wg syncconf {INTERFACE}` command to update the current running config.)
 
 Now I can check the status of WireGuard on the GCP end:
-```commandroot-session
-wg show
-interface: wg0
+```shell
+wg show # [tl! .cmd_root]
+interface: wg0 # [tl! .nocopy:start]
   public key: {GCP_PUBLIC_KEY}
   private key: (hidden)
   listening port: 51820
@@ -287,28 +289,28 @@ peer: {VYOS_PUBLIC_KEY}
   endpoint: {VYOS_PUBLIC_IP}:43990
   allowed ips: 10.200.200.2/32, 192.168.1.0/24, 172.16.0.0/16
   latest handshake: 55 seconds ago
-  transfer: 1.23 KiB received, 368 B sent
+  transfer: 1.23 KiB received, 368 B sent # [tl! .nocopy:end]
 ```
 
 Hey, we're passing traffic now! And I can verify that I can ping stuff on my home and lab networks from the GCP instance:
-```command-session
-ping -c 1 192.168.1.5
-PING 192.168.1.5 (192.168.1.5) 56(84) bytes of data.
+```shell
+ping -c 1 192.168.1.5 # [tl! .cmd]
+PING 192.168.1.5 (192.168.1.5) 56(84) bytes of data. # [tl! .nocopy:start]
 64 bytes from 192.168.1.5: icmp_seq=1 ttl=127 time=35.6 ms
 
 --- 192.168.1.5 ping statistics ---
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 35.598/35.598/35.598/0.000 ms
+rtt min/avg/max/mdev = 35.598/35.598/35.598/0.000 ms # [tl! .nocopy:end]
 ```
 
-```command-session
-ping -c 1 172.16.10.1
-PING 172.16.10.1 (172.16.10.1) 56(84) bytes of data.
+```shell
+ping -c 1 172.16.10.1 # [tl! .cmd]
+PING 172.16.10.1 (172.16.10.1) 56(84) bytes of data. # [tl! .nocopy:start]
 64 bytes from 172.16.10.1: icmp_seq=1 ttl=64 time=35.3 ms
 
 --- 172.16.10.1 ping statistics ---
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 35.275/35.275/35.275/0.000 ms
+rtt min/avg/max/mdev = 35.275/35.275/35.275/0.000 ms # [tl! .nocopy:end]
 ```
 
 Cool!
@@ -347,17 +349,14 @@ I _shouldn't_ need the keepalive for the "Road Warrior" peers connecting to the 
 
 Now I can go ahead and save this configuration, but before I try (and fail) to connect I first need to tell the cloud-hosted peer about the Chromebook. So I fire up an SSH session to my GCP instance, become root, and edit the WireGuard configuration to add a new `[Peer]` section.
 
-```command
-sudo -i
-```
-
-```commandroot
-vi /etc/wireguard/wg0.conf
+```shell
+sudo -i # [tl! .cmd]
+vi /etc/wireguard/wg0.conf # [tl! .cmd_root]
 ```
 
 Here's the new section that I'll add to the bottom of the config:
 
-```cfg
+```ini
 [Peer]
 # Chromebook
 PublicKey = {CB_PUBLIC_KEY}
@@ -367,7 +366,8 @@ AllowedIPs = 10.200.200.3/32
 This one is acting as a single-node endpoint (rather than an entryway into other networks like the VyOS peer) so setting `AllowedIPs` to only the peer's IP makes sure that WireGuard will only send it traffic specifically intended for this peer.
 
 So my complete `/etc/wireguard/wg0.conf` looks like this so far:
-```cfg
+```ini
+# torchlight! {"lineNumbers": true}
 # /etc/wireguard/wg0.conf
 [Interface]
 Address = 10.200.200.1/24
@@ -378,7 +378,7 @@ DNS = 10.200.200.2, lab.bowdre.net
 PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o ens4 -j MASQUERADE; ip6tables -A FORWARD -i wg0 -j ACCEPT; ip6tables -t nat -A POSTROUTING -o ens4 -j MASQUERADE
 PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o ens4 -j MASQUERADE; ip6tables -D FORWARD -i wg0 -j ACCEPT; ip6tables -t nat -D POSTROUTING -o ens4 -j MASQUERADE
 
-[Peer]
+[Peer] # [tl! focus:start]
 # VyOS
 PublicKey = {VYOS_PUBLIC_KEY}
 AllowedIPs = 10.200.200.2/32, 192.168.1.0/24, 172.16.0.0/16
@@ -386,19 +386,19 @@ AllowedIPs = 10.200.200.2/32, 192.168.1.0/24, 172.16.0.0/16
 [Peer]
 # Chromebook
 PublicKey = {CB_PUBLIC_KEY}
-AllowedIPs = 10.200.200.3/32
+AllowedIPs = 10.200.200.3/32 # [tl! focus:end]
 ```
 
 Now to save the file and reload the WireGuard configuration again:
-```commandroot
-wg syncconf wg0 <(wg-quick strip wg0)
+```shell
+wg syncconf wg0 <(wg-quick strip wg0) # [tl! .cmd_root]
 ```
 
 At this point I can activate the connection in the WireGuard Android app, wait a few seconds, and check with `wg show` to confirm that the tunnel has been established successfully:
 
-```commandroot-session
-wg show
-interface: wg0
+```shell
+wg show # [tl! .cmd_root]
+interface: wg0 # [tl! .nocopy:start]
   public key: {GCP_PUBLIC_KEY}
   private key: (hidden)
   listening port: 51820
@@ -413,7 +413,7 @@ peer: {CB_PUBLIC_KEY}
   endpoint: {CB_PUBLIC_IP}:33752
   allowed ips: 10.200.200.3/32
   latest handshake: 48 seconds ago
-  transfer: 169.17 KiB received, 808.33 KiB sent
+  transfer: 169.17 KiB received, 808.33 KiB sent # [tl! .nocopy:end]
 ```
 
 And I can even access my homelab when not at home!
@@ -423,23 +423,21 @@ And I can even access my homelab when not at home!
 Being able to copy-and-paste the required public keys between the WireGuard app and the SSH session to the GCP instance made it relatively easy to set up the Chromebook, but things could be a bit trickier on a phone without that kind of access. So instead I will create the phone's configuration on the WireGuard server in the cloud, render that config file as a QR code, and simply scan that through the phone's WireGuard app to import the settings.
 
 I'll start by SSHing to the GCP instance, elevating to root, setting the restrictive `umask` again, and creating a new folder to store client configurations.
-```command
-sudo -i
-```
-
-```commandroot
-umask 077
+```shell
+sudo -i # [tl! .cmd]
+umask 077 # [tl! .cmd_root:2]
 mkdir /etc/wireguard/clients
 cd /etc/wireguard/clients
 ```
 
 As before, I'll use the built-in `wg` commands to generate the private and public key pair:
-```command
-wg genkey | tee phone1.key | wg pubkey > phone1.pub
+```shell
+wg genkey | tee phone1.key | wg pubkey > phone1.pub # [tl! .cmd_root]
 ```
 
 I can then use those keys to assemble the config for the phone:
-```cfg
+```ini
+# torchlight! {"lineNumbers": true}
 # /etc/wireguard/clients/phone1.conf
 [Interface]
 PrivateKey = {PHONE1_PRIVATE_KEY}
@@ -453,20 +451,20 @@ Endpoint = {GCP_PUBLIC_IP}:51820
 ```
 
 I'll also add the interface address and corresponding public key to a new `[Peer]` section of `/etc/wireguard/wg0.conf`:
-```cfg
+```ini
 [Peer]
 PublicKey = {PHONE1_PUBLIC_KEY}
 AllowedIPs = 10.200.200.4/32
 ```
 
 And reload the WireGuard config:
-```commandroot
-wg syncconf wg0 <(wg-quick strip wg0)
+```shell
+wg syncconf wg0 <(wg-quick strip wg0) # [tl! .cmd_root]
 ```
 
 Back in the `clients/` directory, I can use `qrencode` to render the phone configuration file (keys and all!) as a QR code:
-```commandroot
-qrencode -t ansiutf8 < phone1.conf
+```shell
+qrencode -t ansiutf8 < phone1.conf # [tl! .cmd_root]
 ```
 ![QR code config](20211028_qrcode_config.png)
 
@@ -478,8 +476,8 @@ I can even access my vSphere lab environment - not that it offers a great mobile
 
 Before moving on too much further, though, I'm going to clean up the keys and client config file that I generated on the GCP instance. It's not great hygiene to keep a private key stored on the same system it's used to access.
 
-```commandroot
-rm -f /etc/wireguard/clients/*
+```shell
+rm -f /etc/wireguard/clients/* # [tl! .cmd_root]
 ```
 
 ##### Bonus: Automation!

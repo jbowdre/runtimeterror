@@ -78,7 +78,7 @@ chmod +x /usr/local/bin/docker-compose
 And then verify that it works:
 ```shell
 docker-compose --version # [tl! .cmd_root]
-docker-compose version 1.29.2, build 5becea4c # [tl! .cmd_return]
+docker-compose version 1.29.2, build 5becea4c # [tl! .nocopy]
 ```
 
 I'll also want to enable and start Docker:
@@ -136,7 +136,7 @@ Then I can fire it up with `docker-compose up --detach`:
 
 ```shell
 docker-compose up --detach # [tl! .cmd_root focus:start]
-Creating network "adguard_default" with the default driver # [tl! .cmd_return:start]
+Creating network "adguard_default" with the default driver # [tl! .nocopy:start]
 Pulling adguard (adguard/adguardhome:latest)...
 latest: Pulling from adguard/adguardhome  # [tl! focus:end]
 339de151aab4: Pull complete
@@ -145,7 +145,7 @@ latest: Pulling from adguard/adguardhome  # [tl! focus:end]
 bfad96428d01: Pull complete
 Digest: sha256:de7d791b814560663fe95f9812fca2d6dd9d6507e4b1b29926cc7b4a08a676ad # [tl! focus:3]
 Status: Downloaded newer image for adguard/adguardhome:latest
-Creating adguard ... done # [tl! .cmd_return:end]
+Creating adguard ... done # [tl! .nocopy:end]
 ```
 
 
