@@ -16,8 +16,8 @@ function createCopyButton(highlightDiv) {
 document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
 
 async function copyCodeToClipboard(button, highlightDiv) {
-  // capture all code lines in the selected block which aren't classed `cmd_return`
-  let codeToCopy = highlightDiv.querySelectorAll(":last-child > .torchlight > code > .line:not(.cmd_return)");
+  // capture all code lines in the selected block which aren't classed `nocopy`
+  let codeToCopy = highlightDiv.querySelectorAll(":last-child > .torchlight > code > .line:not(.nocopy)");
   // now remove the first-child of each line which has class `line-number`
   codeToCopy = Array.from(codeToCopy).reduce((accumulator, line) => {
     if (line.firstChild.className != "line-number") {
