@@ -2,7 +2,7 @@
   command = """
   hugo --minify
   npm -i @torchlight-api/torchlight-cli
-  npx torchliight
+  npx torchlight
   """
   publish = "public"
 
