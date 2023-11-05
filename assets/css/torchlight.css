@@ -103,6 +103,9 @@ When the code block is hovered, bring all the lines into focus.
   overflow-x: visible;
 }
 
+/*
+Insert prompt indicators on interactive shells.
+*/
 .cmd::before {
   color: var(--base07);
   content: "$ ";
@@ -113,12 +116,15 @@ When the code block is hovered, bring all the lines into focus.
   content: "# ";
 }
 
-.cmd_return {
-  webkit-user-select: none;
-  user-select: none;
-}
-
 .cmd_pwsh::before {
   color: var(--base07);
   content: "PS> ";
+}
+
+/*
+Don't copy shell outputs
+*/
+.nocopy {
+  webkit-user-select: none;
+  user-select: none;
 }
