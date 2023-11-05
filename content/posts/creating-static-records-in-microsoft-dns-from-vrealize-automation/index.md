@@ -22,62 +22,64 @@ I eventually came across [this blog post](https://www.virtualnebula.com/blog/201
 ### Preparing the SSH host
 I deployed a Windows Server 2019 Core VM to use as my SSH host, and I joined it to my AD domain as `win02.lab.bowdre.net`. Once that's taken care of, I need to install the RSAT DNS tools so that I can use the `Add-DnsServerResourceRecord` and associated cmdlets. I can do that through PowerShell like so:
 ```powershell
-# Install RSAT DNS tools
-Add-WindowsCapability -online -name Rsat.Dns.Tools~~~~0.0.1.0
+# Install RSAT DNS tools [tl! .nocopy]
+Add-WindowsCapability -online -name Rsat.Dns.Tools~~~~0.0.1.0 # [tl! .cmd_pwsh]
 ```
 
 Instead of using a third-party SSH server, I'll use the OpenSSH Server that's already available in Windows 10 (1809+) and Server 2019:
 ```powershell
-# Install OpenSSH Server
-Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+# Install OpenSSH Server [tl! .nocopy]
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0 # [tl! .cmd_pwsh]
 ```
 
 I'll also want to set it so that the default shell upon SSH login is PowerShell (rather than the standard Command Prompt) so that I can have easy access to those DNS cmdlets:
 ```powershell
-# Set PowerShell as the default Shell (for access to DNS cmdlets)
-New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force
+# Set PowerShell as the default Shell (for access to DNS cmdlets) # [tl! .nocopy]
+New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell ` # [tl! .cmd_pwsh:2
+  -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" `
+  -PropertyType String -Force
 ```
 
 I'll be using my `lab\vra` service account for managing DNS. I've already given it the appropriate rights on the DNS server, but I'll also add it to the Administrators group on my SSH host:
 ```powershell
-# Add the service account as a local administrator
-Add-LocalGroupMember -Group Administrators -Member "lab\vra"
+# Add the service account as a local administrator # [tl! .nocopy]
+Add-LocalGroupMember -Group Administrators -Member "lab\vra" # [tl! .cmd_pwsh]
 ```
 
 And I'll modify the OpenSSH configuration so that only members of that Administrators group are permitted to log into the server via SSH:
 ```powershell
-# Restrict SSH access to members in the local Administrators group
-(Get-Content "C:\ProgramData\ssh\sshd_config") -Replace "# Authentication:", "$&`nAllowGroups Administrators" | Set-Content "C:\ProgramData\ssh\sshd_config"
+# Restrict SSH access to members in the local Administrators group [tl! .nocopy]
+(Get-Content "C:\ProgramData\ssh\sshd_config") -Replace "# Authentication:", `
+  "$&`nAllowGroups Administrators" | Set-Content "C:\ProgramData\ssh\sshd_config" # [tl! .cmd_pwsh:-1]
 ```
 
 Finally, I'll start the `sshd` service and set it to start up automatically:
 ```powershell
-# Start service and set it to automatic
-Set-Service -Name sshd -StartupType Automatic -Status Running
+# Start service and set it to automatic [tl! .nocopy]
+Set-Service -Name sshd -StartupType Automatic -Status Running # [tl! .cmd_pwsh]
 ```
 
 #### A quick test
 At this point, I can log in to the server via SSH and confirm that I can create and delete records in my DNS zone:
 ```powershell
-ssh vra@win02.lab.bowdre.net
-vra@win02.lab.bowdre.net's password:
+ssh vra@win02.lab.bowdre.net # [tl! .cmd_pwsh]
+vra@win02.lab.bowdre.net`'s password: # [tl! .nocopy:3]
 
 Windows PowerShell
 Copyright (C) Microsoft Corporation. All rights reserved.
-
-PS C:\Users\vra> Add-DnsServerResourceRecordA -ComputerName win01.lab.bowdre.net -Name testy -ZoneName lab.bowdre.net -AllowUpdateAny -IPv4Address 172.16.99.99
-
-PS C:\Users\vra> nslookup testy
-Server:  win01.lab.bowdre.net
+Add-DnsServerResourceRecordA -ComputerName win01.lab.bowdre.net `
+  -Name testy -ZoneName lab.bowdre.net -AllowUpdateAny -IPv4Address 172.16.99.99 # [tl! .cmd_pwsh:-1]
+nslookup testy # [tl! .cmd_pwsh]
+Server:  win01.lab.bowdre.net # [tl! .nocopy:start]
 Address:  192.168.1.5
 
 Name:    testy.lab.bowdre.net
 Address:  172.16.99.99
-
-PS C:\Users\vra> Remove-DnsServerResourceRecord -ComputerName win01.lab.bowdre.net -Name testy -ZoneName lab.bowdre.net -RRType A -Force
-
-PS C:\Users\vra> nslookup testy
-Server:  win01.lab.bowdre.net
+# [tl! .nocopy:end]
+Remove-DnsServerResourceRecord -ComputerName win01.lab.bowdre.net `
+  -Name testy -ZoneName lab.bowdre.net -RRType A -Force # [tl! .cmd_pwsh:-1]
+nslookup testy # [tl! .cmd_pwsh]
+Server:  win01.lab.bowdre.net # [tl! .nocopy:3]
 Address:  192.168.1.5
 
 *** win01.lab.bowdre.net can't find testy: Non-existent domain
@@ -111,23 +113,24 @@ resources:
 ```
 
 So here's the complete cloud template that I've been working on:
-```yaml {linenos=true}
-formatVersion: 1
+```yaml
+# torchlight! {"lineNumbers": true}
+formatVersion: 1 # [tl! focus:1]
 inputs:
-  site:
+  site: # [tl! collapse:5]
     type: string
     title: Site
     enum:
       - BOW
       - DRE
-  image:
+  image: # [tl! collapse:6]
     type: string
     title: Operating System
     oneOf:
       - title: Windows Server 2019
         const: ws2019
     default: ws2019
-  size:
+  size: # [tl! collapse:10]
     title: Resource Size
     type: string
     oneOf:
@@ -138,18 +141,18 @@ inputs:
       - title: 'Small [2vCPU|2GB]'
         const: small
     default: small
-  network:
+  network: # [tl! collapse:2]
     title: Network
     type: string
-  adJoin:
+  adJoin: # [tl! collapse:3]
     title: Join to AD domain
     type: boolean
     default: true
-  staticDns:
+  staticDns: # [tl! highlight:3 focus:3]
     title: Create static DNS record
     type: boolean
     default: false
-  environment:
+  environment: # [tl! collapse:10]
     type: string
     title: Environment
     oneOf:
@@ -160,7 +163,7 @@ inputs:
       - title: Production
         const: P
     default: D
-  function:
+  function: # [tl! collapse:14]
     type: string
     title: Function Code
     oneOf:
@@ -175,34 +178,34 @@ inputs:
       - title: Testing (TST)
         const: TST
     default: TST
-  app:
+  app: # [tl! collapse:5]
     type: string
     title: Application Code
     minLength: 3
     maxLength: 3
     default: xxx
-  description:
+  description: # [tl! collapse:4]
     type: string
     title: Description
     description: Server function/purpose
     default: Testing and evaluation
-  poc_name:
+  poc_name: # [tl! collapse:3]
     type: string
     title: Point of Contact Name
     default: Jack Shephard
-  poc_email:
+  poc_email: # [tl! collapse:4]
     type: string
     title: Point of Contact Email
-    default: jack.shephard@virtuallypotato.com
+    default: username@example.com
     pattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
-  ticket:
+  ticket: # [tl! collapse:3]
     type: string
     title: Ticket/Request Number
     default: 4815162342
-resources:
+resources: # [tl! focus:3]
   Cloud_vSphere_Machine_1:
     type: Cloud.vSphere.Machine
-    properties:
+    properties: # [tl! collapse:start]
       image: '${input.image}'
       flavor: '${input.size}'
       site: '${input.site}'
@@ -212,9 +215,9 @@ resources:
       ignoreActiveDirectory: '${!input.adJoin}'
       activeDirectory:
         relativeDN: '${"OU=Servers,OU=Computers,OU=" + input.site + ",OU=LAB"}'
-      customizationSpec: '${input.adJoin ? "vra-win-domain" : "vra-win-workgroup"}'
-      staticDns: '${input.staticDns}'
-      dnsDomain: lab.bowdre.net
+      customizationSpec: '${input.adJoin ? "vra-win-domain" : "vra-win-workgroup"}' # [tl! collapse:end]
+      staticDns: '${input.staticDns}' # [tl! focus highlight]
+      dnsDomain: lab.bowdre.net # [tl! collapse:start]
       poc: '${input.poc_name + " (" + input.poc_email + ")"}'
       ticket: '${input.ticket}'
       description: '${input.description}'
@@ -222,10 +225,10 @@ resources:
         - network: '${resource.Cloud_vSphere_Network_1.id}'
           assignment: static
       constraints:
-        - tag: 'comp:${to_lower(input.site)}'
+        - tag: 'comp:${to_lower(input.site)}' # [tl! collapse:end]
   Cloud_vSphere_Network_1:
     type: Cloud.vSphere.Network
-    properties:
+    properties: # [tl! collapse:3]
       networkType: existing
       constraints:
         - tag: 'net:${input.network}'
@@ -280,9 +283,12 @@ Now we're ready for the good part: inserting a new scriptable task into the work
 ![Task inputs](20210809_task_inputs.png)
 
 And here's the JavaScript for the task:
-```js {linenos=true}
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: Create DNS Record task
-//    Inputs: inputProperties (Properties), dnsServers (Array/string), sshHost (string), sshUser (string), sshPass (secureString), supportedDomains (Array/string)
+//    Inputs: inputProperties (Properties), dnsServers (Array/string),
+//      sshHost (string), sshUser (string), sshPass (secureString),
+//      supportedDomains (Array/string)
 //    Outputs: None
 
 var staticDns = inputProperties.customProperties.staticDns;
@@ -341,9 +347,12 @@ The schema will include a single scriptable task:
 
 And it's going to be *pretty damn similar* to the other one:
 
-```js {linenos=true}
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: Delete DNS Record task
-//    Inputs: inputProperties (Properties), dnsServers (Array/string), sshHost (string), sshUser (string), sshPass (secureString), supportedDomains (Array/string)
+//    Inputs: inputProperties (Properties), dnsServers (Array/string),
+//      sshHost (string), sshUser (string), sshPass (secureString),
+//      supportedDomains (Array/string)
 //    Outputs: None
 
 var staticDns = inputProperties.customProperties.staticDns;
@@ -396,9 +405,9 @@ Once the deployment completes, I go back into vRO, find the most recent item in 
 ![Workflow success!](20210813_workflow_success.png)
 
 And I can run a quick query to make sure that name actually resolves:
-```command-session
-dig +short bow-ttst-xxx023.lab.bowdre.net A
-172.16.30.10
+```shell
+dig +short bow-ttst-xxx023.lab.bowdre.net A # [tl! .cmd]
+172.16.30.10 # [tl! .nocopy]
 ```
 
 It works!
@@ -410,8 +419,8 @@ Again, I'll check the **Workflow Runs** in vRO to see that the deprovisioning ta
 ![VM Deprovisioning workflow](20210813_workflow_deletion.png)
 
 And I can `dig` a little more to make sure the name doesn't resolve anymore:
-```command-session
-dig +short bow-ttst-xxx023.lab.bowdre.net A
+```shell
+dig +short bow-ttst-xxx023.lab.bowdre.net A # [tl! .cmd]
 
 ```
 

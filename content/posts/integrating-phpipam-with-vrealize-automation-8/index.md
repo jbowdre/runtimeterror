@@ -23,13 +23,14 @@ If you'd just like to import a working phpIPAM integration into your environment
 Before even worrying about the SDK, I needed to [get a phpIPAM instance ready](https://phpipam.net/documents/installation/). I started with a small (1vCPU/1GB RAM/16GB HDD) VM attached to my "Home" network (`192.168.1.0/24`). I installed Ubuntu 20.04.1 LTS, and then used [this guide](https://computingforgeeks.com/install-and-configure-phpipam-on-ubuntu-debian-linux/) to install phpIPAM.
 
 Once phpIPAM was running and accessible via the web interface, I then used `openssl` to generate a self-signed certificate to be used for the SSL API connection:
-```command
-sudo mkdir /etc/apache2/certificate
+```shell
+sudo mkdir /etc/apache2/certificate # [tl! .cmd:2]
 cd /etc/apache2/certificate/
 sudo openssl req -new -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out apache-certificate.crt -keyout apache.key
 ```
 I edited the apache config file to bind that new certificate on port 443, and to redirect requests on port 80 to port 443:
-```apache {linenos=true}
+```text
+# torchlight! {"lineNumbers": true}
 <VirtualHost *:80>
         ServerName ipam.lab.bowdre.net
         Redirect permanent / https://ipam.lab.bowdre.net
@@ -54,7 +55,8 @@ After restarting apache, I verified that hitting `http://ipam.lab.bowdre.net` re
 Remember how I've got a "Home" network as well as [several internal networks](/vmware-home-lab-on-intel-nuc-9#networking) which only exist inside the lab environment? I dropped the phpIPAM instance on the Home network to make it easy to connect to, but it doesn't know how to talk to the internal networks where vRA will actually be deploying the VMs. So I added a static route to let it know that traffic to `172.16.0.0/16` would have to go through the Vyos router at `192.168.1.100`.
 
 This is Ubuntu, so I edited `/etc/netplan/99-netcfg-vmware.yaml` to add the `routes` section at the bottom:
-```yaml {linenos=true,hl_lines="17-20"}
+```yaml
+# torchlight! {"lineNumbers": true}
 # /etc/netplan/99-netcfg-vmware.yaml
 network:
   version: 2
@@ -71,24 +73,23 @@ network:
           - lab.bowdre.net
         addresses:
           - 192.168.1.5
-      routes:
+      routes: # [tl! focus:3]
               - to: 172.16.0.0/16
                 via: 192.168.1.100
                 metric: 100
 ```
 I then ran `sudo netplan apply` so the change would take immediate effect and confirmed the route was working by pinging the vCenter's interface on the `172.16.10.0/24` network:
-```command
-sudo netplan apply
+```shell
+sudo netplan apply # [tl! .cmd]
 ```
-```command-session
-ip route
-default via 192.168.1.1 dev ens160 proto static
+```shell
+ip route # [tl! .cmd]
+default via 192.168.1.1 dev ens160 proto static # [tl! .nocopy:3]
 172.16.0.0/16 via 192.168.1.100 dev ens160 proto static metric 100
 192.168.1.0/24 dev ens160 proto kernel scope link src 192.168.1.14
-```
-```command-session
-ping 172.16.10.12
-PING 172.16.10.12 (172.16.10.12) 56(84) bytes of data.
+
+ping 172.16.10.12 # [tl! .cmd]
+PING 172.16.10.12 (172.16.10.12) 56(84) bytes of data. # [tl! .nocopy:7]
 64 bytes from 172.16.10.12: icmp_seq=1 ttl=64 time=0.282 ms
 64 bytes from 172.16.10.12: icmp_seq=2 ttl=64 time=0.256 ms
 64 bytes from 172.16.10.12: icmp_seq=3 ttl=64 time=0.241 ms
@@ -99,7 +100,7 @@ rtt min/avg/max/mdev = 0.241/0.259/0.282/0.016 ms
 ```
 
 Now would also be a good time to go ahead and enable cron jobs so that phpIPAM will automatically scan its defined subnets for changes in IP availability and device status. phpIPAM includes a pair of scripts in `INSTALL_DIR/functions/scripts/`: one for discovering new hosts, and the other for checking the status of previously discovered hosts. So I ran `sudo crontab -e` to edit root's crontab and pasted in these two lines to call both scripts every 15 minutes:
-```cron
+```text
 */15 * * * * /usr/bin/php /var/www/html/phpipam/functions/scripts/discoveryCheck.php
 */15 * * * * /usr/bin/php /var/www/html/phpipam/functions/scripts/pingCheck.php
 ```
@@ -205,9 +206,10 @@ Now that I know how to talk to phpIPAM via its RESP API, it's time to figure out
 I downloaded the SDK from [here](https://code.vmware.com/web/sdk/1.1.0/vmware-vrealize-automation-third-party-ipam-sdk). It's got a pretty good [README](https://github.com/jbowdre/phpIPAM-for-vRA8/blob/main/README_VMware.md) which describes the requirements (Java 8+, Maven 3, Python3, Docker, internet access) as well as how to build the package. I also consulted [this white paper](https://docs.vmware.com/en/vRealize-Automation/8.2/ipam_integration_contract_reqs.pdf) which describes the inputs provided by vRA and the outputs expected from the IPAM integration.
 
 The README tells you to extract the .zip and make a simple modification to the `pom.xml` file to "brand" the integration:
-```xml {linenos=true,hl_lines="2-4"}
+```xml
+# torchlight! {"lineNumbers": true}
 <properties>
-    <provider.name>phpIPAM</provider.name>
+    <provider.name>phpIPAM</provider.name>  <!-- [tl! focus:2] -->
     <provider.description>phpIPAM integration for vRA</provider.description>
     <provider.version>1.0.3</provider.version>
 
@@ -221,7 +223,8 @@ The README tells you to extract the .zip and make a simple modification to the `
 You can then kick off the build with `mvn package -PcollectDependencies -Duser.id=${UID}`, which will (eventually) spit out `./target/phpIPAM.zip`. You can then [import the package to vRA](https://docs.vmware.com/en/vRealize-Automation/8.3/Using-and-Managing-Cloud-Assembly/GUID-410899CA-1B02-4507-96AD-DFE622D2DD47.html) and test it against the `httpbin.org` hostname to validate that the build process works correctly.
 
 You'll notice that the form includes fields for Username, Password, and Hostname; we'll also need to specify the API app ID. This can be done by editing `./src/main/resources/endpoint-schema.json`. I added an `apiAppId` field:
-```json {linenos=true,hl_lines=[12,38]}
+```json
+// torchlight! {"lineNumbers":true}
 {
    "layout":{
       "pages":[
@@ -233,7 +236,7 @@ You'll notice that the form includes fields for Username, Password, and Hostname
                   "id":"section_1",
                   "fields":[
                      {
-                        "id":"apiAppId",
+                        "id":"apiAppId", // [tl! focus]
                         "display":"textField"
                      },
                      {
@@ -259,7 +262,7 @@ You'll notice that the form includes fields for Username, Password, and Hostname
          "type":{
             "dataType":"string"
          },
-         "label":"API App ID",
+         "label":"API App ID", // [tl! focus]
          "constraints":{
             "required":true
          }
@@ -321,7 +324,8 @@ Example payload:
 ```
 
 The `do_validate_endpoint` function has a handy comment letting us know that's where we'll drop in our code:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 def do_validate_endpoint(self, auth_credentials, cert):
     # Your implemention goes here
 
@@ -332,7 +336,8 @@ def do_validate_endpoint(self, auth_credentials, cert):
         response = requests.get("https://" + self.inputs["endpointProperties"]["hostName"], verify=cert, auth=(username, password))
 ```
 The example code gives us a nice start at how we'll get our inputs from vRA. So let's expand that a bit:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 def do_validate_endpoint(self, auth_credentials, cert):
     # Build variables
     username = auth_credentials["privateKeyId"]
@@ -341,19 +346,22 @@ def do_validate_endpoint(self, auth_credentials, cert):
     apiAppId = self.inputs["endpointProperties"]["apiAppId"]
 ```
 As before, we'll construct the "base" URI by inserting the `hostname` and `apiAppId`, and we'll combine the `username` and `password` into our `auth` variable:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 uri = f'https://{hostname}/api/{apiAppId}/
 auth = (username, password)
 ```
 I realized that I'd be needing to do the same authentication steps for each one of these operations, so I created a new `auth_session()` function to do the heavy lifting. Other operations will also need to return the authorization token but for this run we really just need to know whether the authentication was successful, which we can do by checking `req.status_code`.
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 def auth_session(uri, auth, cert):
     auth_uri = f'{uri}/user/'
     req = requests.post(auth_uri, auth=auth, verify=cert)
     return req
 ```
 And we'll call that function from `do_validate_endpoint()`:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 # Test auth connection
 try:
     response = auth_session(uri, auth, cert)
@@ -372,7 +380,8 @@ After completing each operation, run `mvn package -PcollectDependencies -Duser.i
 Confirm that everything worked correctly by hopping over to the **Extensibility** tab, selecting **Action Runs** on the left, and changing the **User Runs** filter to say *Integration Runs*.
 ![Extensibility action runs](e4PTJxfqH.png)
 Select the newest `phpIPAM_ValidateEndpoint` action and make sure it has a happy green *Completed* status. You can also review the Inputs to make sure they look like what you expected:
-```json {linenos=true}
+```json
+// torchlight! {"lineNumbers": true}
 {
   "__metadata": {
     "headers": {
@@ -399,7 +408,8 @@ That's one operation in the bank!
 
 ### Step 6: 'Get IP Ranges' action
 So vRA can authenticate against phpIPAM; next, let's actually query to get a list of available IP ranges. This happens in `./src/main/python/get_ip_ranges/source.py`. We'll start by pulling over our `auth_session()` function and flesh it out a bit more to return the authorization token:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 def auth_session(uri, auth, cert):
     auth_uri = f'{uri}/user/'
     req = requests.post(auth_uri, auth=auth, verify=cert)
@@ -409,7 +419,8 @@ def auth_session(uri, auth, cert):
     return token
 ```
 We'll then modify `do_get_ip_ranges()` with our needed variables, and then call `auth_session()` to get the necessary token:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 def do_get_ip_ranges(self, auth_credentials, cert):
     # Build variables
     username = auth_credentials["privateKeyId"]
@@ -423,7 +434,8 @@ def do_get_ip_ranges(self, auth_credentials, cert):
     token = auth_session(uri, auth, cert)
 ```
 We can then query for the list of subnets, just like we did earlier:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 # Request list of subnets
 subnet_uri = f'{uri}/subnets/'
 ipRanges = []
@@ -434,7 +446,8 @@ I decided to add the extra `filter_by=isPool&filter_value=1` argument to the que
 
 {{% notice note "Update" %}}
 I now filter for networks identified by the designated custom field like so:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
     # Request list of subnets
     subnet_uri = f'{uri}/subnets/'
     if enableFilter == "true":
@@ -452,7 +465,8 @@ I now filter for networks identified by the designated custom field like so:
 Now is a good time to consult [that white paper](https://docs.vmware.com/en/VMware-Cloud-services/1.0/ipam_integration_contract_reqs.pdf) to confirm what fields I'll need to return to vRA. That lets me know that I'll need to return `ipRanges` which is a list of `IpRange` objects. `IpRange` requires `id`, `name`, `startIPAddress`, `endIPAddress`, `ipVersion`, and `subnetPrefixLength` properties. It can also accept `description`, `gatewayAddress`, and `dnsServerAddresses` properties, among others. Some of these properties are returned directly by the phpIPAM API, but others will need to be computed on the fly.
 
 For instance, these are pretty direct matches:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 ipRange['id'] = str(subnet['id'])
 ipRange['description'] = str(subnet['description'])
 ipRange['subnetPrefixLength'] = str(subnet['mask'])
@@ -463,32 +477,37 @@ ipRange['name'] = f"{str(subnet['subnet'])}/{str(subnet['mask'])}"
 ```
 
 Working with IP addresses in Python can be greatly simplified by use of the `ipaddress` module, so I added an `import ipaddress` statement near the top of the file. I also added it to `requirements.txt` to make sure it gets picked up by the Maven build. I can then use that to figure out the IP version as well as computing reasonable start and end IP addresses:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 network = ipaddress.ip_network(str(subnet['subnet']) + '/' + str(subnet['mask']))
 ipRange['ipVersion'] = 'IPv' + str(network.version)
 ipRange['startIPAddress'] = str(network[1])
 ipRange['endIPAddress'] = str(network[-2])
 ```
 I'd like to try to get the DNS servers from phpIPAM if they're defined, but I also don't want the whole thing to puke if a subnet doesn't have that defined. phpIPAM returns the DNS servers as a semicolon-delineated string; I  need them to look like a Python list:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 try:
   ipRange['dnsServerAddresses'] = [server.strip() for server in str(subnet['nameservers']['namesrv1']).split(';')]
 except:
    ipRange['dnsServerAddresses'] = []
 ```
 I can also nest another API request to find which address is marked as the gateway for a given subnet:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 gw_req = requests.get(f"{subnet_uri}/{subnet['id']}/addresses/?filter_by=is_gateway&filter_value=1", headers=token, verify=cert)
 if gw_req.status_code == 200:
   gateway = gw_req.json()['data'][0]['ip']
   ipRange['gatewayAddress'] = gateway
 ```
 And then I merge each of these `ipRange` objects into the `ipRanges` list which will be returned to vRA:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 ipRanges.append(ipRange)
 ```
 After rearranging a bit and tossing in some logging, here's what I've got:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 for subnet in subnets:
     ipRange = {}
     ipRange['id'] = str(subnet['id'])
@@ -523,7 +542,7 @@ The full code can be found [here](https://github.com/jbowdre/phpIPAM-for-vRA8/bl
 In any case, it's time to once again use `mvn package -PcollectDependencies -Duser.id=${UID}` to fire off the build, and then import `phpIPAM.zip` into vRA.
 
 vRA runs the `phpIPAM_GetIPRanges` action about every ten minutes so keep checking back on the **Extensibility > Action Runs** view until it shows up. You can then select the action and review the Log to see which IP ranges got picked up:
-```log
+```
 [2021-02-21 23:14:04,026] [INFO] - Querying for auth credentials
 [2021-02-21 23:14:04,051] [INFO] - Credentials obtained successfully!
 [2021-02-21 23:14:04,089] [INFO] - Found subnet: 172.16.10.0/24 - 1610-Management.
@@ -544,7 +563,8 @@ Next, we need to figure out how to allocate an IP.
 
 ### Step 7: 'Allocate IP' action
 I think we've got a rhythm going now. So we'll dive in to `./src/main/python/allocate_ip/source.py`, create our `auth_session()` function, and add our variables to the `do_allocate_ip()` function. I also created a new `bundle` object to hold the `uri`, `token`, and `cert` items so that I don't have to keep typing those over and over and over.
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 def auth_session(uri, auth, cert):
     auth_uri = f'{uri}/user/'
     req = requests.post(auth_uri, auth=auth, verify=cert)
@@ -571,7 +591,8 @@ def do_allocate_ip(self, auth_credentials, cert):
     }
 ```
 I left the remainder of `do_allocate_ip()` intact but modified its calls to other functions so that my new `bundle` would be included:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 allocation_result = []
 try:
     resource = self.inputs["resourceInfo"]
@@ -586,7 +607,8 @@ except Exception as e:
     raise e
 ```
 I also added `bundle` to the `allocate()` function:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 def allocate(resource, allocation, context, endpoint, bundle):
 
     last_error = None
@@ -603,7 +625,8 @@ def allocate(resource, allocation, context, endpoint, bundle):
     raise last_error
 ```
 The heavy lifting is actually handled in `allocate_in_range()`. Right now, my implementation only supports doing a single allocation so I added an escape in case someone asks to do something crazy like allocate *2* IPs. I then set up my variables:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 def allocate_in_range(range_id, resource, allocation, context, endpoint, bundle):
     if int(allocation['size']) ==1:
       vmName = resource['name']
@@ -626,13 +649,15 @@ payload = {
 That timestamp will be handy when reviewing the reservations from the phpIPAM side of things. Be sure to add an appropriate `import datetime` statement at the top of this file, and include `datetime` in `requirements.txt`.
 
 So now we'll construct the URI and post the allocation request to phpIPAM. We tell it which `range_id` to use and it will return the first available IP.
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 allocate_uri = f'{uri}/addresses/first_free/{str(range_id)}/'
 allocate_req = requests.post(allocate_uri, data=payload, headers=token, verify=cert)
 allocate_req = allocate_req.json()
 ```
 Per the white paper, we'll need to return `ipAllocationId`, `ipAddresses`, `ipRangeId`, and `ipVersion` to vRA in an `AllocationResult`. Once again, I'll leverage the `ipaddress` module for figuring the version (and, once again, I'll add it as an import and to the `requirements.txt` file).
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 if allocate_req['success']:
    version = ipaddress.ip_address(allocate_req['data']).version
    result = {
@@ -648,7 +673,8 @@ else:
 return result
 ```
 I also implemented a hasty `rollback()` in case something goes wrong and we need to undo the allocation:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 def rollback(allocation_result, bundle):
     uri = bundle['uri']
     token = bundle['token']
@@ -663,7 +689,7 @@ def rollback(allocation_result, bundle):
     return
 ```
 The full `allocate_ip` code is [here](https://github.com/jbowdre/phpIPAM-for-vRA8/blob/main/src/main/python/allocate_ip/source.py). Once more, run `mvn package -PcollectDependencies -Duser.id=${UID}` and import the new `phpIPAM.zip` package into vRA. You can then open a Cloud Assembly Cloud Template associated with one of the specified networks and hit the "Test" button to see if it works. You should see a new `phpIPAM_AllocateIP` action run appear on the **Extensibility > Action runs** tab. Check the Log for something like this:
-```log
+```
 [2021-02-22 01:31:41,729] [INFO] - Querying for auth credentials
 [2021-02-22 01:31:41,757] [INFO] - Credentials obtained successfully!
 [2021-02-22 01:31:41,773] [INFO] - Allocating from range 12
@@ -676,7 +702,8 @@ Almost done!
 
 ### Step 8: 'Deallocate IP' action
 The last step is to remove the IP allocation when a vRA deployment gets destroyed. It starts just like the `allocate_ip` action with our `auth_session()` function and variable initialization:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 def auth_session(uri, auth, cert):
     auth_uri = f'{uri}/user/'
     req = requests.post(auth_uri, auth=auth, verify=cert)
@@ -712,7 +739,8 @@ def do_deallocate_ip(self, auth_credentials, cert):
     }
 ```
 And the `deallocate()` function is basically a prettier version of the `rollback()` function from the `allocate_ip` action:
-```python {linenos=true}
+```python
+# torchlight! {"lineNumbers": true}
 def deallocate(resource, deallocation, bundle):
     uri = bundle['uri']
     token = bundle['token']
@@ -730,13 +758,14 @@ def deallocate(resource, deallocation, bundle):
     }
 ```
 You can review the full code [here](https://github.com/jbowdre/phpIPAM-for-vRA8/blob/main/src/main/python/deallocate_ip/source.py). Build the package with Maven, import to vRA, and run another test deployment. The `phpIPAM_DeallocateIP` action should complete successfully. Something like this will be in the log:
-```log
+```
 [2021-02-22 01:36:29,438] [INFO] - Querying for auth credentials
 [2021-02-22 01:36:29,461] [INFO] - Credentials obtained successfully!
 [2021-02-22 01:36:29,476] [INFO] - Deallocating ip 172.16.40.3 from range 12
 ```
 And the Outputs section of the Details tab will show:
-```json {linenos=true}
+```json
+// torchlight! {"lineNumbers": true}
 {
   "ipDeallocations": [
     {

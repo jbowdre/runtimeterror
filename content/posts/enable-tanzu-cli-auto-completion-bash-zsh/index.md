@@ -51,14 +51,14 @@ Running `tanzu completion --help` will tell you what's needed, and you can just 
 ```
 
 So to get the completions to load automatically whenever you start a `bash` shell, run:
-```command
-tanzu completion bash >  $HOME/.tanzu/completion.bash.inc
+```shell
+tanzu completion bash >  $HOME/.tanzu/completion.bash.inc # [tl! .cmd:1]
 printf "\n# Tanzu shell completion\nsource '$HOME/.tanzu/completion.bash.inc'\n" >> $HOME/.bash_profile
 ```
 
 For a `zsh` shell, it's:
-```command
-echo "autoload -U compinit; compinit" >> ~/.zshrc
+```shell
+echo "autoload -U compinit; compinit" >> ~/.zshrc # [tl! .cmd:1]
 tanzu completion zsh > "${fpath[1]}/_tanzu"
 ```
 

@@ -19,8 +19,8 @@ Here's how.
 #### Step Zero: Prereqs
 You'll need Windows 10 1903 build 18362 or newer (on x64). You can check by running `ver` from a Command Prompt:
 ```powershell
-C:\> ver
-Microsoft Windows [Version 10.0.18363.1082]
+ver # [tl! .cmd_pwsh]
+Microsoft Windows [Version 10.0.18363.1082] # [tl! .nocopy]
 ```
 We're interested in that third set of numbers. 18363 is bigger than 18362 so we're good to go!
 
@@ -28,13 +28,13 @@ We're interested in that third set of numbers. 18363 is bigger than 18362 so we'
 *(Not needed if you've already been using WSL1.)*
 You can do this by dropping the following into an elevated Powershell prompt:
 ```powershell
-dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart # [tl! .cmd_pwsh]
 ```
 
 #### Step Two: Enable the Virtual Machine Platform feature
 Drop this in an elevated Powershell:
 ```powershell
-dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart # [tl! .cmd_pwsh]
 ```
 And then reboot (this is still Windows, after all).
 
@@ -44,22 +44,22 @@ Download it from [here](https://wslstorestorage.blob.core.windows.net/wslblob/ws
 #### Step Four: Set WSL2 as your default
 Open a Powershell window and run:
 ```powershell
-wsl --set-default-version 2
+wsl --set-default-version 2 # [tl! .cmd_pwsh]
 ```
 
 #### Step Five: Install a Linux distro, or upgrade an existing one
-If you're brand new to this WSL thing, head over to the [Microsoft Store](https://aka.ms/wslstore) and download your favorite Linux distribution. Once it's installed, launch it and you'll be prompted to set up a Linux username and password. 
+If you're brand new to this WSL thing, head over to the [Microsoft Store](https://aka.ms/wslstore) and download your favorite Linux distribution. Once it's installed, launch it and you'll be prompted to set up a Linux username and password.
 
 If you've already got a WSL1 distro installed, first run `wsl -l -v` in Powershell to make sure you know the distro name:
 ```powershell
-PS C:\Users\jbowdre> wsl -l -v
-  NAME      STATE           VERSION
+wsl -l -v # [tl! .cmd_pwsh]
+  NAME      STATE           VERSION # [tl! .nocopy:1]
 * Debian    Running         2
 ```
 And then upgrade the distro to WSL2 with `wsl --set-version <distro_name> 2`:
 ```powershell
-PS C:\Users\jbowdre> wsl --set-version Debian 2
-Conversion in progress, this may take a few minutes...
+PS C:\Users\jbowdre> wsl --set-version Debian 2 # [tl! .cmd_pwsh]
+Conversion in progress, this may take a few minutes... # [tl! .nocopy]
 ```
 Cool!
 

@@ -44,8 +44,8 @@ After hitting **Execute**, the Swagger UI will populate the *Responses* section 
 ![curl request format](login_controller_3.png)
 
 So I could easily replicate this using the `curl` utility by just copying and pasting the following into a shell:
-```command-session
-curl -X 'POST' \
+```curl
+curl -X 'POST' \ # [tl! .cmd]
   'https://vra.lab.bowdre.net/csp/gateway/am/api/login' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
@@ -69,31 +69,32 @@ Now I can go find an IaaS API that I'm interested in querying (like `/iaas/api/f
 ![Using Swagger to query for flavor mappings](flavor_mappings_swagger_request.png)
 
 And here's the result:
-```json {hl_lines=[6,10,14,44,48,52,56,60,64]}
+```json
+// torchlight! {"lineNumbers": true}
 {
   "content": [
     {
       "flavorMappings": {
         "mapping": {
-          "1vCPU | 2GB [tiny]": {
+          "1vCPU | 2GB [tiny]": { // [tl! focus]
             "cpuCount": 1,
             "memoryInMB": 2048
           },
-          "1vCPU | 1GB [micro]": {
+          "1vCPU | 1GB [micro]": { // [tl! focus]
             "cpuCount": 1,
             "memoryInMB": 1024
           },
-          "2vCPU | 4GB [small]": {
+          "2vCPU | 4GB [small]": { // [tl! focus]
             "cpuCount": 2,
             "memoryInMB": 4096
           }
-        },
+        }, // [tl! collapse:5]
         "_links": {
           "region": {
             "href": "/iaas/api/regions/3617c011-39db-466e-a7f3-029f4523548f"
           }
         }
-      },
+      },// [tl! collapse:start]
       "externalRegionId": "Datacenter:datacenter-39056",
       "cloudAccountId": "75d29635-f128-4b85-8cf9-95a9e5981c68",
       "name": "",
@@ -107,43 +108,43 @@ And here's the result:
         },
         "region": {
           "href": "/iaas/api/regions/3617c011-39db-466e-a7f3-029f4523548f"
-        }
+        } // [tl! collapse:end]
       }
     },
     {
       "flavorMappings": {
         "mapping": {
-          "2vCPU | 8GB [medium]": {
+          "2vCPU | 8GB [medium]": { // [tl! focus]
             "cpuCount": 2,
             "memoryInMB": 8192
           },
-          "1vCPU | 2GB [tiny]": {
+          "1vCPU | 2GB [tiny]": { // [tl! focus]
             "cpuCount": 1,
             "memoryInMB": 2048
           },
-          "8vCPU | 16GB [giant]": {
+          "8vCPU | 16GB [giant]": { // [tl! focus]
             "cpuCount": 8,
             "memoryInMB": 16384
           },
-          "1vCPU | 1GB [micro]": {
+          "1vCPU | 1GB [micro]": { // [tl! focus]
             "cpuCount": 1,
             "memoryInMB": 1024
           },
-          "2vCPU | 4GB [small]": {
+          "2vCPU | 4GB [small]": { // [tl! focus]
             "cpuCount": 2,
             "memoryInMB": 4096
           },
-          "4vCPU | 12GB [large]": {
+          "4vCPU | 12GB [large]": { // [tl! focus]
             "cpuCount": 4,
             "memoryInMB": 12288
           }
-        },
+        }, // [tl! collapse:5]
         "_links": {
           "region": {
             "href": "/iaas/api/regions/c0d2a662-9ee5-4a27-9a9e-e92a72668136"
           }
         }
-      },
+      }, // [tl! collapse:start]
       "externalRegionId": "Datacenter:datacenter-1001",
       "cloudAccountId": "75d29635-f128-4b85-8cf9-95a9e5981c68",
       "name": "",
@@ -158,7 +159,7 @@ And here's the result:
         "region": {
           "href": "/iaas/api/regions/c0d2a662-9ee5-4a27-9a9e-e92a72668136"
         }
-      }
+      } // [tl! collapse:end]
     }
   ],
   "totalElements": 2,
@@ -175,61 +176,62 @@ As you can see, Swagger can really help to jump-start the exploration of a new A
 [HTTPie](https://httpie.io/) is a handy command-line utility optimized for interacting with web APIs. This will make things easier as I dig deeper.
 
 Installing the [Debian package](https://httpie.io/docs/cli/debian-and-ubuntu) is a piece of ~~cake~~ _pie_[^pie]:
-```command
-curl -SsL https://packages.httpie.io/deb/KEY.gpg | sudo apt-key add -
+```shell
+curl -SsL https://packages.httpie.io/deb/KEY.gpg | sudo apt-key add - # [tl! .cmd:3]
 sudo curl -SsL -o /etc/apt/sources.list.d/httpie.list https://packages.httpie.io/deb/httpie.list
 sudo apt update
 sudo apt install httpie
 ```
 
 Once installed, running `http` will give me a quick overview of how to use this new tool:
-```command-session
-http
-usage:
+```shell
+http # [tl! .cmd]
+usage: # [tl! .nocopy:start]
     http [METHOD] URL [REQUEST_ITEM ...]
 
 error:
     the following arguments are required: URL
 
 for more information:
-    run 'http --help' or visit https://httpie.io/docs/cli
+    run 'http --help' or visit https://httpie.io/docs/cli # [tl! .nocopy:end]
 ```
 HTTPie cleverly interprets anything passed after the URL as a [request item](https://httpie.io/docs/cli/request-items), and it determines the item type based on a simple key/value syntax:
 > Each request item is simply a key/value pair separated with the following characters: `:` (headers), `=` (data field, e.g., JSON, form), `:=` (raw data field), `==` (query parameters), `@` (file upload).
 
 So my earlier request for an authentication token becomes:
-```command
-https POST vra.lab.bowdre.net/csp/gateway/am/api/login username='vra' password='********' domain='lab.bowdre.net'
+```shell
+https POST vra.lab.bowdre.net/csp/gateway/am/api/login username='vra' password='********' domain='lab.bowdre.net' # [tl! .cmd]
 ```
 {{% notice tip "Working with Self-Signed Certificates" %}}
 If your vRA endpoint is using a self-signed or otherwise untrusted certificate, pass the HTTPie option `--verify=no` to ignore certificate errors:
-```command
-https --verify=no POST [URL] [REQUEST_ITEMS]
+```shell
+https --verify=no POST [URL] [REQUEST_ITEMS] # [tl! .cmd]
 ```
 {{% /notice %}}
 
 Running that will return a bunch of interesting headers but I'm mainly interested in the response body:
 ```json
 {
-  "cspAuthToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjI4NDY0MjAzMzA2NDQwMTQ2NDQifQ.eyJpc3MiOiJDTj1QcmVsdWRlIElkZW50aXR5IFNlcnZpY2UsT1U9Q01CVSxPPVZNd2FyZSxMPVNvZmlhLFNUPVNvZmlhLEM9QkciLCJpYXQiOjE2NTQwMjQw[...]HBOQQwEepXTNAaTv9gWMKwvPzktmKWyJFmC64FGomRyRyWiJMkLy3xmvYQERwxaDj_15-ErjC6F3c2mV1qIqES2oZbEpjxar16ZVSPshIaOoWRXe5uZB21tkuwVMgZuuwgmpliG_JBa1Y6Oh0FZBbI7o0ERro9qOW-s2npz4Csv5FwcXt0fa4esbXXIKINjqZMh9NDDb23bUabSag"
+  "cspAuthToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjI4NDY0MjAzMzA2NDQwMTQ2NDQifQ.eyJpc3MiOiJDTj1QcmVsdWRlIElkZW50aXR5IFNlcnZpY2UsT1U9Q01CVSxPPVZNd2FyZSxMPVNvZmlh[...]HBOQQwEepXTNAaTv9gWMKwvPzktmKWyJFmC64FGomRyRyWiJMkLy3xmvYQERwxaDj_15-npz4Csv5FwcXt0fa"
 }
 ```
 
 There's the auth token[^token] that I'll need for subsequent requests. I'll store that in a variable so that it's easier to wield:
-```command
-token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjI4NDY0MjAzMzA2NDQwMTQ2NDQifQ.eyJpc3MiOiJDTj1QcmVsdWRlIElkZW50aXR5IFNlcnZpY2UsT1U9Q01CVSxPPVZNd2FyZSxMPVNvZmlhLFNUPVNvZmlhLEM9QkciLCJpYXQiOjE2NTQwMjQw[...]HBOQQwEepXTNAaTv9gWMKwvPzktmKWyJFmC64FGomRyRyWiJMkLy3xmvYQERwxaDj_15-ErjC6F3c2mV1qIqES2oZbEpjxar16ZVSPshIaOoWRXe5uZB21tkuwVMgZuuwgmpliG_JBa1Y6Oh0FZBbI7o0ERro9qOW-s2npz4Csv5FwcXt0fa4esbXXIKINjqZMh9NDDb23bUabSag
+```shell
+token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjI4NDY0MjAzMzA2NDQwMTQ2NDQifQ.eyJpc3MiOiJDTj1QcmVsdWRlIElkZW50aXR5IFNlcnZpY2UsT1U9Q01CVSxPPVZNd2FyZSxMPVNvZmlh[...]HBOQQwEepXTNAaTv9gWMKwvPzktmKWyJFmC64FGomRyRyWiJMkLy3xmvYQERwxaDj_15-npz4Csv5FwcXt0fa # [tl! .cmd]
 ```
 
 So now if I want to find out which images have been configured in vRA, I can ask:
-```command
-https GET vra.lab.bowdre.net/iaas/api/images "Authorization: Bearer $token"
+```shell
+https GET vra.lab.bowdre.net/iaas/api/images "Authorization: Bearer $token" # [tl! .cmd]
 ```
 {{% notice note "Request Items" %}}
 Remember from above that HTTPie will automatically insert key/value pairs separated by a colon into the request header.
 {{% /notice %}}
 
 And I'll get back some headers followed by an JSON object detailing the defined image mappings broken up by region:
-```json {linenos=true,hl_lines=[11,14,37,40,53,56]}
+```json
+// torchlight! {"lineNumbers": true}
 {
   "content": [
     {
@@ -240,10 +242,10 @@ And I'll get back some headers followed by an JSON object detailing the defined 
       },
       "externalRegionId": "Datacenter:datacenter-39056",
       "mapping": {
-        "Photon 4": {
+        "Photon 4": { // [tl! focus]
           "_links": {
             "region": {
-              "href": "/iaas/api/regions/3617c011-39db-466e-a7f3-029f4523548f"
+              "href": "/iaas/api/regions/3617c011-39db-466e-a7f3-029f4523548f" // [tl! focus]
             }
           },
           "cloudConfig": "",
@@ -266,10 +268,10 @@ And I'll get back some headers followed by an JSON object detailing the defined 
       },
       "externalRegionId": "Datacenter:datacenter-1001",
       "mapping": {
-        "Photon 4": {
+        "Photon 4": { // [tl! focus]
           "_links": {
             "region": {
-              "href": "/iaas/api/regions/c0d2a662-9ee5-4a27-9a9e-e92a72668136"
+              "href": "/iaas/api/regions/c0d2a662-9ee5-4a27-9a9e-e92a72668136" // [tl! focus]
             }
           },
           "cloudConfig": "",
@@ -282,10 +284,10 @@ And I'll get back some headers followed by an JSON object detailing the defined 
           "name": "photon",
           "osFamily": "LINUX"
         },
-        "Windows Server 2019": {
+        "Windows Server 2019": { // [tl! focus]
           "_links": {
             "region": {
-              "href": "/iaas/api/regions/c0d2a662-9ee5-4a27-9a9e-e92a72668136"
+              "href": "/iaas/api/regions/c0d2a662-9ee5-4a27-9a9e-e92a72668136" // [tl! focus]
             }
           },
           "cloudConfig": "",
@@ -376,7 +378,8 @@ I'll head into **Library > Actions** to create a new action inside my `com.virtu
 | `configurationName` | `string` | Name of Configuration |
 | `variableName` | `string` | Name of desired variable inside Configuration |
 
-```javascript {linenos=true}
+```javascript
+// torchlight! {"lineNumbers": true}
 /*
 JavaScript: getConfigValue action
     Inputs: path (string), configurationName (string), variableName (string)
@@ -396,7 +399,8 @@ Next, I'll create another action in my `com.virtuallypotato.utility` module whic
 
 ![vraLogin action](vraLogin_action.png)
 
-```javascript {linenos=true}
+```javascript
+// torchlight! {"lineNumbers": true}
 /*
 JavaScript: vraLogin action
     Inputs: none
@@ -428,7 +432,8 @@ I like to clean up after myself so I'm also going to create a `vraLogout` action
 |:--- |:--- |:--- |
 | `token` | `string` | Auth token of the session to destroy |
 
-```javascript {linenos=true}
+```javascript
+// torchlight! {"lineNumbers": true}
 /*
 JavaScript: vraLogout action
     Inputs: token (string)
@@ -458,7 +463,8 @@ My final "utility" action for this effort will run in between `vraLogin` and `vr
 |`uri`|`string`|Path to API controller (`/iaas/api/flavor-profiles`)|
 |`content`|`string`|Any additional data to pass with the request|
 
-```javascript {linenos=true}
+```javascript
+// torchlight! {"lineNumbers": true}
 /*
 JavaScript: vraExecute action
     Inputs: token (string), method (string), uri (string), content (string)
@@ -496,7 +502,8 @@ This action will:
 Other actions wanting to interact with the vRA REST API will follow the same basic formula, though with some more logic and capability baked in.
 
 Anyway, here's my first swing:
-```JavaScript {linenos=true}
+```javascript
+// torchlight! {"lineNumbers": true}
 /*
 JavaScript: vraTester action
     Inputs: none
@@ -513,7 +520,8 @@ Pretty simple, right? Let's see if it works:
 ![vraTester action](vraTester_action.png)
 
 It did! Though that result is a bit hard to parse visually, so I'm going to prettify it a bit:
-```json {linenos=true,hl_lines=[17,35,56,74]}
+```json
+// torchlight! {"lineNumbers": true}
 [
   {
     "tags": [],
@@ -530,7 +538,7 @@ It did! Though that result is a bit hard to parse visually, so I'm going to pret
     "folder": "vRA_Deploy",
     "externalRegionId": "Datacenter:datacenter-1001",
     "cloudAccountId": "75d29635-f128-4b85-8cf9-95a9e5981c68",
-    "name": "NUC",
+    "name": "NUC",  // [tl! focus]
     "id": "3d4f048a-385d-4759-8c04-117a170d060c",
     "updatedAt": "2022-06-02",
     "organizationId": "61ebe5bf-5f55-4dee-8533-7ad05c067dd9",
@@ -548,7 +556,7 @@ It did! Though that result is a bit hard to parse visually, so I'm going to pret
         "href": "/iaas/api/zones/3d4f048a-385d-4759-8c04-117a170d060c"
       },
       "region": {
-        "href": "/iaas/api/regions/c0d2a662-9ee5-4a27-9a9e-e92a72668136"
+        "href": "/iaas/api/regions/c0d2a662-9ee5-4a27-9a9e-e92a72668136" // [tl! focus]
       },
       "cloud-account": {
         "href": "/iaas/api/cloud-accounts/75d29635-f128-4b85-8cf9-95a9e5981c68"
@@ -569,7 +577,7 @@ It did! Though that result is a bit hard to parse visually, so I'm going to pret
     },
     "externalRegionId": "Datacenter:datacenter-39056",
     "cloudAccountId": "75d29635-f128-4b85-8cf9-95a9e5981c68",
-    "name": "QTZ",
+    "name": "QTZ", // [tl! focus]
     "id": "84470591-74a2-4659-87fd-e5d174a679a2",
     "updatedAt": "2022-06-02",
     "organizationId": "61ebe5bf-5f55-4dee-8533-7ad05c067dd9",
@@ -587,7 +595,7 @@ It did! Though that result is a bit hard to parse visually, so I'm going to pret
         "href": "/iaas/api/zones/84470591-74a2-4659-87fd-e5d174a679a2"
       },
       "region": {
-        "href": "/iaas/api/regions/3617c011-39db-466e-a7f3-029f4523548f"
+        "href": "/iaas/api/regions/3617c011-39db-466e-a7f3-029f4523548f" // [tl! focus]
       },
       "cloud-account": {
         "href": "/iaas/api/cloud-accounts/75d29635-f128-4b85-8cf9-95a9e5981c68"
@@ -609,7 +617,8 @@ This action will basically just repeat the call that I tested above in `vraTeste
 
 ![vraGetZones action](vraGetZones_action.png)
 
-```javascript {linenos=true}
+```javascript
+// torchlight! {"lineNumbers": true}
 /*
 JavaScript: vraGetZones action
     Inputs: none
@@ -639,7 +648,8 @@ Oh, and the whole thing is wrapped in a conditional so that the code only execut
 |:--- |:--- |:--- |
 | `zoneName` | `string` | The name of the Zone selected in the request form |
 
-```javascript {linenos=true}
+```javascript
+// torchlight! {"lineNumbers": true}
 /* JavaScript: vraGetImages action
     Inputs: zoneName (string)
     Return type: array/string
@@ -708,7 +718,8 @@ Next I'll repeat the same steps to create a new `image` input. This time, though
 ![Binding the input](image_input.png)
 
 The full code for my template now looks like this:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 formatVersion: 1
 inputs:
   zoneName:
