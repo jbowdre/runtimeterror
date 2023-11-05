@@ -81,7 +81,7 @@
   z-index: -1;
   opacity: .01;
 }
-.chroma [data-lang]:before {
+.torchlight [data-lang]:before {
   position: absolute;
   z-index: 0;
   top: -29px;
