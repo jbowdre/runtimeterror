@@ -117,3 +117,8 @@ When the code block is hovered, bring all the lines into focus.
   webkit-user-select: none;
   user-select: none;
 }
+
+.cmd_pwsh::before {
+  color: var(--base07);
+  content: "PS> ";
+}
