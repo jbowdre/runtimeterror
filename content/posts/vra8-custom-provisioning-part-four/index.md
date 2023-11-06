@@ -58,7 +58,8 @@ I also went ahead and specified that the action will return a String.
 
 And now for the code. I really just want to mash all those variables together into a long string, and I'll also add a timestamp to make sure each deployment name is truly unique.
 
-```js {linenos=true}
+```javascript
+// torchlight! {"lineNumbers": true}
 //  JavaScript: createDeploymentName
 //    Inputs: catalogItemName (String), requestedByName (String), siteCode (String),
 //        envCode (String), functionCode (String), appCode (String)
@@ -126,7 +127,8 @@ This gets filed under the existing `CustomProvisioning` folder, and I name it `n
 I created a new action named (appropriately) `getNetworksForSite`. This will accept `siteCode (String)` as its input from the Service Broker request form, and will return an array of strings containing the available networks.
 ![getNetworksForSite action](IdrT-Un8H1.png)
 
-```js {linenos=true}
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: getNetworksForSite
 //    Inputs: siteCode (String)
 //    Returns: site.value (Array/String)
@@ -163,7 +165,8 @@ inputs:
 
 and update the resource configuration for the network entity to constrain it based on `input.network` instead of `input.site` as before:
 
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 resources:
   Cloud_vSphere_Machine_1:
     type: Cloud.vSphere.Machine

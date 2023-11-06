@@ -12,8 +12,8 @@ tags:
   - meta
 ---
 
-```command
-cp -a virtuallypotato.com runtimeterror.dev
+```shell
+cp -a virtuallypotato.com runtimeterror.dev # [tl! .cmd:2]
 rm -rf virtuallypotato.com
 ln -s virtuallypotato.com runtimeterror.dev
 ```

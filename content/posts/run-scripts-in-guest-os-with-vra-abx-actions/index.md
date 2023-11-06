@@ -29,13 +29,14 @@ I will also add some properties to tell PowerCLI (and the `Invoke-VmScript` cmdl
 
 ##### Inputs section
 I'll kick this off by going into Cloud Assembly and editing the `WindowsDemo` template I've been working on for the past few eons. I'll add a `diskSize` input:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 formatVersion: 1
 inputs:
   site: [...]
   image: [...]
   size: [...]
-  diskSize:
+  diskSize: # [tl! focus:5]
     title: 'System drive size'
     default: 60
     type: integer
@@ -49,11 +50,12 @@ inputs:
 The default value is set to 60GB to match the VMDK attached to the source template; that's also the minimum value since shrinking disks gets messy.
 
 I'll also drop in an `adminsList` input at the bottom of the section:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 [...]
   poc_email: [...]
   ticket: [...]
-  adminsList:
+  adminsList: # [tl! focus:4]
     type: string
     title: Administrators
     description: Comma-separated list of domain accounts/groups which need admin access to this server.
@@ -71,7 +73,8 @@ In the Resources section of the cloud template, I'm going to add a few propertie
 
 I'll also include the `adminsList` input from earlier so that can get passed to ABX as well. And I'm going to add in an `adJoin` property (mapped to the [existing `input.adJoin`](/joining-vms-to-active-directory-in-site-specific-ous-with-vra8#cloud-template)) so that I'll have that to work with later.
 
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 [...]
 resources:
   Cloud_vSphere_Machine_1:
@@ -80,7 +83,7 @@ resources:
       image: '${input.image}'
       flavor: '${input.size}'
       site: '${input.site}'
-      vCenter: vcsa.lab.bowdre.net
+      vCenter: vcsa.lab.bowdre.net # [tl! focus:3]
       vCenterUser: vra@lab.bowdre.net
       templateUser: '${input.adJoin ? "vra@lab" : "Administrator"}'
       adminsList: '${input.adminsList}'
@@ -93,12 +96,13 @@ resources:
 ```
 
 And I will add in a `storage` property as well which will automatically adjust the deployed VMDK size to match the specified input:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 [...]
       description: '${input.description}'
       networks: [...]
       constraints: [...]
-      storage:
+      storage: # [tl! focus:1]
         bootDiskCapacityInGB: '${input.diskSize}'
   Cloud_vSphere_Network_1:
     type: Cloud.vSphere.Network
@@ -108,7 +112,8 @@ And I will add in a `storage` property as well which will automatically adjust t
 
 ##### Complete template
 Okay, all together now:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 formatVersion: 1
 inputs:
   site:
@@ -196,7 +201,7 @@ inputs:
   poc_email:
     type: string
     title: Point of Contact Email
-    default: jack.shephard@virtuallypotato.com
+    default: jack.shephard@example.com
     pattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
   ticket:
     type: string
@@ -296,7 +301,8 @@ And I'll pop over to the right side to map the Action Constants I created earlie
 ![Mapping constants in action](20210901_map_constants_to_action.png)
 
 Now for The Script:
-```powershell {linenos=true}
+```powershell
+# torchlight! {"lineNumbers": true}
 <# vRA 8.x ABX action to perform certain in-guest actions post-deploy:
     Windows:
         - auto-update VM tools

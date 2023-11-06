@@ -36,7 +36,7 @@ Sounds great - but how do you actually make golink available on your tailnet? We
 There are three things I'll need to do in the Tailscale admin portal before moving on:
 #### Create an ACL tag
 I assign ACL tags to devices in my tailnet based on their location and/or purpose, and I'm then able to use those in a policy to restrict access between certain devices. To that end, I'm going to create a new `tag:golink` tag for this purpose. Creating a new tag in Tailscale is really just going to the [Access Controls page of the admin console](https://login.tailscale.com/admin/acls) and editing the policy to specify a `tagOwner` who is permitted to assign the tag:
-```text {hl_lines=[11]}
+```json
   "groups":
     "group:admins": ["john@example.com"],
   },
@@ -47,14 +47,14 @@ I assign ACL tags to devices in my tailnet based on their location and/or purpos
     "tag:dns":    ["group:admins"],
     "tag:rsync":  ["group:admins"],
     "tag:funnel": ["group:admins"],
-    "tag:golink": ["group:admins"],
+    "tag:golink": ["group:admins"], // [tl! highlight]
   },
 ```
 
 #### Configure ACL access
 This step is really only necessary since I've altered the default Tailscale ACL and prevent my nodes from communicating with each other unless specifically permitted. I want to make sure that everything on my tailnet can access golink:
 
-```text
+```json
 "acls": [
     {
       // make golink accessible to everything
@@ -80,20 +80,21 @@ After clicking the **Generate key** button, the key will be displayed. This is t
 
 ### Docker setup
 The [golink repo](https://github.com/tailscale/golink) offers this command for running the container:
-```command
-docker run -it --rm ghcr.io/tailscale/golink:main
+```shell
+docker run -it --rm ghcr.io/tailscale/golink:main # [tl! .cmd]
 ```
 
 The doc also indicates that I can pass the auth key to the golink service via the `TS_AUTHKEY` environment variable, and that all the configuration will be stored in `/home/nonroot` (which will be owned by uid/gid `65532`). I'll take this knowledge and use it to craft a `docker-compose.yml` to simplify container management.
 
-```command
-mkdir -p golink/data
+```shell
+mkdir -p golink/data # [tl! .cmd:3]
 cd golink
 chmod 65532:65532 data
 vi docker-compose.yaml
 ```
 
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 # golink docker-compose.yaml
 version: '3'
 services:
@@ -146,8 +147,8 @@ Some of my other golinks:
 You can browse to `go/.export` to see a JSON-formatted listing of all configured shortcuts - or, if you're clever, you could do something like `curl http://go/.export -o links.json` to download a copy.
 
 To restore, just pass `--snapshot /path/to/links.json` when starting golink. What I usually do is copy the file into the `data` folder that I'm mounting as a Docker volume, and then just run:
-```command
-sudo docker exec golink /golink --sqlitedb /home/nonroot/golink.db --snapshot /home/nonroot/links.json
+```shell
+sudo docker exec golink /golink --sqlitedb /home/nonroot/golink.db --snapshot /home/nonroot/links.json # [tl! .cmd]
 ```
 
 ### Conclusion

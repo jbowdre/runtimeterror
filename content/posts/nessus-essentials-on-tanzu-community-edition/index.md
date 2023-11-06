@@ -28,11 +28,11 @@ Now that VMware [has released](https://blogs.vmware.com/vsphere/2022/01/announci
 I start off by heading to [tenable.com/products/nessus/nessus-essentials](https://www.tenable.com/products/nessus/nessus-essentials) to register for a (free!) license key which will let me scan up to 16 hosts. I'll receive the key and download link in an email, but I'm not actually going to use that link to download the Nessus binary. I've got this shiny-and-new [Tanzu Community Edition Kubernetes cluster](/tanzu-community-edition-k8s-homelab/) that could use some more real workloads so I'll instead opt for the [Docker version](https://hub.docker.com/r/tenableofficial/nessus).
 
 Tenable provides an [example `docker-compose.yml`](https://community.tenable.com/s/article/Deploy-Nessus-docker-image-with-docker-compose) to make it easy to get started:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 version: '3.1'
 
 services:
-
   nessus:
     image: tenableofficial/nessus
     restart: always
@@ -46,7 +46,8 @@ services:
 ```
 
 I can use that knowledge to craft something I can deploy on Kubernetes:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 apiVersion: v1
 kind: Service
 metadata:
@@ -95,16 +96,16 @@ spec:
 Note that I'm configuring the `LoadBalancer` to listen on port `443` and route traffic to the pod on port `8834` so that I don't have to remember to enter an oddball port number when I want to connect to the web interface.
 
 And now I can just apply the file:
-```command-session
-kubectl apply -f nessus.yaml
-service/nessus created
+```shell
+kubectl apply -f nessus.yaml # [tl! .cmd]
+service/nessus created # [tl! .nocopy:1]
 deployment.apps/nessus created
 ```
 
 I'll give it a moment or two to deploy and then check on the service to figure out what IP I need to use to connect:
-```command-session
-kubectl get svc/nessus
-NAME     TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)         AGE
+```shell
+kubectl get svc/nessus # [tl! .cmd]
+NAME     TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)         AGE # [tl! .nocopy:1]
 nessus   LoadBalancer   100.67.16.51   192.168.1.79   443:31260/TCP   57s
 ```
 

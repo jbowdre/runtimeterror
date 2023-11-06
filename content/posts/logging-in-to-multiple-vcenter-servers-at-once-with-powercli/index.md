@@ -17,7 +17,8 @@ I can, and here's how I do it.
 
 ### The Script
 The following Powershell script will let you define a list of vCenters to be accessed, securely store your credentials for each vCenter, log in to every vCenter with a single command, and also close the connections when they're no longer needed. It's also a great starting point for any other custom functions you'd like to incorporate into your PowerCLI sessions.
-```powershell {linenos=true}
+```powershell
+# torchlight! {"lineNumbers": true}
 # PowerCLI_Custom_Functions.ps1
 # Usage:
 #   0) Edit $vCenterList to reference the vCenters in your environment.

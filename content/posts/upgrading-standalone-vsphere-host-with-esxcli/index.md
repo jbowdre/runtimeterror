@@ -41,21 +41,21 @@ The host will need to be in maintenance mode in order to apply the upgrade, and 
 
 ### 3. Place host in maintenance mode
 I can do that by SSH'ing to the host and running:
-```commandroot
-esxcli system maintenanceMode set -e true
+```shell
+esxcli system maintenanceMode set -e true # [tl! .cmd]
 ```
 
 And can confirm that it happened with:
-```commandroot-session
-esxcli system maintenanceMode get
-Enabled
+```shell
+esxcli system maintenanceMode get # [tl! .cmd]
+Enabled # [tl! .nocopy]
 ```
 
 ### 4. Identify the profile name
 Because this is an *upgrade* from one major release to another rather than a simple *update*, I need to know the name of the profile which will be applied. I can identify that with:
-```commandroot-session
-esxcli software sources profile list -d /vmfs/volumes/nuchost-local/_Patches/VMware-ESXi-8.0-20513097-depot.zip
-Name                          Vendor        Acceptance Level  Creation Time        Modification Time
+```shell
+esxcli software sources profile list -d /vmfs/volumes/nuchost-local/_Patches/VMware-ESXi-8.0-20513097-depot.zip # [tl! .cmd]
+Name                          Vendor        Acceptance Level  Creation Time        Modification Time # [tl! .nocopy:3]
 ----------------------------  ------------  ----------------  -------------------  -----------------
 ESXi-8.0.0-20513097-standard  VMware, Inc.  PartnerSupported  2022-09-23T18:59:28  2022-09-23T18:59:28
 ESXi-8.0.0-20513097-no-tools  VMware, Inc.  PartnerSupported  2022-09-23T18:59:28  2022-09-23T18:59:28
@@ -68,13 +68,13 @@ In this case, I'll use the `ESXi-8.0.0-20513097-standard` profile.
 
 ### 5. Install the upgrade
 Now for the moment of truth:
-```commandroot
-esxcli software profile update -d /vmfs/volumes/nuchost-local/_Patches/VMware-ESXi-8.0-20513097-depot.zip -p ESXi-8.0.0-20513097-standard
+```shell
+esxcli software profile update -d /vmfs/volumes/nuchost-local/_Patches/VMware-ESXi-8.0-20513097-depot.zip -p ESXi-8.0.0-20513097-standard # [tl! .cmd]
 ```
 
 When it finishes (successfully), it leaves a little message that the update won't be complete until the host is rebooted, so I'll go ahead and do that as well:
-```commandroot
-reboot
+```shell
+reboot # [tl! .cmd]
 ```
 
 And then wait (oh-so-patiently) for the host to come back up.
