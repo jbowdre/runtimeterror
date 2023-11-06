@@ -134,3 +134,23 @@ url = "https://runtimeterror.dev/simplex"
 icon = "fa-solid fa-envelope"
 title = "Email"
 url = "mailto:ops@runtimeterror.dev"
+
+[[powerLinks]]
+title = "hugo"
+url = "https://gohugo.io"
+
+[[powerLinks]]
+title = "netlify"
+url = "https://www.netlify.com"
+
+[[powerLinks]]
+title = "risotto"
+url = "https://github.com/joeroe/risotto"
+
+[[powerLinks]]
+title = "torchlight"
+url = "https://torchlight.dev"
+
+[[powerLinks]]
+title = "cabin"
+url = "https://withcabin.com/privacy/runtimeterror.dev"
