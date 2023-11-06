@@ -1,6 +1,8 @@
 .hugo_build.lock
-node_modules/
-package-lock.json
-package.json
-public/
-resources/
+/node_modules/
+/package-lock.json
+/package.json
+/public/
+/resources/
+/.env
+
