@@ -90,7 +90,8 @@ Next it updates the links for any thumbnail images mentioned in the front matter
 
 Lastly, it changes the `usePageBundles` flag from `false` to `true` so that Hugo knows what we've done.
 
-```bash {linenos=true}
+```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash
 # Hasty script to convert a given standard Hugo post (where the post content and
 # images are stored separately) to a Page Bundle (where the content and images are

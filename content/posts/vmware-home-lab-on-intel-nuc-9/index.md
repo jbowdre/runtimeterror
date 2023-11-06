@@ -94,15 +94,15 @@ Wouldn't it be great if the VMs that are going to be deployed on those `1610`, `
 
 After logging in to the VM, I entered the router's configuration mode:
 
-```command-session
-configure
-[edit]
+```shell
+configure # [tl! .cmd]
+[edit] # [tl! .nocopy]
 ```
 
 I then started with setting up the interfaces - `eth0` for the `192.168.1.0/24` network, `eth1` on the trunked portgroup, and a number of VIFs on `eth1` to handle the individual VLANs I'm interested in using.
 
-```commandroot
-set interfaces ethernet eth0 address '192.168.1.8/24'
+```shell
+set interfaces ethernet eth0 address '192.168.1.8/24' # [tl! .cmd_root:start]
 set interfaces ethernet eth0 description 'Outside'
 set interfaces ethernet eth1 mtu '9000'
 set interfaces ethernet eth1 vif 1610 address '172.16.10.1/24'
@@ -117,13 +117,13 @@ set interfaces ethernet eth1 vif 1630 mtu '1500'
 set interfaces ethernet eth1 vif 1698 description 'VLAN 1698 for vSAN'
 set interfaces ethernet eth1 vif 1698 mtu '9000'
 set interfaces ethernet eth1 vif 1699 description 'VLAN 1699 for vMotion'
-set interfaces ethernet eth1 vif 1699 mtu '9000'
+set interfaces ethernet eth1 vif 1699 mtu '9000' # [tl! .cmd_root:end]
 ```
 
 I also set up NAT for the networks that should be routable:
 
-```commandroot
-set nat source rule 10 outbound-interface 'eth0'
+```shell
+set nat source rule 10 outbound-interface 'eth0' # [tl! .cmd_root:start]
 set nat source rule 10 source address '172.16.10.0/24'
 set nat source rule 10 translation address 'masquerade'
 set nat source rule 20 outbound-interface 'eth0'
@@ -134,13 +134,13 @@ set nat source rule 30 source address '172.16.30.0/24'
 set nat source rule 30 translation address 'masquerade'
 set nat source rule 100 outbound-interface 'eth0'
 set nat source rule 100 translation address 'masquerade'
-set protocols static route 0.0.0.0/0 next-hop 192.168.1.1
+set protocols static route 0.0.0.0/0 next-hop 192.168.1.1 # [tl! .cmd_root:end]
 ```
 
 And I configured DNS forwarding:
 
-```commandroot
-set service dns forwarding allow-from '0.0.0.0/0'
+```shell
+set service dns forwarding allow-from '0.0.0.0/0' # [tl! .cmd_root:start]
 set service dns forwarding domain 10.16.172.in-addr.arpa. server '192.168.1.5'
 set service dns forwarding domain 20.16.172.in-addr.arpa. server '192.168.1.5'
 set service dns forwarding domain 30.16.172.in-addr.arpa. server '192.168.1.5'
@@ -148,13 +148,13 @@ set service dns forwarding domain lab.bowdre.net server '192.168.1.5'
 set service dns forwarding listen-address '172.16.10.1'
 set service dns forwarding listen-address '172.16.20.1'
 set service dns forwarding listen-address '172.16.30.1'
-set service dns forwarding name-server '192.168.1.1'
+set service dns forwarding name-server '192.168.1.1' # [tl! .cmd_root:end]
 ```
 
 Finally, I also configured VyOS's DHCP server so that I won't have to statically configure the networking for VMs deployed from vRA:
 
-```commandroot
-set service dhcp-server shared-network-name SCOPE_10_MGMT authoritative
+```shell
+set service dhcp-server shared-network-name SCOPE_10_MGMT authoritative # [tl! .cmd_root:start]
 set service dhcp-server shared-network-name SCOPE_10_MGMT subnet 172.16.10.0/24 default-router '172.16.10.1'
 set service dhcp-server shared-network-name SCOPE_10_MGMT subnet 172.16.10.0/24 dns-server '192.168.1.5'
 set service dhcp-server shared-network-name SCOPE_10_MGMT subnet 172.16.10.0/24 domain-name 'lab.bowdre.net'
@@ -174,7 +174,7 @@ set service dhcp-server shared-network-name SCOPE_30_SERVERS subnet 172.16.30.0/
 set service dhcp-server shared-network-name SCOPE_30_SERVERS subnet 172.16.30.0/24 domain-name 'lab.bowdre.net'
 set service dhcp-server shared-network-name SCOPE_30_SERVERS subnet 172.16.30.0/24 lease '86400'
 set service dhcp-server shared-network-name SCOPE_30_SERVERS subnet 172.16.30.0/24 range 0 start '172.16.30.100'
-set service dhcp-server shared-network-name SCOPE_30_SERVERS subnet 172.16.30.0/24 range 0 stop '172.16.30.200'
+set service dhcp-server shared-network-name SCOPE_30_SERVERS subnet 172.16.30.0/24 range 0 stop '172.16.30.200' # [tl! .cmd_root:end]
 ```
 
 Satisfied with my work, I ran the `commit` and `save` commands. BOOM, this server jockey just configured a router!
@@ -211,9 +211,9 @@ I migrated the physical NICs and `vmk0` to the new dvSwitch, and then created ne
 
 I then ssh'd into the hosts and used `vmkping` to make sure they could talk to each other over these interfaces. I changed the vMotion interface to use the vMotion TCP/IP stack so needed to append the `-S vmotion` flag to the command:
 
-```commandroot-session
-vmkping -I vmk1 172.16.98.22
-PING 172.16.98.22 (172.16.98.22): 56 data bytes
+```shell
+vmkping -I vmk1 172.16.98.22 # [tl! .cmd_root]
+PING 172.16.98.22 (172.16.98.22): 56 data bytes # [tl! .nocopy:start]
 64 bytes from 172.16.98.22: icmp_seq=0 ttl=64 time=0.243 ms
 64 bytes from 172.16.98.22: icmp_seq=1 ttl=64 time=0.260 ms
 64 bytes from 172.16.98.22: icmp_seq=2 ttl=64 time=0.262 ms
@@ -221,17 +221,16 @@ PING 172.16.98.22 (172.16.98.22): 56 data bytes
 --- 172.16.98.22 ping statistics ---
 3 packets transmitted, 3 packets received, 0% packet loss
 round-trip min/avg/max = 0.243/0.255/0.262 ms
-```
-```commandroot-session
-vmkping -I vmk2 172.16.99.22 -S vmotion
-PING 172.16.99.22 (172.16.99.22): 56 data bytes
+# [tl! .nocopy:end]
+vmkping -I vmk2 172.16.99.22 -S vmotion # [tl! .cmd_root]
+PING 172.16.99.22 (172.16.99.22): 56 data bytes # [tl! .nocopy:start]
 64 bytes from 172.16.99.22: icmp_seq=0 ttl=64 time=0.202 ms
 64 bytes from 172.16.99.22: icmp_seq=1 ttl=64 time=0.312 ms
 64 bytes from 172.16.99.22: icmp_seq=2 ttl=64 time=0.242 ms
 
 --- 172.16.99.22 ping statistics ---
 3 packets transmitted, 3 packets received, 0% packet loss
-round-trip min/avg/max = 0.202/0.252/0.312 ms
+round-trip min/avg/max = 0.202/0.252/0.312 ms # [tl! .nocopy:end]
 ```
 
 Okay, time to throw some vSAN on these hosts. Select the cluster object, go to the configuration tab, scroll down to vSAN, and click "Turn on vSAN". This will be a single site cluster, and I don't need to enable any additional services. When prompted, I claim the 8GB drives for the cache tier and the 16GB drives for capacity.

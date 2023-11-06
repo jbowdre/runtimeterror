@@ -68,9 +68,9 @@ I've already got Docker installed on this machine, but if I didn't I would follo
 
 I also verify that my install is using `cgroup` version 1 as version 2 is not currently supported:
 
-```command-session
-docker info | grep -i cgroup
- Cgroup Driver: cgroupfs
+```shell
+docker info | grep -i cgroup # [tl! .cmd]
+ Cgroup Driver: cgroupfs # [tl! .nocopy:1]
  Cgroup Version: 1
 ```
 
@@ -79,64 +79,49 @@ Next up, I'll install `kubectl` [as described here](https://kubernetes.io/docs/t
 
 I can look at the [releases page on GithHub](https://github.com/kubernetes/kubernetes/releases) to see that the latest release for me is `1.22.5`. With this newfound knowledge I can follow the [Install kubectl binary with curl on Linux](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-binary-with-curl-on-linux) instructions to grab that specific version:
 
-```command-session
-curl -LO https://dl.k8s.io/release/v1.22.5/bin/linux/amd64/kubectl
-
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100   154  100   154    0     0   2298      0 --:--:-- --:--:-- --:--:--  2298
-100 44.7M  100 44.7M    0     0  56.9M      0 --:--:-- --:--:-- --:--:-- 56.9M
-```
-```command-session
+```shell
+curl -sLO https://dl.k8s.io/release/v1.22.5/bin/linux/amd64/kubectl # [tl! .cmd:1]
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-
+# [tl! .nocopy:2]
 [sudo] password for john:
-```
-```command-session
-kubectl version --client
-Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.5", GitCommit:"5c99e2ac2ff9a3c549d9ca665e7bc05a3e18f07e", GitTreeState:"clean", BuildDate:"2021-12-16T08:38:33Z", GoVersion:"go1.16.12", Compiler:"gc", Platform:"linux/amd64"}
+
+kubectl version --client # [tl! .cmd]
+Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.5", # [tl! .nocopy:3]
+  GitCommit:"5c99e2ac2ff9a3c549d9ca665e7bc05a3e18f07e", GitTreeState:"clean",
+  BuildDate:"2021-12-16T08:38:33Z", GoVersion:"go1.16.12", Compiler:"gc",
+  Platform:"linux/amd64"}
 ```
 
 #### `kind` binary
 It's not strictly a requirement, but having the `kind` executable available will be handy for troubleshooting during the bootstrap process in case anything goes sideways. It can be installed in basically the same was as `kubectl`:
 
-```command-session
-curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
-
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100    98  100    98    0     0    513      0 --:--:-- --:--:-- --:--:--   513
-100   655  100   655    0     0   2212      0 --:--:-- --:--:-- --:--:-- 10076
-100 6660k  100 6660k    0     0  11.8M      0 --:--:-- --:--:-- --:--:-- 11.8M
-```
-```command
+```shell
+curl -sLo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64 # [tl! .cmd:2]
 sudo install -o root -g root -m 0755 kind /usr/local/bin/kind
-```
-```command-session
 kind version
-kind v0.11.1 go1.16.5 linux/amd64
+kind v0.11.1 go1.16.5 linux/amd64 # [tl! .nocopy]
 ```
 
 #### Tanzu CLI
 The final bit of required software is the Tanzu CLI, which can be downloaded from the [project on GitHub](https://github.com/vmware-tanzu/community-edition/releases).
 
-```command-session
-curl -H "Accept: application/vnd.github.v3.raw" \
+```shell
+curl -H "Accept: application/vnd.github.v3.raw" \ # [tl! .cmd]
   -L https://api.github.com/repos/vmware-tanzu/community-edition/contents/hack/get-tce-release.sh | \
   bash -s v0.9.1 linux
 ```
 
 And then unpack it and run the installer:
-```command
-tar xf tce-linux-amd64-v0.9.1.tar.gz
+```shell
+tar xf tce-linux-amd64-v0.9.1.tar.gz # [tl! .cmd:2]
 cd tce-linux-amd64-v0.9.1
 ./install.sh
 ```
 
 I can then verify the installation is working correctly:
-```command-session
-tanzu version
-version: v0.2.1
+```shell
+tanzu version # [tl! .cmd]
+version: v0.2.1 # [tl! .nocopy:2]
 buildDate: 2021-09-29
 sha: ceaa474
 ```
@@ -146,15 +131,15 @@ Okay, now it's time for the good stuff - creating some shiny new Tanzu clusters!
 
 #### Management cluster
 I need to create a Management cluster first and I'd like to do that with the UI, so that's as simple as:
-```command
-tanzu management-cluster create --ui
+```shell
+tanzu management-cluster create --ui # [tl! .cmd]
 ```
 
 I should then be able to access the UI by pointing a web browser at `http://127.0.0.1:8080`... but I'm running this on a VM without a GUI, so I'll need to back up and tell it to bind on `0.0.0.0:8080` so the web installer will be accessible across the network. I can also include `--browser none` so that the installer doesn't bother with trying to launch a browser locally.
 
-```command-session
-tanzu management-cluster create --ui --bind 0.0.0.0:8080 --browser none
-
+```shell
+tanzu management-cluster create --ui --bind 0.0.0.0:8080 --browser none # [tl! .cmd]
+# [tl! .nocopy:2]
 Validating the pre-requisites...
 Serving kickstart UI at http://[::]:8080
 ```
@@ -190,20 +175,22 @@ I skip the Tanzu Mission Control piece (since I'm still waiting on access to [TM
 
 See the option at the bottom to copy the CLI command? I'll need to use that since clicking the friendly **Deploy** button doesn't seem to work while connected to the web server remotely.
 
-```command
-tanzu management-cluster create --file /home/john/.config/tanzu/tkg/clusterconfigs/dr94t3m2on.yaml -v 6
+```shell
+tanzu management-cluster create \ # [tl! .cmd]
+  --file /home/john/.config/tanzu/tkg/clusterconfigs/dr94t3m2on.yaml -v 6
 ```
 
 In fact, I'm going to copy that file into my working directory and give it a more descriptive name so that I can re-use it in the future.
 
-```command
-cp ~/.config/tanzu/tkg/clusterconfigs/dr94t3m2on.yaml ~/projects/tanzu-homelab/tce-mgmt.yaml
+```shell
+cp ~/.config/tanzu/tkg/clusterconfigs/dr94t3m2on.yaml \ # [tl! .cmd]
+  ~/projects/tanzu-homelab/tce-mgmt.yaml
 ```
 
 Now I can run the install command:
 
-```command
-tanzu management-cluster create --file ./tce-mgmt.yaml -v 6
+```shell
+tanzu management-cluster create --file ./tce-mgmt.yaml -v 6 # [tl! .cmd]
 ```
 
 After a moment or two of verifying prerequisites, I'm met with a polite offer to enable Tanzu Kubernetes Grid Service in vSphere:
@@ -250,9 +237,9 @@ Some addons might be getting installed! Check their status by running the follow
 
 I can run that last command to go ahead and verify that the addon installation has completed:
 
-```command-session
-kubectl get apps -A
-NAMESPACE    NAME                   DESCRIPTION           SINCE-DEPLOY   AGE
+```shell
+kubectl get apps -A # [tl! .cmd]
+NAMESPACE    NAME                   DESCRIPTION           SINCE-DEPLOY   AGE # [tl! .nocopy:5]
 tkg-system   antrea                 Reconcile succeeded   26s            6m49s
 tkg-system   metrics-server         Reconcile succeeded   36s            6m49s
 tkg-system   tanzu-addons-manager   Reconcile succeeded   22s            8m54s
@@ -261,9 +248,9 @@ tkg-system   vsphere-csi            Reconcile succeeded   36s            6m50s
 ```
 
 And I can use the Tanzu CLI to get some other details about the new management cluster:
-```command-session
-tanzu management-cluster get tce-mgmt
-  NAME      NAMESPACE   STATUS   CONTROLPLANE  WORKERS  KUBERNETES        ROLES
+```shell
+tanzu management-cluster get tce-mgmt # [tl! .cmd]
+  NAME      NAMESPACE   STATUS   CONTROLPLANE  WORKERS  KUBERNETES        ROLES # [tl! .nocopy:start]
   tce-mgmt  tkg-system  running  1/1           1/1      v1.21.2+vmware.1  management
 
 
@@ -285,7 +272,7 @@ Providers:
   capi-kubeadm-bootstrap-system      bootstrap-kubeadm       BootstrapProvider       kubeadm       v0.3.23
   capi-kubeadm-control-plane-system  control-plane-kubeadm   ControlPlaneProvider    kubeadm       v0.3.23
   capi-system                        cluster-api             CoreProvider            cluster-api   v0.3.23
-  capv-system                        infrastructure-vsphere  InfrastructureProvider  vsphere       v0.7.10
+  capv-system                        infrastructure-vsphere  InfrastructureProvider  vsphere       v0.7.10 # [tl! .nocopy:end]
 ```
 
 
@@ -296,8 +283,8 @@ Excellent! Things are looking good so I can move on to create the cluster which 
 #### Workload cluster
 I won't use the UI for this but will instead take a copy of my `tce-mgmt.yaml` file and adapt it to suit the workload needs (as described [here](https://tanzucommunityedition.io/docs/latest/workload-clusters/)).
 
-```command
-cp tce-mgmt.yaml tce-work.yaml
+```shell
+cp tce-mgmt.yaml tce-work.yaml # [tl! .cmd:1]
 vi tce-work.yaml
 ```
 
@@ -314,9 +301,9 @@ I *could* change a few others if I wanted to[^i_wont]:
 
 After saving my changes to the `tce-work.yaml` file, I'm ready to deploy the cluster:
 
-```command-session
-tanzu cluster create --file tce-work.yaml
-Validating configuration...
+```shell
+tanzu cluster create --file tce-work.yaml # [tl! .cmd]
+Validating configuration...  # [tl! .nocopy:start]
 Warning: Pinniped configuration not found. Skipping pinniped configuration in workload cluster. Please refer to the documentation to check if you can configure pinniped on workload cluster manually
 Creating workload cluster 'tce-work'...
 Waiting for cluster to be initialized...
@@ -324,13 +311,13 @@ Waiting for cluster nodes to be available...
 Waiting for addons installation...
 Waiting for packages to be up and running...
 
-Workload cluster 'tce-work' created
+Workload cluster 'tce-work' created # [tl! .nocopy:end]
 ```
 
 Right on! I'll use `tanzu cluster get` to check out the workload cluster:
-```command-session
-tanzu cluster get tce-work
-  NAME      NAMESPACE  STATUS   CONTROLPLANE  WORKERS  KUBERNETES        ROLES
+```shell
+tanzu cluster get tce-work # [tl! .cmd]
+  NAME      NAMESPACE  STATUS   CONTROLPLANE  WORKERS  KUBERNETES        ROLES # [tl! .nocopy:start]
   tce-work  default    running  1/1           1/1      v1.21.2+vmware.1  <none>
 ℹ
 
@@ -343,7 +330,7 @@ NAME                                                         READY  SEVERITY  RE
 │ └─Machine/tce-work-control-plane-8km9m                     True                     9m31s
 └─Workers
   └─MachineDeployment/tce-work-md-0
-    └─Machine/tce-work-md-0-687444b744-cck4x                 True                     8m31s
+    └─Machine/tce-work-md-0-687444b744-cck4x                 True                     8m31s # [tl! .nocopy:end]
 ```
 
 I can also go into vCenter and take a look at the VMs which constitute the two clusters:
@@ -360,9 +347,9 @@ Excellent, I've got a Tanzu management cluster and a Tanzu workload cluster. Wha
 
 If I run `kubectl get nodes` right now, I'll only get information about the management cluster:
 
-```command-session
-kubectl get nodes
-NAME                             STATUS   ROLES                  AGE   VERSION
+```shell
+kubectl get nodes # [tl! .cmd]
+NAME                             STATUS   ROLES                  AGE   VERSION # [tl! .nocopy:2]
 tce-mgmt-control-plane-xtdnx     Ready    control-plane,master   18h   v1.21.2+vmware.1
 tce-mgmt-md-0-745b858d44-4c9vv   Ready    <none>                 17h   v1.21.2+vmware.1
 ```
@@ -370,30 +357,29 @@ tce-mgmt-md-0-745b858d44-4c9vv   Ready    <none>                 17h   v1.21.2+v
 #### Setting the right context
 To be able to deploy stuff to the workload cluster, I need to tell `kubectl` how to talk to it. And to do that, I'll first need to use `tanzu` to capture the cluster's kubeconfig:
 
-```command-session
-tanzu cluster kubeconfig get tce-work --admin
-Credentials of cluster 'tce-work' have been saved
+```shell
+tanzu cluster kubeconfig get tce-work --admin # [tl! .cmd]
+Credentials of cluster 'tce-work' have been saved # [tl! .nocopy:1]
 You can now access the cluster by running 'kubectl config use-context tce-work-admin@tce-work'
 ```
 
 I can now run `kubectl config get-contexts` and see that I have access to contexts on both management and workload clusters:
 
-```command-session
-kubectl config get-contexts
-CURRENT   NAME                      CLUSTER    AUTHINFO         NAMESPACE
+```shell
+kubectl config get-contexts # [tl! .cmd]
+CURRENT   NAME                      CLUSTER    AUTHINFO         NAMESPACE # [tl! .nocopy:2]
 *         tce-mgmt-admin@tce-mgmt   tce-mgmt   tce-mgmt-admin
           tce-work-admin@tce-work   tce-work   tce-work-admin
 ```
 
 And I can switch to the `tce-work` cluster like so:
 
-```command-session
-kubectl config use-context tce-work-admin@tce-work
-Switched to context "tce-work-admin@tce-work".
-```
-```command-session
-kubectl get nodes
-NAME                             STATUS   ROLES                  AGE   VERSION
+```shell
+kubectl config use-context tce-work-admin@tce-work # [tl! .cmd]
+Switched to context "tce-work-admin@tce-work". # [tl! .nocopy]
+
+kubectl get nodes # [tl! .cmd]
+NAME                             STATUS   ROLES                  AGE   VERSION # [tl! .nocopy:2]
 tce-work-control-plane-8km9m     Ready    control-plane,master   17h   v1.21.2+vmware.1
 tce-work-md-0-687444b744-cck4x   Ready    <none>                 17h   v1.21.2+vmware.1
 ```
@@ -405,13 +391,12 @@ Before I move on to deploying actually *useful* workloads, I'll start with deplo
 
 I can check out the sample deployment that William put together [here](https://github.com/lamw/vmware-k8s-app-demo/blob/master/yelb.yaml), and then deploy it with:
 
-```command-session
-kubectl create ns yelb
-namespace/yelb created
-```
-```command-session
-kubectl apply -f https://raw.githubusercontent.com/lamw/vmware-k8s-app-demo/master/yelb.yaml
-service/redis-server created
+```shell
+kubectl create ns yelb # [tl! .cmd]
+namespace/yelb created # [tl! .nocopy:1]
+
+kubectl apply -f https://raw.githubusercontent.com/lamw/vmware-k8s-app-demo/master/yelb.yaml # [tl! .cmd]
+service/redis-server created # [tl! .nocopy:start]
 service/yelb-db created
 service/yelb-appserver created
 service/yelb-ui created
@@ -419,10 +404,9 @@ deployment.apps/yelb-ui created
 deployment.apps/redis-server created
 deployment.apps/yelb-db created
 deployment.apps/yelb-appserver created
-```
-```command-session
-kubectl -n yelb get pods
-NAME                             READY   STATUS    RESTARTS   AGE
+# [tl! .nocopy:end]
+kubectl -n yelb get pods # [tl! .cmd]
+NAME                             READY   STATUS    RESTARTS   AGE # [tl! .nocopy:4]
 redis-server-74556bbcb7-r9jqc    1/1     Running   0          10s
 yelb-appserver-d584bb889-2jspg   1/1     Running   0          10s
 yelb-db-694586cd78-wb8tt         1/1     Running   0          10s
@@ -431,36 +415,35 @@ yelb-ui-8f54fd88c-k2dw9          1/1     Running   0          10s
 
 Once the app is running, I can point my web browser at it to see it in action. But what IP do I use?
 
-```command-session
-kubectl -n yelb get svc/yelb-ui
-NAME             TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+```shell
+kubectl -n yelb get svc/yelb-ui # [tl! .cmd]
+NAME             TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE # [tl! .nocopy:1]
 yelb-ui          NodePort    100.71.228.116   <none>        80:30001/TCP   84s
 ```
 
 This demo is using a `NodePort` type service to expose the front end, which means it will be accessible on port `30001` on the node it's running on. I can find that IP by:
-```command-session
-kubectl -n yelb describe pod $(kubectl -n yelb get pods | grep yelb-ui | awk '{print $1}') | grep "Node:"
-Node:         tce-work-md-0-687444b744-cck4x/192.168.1.145
+```shell
+kubectl -n yelb describe pod $(kubectl -n yelb get pods | grep yelb-ui | awk '{print $1}') | grep "Node:" # [tl! .cmd]
+Node:         tce-work-md-0-687444b744-cck4x/192.168.1.145 # [tl! .nocopy]
 ```
 
 So I can point my browser at `http://192.168.1.145:30001` and see the demo:
 ![yelb demo page](yelb_nodeport_demo.png)
 
 After marveling at my own magnificence[^magnificence] for a few minutes, I'm ready to move on to something more interesting - but first, I'll just delete the `yelb` namespace to clean up the work I just did:
-```command-session
-kubectl delete ns yelb
-namespace "yelb" deleted
+```shell
+kubectl delete ns yelb # [tl! .cmd]
+namespace "yelb" deleted # [tl! .nocopy]
 ```
 
 Now let's move on and try to deploy `yelb` behind a `LoadBalancer` service so it will get its own IP. William has a [deployment spec](https://github.com/lamw/vmware-k8s-app-demo/blob/master/yelb-lb.yaml) for that too.
 
-```command-session
-kubectl create ns yelb
-namespace/yelb created
-```
-```command-session
-kubectl apply -f https://raw.githubusercontent.com/lamw/vmware-k8s-app-demo/master/yelb-lb.yaml
-service/redis-server created
+```shell
+kubectl create ns yelb # [tl! .cmd]
+namespace/yelb created # [tl! .nocopy:1]
+
+kubectl apply -f https://raw.githubusercontent.com/lamw/vmware-k8s-app-demo/master/yelb-lb.yaml # [tl! .cmd]
+service/redis-server created # [tl! .nocopy:8]
 service/yelb-db created
 service/yelb-appserver created
 service/yelb-ui created
@@ -468,10 +451,9 @@ deployment.apps/yelb-ui created
 deployment.apps/redis-server created
 deployment.apps/yelb-db created
 deployment.apps/yelb-appserver created
-```
-```command-session
-kubectl -n yelb get pods
-NAME                             READY   STATUS    RESTARTS   AGE
+
+kubectl -n yelb get pods # [tl! .cmd]
+NAME                             READY   STATUS    RESTARTS   AGE # [tl! .nocopy:4]
 redis-server-74556bbcb7-q6l62    1/1     Running   0          7s
 yelb-appserver-d584bb889-p5qgd   1/1     Running   0          7s
 yelb-db-694586cd78-hjtn4         1/1     Running   0          7s
@@ -479,9 +461,9 @@ yelb-ui-8f54fd88c-pm9qw          1/1     Running   0          7s
 ```
 
 And I can take a look at that service...
-```command-session
-kubectl -n yelb get svc/yelb-ui
-NAME      TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+```shell
+kubectl -n yelb get svc/yelb-ui # [tl! .cmd]
+NAME      TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE # [tl! .nocopy:1]
 yelb-ui   LoadBalancer   100.67.177.185   <pending>     80:32339/TCP   15s
 ```
 
@@ -492,25 +474,23 @@ Wait a minute. That external IP is *still* `<pending>`. What gives? Oh yeah I ne
 #### Deploying `kube-vip` as a load balancer
 Fortunately, William Lam [wrote up some tips](https://williamlam.com/2021/10/quick-tip-install-kube-vip-as-service-load-balancer-with-tanzu-community-edition-tce.html) for handling that too. It's [based on work by Scott Rosenberg](https://github.com/vrabbi/tkgm-customizations). The quick-and-dirty steps needed to make this work are:
 
-```command
-git clone https://github.com/vrabbi/tkgm-customizations.git
+```shell
+git clone https://github.com/vrabbi/tkgm-customizations.git # [tl! .cmd:3]
 cd tkgm-customizations/carvel-packages/kube-vip-package
 kubectl apply -n tanzu-package-repo-global -f metadata.yml
 kubectl apply -n tanzu-package-repo-global -f package.yaml
-```
-```command-session
-cat << EOF > values.yaml
+
+cat << EOF > values.yaml # [tl! .cmd]
 vip_range: 192.168.1.64-192.168.1.80
 EOF
-```
-```command
-tanzu package install kubevip -p kubevip.terasky.com -v 0.3.9 -f values.yaml
+
+tanzu package install kubevip -p kubevip.terasky.com -v 0.3.9 -f values.yaml # [tl! .cmd]
 ```
 
 Now I can check out the `yelb-ui` service again:
-```command-session
-kubectl -n yelb get svc/yelb-ui
-NAME      TYPE           CLUSTER-IP       EXTERNAL-IP    PORT(S)        AGE
+```shell
+kubectl -n yelb get svc/yelb-ui # [tl!.cmd]
+NAME      TYPE           CLUSTER-IP       EXTERNAL-IP    PORT(S)        AGE # [tl! .nocopy:1]
 yelb-ui   LoadBalancer   100.67.177.185   192.168.1.65   80:32339/TCP   4h35m
 ```
 
@@ -518,9 +498,9 @@ And it's got an IP! I can point my browser to `http://192.168.1.65` now and see:
 ![Successful LoadBalancer test!](yelb_loadbalancer_demo.png)
 
 I'll keep the `kube-vip` load balancer since it'll come in handy, but I have no further use for `yelb`:
-```command-session
-kubectl delete ns yelb
-namespace "yelb" deleted
+```shell
+kubectl delete ns yelb # [tl! .cmd]
+namespace "yelb" deleted # [tl! .nocopy]
 ```
 
 #### Persistent Volume Claims, Storage Classes, and Storage Policies
@@ -533,7 +513,8 @@ Then I create a new vSphere Storage Policy called `tkg-storage-policy` which sta
 ![My Tanzu storage policy](storage_policy.png)
 
 So that's the vSphere side of things sorted; now to map that back to the Kubernetes side. For that, I'll need to define a Storage Class tied to the vSphere Storage profile so I drop these details into a new file called `vsphere-sc.yaml`:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
@@ -544,13 +525,14 @@ parameters:
 ```
 
 And then apply it with :
-```command-session
-kubectl apply -f vsphere-sc.yaml
-storageclass.storage.k8s.io/vsphere created
+```shell
+kubectl apply -f vsphere-sc.yaml # [tl! .cmd]
+storageclass.storage.k8s.io/vsphere created # [tl! .nocopy]
 ```
 
 I can test that I can create a Persistent Volume Claim against the new `vsphere` Storage Class by putting this in a new file called `vsphere-pvc.yaml`:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -567,15 +549,15 @@ spec:
 ```
 
 And applying it:
-```command-session
-kubectl apply -f demo-pvc.yaml
-persistentvolumeclaim/vsphere-demo-1 created
+```shell
+kubectl apply -f demo-pvc.yaml # [tl! .cmd]
+persistentvolumeclaim/vsphere-demo-1 created # [tl! .nocopy]
 ```
 
 I can see the new claim, and confirm that its status is `Bound`:
-```command-session
-kubectl get pvc
-NAME             STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+```shell
+kubectl get pvc # [tl! .cmd]
+NAME             STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE # [tl! .nocopy:1]
 vsphere-demo-1   Bound    pvc-36cc7c01-a1b3-4c1c-ba0d-dff3fd47f93b   5Gi        RWO            vsphere        4m25s
 ```
 
@@ -583,9 +565,9 @@ And for bonus points, I can see that the container volume was created on the vSp
 ![Container Volume in vSphere](container_volume_in_vsphere.png)
 
 So that's storage sorted. I'll clean up my test volume before moving on:
-```command-session
-kubectl delete -f demo-pvc.yaml
-persistentvolumeclaim "vsphere-demo-1" deleted
+```shell
+kubectl delete -f demo-pvc.yaml # [tl! .cmd]
+persistentvolumeclaim "vsphere-demo-1" deleted # [tl! .nocopy]
 ```
 
 ### A real workload - phpIPAM
@@ -597,9 +579,9 @@ So I set to work exploring some containerization options, and I found [phpipam-d
 
 To start, I'll create a new namespace to keep things tidy:
 
-```command-session
-kubectl create ns ipam
-namespace/ipam created
+```shell
+kubectl create ns ipam # [tl! .cmd]
+namespace/ipam created # [tl! .nocopy]
 ```
 
 I'm going to wind up with four pods:
@@ -614,7 +596,8 @@ I'll use each container's original `docker-compose` configuration and adapt that
 
 #### phpipam-db
 The phpIPAM database will live inside a MariaDB container. Here's the relevant bit from `docker-compose`:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 services:
   phpipam-db:
     image: mariadb:latest
@@ -629,7 +612,8 @@ services:
 So it will need a `Service` exposing the container's port `3306` so that other pods can connect to the database. For my immediate demo, using `type: ClusterIP` will be sufficient since all the connections will be coming from within the cluster. When I do this for real, it will need to be `type: LoadBalancer` so that the agent running on a different cluster can connect. And it will need a `PersistentVolumeClaim` so it can store the database data at `/var/lib/mysql`. It will also get passed an environment variable to set the initial `root` password on the database instance (which will be used later during the phpIPAM install to create the initial `phpipam` database).
 
 It might look like this on the Kubernetes side:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 # phpipam-db.yaml
 apiVersion: v1
 kind: Service
@@ -700,7 +684,8 @@ Moving on:
 
 #### phpipam-www
 This is the `docker-compose` excerpt for the web component:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 services:
   phpipam-web:
     image: phpipam/phpipam-www:1.5x
@@ -718,7 +703,8 @@ services:
 Based on that, I can see that my `phpipam-www` pod will need a container running the `phpipam/phpipam-www:1.5x` image, a `Service` of type `LoadBalancer` to expose the web interface on port `80`, a `PersistentVolumeClaim` mounted to `/phpipam/css/images/logo`, and some environment variables passed in to configure the thing. Note that the `IPAM_DATABASE_PASS` variable defines the password used for the `phpipam` user on the database (not the `root` user referenced earlier), and the `IPAM_DATABASE_WEBHOST=%` variable will define which hosts that `phpipam` database user will be able to connect from; setting it to `%` will make sure that my remote agent can connect to the database even if I don't know where the agent will be running.
 
 Here's how I'd adapt that into a structure that Kubernetes will understand:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 # phpipam-www.yaml
 apiVersion: v1
 kind: Service
@@ -767,7 +753,7 @@ spec:
       labels:
         app: phpipam-www
     spec:
-      containers:
+      containers: # [tl! focus:2]
       - name: phpipam-www
         image: phpipam/phpipam-www:1.5x
         env:
@@ -792,7 +778,8 @@ spec:
 
 #### phpipam-cron
 This container has a pretty simple configuration in `docker-compose`:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 services:
   phpipam-cron:
     image: phpipam/phpipam-cron:1.5x
@@ -805,7 +792,8 @@ services:
 
 No exposed ports, no need for persistence - just a base image and a few variables to tell it how to connect to the database and how often to run the scans:
 
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 # phpipam-cron.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -838,7 +826,8 @@ spec:
 
 #### phpipam-agent
 And finally, my remote scan agent. Here's the `docker-compose`:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 services:
   phpipam-agent:
     container_name: phpipam-agent
@@ -860,7 +849,8 @@ services:
 It's got a few additional variables to make it extra-configurable, but still no need for persistence or network exposure. That `IPAM_AGENT_KEY` variable will need to get populated the appropriate key generated within the new phpIPAM deployment, but we can deal with that later.
 
 For now, here's how I'd tell Kubernetes about it:
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 # phpipam-agent.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -905,32 +895,32 @@ spec:
 
 #### Deployment and configuration of phpIPAM
 I can now go ahead and start deploying these containers, starting with the database one (upon which all the others rely):
-```command-session
-kubectl apply -f phpipam-db.yaml
-service/phpipam-db created
+```shell
+kubectl apply -f phpipam-db.yaml # [tl! .cmd]
+service/phpipam-db created # [tl! .nocopy:2]
 persistentvolumeclaim/phpipam-db-pvc created
 deployment.apps/phpipam-db created
 ```
 
 And the web server:
-```command-session
-kubectl apply -f phpipam-www.yaml
-service/phpipam-www created
+```shell
+kubectl apply -f phpipam-www.yaml # [tl! .cmd]
+service/phpipam-www created # [tl! .nocopy:2]
 persistentvolumeclaim/phpipam-www-pvc created
 deployment.apps/phpipam-www created
 ```
 
 And the cron runner:
-```command-session
-kubectl apply -f phpipam-cron.yaml
-deployment.apps/phpipam-cron created
+```shell
+kubectl apply -f phpipam-cron.yaml # [tl! .cmd]
+deployment.apps/phpipam-cron created # [tl! .nocopy]
 ```
 
 I'll hold off on the agent container for now since I'll need to adjust the configuration slightly after getting phpIPAM set up, but I will go ahead and check out my work so far:
 
-```command-session
-kubectl -n ipam get all
-NAME                                READY   STATUS    RESTARTS   AGE
+```shell
+kubectl -n ipam get all # [tl! .cmd]
+NAME                                READY   STATUS    RESTARTS   AGE # [tl! .nocopy:start]
 pod/phpipam-cron-6c994897c4-6rsnp   1/1     Running   0          4m30s
 pod/phpipam-db-5f4c47d4b9-sb5bd     1/1     Running   0          16m
 pod/phpipam-www-769c95c68d-94klg    1/1     Running   0          5m59s
@@ -947,7 +937,7 @@ deployment.apps/phpipam-www    1/1     1            1           5m59s
 NAME                                      DESIRED   CURRENT   READY   AGE
 replicaset.apps/phpipam-cron-6c994897c4   1         1         1       4m30s
 replicaset.apps/phpipam-db-5f4c47d4b9     1         1         1       16m
-replicaset.apps/phpipam-www-769c95c68d    1         1         1       5m59s
+replicaset.apps/phpipam-www-769c95c68d    1         1         1       5m59s # [tl! .nocopy:end]
 ```
 
 And I can point my browser to the `EXTERNAL-IP` associated with the `phpipam-www` service to see the initial setup page:
@@ -977,9 +967,9 @@ I'll copy the agent code and plug it into my `phpipam-agent.yaml` file:
 ```
 
 And then deploy that:
-```command-session
-kubectl apply -f phpipam-agent.yaml
-deployment.apps/phpipam-agent created
+```shell
+kubectl apply -f phpipam-agent.yaml # [tl! .cmd]
+deployment.apps/phpipam-agent created # [tl! .nocopy]
 ```
 
 The scan agent isn't going to do anything until it's assigned to a subnet though, so now I head to **Administration > IP related management > Sections**. phpIPAM comes with a few default sections and ranges and such defined so I'll delete those and create a new one that I'll call `Lab`.

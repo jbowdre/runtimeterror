@@ -16,7 +16,8 @@ Unfortunately, I found that this approach can take a long time to run and often 
 After further experimentation, I settled on using PowerShell to create a one-time scheduled task that would run the updates and reboot, if necessary. I also wanted the task to automatically delete itself after running to avoid cluttering up the task scheduler library - and that last item had me quite stumped until I found [this blog post with the solution](https://iamsupergeek.com/self-deleting-scheduled-task-via-powershell/).
 
 So here's what I put together:
-```powershell {linenos=true}
+```powershell
+# torchlight! {"lineNumbers": true}
 # This can be easily pasted into a remote PowerShell session to automatically install any available updates and reboot.
 # It creates a scheduled task to start the update process after a one-minute delay so that you don't have to maintain
 # the session during the process (or have the session timeout), and it also sets the task to automatically delete itself 2 hours later.

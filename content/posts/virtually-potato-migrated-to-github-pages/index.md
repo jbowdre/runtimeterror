@@ -28,29 +28,29 @@ I found that the quite-popular [Minimal Mistakes](https://mademistakes.com/work/
 A quick `git clone` operation was sufficient to create a local copy of my new site in my Lenovo Chromebook Duet's [Linux environment](/setting-up-linux-on-a-new-lenovo-chromebook-duet-bonus-arm64-complications). That lets me easily create and edit Markdown posts or configuration files with VS Code, commit them to the local copy of the repo, and then push them back to GitHub when I'm ready to publish the changes.
 
 In order to view the local changes, I needed to install Jekyll locally as well. I started by installing Ruby and other prerequisites:
-```command
-sudo apt-get install ruby-full build-essential zlib1g-dev
+```shell
+sudo apt-get install ruby-full build-essential zlib1g-dev # [tl! .cmd]
 ```
 
 I added the following to my `~/.zshrc` file so that the gems would be installed under my home directory rather than somewhere more privileged:
-```command
-export GEM_HOME="$HOME/gems"
+```shell
+export GEM_HOME="$HOME/gems" # [tl! .cmd:1]
 export PATH="$HOME/gems/bin:$PATH"
 ```
 
 And then ran `source ~/.zshrc` so the change would take immediate effect.
 
 I could then install Jekyll:
-```command
-gem install jekyll bundler
+```shell
+gem install jekyll bundler # [tl! .cmd]
 ```
 
 I then `cd`ed to the local repo and ran `bundle install` to also load up the components specified in the repo's `Gemfile`.
 
 And, finally, I can run this to start up the local Jekyll server instance:
-```command-session
-bundle exec jekyll serve -l --drafts
-Configuration file: /home/jbowdre/projects/jbowdre.github.io/_config.yml
+```shell
+bundle exec jekyll serve -l --drafts # [tl! .cmd]
+Configuration file: /home/jbowdre/projects/jbowdre.github.io/_config.yml # [tl! .nocopy:start]
             Source: /home/jbowdre/projects/jbowdre.github.io
        Destination: /home/jbowdre/projects/jbowdre.github.io/_site
  Incremental build: enabled
@@ -62,7 +62,7 @@ Configuration file: /home/jbowdre/projects/jbowdre.github.io/_config.yml
  Auto-regeneration: enabled for '/home/jbowdre/projects/jbowdre.github.io'
 LiveReload address: http://0.0.0.0:35729
     Server address: http://0.0.0.0:4000
-  Server running... press ctrl-c to stop.
+  Server running... press ctrl-c to stop. # [tl! .nocopy:end]
 ```
 
 And there it is!

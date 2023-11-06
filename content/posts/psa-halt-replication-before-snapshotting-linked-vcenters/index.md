@@ -20,38 +20,37 @@ Take these steps when you need to snapshot linked vCenters to avoid breaking rep
 1. Open an SSH session to *all* the vCenters within the SSO domain.
 2. Log in and enter `shell` to access the shell on each vCenter.
 3. Verify that replication is healthy by running `/usr/lib/vmware-vmdir/bin/vdcrepadmin -f showpartnerstatus -h localhost -u administrator -w [SSO_ADMIN_PASSWORD]` on each vCenter. You want to ensure that each host shows as available to all other hosts, and the message that `Partner is 0 changes behind.`:
-    ```commandroot-session
-    /usr/lib/vmware-vmdir/bin/vdcrepadmin -f showpartnerstatus -h localhost -u administrator -w $ssoPass
-    Partner: vcsa2.lab.bowdre.net
+    ```shell
+    /usr/lib/vmware-vmdir/bin/vdcrepadmin -f showpartnerstatus -h localhost -u administrator -w $ssoPass # [tl! .cmd]
+    Partner: vcsa2.lab.bowdre.net # [tl! .nocopy:6]
     Host available:   Yes
     Status available: Yes
     My last change number:             9346
     Partner has seen my change number: 9346
-    Partner is 0 changes behind.
-    ```
-    ```commandroot-session
-    /usr/lib/vmware-vmdir/bin/vdcrepadmin -f showpartnerstatus -h localhost -u administrator -w $ssoPass
-    Partner: vcsa.lab.bowdre.net
+    Partner is 0 changes behind. # [tl! highlight]
+
+    /usr/lib/vmware-vmdir/bin/vdcrepadmin -f showpartnerstatus -h localhost -u administrator -w $ssoPass # [tl! .cmd]
+    Partner: vcsa.lab.bowdre.net # [tl! .nocopy:6]
     Host available:   Yes
     Status available: Yes
     My last change number:             9518
     Partner has seen my change number: 9518
-    Partner is 0 changes behind.
+    Partner is 0 changes behind. # [tl! highlight]
     ```
 4. Stop `vmdird` on each vCenter by running `/bin/service-control --stop vmdird`:
 
-    ```commandroot-session
-    /bin/service-control --stop vmdird
-    Operation not cancellable. Please wait for it to finish...
+    ```shell
+    /bin/service-control --stop vmdird # [tl! .cmd]
+    Operation not cancellable. Please wait for it to finish... # [tl! .nocopy:2]
     Performing stop operation on service vmdird...
     Successfully stopped service vmdird
     ```
 5. Snapshot the vCenter appliance VMs.
 6. Start replication on each server again with `/bin/service-control --start vmdird`:
 
-    ```commandroot-session
-    /bin/service-control --start vmdird
-    Operation not cancellable. Please wait for it to finish...
+    ```shell
+    /bin/service-control --start vmdird # [tl! .cmd]
+    Operation not cancellable. Please wait for it to finish... # [tl! .nocopy]
     Performing start operation on service vmdird...
     Successfully started service vmdird
     ```

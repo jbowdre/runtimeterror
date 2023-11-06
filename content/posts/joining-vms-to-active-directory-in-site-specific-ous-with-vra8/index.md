@@ -52,7 +52,8 @@ Now to reference these specs from a cloud template...
 ### Cloud template
 I want to make sure that users requesting a deployment are able to pick whether or not a system should be joined to the domain, so I'm going to add that as an input option on the template:
 
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 inputs:
   [...]
   adJoin:
@@ -66,7 +67,8 @@ This new `adJoin` input is a boolean so it will appear on the request form as a 
 
 In the `resources` section of the template, I'll set a new property called `ignoreActiveDirectory` to be the inverse of the `adJoin` input; that will tell the AD integration not to do anything if the box to join the VM to the domain is unchecked. I'll also use `activeDirectory: relativeDN` to insert the appropriate site code into the DN where the computer object will be created. And, finally, I'll reference the `customizationSpec` and use [cloud template conditional syntax](https://docs.vmware.com/en/vRealize-Automation/8.4/Using-and-Managing-Cloud-Assembly/GUID-12F0BC64-6391-4E5F-AA48-C5959024F3EB.html#conditions-4) to apply the correct spec based on whether it's a domain or workgroup deployment. (These conditionals take the pattern `'${conditional-expresion ? true-value : false-value}'`).
 
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 resources:
   Cloud_vSphere_Machine_1:
     type: Cloud.vSphere.Machine
@@ -81,7 +83,8 @@ resources:
 
 Here's the current cloud template in its entirety:
 
-```yaml {linenos=true}
+```yaml
+# torchlight! {"lineNumbers": true}
 formatVersion: 1
 inputs:
   site:

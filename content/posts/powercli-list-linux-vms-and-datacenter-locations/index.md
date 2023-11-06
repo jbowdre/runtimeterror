@@ -28,7 +28,8 @@ I've got a [`Connect-vCenters` function](/logging-in-to-multiple-vcenter-servers
 
 What I came up with is using `Get-Datacenter` to enumerate each virtual datacenter, and then list the VMs matching my query within:
 
-```powershell {linenos=true}
+```powershell
+# torchlight! {"lineNumbers": true}
 $linuxVms = foreach( $datacenter in ( Get-Datacenter )) {
   Get-Datacenter $datacenter | Get-VM | Where { $_.ExtensionData.Config.GuestFullName -notmatch "win" -and $_.Name -notmatch "vcls" } | `
   Select @{ N="Datacenter";E={ $datacenter.Name }},
