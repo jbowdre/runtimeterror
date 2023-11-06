@@ -13,6 +13,28 @@
   opacity: 0.80;
 }
 
+/* Footer tweaks */
+.copyright {
+  font-size: 14px;
+  line-height: 1.3rem;
+}
+
+.powered_by {
+  font-size: 12px;
+  line-height: 1.1rem;
+  color: var(--muted);
+}
+
+.powered_by a:link, .powered_by a:visited {
+  color: var(--off-fg);
+  text-decoration: none;
+}
+
+.powered_by a:hover {
+  color: var(--hover);
+  text-decoration: underline;
+}
+
 /* Notice CSS Built on hugo-notice by Nicolas Martignoni: https://github.com/martignoni/hugo-notice */
 .notice {
   --root-color: #444;
@@ -134,31 +156,4 @@ body.dark .notice {
   position: relative;
 }
 
-/* Insert prompt char ::before on every line in command codeblocks */
-/* .command .line {display: inherit;}
-.command .line::before {
-  color: var(--base07);
-  content: "$ ";
-}
-
-.commandroot .line {display: inherit;}
-.commandroot .line::before {
-  color: var(--base08);
-  content: "# ";
-} */
-
-/* Insert prompt char ::before on first line in cmd-session codeblocks
-(These are useful for showing returned values from commands)
-*/
-/* .command-session .line {display: inherit;}
-.command-session code::before {
-  color: var(--base07);
-  content: "$ ";
-}
-
-.commandroot-session .line {display: inherit;}
-.commandroot-session code::before {
-  color: var(--base08);
-  content: "# ";
-} */
 
