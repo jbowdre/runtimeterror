@@ -1,7 +1,7 @@
 {{- partial "lang.html" . -}}
 <p class="copyright">{{ .Site.Copyright | markdownify }}</p>
-<p class="advertisement">Powered by: [<a target="_blank" href="https://gohugo.io/">hugo</a> | <a target="_blank" href="https://github.com/joeroe/risotto">risotto</a> | <a target="_blank" href="https://torchlight.dev">Torchlight</a> | <a target="_blank" href="https://withcabin.com/privacy/runtimeterror.dev">Cabin</a> | <a target="_blank" href="https://www.netlify.com">netlify</a>]
-<br>[<a target="_blank" href="https://github.com/jbowdre/runtimeterror">View source</a>]</p>
+<p class="powered_by">{"powered_by": [{{- range $i, $link :=  .Site.Params.powerLinks }}{{ if $i }}, {{ end }}&quot;<a target="_blank" href="{{ $link.url }}">{{ $link.title }}</a>&quot;{{ end }}]}
+<br>&lt;<a target="_blank" href="https://github.com/jbowdre/runtimeterror">view source</a>&gt;</p>
 
 {{ if (findRE "<pre" .Content 1) }}
   {{ $jsCopy := resources.Get "js/code-copy-button.js" | minify }}
