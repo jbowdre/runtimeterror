@@ -115,6 +115,7 @@ opacity: 1;
 * Additional styling                         *
 **********************************************/
 
+/* Fix for disjointed horizontal scrollbars */
 .highlight div {
   overflow-x: visible;
 }
