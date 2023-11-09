@@ -33,32 +33,24 @@ async function copyCodeToClipboard(button, highlightDiv) {
     if (result.state == "granted" || result.state == "prompt") {
       await navigator.clipboard.writeText(codeToCopy);
     } else {
-      copyCodeBlockExecCommand(codeToCopy, highlightDiv);
+      button.blur();
+      button.innerText = "Error!";
+      setTimeout(function () {
+        button.innerText = "Copy";
+      }, 2000);
     }
   } catch (_) {
-    copyCodeBlockExecCommand(codeToCopy, highlightDiv);
+    button.blur();
+    button.innerText = "Error!";
+    setTimeout(function () {
+      button.innerText = "Copy";
+    }, 2000);
   } finally {
- button.blur();
-  button.innerText = "Copied!";
-  setTimeout(function () {
-    button.innerText = "Copy";
-  }, 2000);  }
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(function () {
+      button.innerText = "Copy";
+    }, 2000);
+  }
 }
 
-function copyCodeBlockExecCommand(codeToCopy, highlightDiv) {
-  console.log("We shouldn't get here...");
-  const textArea = document.createElement("textArea");
-  textArea.contentEditable = "true";
-  textArea.readOnly = "false";
-  textArea.className = "copyable-text-area";
-  textArea.value = codeToCopy;
-  highlightDiv.insertBefore(textArea, highlightDiv.firstChild);
-  const range = document.createRange();
-  range.selectNodeContents(textArea);
-  const sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
-  textArea.setSelectionRange(0, 999999);
-  document.execCommand("copy");
-  highlightDiv.removeChild(textArea);
-}
