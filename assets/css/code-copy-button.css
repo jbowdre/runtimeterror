@@ -10,17 +10,17 @@
 
 .copy-code-button {
   position: absolute;
-  z-index: 2;
-  right: 0;
-  top: -29px;
+  z-index: -1;
+  right: 0px;
+  top: -26px;
   font-size: 13px;
   font-weight: 700;
   line-height: 14px;
   letter-spacing: 0.5px;
   width: 65px;
-  color: #ffffff;
-  background-color: #000000;
-  border: 1.25px solid #232326;
+  color: var(--fg);
+  background-color: var(--bg);
+  border: 1.25px solid var(--off-bg);
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   border-bottom-right-radius: 0px;
@@ -36,8 +36,8 @@
 .copy-code-button:focus,
 .copy-code-button:active,
 .copy-code-button:active:hover {
-  color: #222225;
-  background-color: #b3b3b3;
+  color: var(--off-bg);
+  background-color: var(--off-fg);
   opacity: 0.8;
 }
 
@@ -50,14 +50,14 @@
 
 .torchlight [data-lang]:before {
   position: absolute;
-  z-index: 0;
-  top: -29px;
-  left: 0;
+  z-index: -1;
+  top: -26px;
+  left: 0px;
   content: attr(data-lang);
   font-size: 13px;
   font-weight: 700;
-  color: white;
-  background-color: black;
+  color: var(--fg);
+  background-color: var(--bg);
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   border-bottom-left-radius: 0;
@@ -67,6 +67,6 @@
   opacity: 0.6;
   position: absolute;
   letter-spacing: 0.5px;
-  border: 1.25px solid #232326;
+  border: 1.25px solid var(--off-bg);
   margin: 0 0 0 1px;
 }
