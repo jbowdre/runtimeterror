@@ -22,6 +22,7 @@
 <!-- cabin analytics -->
 <script async defer src="https://scripts.withcabin.com/hello.js"></script>
 
+<!-- syntax highlighting -->
 {{ if (findRE "<pre" .Content 1) }}
   {{ $syntax := resources.Get "css/torchlight.css" | minify }}
   <link href="{{ $syntax.RelPermalink }}" rel="stylesheet">
