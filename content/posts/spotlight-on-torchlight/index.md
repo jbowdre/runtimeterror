@@ -118,6 +118,7 @@ echo "TORCHLIGHT_TOKEN=torch_[...]" > ./.env # [tl! .cmd]
 
 [^free]: Torchlight is free for sites which don't generate revenue, though it does require a link back to `torchlight.dev`. I stuck the attribution link in the footer. More pricing info [here].
 
+#### Installation
 I then used `npm` to install Torchlight in the root of my Hugo repo:
 ```shell
 npm i @torchlight-api/torchlight-cli # [tl! .cmd]
@@ -169,7 +170,10 @@ Node.js v18.17.1
 
 Oh. Hmm.
 
-There's an [open issue](https://github.com/torchlight-api/torchlight-cli/issues/4) which reveals that the stub config file is actually located under the `src/` directory instead of `dist/`. I'll just copy that to my repo root and then set to work modifying it to suit my needs:
+There's an [open issue](https://github.com/torchlight-api/torchlight-cli/issues/4) which reveals that the stub config file is actually located under the `src/` directory instead of `dist/`.
+
+#### Configuration
+I'll just copy that to my repo root and then set to work modifying it to suit my needs:
 
 ```shell
 cp node_modules/@torchlight-api/torchlight-cli/src/stubs/config.js ./torchlight.config.js # [tl! .cmd]
@@ -212,8 +216,7 @@ module.exports = {
 
     // If there are any diff indicators for a line, put them
     // in place of the line number to save horizontal space.
-    diffIndicatorsInPlaceOfLineNumbers: true // [tl! -- focus:1]
-    diffIndicatorsInPlaceOfLineNumbers: false // put the diff indicators next to the line numbers [tl! ++ reindex(-1)]
+    diffIndicatorsInPlaceOfLineNumbers: true
 
     // When lines are collapsed, this is the text that will
     // be shown to indicate that they can be expanded.
@@ -249,6 +252,150 @@ module.exports = {
 ```
 
 You can find more details about the configuration options [here](https://torchlight.dev/docs/clients/cli#configuration-file).
+
+#### Stylization
+It's not strictly necessary for the basic functionality, but applying a little bit of extra CSS to match up with the classes leveraged by Torchlight can help to make things look a bit more polished. Fortunately for this _fake-it-til-you-make-it_ dev, Torchlight provides sample CSS that work great for this:
+
+- [Basic CSS](https://torchlight.dev/docs/css) for generally making things look tidy
+- [Focus CSS](https://torchlight.dev/docs/annotations/focusing#css) for that slick blur/focus effect
+- [Collapse CSS](https://torchlight.dev/docs/annotations/collapsing#required-css) for some accordion action
+
+Put those blocks together (along with a few minor tweaks), and here's what I started with in `assets/css/torchlight.css`:
+```css
+// torchlight! {"lineNumbers": true}
+
+/*********************************************
+* Basic styling for Torchlight code blocks.  *
+**********************************************/
+
+/*
+ Margin and rounding are personal preferences,
+ overflow-x-auto is recommended.
+*/
+pre {
+    border-radius: 0.25rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+}
+
+/*
+ Add some vertical padding and expand the width
+ to fill its container. The horizontal padding
+ comes at the line level so that background
+ colors extend edge to edge.
+*/
+pre.torchlight {
+    display: block;
+    min-width: -webkit-max-content;
+    min-width: -moz-max-content;
+    min-width: max-content;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+/*
+ Horizontal line padding to match the vertical
+ padding from the code block above.
+*/
+pre.torchlight .line {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/*
+ Push the code away from the line numbers and
+ summary caret indicators.
+*/
+pre.torchlight .line-number,
+pre.torchlight .summary-caret {
+    margin-right: 1rem;
+}
+
+/*********************************************
+* Focus styling                              *
+**********************************************/
+
+/*
+  Blur and dim the lines that don't have the `.line-focus` class,
+  but are within a code block that contains any focus lines.
+*/
+.torchlight.has-focus-lines .line:not(.line-focus) {
+    transition: filter 0.35s, opacity 0.35s;
+    filter: blur(.095rem);
+    opacity: .65;
+}
+
+/*
+  When the code block is hovered, bring all the lines into focus.
+*/
+.torchlight.has-focus-lines:hover .line:not(.line-focus) {
+    filter: blur(0px);
+    opacity: 1;
+}
+
+/*********************************************
+* Collapse styling                           *
+**********************************************/
+
+.torchlight summary:focus {
+    outline: none;
+}
+
+/* Hide the default markers, as we provide our own */
+.torchlight details > summary::marker,
+.torchlight details > summary::-webkit-details-marker {
+    display: none;
+}
+
+.torchlight details .summary-caret::after {
+    pointer-events: none;
+}
+
+/* Add spaces to keep everything aligned */
+.torchlight .summary-caret-empty::after,
+.torchlight details .summary-caret-middle::after,
+.torchlight details .summary-caret-end::after {
+    content: " ";
+}
+
+/* Show a minus sign when the block is open. */
+.torchlight details[open] .summary-caret-start::after {
+    content: "-";
+}
+
+/* And a plus sign when the block is closed. */
+.torchlight details:not([open]) .summary-caret-start::after {
+    content: "+";
+}
+
+/* Hide the [...] indicator when open. */
+.torchlight details[open] .summary-hide-when-open {
+    display: none;
+}
+
+/* Show the [...] indicator when closed. */
+.torchlight details:not([open]) .summary-hide-when-open {
+    display: initial;
+}
+
+/*********************************************
+* Additional styling                         *
+**********************************************/
+
+/* Fix for disjointed horizontal scrollbars */
+.highlight div {
+  overflow-x: visible;
+}
+```
+
+I'll make sure that this CSS gets dynamically attached to any pages with a code block by adding this to the bottom of my `layouts/partials/head.html`:
+```html
+<!-- syntax highlighting -->
+{{ if (findRE "<pre" .Content 1) }}
+  {{ $syntax := resources.Get "css/torchlight.css" | minify }}
+  <link href="{{ $syntax.RelPermalink }}" rel="stylesheet">
+```
 
 As a bit of housekeeping, I'm also going to remove the built-in highlighter configuration from my `config/_default/markup.toml` file to make sure it doesn't conflict with Torchlight:
 ```toml
@@ -398,5 +545,300 @@ Once that's done, I edit the `netlify.toml` file at the root of my site repo to 
 
 Now when I `git push` new content, Netlify will use Hugo to build the site, then install and call Torchlight to `++fancy;` the code blocks before the site gets served. Very nice!
 
-### Hard Mode
-Of course, I Just. Can't. leave well enough alone.
+### #Goals
+Of course, I. Just. Can't. leave well enough alone, so my work here isn't finished - not by a long shot.
+
+You see, I'm a sucker for handy "copy" buttons attached to code blocks, and that's not something that Torchlight does (it just returns rendered HTML, remember? No fancy JavaScript here). I also wanted to add informative prompt indicators (like `$` and `#`) to code blocks representing command-line inputs (rather than script files). And I'd like to flag text returned by a command so that *only* the commands get copied, effectively ignoring the returned text, diff-removed lines, diff markers, line numbers, and prompt indicators.
+
+I had previously implemented a solution based *heavily* on Aaron Luna's blog post, [Hugo: Add Copy-to-Clipboard Button to Code Blocks with Vanilla JS](https://aaronluna.dev/blog/add-copy-button-to-code-blocks-hugo-chroma/). Getting that Chroma-focused solution to work well with Torchlight-formatted code blocks took some work, particularly since I'm inept at web development and can barely spell "CSS" and "JavaScrapped".
+
+But I[^copilot] eventually fumbled through the changes required to meet my #goals, and I'm pretty happy with the result.
+
+[^copilot]: With a little help from my Copilot buddy...
+
+#### Custom classes
+Remember Torchlight's in-line annotations that I mentioned earlier? They're pretty capable out of the box, but can also be expanded through the use of [custom classes](https://torchlight.dev/docs/annotations/classes). This makes it pretty easy to selectively apply special handling to lines of code, something that's otherwise pretty dang tricky to do with Chroma.
+
+So, for instance, I could add a class `.cmd` for standard user-level command-line inputs:
+```shell
+# torchlight! {"torchlightAnnotations":false}
+sudo make me a sandwich # [tl! .cmd]
+```
+```shell
+sudo make me a sandwich # [tl! .cmd]
+```
+
+Or `.cmd_root` for a root prompt:
+```shell
+# torchlight! {"torchlightAnnotations": false}
+wall "Make your own damn sandwich." # [tl! .cmd_root]
+```
+```shell
+wall "Make your own damn sandwich." # [tl! .cmd_root]
+```
+
+And for deviants:
+```powershell
+# torchlight! {"torchlightAnnotations": false}
+Write-Host -ForegroundColor Green "A taco is a sandwich" # [tl! .cmd_pwsh]
+```
+```powershell
+Write-Host -ForegroundColor Green "A taco is a sandwich" # [tl! .cmd_pwsh]
+```
+
+I also came up with a cleverly-named `.nocopy` class for the returned lines that shouldn't be copyable:
+```shell
+# torchlight! {"torchlightAnnotations": false}
+copy this # [tl! .cmd]
+but not this # [tl! .nocopy]
+```
+```shell
+copy this # [tl! .cmd]
+but not this # [tl! .nocopy]
+```
+
+So that's how I'll tie my custom classes to individual lines of code[^ranges], but I still need to actually define those classes.
+
+I'll drop those at the bottom of the `assets/css/torchlight.css` file I created earlier:
+
+```css
+// torchlight! {"lineNumbers": true}
+/* [tl! collapse:start]
+/*********************************************
+* Basic styling for Torchlight code blocks.  *
+**********************************************/
+
+/*
+ Margin and rounding are personal preferences,
+ overflow-x-auto is recommended.
+*/
+pre {
+    border-radius: 0.25rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+}
+
+/*
+ Add some vertical padding and expand the width
+ to fill its container. The horizontal padding
+ comes at the line level so that background
+ colors extend edge to edge.
+*/
+pre.torchlight {
+    display: block;
+    min-width: -webkit-max-content;
+    min-width: -moz-max-content;
+    min-width: max-content;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+/*
+ Horizontal line padding to match the vertical
+ padding from the code block above.
+*/
+pre.torchlight .line {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/*
+ Push the code away from the line numbers and
+ summary caret indicators.
+*/
+pre.torchlight .line-number,
+pre.torchlight .summary-caret {
+    margin-right: 1rem;
+}
+
+/*********************************************
+* Focus styling                              *
+**********************************************/
+
+/*
+  Blur and dim the lines that don't have the `.line-focus` class,
+  but are within a code block that contains any focus lines.
+*/
+.torchlight.has-focus-lines .line:not(.line-focus) {
+    transition: filter 0.35s, opacity 0.35s;
+    filter: blur(.095rem);
+    opacity: .65;
+}
+
+/*
+  When the code block is hovered, bring all the lines into focus.
+*/
+.torchlight.has-focus-lines:hover .line:not(.line-focus) {
+    filter: blur(0px);
+    opacity: 1;
+}
+
+/*********************************************
+* Collapse styling                           *
+**********************************************/
+
+.torchlight summary:focus {
+    outline: none;
+}
+
+/* Hide the default markers, as we provide our own */
+.torchlight details > summary::marker,
+.torchlight details > summary::-webkit-details-marker {
+    display: none;
+}
+
+.torchlight details .summary-caret::after {
+    pointer-events: none;
+}
+
+/* Add spaces to keep everything aligned */
+.torchlight .summary-caret-empty::after,
+.torchlight details .summary-caret-middle::after,
+.torchlight details .summary-caret-end::after {
+    content: " ";
+}
+
+/* Show a minus sign when the block is open. */
+.torchlight details[open] .summary-caret-start::after {
+    content: "-";
+}
+
+/* And a plus sign when the block is closed. */
+.torchlight details:not([open]) .summary-caret-start::after {
+    content: "+";
+}
+
+/* Hide the [...] indicator when open. */
+.torchlight details[open] .summary-hide-when-open {
+    display: none;
+}
+
+/* Show the [...] indicator when closed. */
+.torchlight details:not([open]) .summary-hide-when-open {
+    display: initial;
+} /* [tl! collapse:end]
+
+/*********************************************
+* Additional styling                         *
+**********************************************/
+
+/* Fix for disjointed horizontal scrollbars */
+.highlight div {
+  overflow-x: visible;
+}
+
+/* [tl! focus:start]
+Insert prompt indicators on interactive shells.
+*/
+.cmd::before {
+  color: var(--base07);
+  content: "$ ";
+}
+
+.cmd_root::before {
+  color: var(--base08);
+  content: "# ";
+}
+
+.cmd_pwsh::before {
+  color: var(--base07);
+  content: "PS> ";
+}
+
+/*
+Don't copy shell outputs
+*/
+.nocopy {
+  webkit-user-select: none;
+  user-select: none;
+} /* [tl! focus:end]
+```
+
+[^ranges]: Or ranges of lines, using the same syntax as before: `[tl! .nocopy:5]` will make this line and the following five uncopyable.
+
+The `.cmd` classes will just insert the respective prompt _before_ each flagged line, and the `.nocopy` class will make it it so that the lines aren't selectable. Now for the tricky part...
+
+#### Copy that blocky
+There are two major pieces for the code-copy wizardry: the CSS to style/arrange the copy button and language label, and the JavaScript to make it work.
+
+I put the CSS in `assets/css/code-copy-button.css`. It's basically straight from Aaron's post but with a few stanzas removed, a few elements renamed, and a few values tweaked to fit this site:
+
+```css
+// torchlight! {"lineNumbers": true}
+/* adapted from https://aaronluna.dev/blog/add-copy-button-to-code-blocks-hugo-chroma/ */
+
+.highlight-wrapper /* already set by torchlight.css [tl! remove:3] */
+  display: block;
+}
+/* [tl! reindex(-4)] */
+.highlight {
+  position: relative;
+  z-index: 0;
+  padding: 0;
+  margin: 0; /* [tl! remove] */
+  margin: 40px 0 10px 0; /* a little more breathing room [tl! reindex(-1)] */
+  border-radius: 4px;
+}
+
+.highlight > .chroma { /* chroma-specific [tl! remove:start] */
+  color: #d0d0d0;
+  background-color: #212121;
+  position: static;
+  z-index: 1;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.chroma .lntd:first-child {
+  padding: 7px 7px 7px 10px;
+  margin: 0;
+}
+
+.chroma .lntd:last-child {
+  padding: 7px 10px 7px 7px;
+  margin: 0;
+}
+/* [tl! remove:end] */
+.copy-code-button { /* [tl! reindex(-19)] */
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  top: 0; /* [tl! remove] */
+  top: -29px; /* put the button above the code block instead of in it [tl! reindex(-1)] */
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 14px;
+  letter-spacing: 0.5px;
+  width: 65px;
+  color: #232326;
+  background-color: #7f7f7f;
+  border: 1.25px solid #232326;
+  border-top-left-radius: 0;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 4px;
+  white-space: nowrap;
+  padding: 4px 4px 5px 4px;
+  margin: 0 0 0 1px;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.copy-code-button:hover,
+.copy-code-button:focus,
+.copy-code-button:active,
+.copy-code-button:active:hover {
+  color: #222225;
+  background-color: #b3b3b3;
+  opacity: 0.8;
+}
+
+.copyable-text-area {
+  position: absolute;
+  height: 0;
+  z-index: -1;
+  opacity: .01;
+}
+
+```
