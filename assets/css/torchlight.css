@@ -66,13 +66,13 @@ filter: blur(0px);
 opacity: 1;
 }
 
-.torchlight summary:focus {
-  outline: none;
-}
-
 /*********************************************
 * Collapse styling                           *
 **********************************************/
+
+.torchlight summary:focus {
+  outline: none;
+}
 
 /* Hide the default markers, as we provide our own */
 .torchlight details > summary::marker,
