@@ -15,13 +15,13 @@ tags:
 
 I've been futzing around a bit with how code blocks render on this blog. Hugo has a built-in, _really fast_, [syntax highlighter](https://gohugo.io/content-management/syntax-highlighting/) courtesy of [Chroma](https://github.com/alecthomas/chroma). Chroma is basically automatic and it renders very quickly[^fast] during the `hugo` build process, and it's a pretty solid "works everywhere out of the box" option.
 
-That said, Chroma sometimes seems to struggle with tokenizing and highlighting certain languages, leaving me with boring monochromatic text blocks. Hugo's implementation allows for annotations like `{hl_lines="11-13"}` alongside the code fences to (for instance) highlight lines 11-13, but that can get kind of clumsy if you're not sure which lines need to be highlighted[^eleven] or are needing to highlight multiple disjoined lines. And sometimes I'd like to share a long code block for context while also collapsing it down to just the bits I'm going to write about. That's not something that can be done with the built-in highlighter (at least not without tacking on a bunch of extra JavaScript and CSS nonsense)[^nonsense].
+That said, Chroma sometimes seems to struggle with tokenizing and highlighting certain languages, leaving me with boring monochromatic text blocks. Hugo's implementation allows for directives inserted next to the code fence backticks (like `{hl_lines="11-13"}` highlight lines 11-13), but that can get kind of clumsy if you're not sure which lines need to be highlighted[^eleven], are needing to highlight multiple disjoined lines, or later insert additional lines which throw off the count. And sometimes I'd like to share a full file for context while also collapsing it down to just the bits I'm going to write about. That's not something that can be done with the built-in highlighter (at least not without tacking on a bunch of extra JavaScript and CSS nonsense[^nonsense]).
 
 [^fast]: Did I mention that it's fast?
 [^eleven]: (or how to count to eleven)
 [^nonsense]: Spoiler: I'm going to tack on some JS and CSS nonsense later - we'll get to that.
 
-But then I found a post from Sebastian de Deyne about [Better code highlighting in Hugo with Torchlight](https://sebastiandedeyne.com/better-code-highlighting-in-hugo-with-torchlight), and I thought that [Torchlight](https://torchlight.dev) sounded pretty promising.
+But then I found a post from Sebastian de Deyne about [Better code highlighting in Hugo with Torchlight](https://sebastiandedeyne.com/better-code-highlighting-in-hugo-with-torchlight).  and I thought that [Torchlight](https://torchlight.dev) sounded pretty promising.
 
 From Torchlight's [docs](https://torchlight.dev/docs),
 
@@ -157,8 +157,8 @@ node:internal/fs/utils:350
     throw err;
     ^
 
-Error: ENOENT: no such file or directory, open '/home/john/projects/runtimeterror/node_modules/@torchlight-api/torchlight-cli/dist/stubs/config.js' # [tl! focus collapse:start]
-    at Object.openSync (node:fs:603:3) #
+Error: ENOENT: no such file or directory, open '/home/john/projects/runtimeterror/node_modules/@torchlight-api/torchlight-cli/dist/stubs/config.js'
+    at Object.openSync (node:fs:603:3)
     at Object.readFileSync (node:fs:471:35)
     at write (/home/john/projects/runtimeterror/node_modules/@torchlight-api/torchlight-cli/dist/bin/torchlight.cjs.js:524:39)
     at init (/home/john/projects/runtimeterror/node_modules/@torchlight-api/torchlight-cli/dist/bin/torchlight.cjs.js:538:12)
@@ -167,7 +167,7 @@ Error: ENOENT: no such file or directory, open '/home/john/projects/runtimeterro
     at /home/john/projects/runtimeterror/node_modules/commander/lib/command.js:1227:65
     at Command._chainOrCall (/home/john/projects/runtimeterror/node_modules/commander/lib/command.js:1144:12)
     at Command._parseCommand (/home/john/projects/runtimeterror/node_modules/commander/lib/command.js:1227:27)
-    at Command._dispatchSubcommand (/home/john/projects/runtimeterror/node_modules/commander/lib/command.js:1050:25) { # [tl! collapse:end]
+    at Command._dispatchSubcommand (/home/john/projects/runtimeterror/node_modules/commander/lib/command.js:1050:25) {
   errno: -2,
   syscall: 'open',
   code: 'ENOENT',
@@ -180,10 +180,10 @@ Node.js v18.17.1
 
 Oh. Hmm.
 
-There's an [open issue](https://github.com/torchlight-api/torchlight-cli/issues/4) which reveals that the stub config file is actually located under the `src/` directory instead of `dist/`.
+There's an [open issue](https://github.com/torchlight-api/torchlight-cli/issues/4) which reveals that the stub config file is actually located under the `src/` directory instead of `dist/`. And it turns out the `init` step isn't strictly necessary, it's just a helper to get you a working config to start.
 
 #### Configuration
-I'll just copy that to my repo root and then set to work modifying it to suit my needs:
+Now that I know where the stub config lives, I can simply copy it to my repo root. I'll then get to work modifying it to suit my needs:
 
 ```shell
 cp node_modules/@torchlight-api/torchlight-cli/src/stubs/config.js ./torchlight.config.js # [tl! .cmd]
@@ -226,11 +226,13 @@ module.exports = {
 
     // If there are any diff indicators for a line, put them
     // in place of the line number to save horizontal space.
-    diffIndicatorsInPlaceOfLineNumbers: true
+    diffIndicatorsInPlaceOfLineNumbers: true // [tl! --]
+    diffIndicatorsInPlaceOfLineNumbers: true, // [tl! ++ reindex(-1)]
 
     // When lines are collapsed, this is the text that will
     // be shown to indicate that they can be expanded.
-    // summaryCollapsedIndicator: '...',
+    // summaryCollapsedIndicator: '...', [tl! --]
+    summaryCollapsedIndicator: 'Click to expand...', // make the collapse a little more explicit [tl! ++ reindex(-1)]
   },
 
   // Options for the highlight command.
