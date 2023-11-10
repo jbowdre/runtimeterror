@@ -157,7 +157,7 @@ node:internal/fs/utils:350
     throw err;
     ^
 
-Error: ENOENT: no such file or directory, open '/home/john/projects/runtimeterror/node_modules/@torchlight-api/torchlight-cli/dist/stubs/config.js'
+Error: ENOENT: no such file or directory, open '/home/john/projects/runtimeterror/node_modules/@torchlight-api/torchlight-cli/dist/stubs/config.js' # [tl! focus]
     at Object.openSync (node:fs:603:3)
     at Object.readFileSync (node:fs:471:35)
     at write (/home/john/projects/runtimeterror/node_modules/@torchlight-api/torchlight-cli/dist/bin/torchlight.cjs.js:524:39)
