@@ -1,31 +1,41 @@
 ---
 title: "Spotlight on Torchlight"
-date: 2023-11-06
+date: 2023-11-09
 # lastmod: 2023-11-06
-draft: true
 description: "Syntax highlighting powered by the Torchlight.dev API makes it easier to dress up code blocks. Here's an overview of what I did to replace this blog's built-in Hugo highlighter (Chroma) with Torchlight."
 featured: false
 toc: true
 comment: true
-series: Tips # Projects, Scripts
+series: Projects # Projects, Scripts
 tags:
   - javascript
   - hugo
   - meta
 ---
 
-I've been futzing around a bit with how code blocks render on this blog. Hugo has a built-in, _really fast_, [syntax highlighter](https://gohugo.io/content-management/syntax-highlighting/) courtesy of [Chroma](https://github.com/alecthomas/chroma). Chroma is basically automatic and it renders very quickly[^fast] during the `hugo` build process, but it often seems to struggle with tokenizing and highlighting certain languages. And while Hugo allows for annotations like `{hl_lines="11-13"}`, that can get kind of clumsy if you're not sure which lines need to be highlighted[^eleven]. And sometimes I'd like to share a long code block for context while also collapsing it down to just the bits I'm going to write about. That's not something that can be done with the built-in highlighter (at least not without tacking on a bunch of extra JavaScript and CSS nonsense).
+I've been futzing around a bit with how code blocks render on this blog. Hugo has a built-in, _really fast_, [syntax highlighter](https://gohugo.io/content-management/syntax-highlighting/) courtesy of [Chroma](https://github.com/alecthomas/chroma). Chroma is basically automatic and it renders very quickly[^fast] during the `hugo` build process, and it's a pretty solid "works everywhere out of the box" option.
+
+That said, Chroma sometimes seems to struggle with tokenizing and highlighting certain languages, leaving me with boring monochromatic text blocks. Hugo's implementation allows for annotations like `{hl_lines="11-13"}` alongside the code fences to (for instance) highlight lines 11-13, but that can get kind of clumsy if you're not sure which lines need to be highlighted[^eleven] or are needing to highlight multiple disjoined lines. And sometimes I'd like to share a long code block for context while also collapsing it down to just the bits I'm going to write about. That's not something that can be done with the built-in highlighter (at least not without tacking on a bunch of extra JavaScript and CSS nonsense)[^nonsense].
 
 [^fast]: Did I mention that it's fast?
 [^eleven]: (or how to count to eleven)
+[^nonsense]: Spoiler: I'm going to tack on some JS and CSS nonsense later - we'll get to that.
 
-But then I found a post from Sebastian de Deyne about [Better code highlighting in Hugo with Torchlight](https://sebastiandedeyne.com/better-code-highlighting-in-hugo-with-torchlight), and thought that [Torchlight](https://torchlight.dev) sounded pretty promising.
+But then I found a post from Sebastian de Deyne about [Better code highlighting in Hugo with Torchlight](https://sebastiandedeyne.com/better-code-highlighting-in-hugo-with-torchlight), and I thought that [Torchlight](https://torchlight.dev) sounded pretty promising.
 
-In Sebastian's words,
+From Torchlight's [docs](https://torchlight.dev/docs),
 
-> Torchlight is a code-highlighter-as-a-service built on Visual Studio Code's editor highlighter editor. You throw blocks of code to Torchlight and they return them in a highlighted form. This results in a more complete highlight than alternatives like highlight.js, and a lot of available themes.
+> *Torchlight is a VS Code-compatible syntax highlighter that requires no JavaScript, supports every language, every VS Code theme, line highlighting, git diffing, and more.*
+>
+> *Unlike traditional syntax highlighting tools, Torchlight is an HTTP API that tokenizes and highlights your code on our backend server instead of in the visitor's browser.*
+>
+> *We find this to be the easiest and most powerful way to achieve accurate and feature rich syntax highlighting.*
+>
+> *Client-side language parsers are limited in their complexity since they have to run in the browser environment. There are a lot of edge cases that those libraries can't catch.*
+>
+> *Torchlight relies on the VS Code parsing engine and TextMate language grammars to achieve the most accurate results possible. We bring the power of the entire VS Code ecosystem to your docs or blog.*
 
-Code blocks in, formatted HTML out, and no JavaScript or extra code to render this slick display in the browser:
+In short: Code blocks in, formatted HTML out, and no JavaScript or extra code to render this slick display in the browser:
 ```toml
 # torchlight! {"lineNumbers": true}
 # netlify.toml
@@ -147,7 +157,7 @@ node:internal/fs/utils:350
     throw err;
     ^
 
-Error: ENOENT: no such file or directory, open '/home/john/projects/runtimeterror/node_modules/@torchlight-api/torchlight-cli/dist/stubs/config.js' # [tl! focus highlight collapse:start]
+Error: ENOENT: no such file or directory, open '/home/john/projects/runtimeterror/node_modules/@torchlight-api/torchlight-cli/dist/stubs/config.js' # [tl! focus collapse:start]
     at Object.openSync (node:fs:603:3) #
     at Object.readFileSync (node:fs:471:35)
     at write (/home/john/projects/runtimeterror/node_modules/@torchlight-api/torchlight-cli/dist/bin/torchlight.cjs.js:524:39)
@@ -395,6 +405,7 @@ I'll make sure that this CSS gets dynamically attached to any pages with a code 
 {{ if (findRE "<pre" .Content 1) }}
   {{ $syntax := resources.Get "css/torchlight.css" | minify }}
   <link href="{{ $syntax.RelPermalink }}" rel="stylesheet">
+{{ end }}
 ```
 
 As a bit of housekeeping, I'm also going to remove the built-in highlighter configuration from my `config/_default/markup.toml` file to make sure it doesn't conflict with Torchlight:
@@ -512,6 +523,7 @@ Writing to /home/john/projects/runtimeterror/public/cat-file-without-comments/in
      |     +             |   -O-    |
     -0-                 -0-     .        O
  -O- |                   -O-       *
+your code will be assimilated
 
 Writing to /home/john/projects/runtimeterror/public/k8s-on-vsphere-node-template-with-packer/index.html # [tl! collapse:end]
 Writing to /home/john/projects/runtimeterror/public/tanzu-community-edition-k8s-homelab/index.html
@@ -550,14 +562,14 @@ Of course, I. Just. Can't. leave well enough alone, so my work here isn't finish
 
 You see, I'm a sucker for handy "copy" buttons attached to code blocks, and that's not something that Torchlight does (it just returns rendered HTML, remember? No fancy JavaScript here). I also wanted to add informative prompt indicators (like `$` and `#`) to code blocks representing command-line inputs (rather than script files). And I'd like to flag text returned by a command so that *only* the commands get copied, effectively ignoring the returned text, diff-removed lines, diff markers, line numbers, and prompt indicators.
 
-I had previously implemented a solution based *heavily* on Aaron Luna's blog post, [Hugo: Add Copy-to-Clipboard Button to Code Blocks with Vanilla JS](https://aaronluna.dev/blog/add-copy-button-to-code-blocks-hugo-chroma/). Getting that Chroma-focused solution to work well with Torchlight-formatted code blocks took some work, particularly since I'm inept at web development and can barely spell "CSS" and "JavaScrapped".
+I had previously implemented a solution based *heavily* on Justin James' blog post, [Hugo - Dynamically Add Copy Code Snippet Button](https://digitaldrummerj.me/hugo-add-copy-code-snippet-button/). Getting that Chroma-focused solution to work well with Torchlight-formatted code blocks took some work, particularly since I'm inept at web development and can barely spell "CSS" and "JavaScrapped".
 
-But I[^copilot] eventually fumbled through the changes required to meet my #goals, and I'm pretty happy with the result.
+But I[^copilot] eventually fumbled through the changes required to meet my #goals, and I'm pretty happy with how it all works.
 
 [^copilot]: With a little help from my Copilot buddy...
 
 #### Custom classes
-Remember Torchlight's in-line annotations that I mentioned earlier? They're pretty capable out of the box, but can also be expanded through the use of [custom classes](https://torchlight.dev/docs/annotations/classes). This makes it pretty easy to selectively apply special handling to lines of code, something that's otherwise pretty dang tricky to do with Chroma.
+Remember Torchlight's in-line annotations that I mentioned earlier? They're pretty capable out of the box, but can also be expanded through the use of [custom classes](https://torchlight.dev/docs/annotations/classes). This makes it easy to selectively apply special handling to selected lines of code, something that's otherwise pretty dang tricky to do with Chroma.
 
 So, for instance, I could add a class `.cmd` for standard user-level command-line inputs:
 ```shell
@@ -757,69 +769,44 @@ Don't copy shell outputs
 
 [^ranges]: Or ranges of lines, using the same syntax as before: `[tl! .nocopy:5]` will make this line and the following five uncopyable.
 
-The `.cmd` classes will just insert the respective prompt _before_ each flagged line, and the `.nocopy` class will make it it so that the lines aren't selectable. Now for the tricky part...
+The `.cmd` classes will simply insert the respective prompt _before_ each flagged line, and the `.nocopy` class will prevent those lines from being selected (and copied). Now for the tricky part...
 
 #### Copy that blocky
 There are two major pieces for the code-copy wizardry: the CSS to style/arrange the copy button and language label, and the JavaScript to make it work.
 
-I put the CSS in `assets/css/code-copy-button.css`. It's basically straight from Aaron's post but with a few stanzas removed, a few elements renamed, and a few values tweaked to fit this site:
+I put the CSS in `assets/css/code-copy-button.css`:
 
 ```css
 // torchlight! {"lineNumbers": true}
-/* adapted from https://aaronluna.dev/blog/add-copy-button-to-code-blocks-hugo-chroma/ */
+/* adapted from https://digitaldrummerj.me/hugo-add-copy-code-snippet-button/ */
 
-.highlight-wrapper /* already set by torchlight.css [tl! remove:3] */
-  display: block;
-}
-/* [tl! reindex(-4)] */
 .highlight {
   position: relative;
   z-index: 0;
   padding: 0;
-  margin: 0; /* [tl! remove] */
-  margin: 40px 0 10px 0; /* a little more breathing room [tl! reindex(-1)] */
+  margin:40px 0 10px 0;
   border-radius: 4px;
 }
 
-.highlight > .chroma { /* chroma-specific [tl! remove:start] */
-  color: #d0d0d0;
-  background-color: #212121;
-  position: static;
-  z-index: 1;
-  border-radius: 4px;
-  padding: 10px;
-}
-
-.chroma .lntd:first-child {
-  padding: 7px 7px 7px 10px;
-  margin: 0;
-}
-
-.chroma .lntd:last-child {
-  padding: 7px 10px 7px 7px;
-  margin: 0;
-}
-/* [tl! remove:end] */
-.copy-code-button { /* [tl! reindex(-19)] */
+.copy-code-button {
   position: absolute;
-  z-index: 2;
-  right: 0;
-  top: 0; /* [tl! remove] */
-  top: -29px; /* put the button above the code block instead of in it [tl! reindex(-1)] */
+  z-index: -1;
+  right: 0px;
+  top: -26px;
   font-size: 13px;
   font-weight: 700;
   line-height: 14px;
   letter-spacing: 0.5px;
   width: 65px;
-  color: #232326;
-  background-color: #7f7f7f;
-  border: 1.25px solid #232326;
-  border-top-left-radius: 0;
+  color: var(--fg);
+  background-color: var(--bg);
+  border: 1.25px solid var(--off-bg);
+  border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
   white-space: nowrap;
-  padding: 4px 4px 5px 4px;
+  padding: 6px 6px 7px 6px;
   margin: 0 0 0 1px;
   cursor: pointer;
   opacity: 0.6;
@@ -829,8 +816,8 @@ I put the CSS in `assets/css/code-copy-button.css`. It's basically straight from
 .copy-code-button:focus,
 .copy-code-button:active,
 .copy-code-button:active:hover {
-  color: #222225;
-  background-color: #b3b3b3;
+  color: var(--off-bg);
+  background-color: var(--off-fg);
   opacity: 0.8;
 }
 
@@ -841,4 +828,120 @@ I put the CSS in `assets/css/code-copy-button.css`. It's basically straight from
   opacity: .01;
 }
 
+.torchlight [data-lang]:before {
+  position: absolute;
+  z-index: -1;
+  top: -26px;
+  left: 0px;
+  content: attr(data-lang);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fg);
+  background-color: var(--bg);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  padding: 6px 6px 7px 6px;
+  line-height: 14px;
+  opacity: 0.6;
+  position: absolute;
+  letter-spacing: 0.5px;
+  border: 1.25px solid var(--off-bg);
+  margin: 0 0 0 1px;
+}
 ```
+
+And, as before, I'll link this from the bottom of my `layouts/partial/head.html` so it will get loaded on the appropriate pages:
+
+```html
+<!-- syntax highlighting -->
+{{ if (findRE "<pre" .Content 1) }}
+  {{ $syntax := resources.Get "css/torchlight.css" | minify }}
+  <link href="{{ $syntax.RelPermalink }}" rel="stylesheet">
+  {{ $copyCss := resources.Get "css/code-copy-button.css" | minify }} <!-- [tl! ++:1 ] -->
+  <link href="{{ $copyCss.RelPermalink }}" rel="stylesheet">
+{{ end }}
+```
+
+#### Code behind the copy
+That sure makes the code blocks and accompanying button / labels look pretty great, but I still need to actually make the button work. For that, I'll need some JavaScript that (again) largely comes from Justin's post.
+
+With all the different classes and things used with Torchlight, it took a lot of (generally misguided) tinkering for me to get the script to copy just the text I wanted (and nothing else). I learned a ton in the process, so I've highlighted the major deviations from Justin's script.
+
+Anyway, here's my `assets/js/code-copy-button.js`:
+```javascript
+// torchlight! {"lineNumbers": true}
+// adapted from https://digitaldrummerj.me/hugo-add-copy-code-snippet-button/
+
+function createCopyButton(highlightDiv) {
+  const button = document.createElement("button");
+  button.className = "copy-code-button";
+  button.type = "button";
+  button.innerText = "Copy";
+  button.addEventListener("click", () => copyCodeToClipboard(button, highlightDiv));
+  highlightDiv.insertBefore(button, highlightDiv.firstChild);
+  const wrapper = document.createElement("div");
+  wrapper.className = "highlight-wrapper";
+  highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+  wrapper.appendChild(highlightDiv);
+}
+
+document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv)); // [tl! focus:start]
+
+async function copyCodeToClipboard(button, highlightDiv) {
+  // capture all code lines in the selected block which aren't classed `nocopy` or `line-remove`
+  let codeToCopy = highlightDiv.querySelectorAll(":last-child > .torchlight > code > .line:not(.nocopy, .line-remove)");
+  // now remove the first-child of each line if it is of class `line-number`
+  codeToCopy = Array.from(codeToCopy).reduce((accumulator, line) => {
+    if (line.firstChild.className != "line-number") {
+      return accumulator + line.innerText + "\n"; }
+    else {
+      return accumulator + Array.from(line.children).filter(
+        (child) => child.className != "line-number").reduce(
+          (accumulator, child) => accumulator + child.innerText, "") + "\n";
+    }
+  }, ""); // [tl! focus:end]
+  try {
+    var result = await navigator.permissions.query({ name: "clipboard-write" });
+    if (result.state == "granted" || result.state == "prompt") {
+      await navigator.clipboard.writeText(codeToCopy);
+    } else {
+      button.blur();
+      button.innerText = "Error!";
+      setTimeout(function () {
+        button.innerText = "Copy";
+      }, 2000);
+    }
+  } catch (_) {
+    button.blur();
+    button.innerText = "Error!";
+    setTimeout(function () {
+      button.innerText = "Copy";
+    }, 2000);
+  } finally {
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(function () {
+      button.innerText = "Copy";
+    }, 2000);
+  }
+}
+
+```
+
+And this script gets called from the bottom of my `layouts/partials/footer.html`:
+```html
+{{ if (findRE "<pre" .Content 1) }}
+  {{ $jsCopy := resources.Get "js/code-copy-button.js" | minify }}
+  <script src="{{ $jsCopy.RelPermalink }}"></script>
+{{ end }}
+```
+
+### Going live!
+
+And at this point, I can just run my `build.sh` script again to rebuild the site locally and verify that it works as well as I think it does.
+
+It looks pretty good to me, so I'll go ahead and push this up to Netlify. If all goes well, this post and the new code block styling will go live at the same time.
+
+See you on the other side!
