@@ -19,8 +19,10 @@
 <link rel="stylesheet" href="{{ "css/risotto.css" | absURL }}">
 <link rel="stylesheet" href="{{ "css/custom.css" | absURL }}">
 
+{{ if .Site.Params.analytics }}
 <!-- cabin analytics -->
 <script async defer src="https://scripts.withcabin.com/hello.js"></script>
+{{ end }}
 
 <!-- syntax highlighting -->
 {{ if (findRE "<pre" .Content 1) }}
