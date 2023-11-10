@@ -1,4 +1,4 @@
-// adapted from https://aaronluna.dev/blog/add-copy-button-to-code-blocks-hugo-chroma/
+// adapted from https://digitaldrummerj.me/hugo-add-copy-code-snippet-button/
 
 function createCopyButton(highlightDiv) {
   const button = document.createElement("button");
@@ -18,7 +18,7 @@ document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButt
 async function copyCodeToClipboard(button, highlightDiv) {
   // capture all code lines in the selected block which aren't classed `nocopy` or `line-remove`
   let codeToCopy = highlightDiv.querySelectorAll(":last-child > .torchlight > code > .line:not(.nocopy, .line-remove)");
-  // now remove the first-child of each line which has class `line-number`
+  // now remove the first-child of each line with class `line-number`
   codeToCopy = Array.from(codeToCopy).reduce((accumulator, line) => {
     if (line.firstChild.className != "line-number") {
       return accumulator + line.innerText + "\n"; }
