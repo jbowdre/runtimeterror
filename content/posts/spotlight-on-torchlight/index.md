@@ -126,7 +126,7 @@ I started with registering for a free[^free] account at [torchlight.dev](https:/
 echo "TORCHLIGHT_TOKEN=torch_[...]" > ./.env # [tl! .cmd]
 ```
 
-[^free]: Torchlight is free for sites which don't generate revenue, though it does require a link back to `torchlight.dev`. I stuck the attribution link in the footer. More pricing info [here].
+[^free]: Torchlight is free for sites which don't generate revenue, though it does require a link back to `torchlight.dev`. I stuck the attribution link in the footer. More pricing info [here](https://torchlight.dev/#pricing).
 
 #### Installation
 I then used `npm` to install Torchlight in the root of my Hugo repo:
