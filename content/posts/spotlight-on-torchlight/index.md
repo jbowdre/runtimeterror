@@ -1,7 +1,7 @@
 ---
 title: "Spotlight on Torchlight"
 date: 2023-11-09
-# lastmod: 2023-11-06
+lastmod: 2023-11-13
 description: "Syntax highlighting powered by the Torchlight.dev API makes it easier to dress up code blocks. Here's an overview of what I did to replace this blog's built-in Hugo highlighter (Chroma) with Torchlight."
 featured: false
 toc: true
@@ -15,7 +15,7 @@ tags:
 
 I've been futzing around a bit with how code blocks render on this blog. Hugo has a built-in, _really fast_, [syntax highlighter](https://gohugo.io/content-management/syntax-highlighting/) courtesy of [Chroma](https://github.com/alecthomas/chroma). Chroma is basically automatic and it renders very quickly[^fast] during the `hugo` build process, and it's a pretty solid "works everywhere out of the box" option.
 
-That said, Chroma sometimes seems to struggle with tokenizing and highlighting certain languages, leaving me with boring monochromatic text blocks. Hugo's implementation allows for directives inserted next to the code fence backticks (like `{hl_lines="11-13"}` highlight lines 11-13), but that can get kind of clumsy if you're not sure which lines need to be highlighted[^eleven], are needing to highlight multiple disjoined lines, or later insert additional lines which throw off the count. And sometimes I'd like to share a full file for context while also collapsing it down to just the bits I'm going to write about. That's not something that can be done with the built-in highlighter (at least not without tacking on a bunch of extra JavaScript and CSS nonsense[^nonsense]).
+That said, the one-size-fits-all approach may not actually fit everyone *well*, and Chroma does leave me wanting a bit more. Chroma sometimes struggles with tokenizing and highlighting certain languages, leaving me with boring monochromatic text blocks. Hugo's implementation supports highlighting individual lines by inserting directives next to the code fence backticks (like `{hl_lines="11-13"}` to highlight lines 11-13), but that can be clumsy if you're not sure which lines need to be highlighted[^eleven], are needing to highlight multiple disjointed lines, or later insert additional lines which throw off the count. And sometimes I'd like to share a full file for context while also collapsing it down to just the bits I'm going to write about. That's not something that can be done with the built-in highlighter (at least not without tacking on a bunch of extra JavaScript and CSS nonsense[^nonsense]).
 
 [^fast]: Did I mention that it's fast?
 [^eleven]: (or how to count to eleven)
