@@ -12,14 +12,14 @@ tags:
 title: 'vRA8 Custom Provisioning: Part Four'
 ---
 
-My [last post in this series](/vra8-custom-provisioning-part-three) marked the completion of the vRealize Orchestrator workflow that I use for pre-provisioning tasks, namely generating a unique *sequential* hostname which complies with a defined naming standard and doesn't conflict with any existing records in vSphere, Active Directory, or DNS. That takes care of many of the "back-end" tasks for a simple deployment. 
+My [last post in this series](/vra8-custom-provisioning-part-three) marked the completion of the vRealize Orchestrator workflow that I use for pre-provisioning tasks, namely generating a unique *sequential* hostname which complies with a defined naming standard and doesn't conflict with any existing records in vSphere, Active Directory, or DNS. That takes care of many of the "back-end" tasks for a simple deployment.
 
-This post will add in some "front-end" operations, like creating a customized VM request form in Service Broker and dynamically populating a drop-down with a list of networks available at the user-selected deployment site. I'll also take care of some housekeeping items like automatically generating a unique deployment name. 
+This post will add in some "front-end" operations, like creating a customized VM request form in Service Broker and dynamically populating a drop-down with a list of networks available at the user-selected deployment site. I'll also take care of some housekeeping items like automatically generating a unique deployment name.
 
 ### Getting started with Service Broker Custom Forms
-So far, I've been working either in the Cloud Assembly or Orchestrator UIs, both of which are really geared toward administrators. Now I'm going to be working with Service Broker which will provide the user-facing front-end. This is where "normal" users will be able to submit provisioning requests without having to worry about any of the underlying infrastructure or orchestration. 
+So far, I've been working either in the Cloud Assembly or Orchestrator UIs, both of which are really geared toward administrators. Now I'm going to be working with Service Broker which will provide the user-facing front-end. This is where "normal" users will be able to submit provisioning requests without having to worry about any of the underlying infrastructure or orchestration.
 
-Before I can do anything with my Cloud Template in the Service Broker UI, though, I'll need to release it from Cloud Assembly. I do this by opening the template on the *Design* tab and clicking the *Version* button at the bottom of the screen. I'll label this as `1.0` and tick the checkbox to *Release this version to the catalog*. 
+Before I can do anything with my Cloud Template in the Service Broker UI, though, I'll need to release it from Cloud Assembly. I do this by opening the template on the *Design* tab and clicking the *Version* button at the bottom of the screen. I'll label this as `1.0` and tick the checkbox to *Release this version to the catalog*.
 ![Releasing the Cloud Template to the Service Broker catalog](0-9BaWJqq.png)
 
 I can then go to the Service Broker UI and add a new Content Source for my Cloud Assembly templates.
@@ -28,7 +28,7 @@ I can then go to the Service Broker UI and add a new Content Source for my Cloud
 After hitting the *Create & Import* button, all released Cloud Templates in the selected Project will show up in the Service Broker *Content* section:
 ![New content!](Hlnnd_8Ed.png)
 
-In order for users to deploy from this template, I also need to go to *Content Sharing*, select the Project, and share the content. This can be done either at the Project level or by selecting individual content items. 
+In order for users to deploy from this template, I also need to go to *Content Sharing*, select the Project, and share the content. This can be done either at the Project level or by selecting individual content items.
 ![Content sharing](iScnhmzVY.png)
 
 That template now appears on the Service Broker *Catalog* tab:
@@ -48,7 +48,7 @@ How about that Deployment Name field? In my tests, I'd been manually creating a 
 ### Automatic deployment naming
 *[Update] I've since come up with what I think is a better approach to handling this. Check it out [here](/vra8-automatic-deployment-naming-another-take)!*
 
-That means it's time to dive back into the vRealize Orchestrator interface and whip up a new action for this purpose. I created a new action within my existing `net.bowdre.utility` module called `createDeploymentName`. 
+That means it's time to dive back into the vRealize Orchestrator interface and whip up a new action for this purpose. I created a new action within my existing `net.bowdre.utility` module called `createDeploymentName`.
 ![createDeploymentName action](GMCWhns7u.png)
 
 A good deployment name *must* be globally unique, and it would be great if it could also convey some useful information like who requested the deployment, which template it is being deployed from, and the purpose of the server. The `siteCode (String)`, `envCode (String)`, `functionCode (String)`, and `appCode (String)` variables from the request form will do a great job of describing the server's purpose. I can also pass in some additional information from the Service Broker form like `catalogItemName (String)` to get the template name and `requestedByName (String)` to identify the user making the request. So I'll set all those as inputs to my action:
@@ -58,9 +58,10 @@ I also went ahead and specified that the action will return a String.
 
 And now for the code. I really just want to mash all those variables together into a long string, and I'll also add a timestamp to make sure each deployment name is truly unique.
 
-```js
+```javascript
+// torchlight! {"lineNumbers": true}
 //  JavaScript: createDeploymentName
-//    Inputs: catalogItemName (String), requestedByName (String), siteCode (String), 
+//    Inputs: catalogItemName (String), requestedByName (String), siteCode (String),
 //        envCode (String), functionCode (String), appCode (String)
 //    Returns: deploymentName (String)
 
@@ -99,7 +100,7 @@ As a quick recap, I've got five networks available for vRA, split across my two 
 I'm going to add additional tags to these networks to further define their purpose.
 
 |Name |Purpose |Tags |
-| --- | --- | --- | 
+| --- | --- | --- |
 | d1620-Servers-1 |Management | `net:bow`, `net:mgmt` |
 | d1630-Servers-2 | Front-end | `net:bow`, `net:front` |
 | d1640-Servers-3 | Back-end | `net:bow`, `net:back` |
@@ -109,7 +110,7 @@ I'm going to add additional tags to these networks to further define their purpo
 I *could* just use those tags to let users pick the appropriate network, but I've found that a lot of times users don't know why they're picking a certain network, they just know the IP range they need to use. So I'll take it a step further and add a giant tag to include the Site, Purpose, and Subnet, and this is what will ultimately be presented to the users:
 
 |Name |Tags |
-| --- | --- | 
+| --- | --- |
 | d1620-Servers-1 | `net:bow`, `net:mgmt`, `net:bow-mgmt-172.16.20.0` |
 | d1630-Servers-2 | `net:bow`, `net:front`, `net:bow-front-172.16.30.0` |
 | d1640-Servers-3 | `net:bow`, `net:back`, `net:bow-back-172.16.40.0` |
@@ -121,12 +122,13 @@ I *could* just use those tags to let users pick the appropriate network, but I'v
 So I can now use a single tag to positively identify a single network, as long as I know its site and either its purpose or its IP space. I'll reference these tags in a vRO action that will populate a dropdown in the request form with the available networks for the selected site. Unfortunately I couldn't come up with an easy way to dynamically pull the tags into vRO so I create another Configuration Element to store them:
 ![networksPerSite configuration element](xfEultDM_.png)
 
-This gets filed under the existing `CustomProvisioning` folder, and I name it `networksPerSite`. Each site gets a new variable of type `Array/string`. The name of the variable matches the site ID, and the contents are just the tags minus the `net:` prefix. 
+This gets filed under the existing `CustomProvisioning` folder, and I name it `networksPerSite`. Each site gets a new variable of type `Array/string`. The name of the variable matches the site ID, and the contents are just the tags minus the `net:` prefix.
 
 I created a new action named (appropriately) `getNetworksForSite`. This will accept `siteCode (String)` as its input from the Service Broker request form, and will return an array of strings containing the available networks.
 ![getNetworksForSite action](IdrT-Un8H1.png)
 
-```js
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: getNetworksForSite
 //    Inputs: siteCode (String)
 //    Returns: site.value (Array/String)
@@ -164,6 +166,7 @@ inputs:
 and update the resource configuration for the network entity to constrain it based on `input.network` instead of `input.site` as before:
 
 ```yaml
+# torchlight! {"lineNumbers": true}
 resources:
   Cloud_vSphere_Machine_1:
     type: Cloud.vSphere.Machine
@@ -194,7 +197,7 @@ Back on the Service Broker UI, I hit my `LAB` Content Source again to Save & Imp
 Now I can just go back to the Catalog tab and request a new deployment to check out my--
 ![Ew, an ugly error](zWFTuOYOG.png)
 
-Oh yeah. That vRO action gets called as soon as the request form loads - before selecting the required site code as an input. I could modify the action so that returns an empty string if the site hasn't been selected yet, but I'm kind of lazy so I'll instead just modify the custom form so that the Site field defaults to the `BOW` site. 
+Oh yeah. That vRO action gets called as soon as the request form loads - before selecting the required site code as an input. I could modify the action so that returns an empty string if the site hasn't been selected yet, but I'm kind of lazy so I'll instead just modify the custom form so that the Site field defaults to the `BOW` site.
 ![BOW is default](yb77nH2Fp.png)
 
 *Now* I can open up the request form and see how well it works:
@@ -214,4 +217,4 @@ And I can also confirm that the VM got named appropriately (based on the [naming
 
 Very slick. And I think that's a great stopping point for today.
 
-Coming up, I'll describe how I create AD computer objects in site-specific OUs, add notes and custom attributes to the VM in vSphere, and optionally create static DNS records on a Windows DNS server. 
+Coming up, I'll describe how I create AD computer objects in site-specific OUs, add notes and custom attributes to the VM in vSphere, and optionally create static DNS records on a Windows DNS server.

@@ -36,36 +36,36 @@ Sounds great - but how do you actually make golink available on your tailnet? We
 There are three things I'll need to do in the Tailscale admin portal before moving on:
 #### Create an ACL tag
 I assign ACL tags to devices in my tailnet based on their location and/or purpose, and I'm then able to use those in a policy to restrict access between certain devices. To that end, I'm going to create a new `tag:golink` tag for this purpose. Creating a new tag in Tailscale is really just going to the [Access Controls page of the admin console](https://login.tailscale.com/admin/acls) and editing the policy to specify a `tagOwner` who is permitted to assign the tag:
-```text {hl_lines=[11]}
-	"groups":
-		"group:admins": ["john@example.com"],
-	},
-	"tagOwners": {
-		"tag:home":   ["group:admins"],
-		"tag:cloud":  ["group:admins"],
-		"tag:client": ["group:admins"],
-		"tag:dns":    ["group:admins"],
-		"tag:rsync":  ["group:admins"],
-		"tag:funnel": ["group:admins"],
-		"tag:golink": ["group:admins"],
-	},
+```json
+  "groups":
+    "group:admins": ["john@example.com"],
+  },
+  "tagOwners": {
+    "tag:home":   ["group:admins"],
+    "tag:cloud":  ["group:admins"],
+    "tag:client": ["group:admins"],
+    "tag:dns":    ["group:admins"],
+    "tag:rsync":  ["group:admins"],
+    "tag:funnel": ["group:admins"],
+    "tag:golink": ["group:admins"], // [tl! highlight]
+  },
 ```
 
 #### Configure ACL access
 This step is really only necessary since I've altered the default Tailscale ACL and prevent my nodes from communicating with each other unless specifically permitted. I want to make sure that everything on my tailnet can access golink:
 
-```text
+```json
 "acls": [
-		{
-			// make golink accessible to everything
-			"action": "accept",
-			"users":  ["*"],
-			"ports": [
-				"tag:golink:80",
-			],
-		},
+    {
+      // make golink accessible to everything
+      "action": "accept",
+      "users":  ["*"],
+      "ports": [
+        "tag:golink:80",
+      ],
+    },
   ...
-	],
+  ],
 ```
 
 #### Create an auth key
@@ -81,19 +81,20 @@ After clicking the **Generate key** button, the key will be displayed. This is t
 ### Docker setup
 The [golink repo](https://github.com/tailscale/golink) offers this command for running the container:
 ```shell
-docker run -it --rm ghcr.io/tailscale/golink:main
+docker run -it --rm ghcr.io/tailscale/golink:main # [tl! .cmd]
 ```
 
 The doc also indicates that I can pass the auth key to the golink service via the `TS_AUTHKEY` environment variable, and that all the configuration will be stored in `/home/nonroot` (which will be owned by uid/gid `65532`). I'll take this knowledge and use it to craft a `docker-compose.yml` to simplify container management.
 
 ```shell
-mkdir -p golink/data
+mkdir -p golink/data # [tl! .cmd:3]
 cd golink
 chmod 65532:65532 data
 vi docker-compose.yaml
 ```
 
 ```yaml
+# torchlight! {"lineNumbers": true}
 # golink docker-compose.yaml
 version: '3'
 services:
@@ -138,9 +139,7 @@ Some of my other golinks:
 | `ipam` | `https://ipam.lab.bowdre.net/{{with .Path}}tools/search/{{.}}{{end}}` | searches my lab phpIPAM instance |
 | `pdb` | `https://www.protondb.com/{{with .Path}}search?q={{.}}{{end}}` | searches [protondb](https://www.protondb.com/), super-handy for checking game compatibility when [Tailscale is installed on a Steam Deck](https://tailscale.com/blog/steam-deck/) |
 | `tailnet` | `https://login.tailscale.com/admin/machines?q={{.Path}}` | searches my Tailscale admin panel for a machine name |
-| `vpot8` | `https://www.virtuallypotato.com/{{with .Path}}search?query={{.}}{{end}}` | searches this here site |
 | `sho` | `https://www.shodan.io/{{with .Path}}search?query={{.}}{{end}}` | searches Shodan for interesting internet-connected systems |
-| `tools` | `https://neeva.com/spaces/m_Bhx8tPfYQbOmaW1UHz-3a_xg3h2amlogo2GzgD` | shortcut to my [Tech Toolkit space](https://neeva.com/spaces/m_Bhx8tPfYQbOmaW1UHz-3a_xg3h2amlogo2GzgD) on Neeva |
 | `randpass` | `https://www.random.org/passwords/?num=1\u0026len=24\u0026format=plain\u0026rnd=new` | generates a random 24-character string suitable for use as a password (`curl`-friendly) |
 | `wx` | `https://wttr.in/{{ .Path }}` | local weather report based on geolocation or weather for a designated city (`curl`-friendly) |
 
@@ -149,7 +148,7 @@ You can browse to `go/.export` to see a JSON-formatted listing of all configured
 
 To restore, just pass `--snapshot /path/to/links.json` when starting golink. What I usually do is copy the file into the `data` folder that I'm mounting as a Docker volume, and then just run:
 ```shell
-sudo docker exec golink /golink --sqlitedb /home/nonroot/golink.db --snapshot /home/nonroot/links.json
+sudo docker exec golink /golink --sqlitedb /home/nonroot/golink.db --snapshot /home/nonroot/links.json # [tl! .cmd]
 ```
 
 ### Conclusion

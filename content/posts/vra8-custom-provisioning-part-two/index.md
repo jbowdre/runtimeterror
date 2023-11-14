@@ -38,6 +38,7 @@ I'll start by adding those fields as inputs on my cloud template.
 I already have a `site` input at the top of the template, used for selecting the deployment location. I'll leave that there:
 
 ```yaml
+# torchlight! {"lineNumbers": true}
 inputs:
   site:
     type: string
@@ -50,6 +51,7 @@ inputs:
 I'll add the rest of the naming components below the prompts for image selection and size, starting with a dropdown of environments to pick from:
 
 ```yaml
+# torchlight! {"lineNumbers": true}
   environment:
     type: string
     title: Environment
@@ -63,6 +65,7 @@ I'll add the rest of the naming components below the prompts for image selection
 And a dropdown for those function options:
 
 ```yaml
+# torchlight! {"lineNumbers": true}
   function:
     type: string
     title: Function Code
@@ -83,6 +86,7 @@ And a dropdown for those function options:
 And finally a text entry field for the application descriptor. Note that this one includes the `minLength` and `maxLength` constraints to enforce the three-character format.
 
 ```yaml
+# torchlight! {"lineNumbers": true}
   app:
     type: string
     title: Application Code
@@ -96,6 +100,7 @@ And finally a text entry field for the application descriptor. Note that this on
 I then need to map these inputs to the resource entity at the bottom of the template so that they can be passed to vRO as custom properties. All of these are direct mappings except for `environment` since I only want the first letter. I use the `substring()` function to achieve that, but wrap it in a conditional so that it won't implode if the environment hasn't been picked yet. I'm also going to add in a `dnsDomain` property that will be useful later when I need to query for DNS conflicts.
 
 ```yaml
+# torchlight! {"lineNumbers": true}
 resources:
   Cloud_vSphere_Machine_1:
     type: Cloud.vSphere.Machine
@@ -112,6 +117,7 @@ resources:
 So here's the complete template:
 
 ```yaml
+# torchlight! {"lineNumbers": true}
 formatVersion: 1
 inputs:
   site:
@@ -228,7 +234,8 @@ The first thing I'll want this workflow to do (particularly for testing) is to t
 
 This action has a single input, a `Properties` object named `payload`. (By the way, vRO is pretty particular about variable typing  so going forward I'll reference variables as `variableName (type)`.) Here's the JavaScript that will basically loop through each element and write the contents to the vRO debug log:
 
-```js
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: logPayloadProperties
 //    Inputs: payload (Properties)
 //    Outputs: none
@@ -291,7 +298,8 @@ Anyway, I drop a Scriptable Task item onto the workflow canvas to handle parsing
 
 The script for this is pretty straight-forward:
 
-```js
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: parse payload
 //    Inputs: inputProperties (Properties)
 //    Outputs: requestProperties (Properties), originalNames (Array/string)
@@ -333,7 +341,8 @@ Select **Output** at the top of the *New Variable* dialog and the complete the f
 
 And here's the script for that task:
 
-```js
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: Apply new names
 //    Inputs: inputProperties (Properties), newNames (Array/string)
 //    Outputs: resourceNames (Array/string)
@@ -363,7 +372,8 @@ Okay, on to the schema. This workflow may take a little while to execute, and it
 
 The script is very short:
 
-```js
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: create lock
 //    Inputs: lockOwner (String), lockId (String)
 //    Outputs: none
@@ -377,7 +387,8 @@ We're getting to the meat of the operation now - another scriptable task named `
 ![Task: generate hostnameBase](XATryy20y.png)
 
 
-```js
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: generate hostnameBase
 //    Inputs: nameFormat (String), requestProperties (Properties), baseFormat (String)
 //    Outputs: hostnameBase (String), digitCount (Number), hostnameSeq (Number)
@@ -415,7 +426,8 @@ I've only got the one vCenter in my lab. At work, I've got multiple vCenters so 
 Anyway, back to my "Generate unique hostname" workflow, where I'll add another scriptable task to prepare the vCenter SDK connection. This one doesn't require any inputs, but will output an array of `VC:SdkConnection` objects:
 ![Task: prepare vCenter SDK connection](ByIWO66PC.png)
 
-```js
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: prepare vCenter SDK connection
 //    Inputs: none
 //    Outputs: sdkConnections (Array/VC:SdkConnection)
@@ -432,7 +444,8 @@ Next, I'm going to drop another ForEach element onto the canvas. For each vCente
 That `vmsByHost (Array/array)` object contains any and all VMs which match `hostnameBase (String)`, but they're broken down by the host they're running on. So I use a scriptable task to convert that array-of-arrays into a new array-of-strings containing just the VM names.
 ![Task: unpack results for all hosts](gIEFRnilq.png)
 
-```js
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: unpack results for all hosts
 //    Inputs: vmsByHost (Array/Array)
 //    Outputs: vmNames (Array/string)
@@ -453,7 +466,8 @@ vmNames = vms.map(function(i) {return (i.displayName).toUpperCase()})
 This scriptable task will check the `computerNames` configuration element we created earlier to see if we've already named a VM starting with `hostnameBase (String)`. If such a name exists, we'll increment the number at the end by one, and return that as a new `hostnameSeq (Number)` variable; if it's the first of its kind, `hostnameSeq (Number)` will be set to `1`. And then we'll combine `hostnameBase (String)` and `hostnameSeq (Number)` to create the new `candidateVmName (String)`. If things don't work out, this script will throw `errMsg (String)` so I need to add that as an output exception binding as well.
 ![Task: generate hostnameSeq & candidateVmName](fWlSrD56N.png)
 
-```js
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: generate hostnameSeq & candidateVmName
 //    Inputs: hostnameBase (String), digitCount (Number)
 //    Outputs: hostnameSeq (Number), computerNames (ConfigurationElement), candidateVmName (String)
@@ -500,7 +514,8 @@ System.log("Proposed VM name: " + candidateVmName)
 Now that I know what I'd like to try to name this new VM, it's time to start checking for any potential conflicts. So this task will compare my `candidateVmName (String)` against the existing `vmNames (Array/string)` to see if there are any collisions. If there's a match, it will set a new variable called `conflict (Boolean)` to `true` and also report the issue through the `errMsg (String)` output exception binding. Otherwise it will move on to the next check.
 ![Task: check for VM name conflicts](qmHszypww.png)
 
-```js
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: check for VM name conflicts
 //    Inputs: candidateVmName (String), vmNames (Array/string)
 //    Outputs: conflict (Boolean)
@@ -527,7 +542,8 @@ I can then drag the new element away from the "everything is fine" flow, and con
 
 All this task really does is clear the `conflict (Boolean)` flag so that's the only output.
 
-```js
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: conflict resolution
 //    Inputs: none
 //    Outputs: conflict (Boolean)
@@ -542,7 +558,8 @@ So if `check VM name conflict` encounters a collision with an existing VM name i
 Assuming that everything has gone according to plan and the workflow has avoided any naming conflicts, it will need to return `nextVmName (String)` back to the `VM Provisioning` workflow. That's as simple as setting it to the last value of `candidateVmName (String)`:
 ![Task: return nextVmName](5QFTPHp5H.png)
 
-```js
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript: return nextVmName
 //    Inputs: candidateVmName (String)
 //    Outputs: nextVmName (String)
@@ -555,7 +572,8 @@ System.log(" ***** Selecting [" + nextVmName + "] as the next VM name ***** ")
 And we should also remove that lock that we created at the start of this workflow.
 ![Task: remove lock](BhBnBh8VB.png)
 
-```js
+```javascript
+// torchlight! {"lineNumbers": true}
 // JavaScript remove lock
 //    Inputs: lockId (String), lockOwner (String)
 //    Outputs: none

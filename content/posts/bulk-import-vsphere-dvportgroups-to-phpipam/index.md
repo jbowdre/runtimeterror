@@ -27,18 +27,18 @@ comment: true # Disable comment if false.
 I [recently wrote](/tanzu-community-edition-k8s-homelab/#a-real-workload---phpipam) about getting started with VMware's [Tanzu Community Edition](https://tanzucommunityedition.io/) and deploying [phpIPAM](https://phpipam.net/) as my first real-world Kubernetes workload. Well I've spent much of my time since then working on a script which would help to populate my phpIPAM instance with a list of networks to monitor.
 
 ### Planning and Exporting
-The first step in making this work was to figure out which networks I wanted to import. We've got hundreds of different networks in use across our production vSphere environments. I focused only on those which are portgroups on distributed virtual switches since those configurations are pretty standardized (being vCenter constructs instead of configured on individual hosts). These dvPortGroups bear a naming standard which conveys all sorts of useful information, and it's easy and safe to rename any dvPortGroups which _don't_ fit the standard (unlike renaming portgroups on a standard virtual switch). 
+The first step in making this work was to figure out which networks I wanted to import. We've got hundreds of different networks in use across our production vSphere environments. I focused only on those which are portgroups on distributed virtual switches since those configurations are pretty standardized (being vCenter constructs instead of configured on individual hosts). These dvPortGroups bear a naming standard which conveys all sorts of useful information, and it's easy and safe to rename any dvPortGroups which _don't_ fit the standard (unlike renaming portgroups on a standard virtual switch).
 
 The standard naming convention is `[Site/Description] [Network Address]{/[Mask]}`. So the networks (across two virtual datacenters and two dvSwitches) look something like this:
 ![Production dvPortGroups approximated in my testing lab environment](dvportgroups.png)
 
-Some networks have masks in the name, some don't; and some use an underscore (`_`) rather than a slash (`/`) to separate the network from the mask . Most networks correctly include the network address with a `0` in the last octet, but some use an `x` instead. And the VLANs associated with the networks have a varying number of digits. Consistency can be difficult so these are all things that I had to keep in mind as I worked on a solution which would make a true best effort at importing all of these. 
+Some networks have masks in the name, some don't; and some use an underscore (`_`) rather than a slash (`/`) to separate the network from the mask . Most networks correctly include the network address with a `0` in the last octet, but some use an `x` instead. And the VLANs associated with the networks have a varying number of digits. Consistency can be difficult so these are all things that I had to keep in mind as I worked on a solution which would make a true best effort at importing all of these.
 
 As long as the dvPortGroup names stick to this format I can parse the name to come up with a description as well as the IP space of the network. The dvPortGroup also carries information about the associated VLAN, which is useful information to have. And I can easily export this information with a simple PowerCLI query:
 
 ```powershell
-PS /home/john> get-vdportgroup | select Name, VlanConfiguration
-
+get-vdportgroup | select Name, VlanConfiguration # [tl! .cmd_pwsh]
+# [tl! .nocopy:start]
 Name                           VlanConfiguration
 ----                           -----------------
 MGT-Home 192.168.1.0
@@ -50,15 +50,15 @@ DRE-Servers 172.16.50.0        VLAN 1650
 DRE-Servers 172.16.60.x        VLAN 1660
 VPOT8-Mgmt 172.20.10.0/27      VLAN 20
 VPOT8-Servers 172.20.10.32/27  VLAN 30
-VPOT8-Servers 172.20.10.64_26  VLAN 40
+VPOT8-Servers 172.20.10.64_26  VLAN 40 # [tl! .nocopy:end]
 ```
 
-In my [homelab](/vmware-home-lab-on-intel-nuc-9/), I only have a single vCenter. In production, we've got a handful of vCenters, and each manages the hosts in a given region. So I can use information about which vCenter hosts a dvPortGroup to figure out which region a network is in. When I import this data into phpIPAM, I can use the vCenter name to assign [remote scan agents](https://github.com/jbowdre/phpipam-agent-docker) to networks based on the region that they're in. I can also grab information about which virtual datacenter a dvPortGroup lives in, which I'll use for grouping networks into sites or sections. 
+In my [homelab](/vmware-home-lab-on-intel-nuc-9/), I only have a single vCenter. In production, we've got a handful of vCenters, and each manages the hosts in a given region. So I can use information about which vCenter hosts a dvPortGroup to figure out which region a network is in. When I import this data into phpIPAM, I can use the vCenter name to assign [remote scan agents](https://github.com/jbowdre/phpipam-agent-docker) to networks based on the region that they're in. I can also grab information about which virtual datacenter a dvPortGroup lives in, which I'll use for grouping networks into sites or sections.
 
 The vCenter can be found in the `Uid` property returned by `get-vdportgroup`:
 ```powershell
-PS /home/john> get-vdportgroup | select Name, VlanConfiguration, Datacenter, Uid
-
+get-vdportgroup | select Name, VlanConfiguration, Datacenter, Uid # [tl! .cmd_pwsh]
+# [tl! .nocopy:start]
 Name                     VlanConfiguration   Datacenter Uid
 ----                     -----------------   ---------- ---
 MGT-Home 192.168.1.0                         Lab        /VIServer=lab\john@vcsa.lab.bowdre.net:443/DistributedPortgroup=DistributedVirtualPortgroup-dvportgroup-27015/
@@ -70,13 +70,14 @@ DRE-Servers 172.16.50.0  VLAN 1650           Lab        /VIServer=lab\john@vcsa.
 DRE-Servers 172.16.60.x  VLAN 1660           Lab        /VIServer=lab\john@vcsa.lab.bowdre.net:443/DistributedPortgroup=DistributedVirtualPortgroup-dvportgroup-28014/
 VPOT8-Mgmt 172.20.10.0/… VLAN 20             Other Lab  /VIServer=lab\john@vcsa.lab.bowdre.net:443/DistributedPortgroup=DistributedVirtualPortgroup-dvportgroup-35018/
 VPOT8-Servers 172.20.10… VLAN 30             Other Lab  /VIServer=lab\john@vcsa.lab.bowdre.net:443/DistributedPortgroup=DistributedVirtualPortgroup-dvportgroup-35019/
-VPOT8-Servers 172.20.10… VLAN 40             Other Lab  /VIServer=lab\john@vcsa.lab.bowdre.net:443/DistributedPortgroup=DistributedVirtualPortgroup-dvportgroup-35020/
+VPOT8-Servers 172.20.10… VLAN 40             Other Lab  /VIServer=lab\john@vcsa.lab.bowdre.net:443/DistributedPortgroup=DistributedVirtualPortgroup-dvportgroup-35020/ # [tl! .nocopy:end]
 ```
 
 It's not pretty, but it'll do the trick. All that's left is to export this data into a handy-dandy CSV-formatted file that I can easily parse for import:
 
 ```powershell
-get-vdportgroup | select Name, VlanConfiguration, Datacenter, Uid | export-csv -NoTypeInformation ./networks.csv
+get-vdportgroup | select Name, VlanConfiguration, Datacenter, Uid ` # [tl! .cmd_pwsh]
+  | export-csv -NoTypeInformation ./networks.csv
 ```
 ![My networks.csv export, including the networks which don't match the naming criteria and will be skipped by the import process.](networks.csv.png)
 
@@ -97,6 +98,7 @@ I'm also going to head in to **Administration > IP Related Management > Sections
 Well that's enough prep work; now it's time for the Python3 [script](https://github.com/jbowdre/misc-scripts/blob/main/Python/phpipam-bulk-import.py):
 
 ```python
+# torchlight! {"lineNumbers": true}
 # The latest version of this script can be found on Github:
 # https://github.com/jbowdre/misc-scripts/blob/main/Python/phpipam-bulk-import.py
 
@@ -361,7 +363,7 @@ def main():
     # make sure filepath is a path to an actual file
     print("""\n\n
     This script helps to add vSphere networks to phpIPAM for IP address management. It is expected
-    that the vSphere networks are configured as portgroups on distributed virtual switches and 
+    that the vSphere networks are configured as portgroups on distributed virtual switches and
     named like '[Description] [Subnet IP]{/[mask]}' (ex: 'LAB-Servers 192.168.1.0'). The following PowerCLI
     command can be used to export the networks from vSphere:
 
@@ -377,7 +379,7 @@ def main():
       else:
         print(f'[ERROR] Unable to find file at {filepath.name}.')
         continue
-  
+
   # get collection of networks to import
   networks = import_networks(filepath)
   networkNames = get_sorted_list_of_unique_values('name', networks)
@@ -415,7 +417,7 @@ def main():
     else:
       del test
       break
-  
+
   username = validate_input_is_not_empty('Username', f'Username with read/write access to {hostname}')
   password = getpass.getpass(f'Password for {username}:\n')
   apiAppId = validate_input_is_not_empty('App ID', f'App ID for API key (from https://{hostname}/administration/api/)')
@@ -452,7 +454,7 @@ def main():
   vlan_sets = get_vlan_sets(uri, token, vlans)
   if remote_agent:
     agent_sets = get_agent_sets(uri, token, regions)
-  
+
   # create the networks
   for network in networks:
     network['region'] = regions[network['vcenter']]['name']
@@ -462,7 +464,7 @@ def main():
     if network['vlan'] == 0:
       network['vlanId'] = None
     else:
-      network['vlanId'] = get_id_from_sets(network['vlan'], vlan_sets) 
+      network['vlanId'] = get_id_from_sets(network['vlan'], vlan_sets)
     if remote_agent:
       network['agentId'] = get_id_from_sets(network['region'], agent_sets)
     else:
@@ -478,8 +480,8 @@ if __name__ == "__main__":
 ```
 
 I'll run it and provide the path to the network export CSV file:
-```bash
-python3 phpipam-bulk-import.py ~/networks.csv
+```shell
+python3 phpipam-bulk-import.py ~/networks.csv # [tl! .cmd]
 ```
 
 The script will print out a little descriptive bit about what sort of networks it's going to try to import and then will straight away start processing the file to identify the networks, vCenters, VLANs, and datacenters which will be imported:
@@ -489,16 +491,19 @@ Importing networks from /home/john/networks.csv...
 Processed 17 lines and found:
 
 - 10 networks:
-        ['BOW-Servers 172.16.20.0', 'BOW-Servers 172.16.30.0', 'BOW-Servers 172.16.40.0', 'DRE-Servers 172.16.50.0', 'DRE-Servers 172.16.60.x', 'MGT-Home 192.168.1.0', 'MGT-Servers 172.16.10.0', 'VPOT8-Mgmt 172.20.10.0/27', 'VPOT8-Servers 172.20.10.32/27', 'VPOT8-Servers 172.20.10.64_26']
+    ['BOW-Servers 172.16.20.0', 'BOW-Servers 172.16.30.0', 'BOW-Servers 172.16.40.0',
+    'DRE-Servers 172.16.50.0', 'DRE-Servers 172.16.60.x', 'MGT-Home 192.168.1.0',
+    'MGT-Servers 172.16.10.0', 'VPOT8-Mgmt 172.20.10.0/27', 'VPOT8-Servers 172.20.10.32/27',
+    'VPOT8-Servers 172.20.10.64_26']
 
 - 1 vCenter servers:
-        ['vcsa']
+    ['vcsa']
 
 - 10 VLANs:
-        [0, 20, 30, 40, 1610, 1620, 1630, 1640, 1650, 1660]
+    [0, 20, 30, 40, 1610, 1620, 1630, 1640, 1650, 1660]
 
 - 2 Datacenters:
-        ['Lab', 'Other Lab']
+    ['Lab', 'Other Lab']
 ```
 
 It then starts prompting for the additional details which will be needed:
@@ -571,7 +576,7 @@ So now phpIPAM knows about the vSphere networks I care about, and it can keep tr
 ... but I haven't actually *deployed* an agent yet. I'll do that by following the same basic steps [described here](/tanzu-community-edition-k8s-homelab/#phpipam-agent) to spin up my `phpipam-agent` on Kubernetes, and I'll plug in that automagically-generated code for the `IPAM_AGENT_KEY` environment variable:
 
 ```yaml
----
+# torchlight! {"lineNumbers": true}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

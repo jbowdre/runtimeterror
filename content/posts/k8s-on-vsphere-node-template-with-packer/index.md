@@ -55,7 +55,7 @@ Sounds pretty cool, right? I'm not going to go too deep into "how to Packer" in 
 ### Install Packer
 Before being able to *use* Packer, you have to install it. On Debian/Ubuntu Linux, this process consists of adding the HashiCorp GPG key and software repository, and then simply installing the package:
 ```shell
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - # [tl! .cmd:2]
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 sudo apt-get update && sudo apt-get install packer
 ```
@@ -113,7 +113,8 @@ Let's quickly run through that build process, and then I'll back up and examine 
 ### `ubuntu-k8s.pkr.hcl`
 #### `packer` block
 The first block in the file tells Packer about the minimum version requirements for Packer as well as the external plugins used for the build:
-```
+```hcl
+// torchlight! {"lineNumbers": true}
 //  BLOCK: packer
 //  The Packer configuration.
 packer {
@@ -134,7 +135,8 @@ As I mentioned above, I'll be using the official [`vsphere` plugin](https://gith
 
 #### `data` block
 This section would be used for loading information from various data sources, but I'm only using it for the `sshkey` plugin (as mentioned above).
-```text
+```hcl
+// torchlight! {"lineNumbers": true}
 // BLOCK: data
 // Defines data sources.
 data "sshkey" "install" {
@@ -147,7 +149,8 @@ This will generate an ECDSA keypair, and the public key will include the identif
 
 #### `locals` block
 Locals are a type of Packer variable which aren't explicitly declared in the `variables.pkr.hcl` file. They only exist within the context of a single build (hence the "local" name). Typical Packer variables are static and don't support string manipulation; locals, however, do support expressions that can be used to change their value on the fly. This makes them very useful when you need to combine variables into a single string or concatenate lists of SSH public keys (such as in the highlighted lines):
-```text {hl_lines=[10,17]}
+```hcl
+// torchlight! {"lineNumbers": true}
 //  BLOCK: locals
 //  Defines local variables.
 locals {
@@ -182,7 +185,8 @@ The `source` block tells the `vsphere-iso` builder how to connect to vSphere, wh
 
 You'll notice that most of this is just mapping user-defined variables (with the `var.` prefix) to properties used by `vsphere-iso`:
 
-```text
+```hcl
+// torchlight! {"lineNumbers": true}
 //  BLOCK: source
 //  Defines the builder configuration blocks.
 source "vsphere-iso" "ubuntu-k8s" {
@@ -284,7 +288,8 @@ source "vsphere-iso" "ubuntu-k8s" {
 #### `build` block
 This block brings everything together and executes the build. It calls the `source.vsphere-iso.ubuntu-k8s` block defined above, and also ties in a `file` and a few `shell` provisioners. `file` provisioners are used to copy files (like SSL CA certificates) into the VM, while the `shell` provisioners run commands and execute scripts. Those will be handy for the post-deployment configuration tasks, like updating and installing packages.
 
-```text
+```hcl
+// torchlight! {"lineNumbers": true}
 //  BLOCK: build
 //  Defines the builders to run, provisioners, and post-processors.
 build {
@@ -323,7 +328,8 @@ Before looking at the build-specific variable definitions, let's take a quick lo
 
 Most of these carry descriptions with them so I won't restate them outside of the code block here:
 
-```text
+```hcl
+// torchlight! {"lineNumbers": true}
 /*
     DESCRIPTION:
     Ubuntu Server 20.04 LTS variables using the Packer Builder for VMware vSphere (vsphere-iso).
@@ -724,7 +730,8 @@ The full `variables.pkr.hcl` can be viewed [here](https://github.com/jbowdre/vsp
 Packer automatically knows to load variables defined in files ending in `*.auto.pkrvars.hcl`. Storing the variable values separately from the declarations in `variables.pkr.hcl` makes it easier to protect sensitive values.
 
 So I'll start by telling Packer what credentials to use for connecting to vSphere, and what vSphere resources to deploy to:
-```text
+```hcl
+// torchlight! {"lineNumbers": true}
 /*
     DESCRIPTION:
     Ubuntu Server 20.04 LTS Kubernetes node variables used by the Packer Plugin for VMware vSphere (vsphere-iso).
@@ -745,7 +752,8 @@ vsphere_folder     = "_Templates"
 ```
 
 I'll then describe the properties of the VM itself:
-```text
+```hcl
+// torchlight! {"lineNumbers": true}
 // Guest Operating System Settings
 vm_guest_os_language = "en_US"
 vm_guest_os_keyboard = "us"
@@ -771,7 +779,8 @@ common_remove_cdrom         = true
 ```
 
 Then I'll configure Packer to convert the VM to a template once the build is finished:
-```text
+```hcl
+// torchlight! {"lineNumbers": true}
 // Template and Content Library Settings
 common_template_conversion         = true
 common_content_library_name        = null
@@ -786,7 +795,8 @@ common_ovf_export_path      = ""
 ```
 
 Next, I'll tell it where to find the Ubuntu 20.04 ISO I downloaded and placed on a datastore, along with the SHA256 checksum to confirm its integrity:
-```text
+```hcl
+// torchlight! {"lineNumbers": true}
 // Removable Media Settings
 common_iso_datastore    = "nuchost-local"
 iso_url                 = null
@@ -797,7 +807,8 @@ iso_checksum_value      = "5035be37a7e9abbdc09f0d257f3e33416c1a0fb322ba860d42d74
 ```
 
 And then I'll specify the VM's boot device order, as well as the boot command that will be used for loading the `cloud-init` coniguration into the Ubuntu installer:
-```text
+```hcl
+// torchlight! {"lineNumbers": true}
 // Boot Settings
 vm_boot_order       = "disk,cdrom"
 vm_boot_wait        = "4s"
@@ -814,7 +825,8 @@ vm_boot_command = [
 
 Once the installer is booted and running, Packer will wait until the VM is available via SSH and then use these credentials to log in. (How will it be able to log in with those creds? We'll take a look at the `cloud-init` configuration in just a minute...)
 
-```text
+```hcl
+// torchlight! {"lineNumbers": true}
 // Communicator Settings
 communicator_port       = 22
 communicator_timeout    = "20m"
@@ -832,7 +844,8 @@ ssh_keys                = [
 Finally, I'll create two lists of scripts that will be run on the VM once the OS install is complete. The `post_install_scripts` will be run immediately after the operating system installation. The `update-packages.sh` script will cause a reboot, and then the set of `pre_final_scripts` will do some cleanup and prepare the VM to be converted to a template.
 
 The last bit of this file also designates the desired version of Kubernetes to be installed.
-```text
+```hcl
+// torchlight! {"lineNumbers": true}
 // Provisioner Settings
 post_install_scripts = [
   "scripts/wait-for-cloud-init.sh",
@@ -865,6 +878,7 @@ Okay, so we've covered the Packer framework that creates the VM; now let's take 
 See the bits that look `${ like_this }`? Those place-holders will take input from the [`locals` block of `ubuntu-k8s.pkr.hcl`](#locals-block) mentioned above. So that's how all the OS properties will get set, including the hostname, locale, LVM partition layout, username, password, and SSH keys.
 
 ```yaml
+# torchlight! {"lineNumbers": true}
 #cloud-config
 autoinstall:
   version: 1
@@ -899,7 +913,7 @@ autoinstall:
 %{ endfor ~}
 %{ endif ~}
   storage:
-    config:
+    config: # [tl! collapse:start]
       - ptable: gpt
         path: /dev/sda
         wipe: superblock
@@ -1037,7 +1051,7 @@ autoinstall:
       - path: /var/log/audit
         device: format-audit
         type: mount
-        id: mount-audit
+        id: mount-audit # [tl! collapse:end]
   user-data:
     package_upgrade: true
     disable_root: true
@@ -1069,6 +1083,7 @@ You can find all of the scripts [here](https://github.com/jbowdre/vsphere-k8s/tr
 #### `wait-for-cloud-init.sh`
 This simply holds up the process until the `/var/lib/cloud//instance/boot-finished` file has been created, signifying the completion of the `cloud-init` process:
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash -eu
 echo '>> Waiting for cloud-init...'
 while [ ! -f /var/lib/cloud/instance/boot-finished ]; do
@@ -1079,6 +1094,7 @@ done
 #### `cleanup-subiquity.sh`
 Next I clean up any network configs that may have been created during the install process:
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash -eu
 if [ -f /etc/cloud/cloud.cfg.d/99-installer.cfg ]; then
   sudo rm /etc/cloud/cloud.cfg.d/99-installer.cfg
@@ -1094,6 +1110,7 @@ fi
 #### `install-ca-certs.sh`
 The [`file` provisioner](#build-block) mentioned above helpfully copied my custom CA certs to the `/tmp/certs/` folder on the VM; this script will install them into the certificate store:
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash -eu
 echo '>> Installing custom certificates...'
 sudo cp /tmp/certs/* /usr/local/share/ca-certificates/
@@ -1107,6 +1124,7 @@ sudo /usr/sbin/update-ca-certificates
 #### `disable-multipathd.sh`
 This disables `multipathd`:
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash -eu
 sudo systemctl disable multipathd
 echo 'Disabling multipathd'
@@ -1115,6 +1133,7 @@ echo 'Disabling multipathd'
 #### `disable-release-upgrade-motd.sh`
 And this one disable the release upgrade notices that would otherwise be displayed upon each login:
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash -eu
 echo '>> Disabling release update MOTD...'
 sudo chmod -x /etc/update-motd.d/91-release-upgrade
@@ -1123,6 +1142,7 @@ sudo chmod -x /etc/update-motd.d/91-release-upgrade
 #### `persist-cloud-init-net.sh`
 I want to make sure that this VM keeps the same IP address following the reboot that will come in a few minutes, so I 'll set a quick `cloud-init` option to help make sure that happens:
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/sh -eu
 echo '>> Preserving network settings...'
 echo 'manual_cache_clean: True' | sudo tee -a /etc/cloud/cloud.cfg
@@ -1132,6 +1152,7 @@ echo 'manual_cache_clean: True' | sudo tee -a /etc/cloud/cloud.cfg
 Then I just set a few options for the `sshd` configuration, like disabling root login:
 
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash -eu
 echo '>> Configuring SSH'
 sudo sed -i 's/.*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
@@ -1144,6 +1165,7 @@ This script is a little longer and takes care of all the Kubernetes-specific set
 
 First I enable the required `overlay` and `br_netfilter` modules:
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash -eu
 echo ">> Installing Kubernetes components..."
 
@@ -1160,6 +1182,7 @@ sudo modprobe br_netfilter
 
 Then I'll make some networking tweaks to enable forwarding and bridging:
 ```shell
+# torchlight! {"lineNumbers": true}
 # Configure networking
 echo ".. configure networking"
 cat << EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
@@ -1173,6 +1196,7 @@ sudo sysctl --system
 
 Next, set up `containerd` as the container runtime:
 ```shell
+# torchlight! {"lineNumbers": true}
 # Setup containerd
 echo ".. setup containerd"
 sudo apt-get update && sudo apt-get install -y containerd apt-transport-https jq
@@ -1183,6 +1207,7 @@ sudo systemctl restart containerd
 
 Then disable swap:
 ```shell
+# torchlight! {"lineNumbers": true}
 # Disable swap
 echo ".. disable swap"
 sudo sed -i '/[[:space:]]swap[[:space:]]/ s/^\(.*\)$/#\1/g' /etc/fstab
@@ -1191,6 +1216,7 @@ sudo swapoff -a
 
 Next I'll install the Kubernetes components and (crucially) `apt-mark hold` them so they won't be automatically upgraded without it being a coordinated change:
 ```shell
+# torchlight! {"lineNumbers": true}
 # Install Kubernetes
 echo ".. install kubernetes version ${KUBEVERSION}"
 sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -1202,6 +1228,7 @@ sudo apt-mark hold kubelet kubeadm kubectl
 #### `update-packages.sh`
 Lastly, I'll be sure to update all installed packages (excepting the Kubernetes ones, of course), and then perform a reboot to make sure that any new kernel modules get loaded:
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash -eu
 echo '>> Checking for and installing updates...'
 sudo apt-get update && sudo apt-get -y upgrade
@@ -1215,6 +1242,7 @@ After the reboot, all that's left are some cleanup tasks to get the VM ready to 
 #### `cleanup-cloud-init.sh`
 I'll start with cleaning up the `cloud-init` state:
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash -eu
 echo '>> Cleaning up cloud-init state...'
 sudo cloud-init clean -l
@@ -1223,6 +1251,7 @@ sudo cloud-init clean -l
 #### `enable-vmware-customization.sh`
 And then be (re)enable the ability for VMware to be able to customize the guest successfully:
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash -eu
 echo '>> Enabling legacy VMware Guest Customization...'
 echo 'disable_vmware_customization: true' | sudo tee -a /etc/cloud/cloud.cfg
@@ -1232,6 +1261,7 @@ sudo vmware-toolbox-cmd config set deployPkg enable-custom-scripts true
 #### `zero-disk.sh`
 I'll also execute this handy script to free up unused space on the virtual disk. It works by creating a file which completely fills up the disk, and then deleting that file:
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash -eu
 echo '>> Zeroing free space to reduce disk size'
 sudo sh -c 'dd if=/dev/zero of=/EMPTY bs=1M || true; sync; sleep 1; sync'
@@ -1241,6 +1271,7 @@ sudo sh -c 'rm -f /EMPTY; sync; sleep 1; sync'
 #### `generalize.sh`
 Lastly, let's do a final run of cleaning up logs, temporary files, and unique identifiers that don't need to exist in a template. This script will also remove the SSH key with the `packer_key` identifier since that won't be needed anymore.
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash -eu
 # Prepare a VM to become a template.
 
@@ -1294,7 +1325,7 @@ sudo rm -f /root/.bash_history
 Now that all the ducks are nicely lined up, let's give them some marching orders and see what happens. All I have to do is open a terminal session to the folder containing the `.pkr.hcl` files, and then run the Packer build command:
 
 ```shell
-packer packer build -on-error=abort -force .
+packer packer build -on-error=abort -force . # [tl! .cmd]
 ```
 
 {{% notice note "Flags" %}}

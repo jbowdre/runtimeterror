@@ -32,7 +32,10 @@ I shared a [few months back](/federated-matrix-server-synapse-on-oracle-clouds-f
 I recently came across the [Snikket project](https://snikket.org/), which [aims](https://snikket.org/about/goals/) to make decentralized end-to-end encrypted personal messaging simple and accessible for *everyone*, with an emphasis on providing a consistent experience across the network. Snikket does this by maintaining a matched set of server and client[^2] software with feature and design parity, making it incredibly easy to deploy and manage the server, and simplifying user registration with invite links. In contrast to Matrix, Snikket does not operate an open server on which users can self-register but instead requires users to be invited to a hosted instance. The idea is that a server would be used by small groups of family and friends where every user knows (and trusts!) the server operator while also ensuring the complete decentralization of the network[^3].
 
 How simple is the server install?
-{{< tweet user="johndotbowdre" id="1461356940466933768" >}}
+>  I spun up a quick @snikket_im XMPP server last night to check out the project - and I do mean QUICK. It took me longer to register a new domain than to deploy the server on GCP and create my first account through the client.
+>
+> — John (@johndotbowdre) November 18, 2021
+
 Seriously, their [4-step quick-start guide](https://snikket.org/service/quickstart/) is so good that I didn't feel the need to do a blog post about my experience. I've now been casually using Snikket for a bit over month and remain very impressed both by the software and the project itself, and have even deployed a new Snikket instance for my family to use. My parents were actually able to join the chat without any issues, which is a testament to how easy it is from a user perspective too.
 
 A few days ago I migrated my original Snikket instance from Google Cloud (GCP) to the same Oracle Cloud Infrastructure (OCI) virtual server that's hosting my Matrix homeserver so I thought I might share some notes first on the installation process. At the end, I'll share the tweaks which were needed to get Snikket to run happily alongside Matrix.
@@ -55,8 +58,8 @@ You can refer to my notes from last time for details on how I [created the Ubunt
 | `60000-60100`[^4] | UDP | Audio/Video data proxy (TURN data) |
 
 As a gentle reminder, Oracle's `iptables` configuration inserts a `REJECT all` rule at the bottom of each chain. I needed to make sure that each of my `ALLOW` rules get inserted above that point. So I used `iptables -L INPUT --line-numbers` to identify which line held the `REJECT` rule, and then used `iptables -I INPUT [LINE_NUMBER] -m state --state NEW -p [PROTOCOL] --dport [PORT] -j ACCEPT` to insert the new rules above that point.
-```bash
-sudo iptables -I INPUT 9 -m state --state NEW -p tcp --dport 80 -j ACCEPT
+```shell
+sudo iptables -I INPUT 9 -m state --state NEW -p tcp --dport 80 -j ACCEPT # [tl! .cmd:start]
 sudo iptables -I INPUT 9 -m state --state NEW -p tcp --dport 443 -j ACCEPT
 sudo iptables -I INPUT 9 -m state --state NEW -p tcp --dports 3478-3479 -j ACCEPT
 sudo iptables -I INPUT 9 -m state --state NEW -p tcp -m multiport --dports 3478-3479 -j ACCEPT
@@ -66,13 +69,13 @@ sudo iptables -I INPUT 9 -m state --state NEW -p tcp --dport 5222 -j ACCEPT
 sudo iptables -I INPUT 9 -m state --state NEW -p tcp --dport 5269 -j ACCEPT
 sudo iptables -I INPUT 9 -m state --state NEW -p udp -m multiport --dports 3478,3479 -j ACCEPT
 sudo iptables -I INPUT 9 -m state --state NEW -p udp -m multiport --dports 5349,5350 -j ACCEPT
-sudo iptables -I INPUT 9 -m state --state NEW -p udp -m multiport --dports 60000:60100 -j ACCEPT
+sudo iptables -I INPUT 9 -m state --state NEW -p udp -m multiport --dports 60000:60100 -j ACCEPT # [tl! .cmd:end]
 ```
 
 Then to verify the rules are in the right order:
-```bash
-$ sudo iptables -L INPUT --line-numbers -n
-Chain INPUT (policy ACCEPT)
+```shell
+sudo iptables -L INPUT --line-numbers -n # [tl! .cmd]
+Chain INPUT (policy ACCEPT) # [tl! .nocopy:start]
 num  target     prot opt source               destination
 1    ts-input   all  --  0.0.0.0/0            0.0.0.0/0
 2    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
@@ -89,13 +92,13 @@ num  target     prot opt source               destination
 13   ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            state NEW tcp dpt:5222
 14   ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            state NEW tcp dpt:5000
 15   ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            state NEW multiport dports 3478,3479
-16   REJECT     all  --  0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-prohibited
+16   REJECT     all  --  0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-prohibited # [tl! .nocopy:end]
 ```
 
 Before moving on, it's important to save them so the rules will persist across reboots!
-```bash
-$ sudo netfilter-persistent save
-run-parts: executing /usr/share/netfilter-persistent/plugins.d/15-ip4tables save
+```shell
+sudo netfilter-persistent save # [tl! .cmd]
+run-parts: executing /usr/share/netfilter-persistent/plugins.d/15-ip4tables save # [tl! .nocopy:1]
 run-parts: executing /usr/share/netfilter-persistent/plugins.d/25-ip6tables save
 ```
 
@@ -112,30 +115,30 @@ share.vpota.to          300   IN      CNAME     chat.vpota.to
 ### Install `docker` and `docker-compose`
 Snikket is distributed as a set of docker containers which makes it super easy to get up and running on basically any Linux system. But, of course, you'll first need to [install `docker`](https://docs.docker.com/engine/install/ubuntu/)
 
-```bash
+```shell
 # Update package index
-sudo apt update
+sudo apt update # [tl! .cmd]
 # Install prereqs
-sudo apt install ca-certificates curl gnupg lsb-release
+sudo apt install ca-certificates curl gnupg lsb-release # [tl! .cmd]
 # Add docker's GPG key
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg # [tl! .cmd]
 # Add the docker repo
-echo \
+echo \ # [tl! .cmd]
   "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 # Refresh the package index with the new repo added
-sudo apt update
+sudo apt update # [tl! .cmd]
 # Install docker
-sudo apt install docker-ce docker-ce-cli containerd.io
+sudo apt install docker-ce docker-ce-cli containerd.io # [tl! .cmd]
 ```
 
 And install `docker-compose` also to simplify the container management:
 
-```bash
+```shell
 # Download the docker-compose binary
-sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose # [tl! .cmd]
 # Make it executable
-sudo chmod +x /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose # [tl! .cmd]
 ```
 
 Now we're ready to...
@@ -143,21 +146,21 @@ Now we're ready to...
 ### Install Snikket
 This starts with just making a place for Snikket to live:
 
-```bash
-sudo mkdir /etc/snikket
+```shell
+sudo mkdir /etc/snikket # [tl! .cmd:1]
 cd /etc/snikket
 ```
 
 And then grabbing the Snikket `docker-compose` file:
 
-```bash
-sudo curl -o docker-compose.yml https://snikket.org/service/resources/docker-compose.beta.yml
+```shell
+sudo curl -o docker-compose.yml https://snikket.org/service/resources/docker-compose.beta.yml # [tl! .cmd]
 ```
 
 And then creating a very minimal configuration file:
 
-```bash
-sudo vi snikket.conf
+```shell
+sudo vi snikket.conf # [tl! .cmd]
 ```
 
 A basic config only needs two parameters:
@@ -173,7 +176,8 @@ In my case, I'm going to add two additional parameters to restrict the UDP TURN 
 
 So here's my config:
 
-```
+```ini
+# torchlight! {"lineNumbers": true}
 SNIKKET_DOMAIN=chat.vpota.to
 SNIKKET_ADMIN_EMAIL=ops@example.com
 
@@ -185,8 +189,8 @@ SNIKKET_TWEAK_TURNSERVER_MAX_PORT=60100
 ### Start it up!
 With everything in place, I can start up the Snikket server:
 
-```bash
-sudo docker-compose up -d
+```shell
+sudo docker-compose up -d # [tl! .cmd]
 ```
 
 This will take a moment or two to pull down all the required container images, start them, and automatically generate the SSL certificates. Very soon, though, I can point my browser to `https://chat.vpota.to` and see a lovely login page - complete with an automagically-valid-and-trusted certificate:
@@ -194,8 +198,8 @@ This will take a moment or two to pull down all the required container images, s
 
 Of course, I don't yet have a way to log in, and like I mentioned earlier Snikket doesn't offer open user registration. Every user (even me, the admin!) has to be invited. Fortunately I can generate my first invite directly from the command line:
 
-```bash
-sudo docker exec snikket create-invite --admin --group default
+```shell
+sudo docker exec snikket create-invite --admin --group default # [tl! .cmd]
 ```
 
 That command will return a customized invite link which I can copy and paste into my browser.
@@ -248,33 +252,34 @@ One of the really cool things about Caddy is that it automatically generates SSL
 
 Fortunately, the [Snikket reverse proxy documentation](https://github.com/snikket-im/snikket-server/blob/master/docs/advanced/reverse_proxy.md#basic) was recently updated with a sample config for making this happen. Matrix and Snikket really only overlap on ports `80` and `443` so those are the only ports I'll need to handle, which lets me go for the "Basic" configuration instead of the "Advanced" one. I can just adapt the sample config from the documentation and add that to my existing `/etc/caddy/Caddyfile` alongside the config for Matrix:
 
-```
-http://chat.vpota.to,
+```text
+# torchlight! {"lineNumbers": true}
+http://chat.vpota.to, # [tl! focus:start]
 http://groups.chat.vpota.to,
 http://share.chat.vpota.to {
-        reverse_proxy localhost:5080
+  reverse_proxy localhost:5080
 }
 
 chat.vpota.to,
 groups.chat.vpota.to,
 share.chat.vpota.to {
-         reverse_proxy https://localhost:5443 {
-                transport http {
-                        tls_insecure_skip_verify
-                }
-        }
-}
+  reverse_proxy https://localhost:5443 {
+    transport http {
+      tls_insecure_skip_verify
+    }
+  }
+} # [tl! focus:end]
 
 matrix.bowdre.net {
-        reverse_proxy /_matrix/* http://localhost:8008
-        reverse_proxy /_synapse/client/* http://localhost:8008
+  reverse_proxy /_matrix/* http://localhost:8008
+  reverse_proxy /_synapse/client/* http://localhost:8008
 }
 
 bowdre.net {
-        route {
-                respond /.well-known/matrix/server `{"m.server": "matrix.bowdre.net:443"}`
-                redir https://virtuallypotato.com
-        }
+  route {
+    respond /.well-known/matrix/server `{"m.server": "matrix.bowdre.net:443"}`
+    redir https://virtuallypotato.com
+  }
 }
 ```
 
@@ -291,32 +296,32 @@ Since Snikket is completely containerized, moving between hosts is a simple matt
 
 The Snikket team has actually put together a couple of scripts to assist with [backing up](https://github.com/snikket-im/snikket-selfhosted/blob/main/scripts/backup.sh) and [restoring](https://github.com/snikket-im/snikket-selfhosted/blob/main/scripts/restore.sh) an instance. I just adapted the last line of each to do what I needed:
 
-```bash
-sudo docker run --rm --volumes-from=snikket \
+```shell
+sudo docker run --rm --volumes-from=snikket \ # [tl! .cmd]
   -v "/home/john/snikket-backup/":/backup debian:buster-slim \
   tar czf /backup/snikket-"$(date +%F-%H%m)".tar.gz /snikket
 ```
 
 That will drop a compressed backup of the `snikket_data` volume into the specified directory, `/home/john/snikket-backup/`. While I'm at it, I'll also go ahead and copy the `docker-compose.yml` and `snikket.conf` files from `/etc/snikket/`:
 
-```bash
-$ sudo cp -a /etc/snikket/* /home/john/snikket-backup/
-$ ls -l /home/john/snikket-backup/
-total 1728
+```shell
+sudo cp -a /etc/snikket/* /home/john/snikket-backup/ # [tl! .cmd]
+ls -l /home/john/snikket-backup/ # [tl! .cmd]
+total 1728 # [tl! .nocopy:3]
 -rw-r--r-- 1 root root     993 Dec 19 17:47 docker-compose.yml
 -rw-r--r-- 1 root root 1761046 Dec 19 17:46 snikket-2021-12-19-1745.tar.gz
 -rw-r--r-- 1 root root     299 Dec 19 17:47 snikket.conf
 ```
 
 And I can then zip that up for easy transfer:
-```bash
-tar cvf /home/john/snikket-backup.tar.gz /home/john/snikket-backup/
+```shell
+tar cvf /home/john/snikket-backup.tar.gz /home/john/snikket-backup/ # [tl! .cmd]
 ```
 
 This would be a great time to go ahead and stop this original Snikket instance. After all, nothing that happens after the backup was exported is going to carry over anyway.
 
-```bash
-sudo docker-compose down
+```shell
+sudo docker-compose down # [tl! .cmd]
 ```
 {{% notice tip "Update DNS" %}}
 This is also a great time to update the `A` record for `chat.vpota.to` so that it points to the new server. It will need a little bit of time for the change to trickle out, and the updated record really needs to be in place before starting Snikket on the new server so that there aren't any certificate problems.
@@ -325,18 +330,18 @@ This is also a great time to update the `A` record for `chat.vpota.to` so that i
 
 Now I just need to transfer the archive from one server to the other. I've got [Tailscale](https://tailscale.com/)[^11] running on my various cloud servers so that they can talk to each other through a secure WireGuard tunnel (remember [WireGuard](/cloud-based-wireguard-vpn-remote-homelab-access/)?) without having to open any firewall ports between them, and that means I can just use `scp` to transfer the file without any fuss. I can even leverage Tailscale's [Magic DNS](https://tailscale.com/kb/1081/magicdns/) feature to avoid worrying with any IPs, just the hostname registered in Tailscale (`chat-oci`):
 
-```bash
-scp /home/john/snikket-backup.tar.gz chat-oci:/home/john/
+```shell
+scp /home/john/snikket-backup.tar.gz chat-oci:/home/john/ # [tl! .cmd]
 ```
 
 Next, I SSH in to the new server and unzip the archive:
 
-```bash
-$ ssh snikket-oci-server
-$ tar xf snikket-backup.tar.gz
-$ cd snikket-backup
-$ ls -l
-total 1728
+```shell
+ssh snikket-oci-server # [tl! .cmd:3]
+tar xf snikket-backup.tar.gz
+cd snikket-backup
+ls -l
+total 1728 # [tl! .nocopy:3]
 -rw-r--r-- 1 root root     993 Dec 19 17:47 docker-compose.yml
 -rw-r--r-- 1 root root 1761046 Dec 19 17:46 snikket-2021-12-19-1745.tar.gz
 -rw-r--r-- 1 root root     299 Dec 19 17:47 snikket.conf
@@ -344,8 +349,8 @@ total 1728
 
 Before I can restore the content of the `snikket-data` volume on the new server, I'll need to first go ahead and set up Snikket again. I've already got `docker` and `docker-compose` installed from when I installed Matrix so I'll skip to creating the Snikket directory and copying in the `docker-compose.yml` and `snikket.conf` files.
 
-```bash
-sudo mkdir /etc/snikket
+```shell
+sudo mkdir /etc/snikket # [tl! .cmd:3]
 sudo cp docker-compose.yml /etc/snikket/
 sudo cp snikket.conf /etc/snikket/
 cd /etc/snikket
@@ -353,7 +358,8 @@ cd /etc/snikket
 
 Before I fire this up on the new host, I need to edit the `snikket.conf` to tell Snikket to use those different ports defined in the reverse proxy configuration using [a couple of `SNIKKET_TWEAK_*` lines](https://github.com/snikket-im/snikket-server/blob/master/docs/advanced/reverse_proxy.md#snikket):
 
-```
+```ini
+# torchlight! {"lineNumbers": true}
 SNIKKET_DOMAIN=chat.vpota.to
 SNIKKET_ADMIN_EMAIL=ops@example.com
 
@@ -364,16 +370,16 @@ SNIKKET_TWEAK_TURNSERVER_MAX_PORT=60100
 ```
 
 Alright, let's start up the Snikket server:
-```bash
-sudo docker-compose up -d
+```shell
+sudo docker-compose up -d # [tl! .cmd]
 ```
 
 After a moment or two, I can point a browser to `https://chat.vpota.to` and see the login screen (with a valid SSL certificate!) but I won't actually be able to log in. As far as Snikket is concerned, this is a brand new setup.
 
 Now I can borrow the last line from the [`restore.sh` script](https://github.com/snikket-im/snikket-selfhosted/blob/main/scripts/restore.sh) to bring in my data:
 
-```bash
-sudo docker run --rm --volumes-from=snikket \
+```shell
+sudo docker run --rm --volumes-from=snikket \ # [tl! .cmd]
   --mount type=bind,source="/home/john/snikket-backup/snikket-2021-12-19-1745.tar.gz",destination=/backup.tar.gz \
   debian:buster-slim \
   bash -c "rm -rf /snikket/*; tar xvf /backup.tar.gz -C /"

@@ -77,6 +77,7 @@ I can then click through the rest of the wizard but (as before) I'll stop on the
 #### Editing the cluster spec
 Remember that awkward `member:1.2.840.113556.1.4.1941:` attribute from earlier? Here's how it looks within the TCE cluster-defining YAML:
 ```yaml
+# torchlight! {"lineNumbers": true}
 LDAP_GROUP_SEARCH_BASE_DN: OU=LAB,DC=lab,DC=bowdre,DC=net
 LDAP_GROUP_SEARCH_FILTER: (objectClass=group)
 LDAP_GROUP_SEARCH_GROUP_ATTRIBUTE: 'member:1.2.840.113556.1.4.1941:'
@@ -86,24 +87,27 @@ LDAP_GROUP_SEARCH_USER_ATTRIBUTE: DN
 
 That `:` at the end of the line will cause problems down the road - specifically when the deployment process creates the `dex` app which handles the actual LDAPS authentication piece. Cumulative hours of [troubleshooting](#troubleshooting-notes) (and learning!) eventually revealed to me that something along the way had choked on that trailing colon and inserted this into the `dex` configuration:
 ```yaml
+# torchlight! {"lineNumbers": true}
 userMatchers:
 - userAttr: DN
   groupAttr:
-    member:1.2.840.113556.1.4.1941: null
+    member:1.2.840.113556.1.4.1941: null # [tl! focus]
 ```
 
 It *should* look like this instead:
 ```yaml
+# torchlight! {"lineNumbers": true}
 userMatchers:
 - userAttr: DN
-  groupAttr: 'member:1.2.840.113556.1.4.1941:'
+  groupAttr: 'member:1.2.840.113556.1.4.1941:' # [tl! focus]
 ```
 
 That error prevents `dex` from starting correctly so the authentication would never work. I eventually figured out that using the `|` character to define the attribute as a [literal scalar](https://yaml.org/spec/1.2.2/#812-literal-style) would help to get around this issue so I changed the cluster YAML to look like this:
 ```yaml
+# torchlight! {"lineNumbers": true}
 LDAP_GROUP_SEARCH_BASE_DN: OU=LAB,DC=lab,DC=bowdre,DC=net
 LDAP_GROUP_SEARCH_FILTER: (objectClass=group)
-LDAP_GROUP_SEARCH_GROUP_ATTRIBUTE: |
+LDAP_GROUP_SEARCH_GROUP_ATTRIBUTE: | # [tl! focus:1]
   'member:1.2.840.113556.1.4.1941:'
 LDAP_GROUP_SEARCH_NAME_ATTRIBUTE: cn
 LDAP_GROUP_SEARCH_USER_ATTRIBUTE: DN
@@ -113,8 +117,8 @@ LDAP_GROUP_SEARCH_USER_ATTRIBUTE: DN
 
 #### Deploying the cluster
 That's the only thing I need to manually edit so now I can go ahead and create the cluster with:
-```
-tanzu management-cluster create tce-mgmt -f tce-mgmt-deploy.yaml
+```shell
+tanzu management-cluster create tce-mgmt -f tce-mgmt-deploy.yaml # [tl! .cmd]
 ```
 
 This will probably take 10-15 minutes to deploy so it's a great time to go top off my coffee.
@@ -136,19 +140,19 @@ Some addons might be getting installed! Check their status by running the follow
 ```
 
 I obediently follow the instructions to switch to the correct context and verify that the addons are all running:
-```bash
-❯ kubectl config use-context tce-mgmt-admin@tce-mgmt
-Switched to context "tce-mgmt-admin@tce-mgmt".
+```shell
+kubectl config use-context tce-mgmt-admin@tce-mgmt # [tl! .cmd]
+Switched to context "tce-mgmt-admin@tce-mgmt". # [tl! .nocopy:1]
 
-❯ kubectl get apps -A
-NAMESPACE    NAME                   DESCRIPTION           SINCE-DEPLOY   AGE
+kubectl get apps -A # [tl! .cmd]
+NAMESPACE    NAME                   DESCRIPTION           SINCE-DEPLOY   AGE # [tl! .nocopy:start]
 tkg-system   antrea                 Reconcile succeeded   5m2s           11m
 tkg-system   metrics-server         Reconcile succeeded   39s            11m
 tkg-system   pinniped               Reconcile succeeded   4m55s          11m
 tkg-system   secretgen-controller   Reconcile succeeded   65s            11m
 tkg-system   tanzu-addons-manager   Reconcile succeeded   70s            11m
 tkg-system   vsphere-cpi            Reconcile succeeded   32s            11m
-tkg-system   vsphere-csi            Reconcile succeeded   66s            11m
+tkg-system   vsphere-csi            Reconcile succeeded   66s            11m # [tl! .nocopy:end]
 ```
 
 ### Post-deployment tasks
@@ -158,21 +162,24 @@ I've got a TCE cluster now but it's not quite ready for me to authenticate with 
 #### Load Balancer deployment
 The [guide I'm following from the TCE site](https://tanzucommunityedition.io/docs/latest/vsphere-ldap-config/) assumes that I'm using NSX-ALB in my environment, but I'm not. So, [as before](/tanzu-community-edition-k8s-homelab/#deploying-kube-vip-as-a-load-balancer), I'll need to deploy [Scott Rosenberg's `kube-vip` Carvel package](https://github.com/vrabbi/tkgm-customizations):
 
-```bash
-git clone https://github.com/vrabbi/tkgm-customizations.git
+```shell
+git clone https://github.com/vrabbi/tkgm-customizations.git # [tl! .cmd:3]
 cd tkgm-customizations/carvel-packages/kube-vip-package
 kubectl apply -n tanzu-package-repo-global -f metadata.yml
 kubectl apply -n tanzu-package-repo-global -f package.yaml
-cat << EOF > values.yaml
+
+cat << EOF > values.yaml # [tl! .cmd]
 vip_range: 192.168.1.64-192.168.1.70
 EOF
-tanzu package install kubevip -p kubevip.terasky.com -v 0.3.9 -f values.yaml
+
+tanzu package install kubevip -p kubevip.terasky.com -v 0.3.9 -f values.yaml # [tl! .cmd]
 ```
 
 #### Modifying services to use the Load Balancer
 With the load balancer in place, I can follow the TCE instruction to modify the Pinniped and Dex services to switch from the `NodePort` type to the `LoadBalancer` type so they can be easily accessed from outside of the cluster. This process starts by creating a file called `pinniped-supervisor-svc-overlay.yaml` and pasting in the following overlay manifest:
 
 ```yaml
+# torchlight! {"lineNumbers": true}
 #@ load("@ytt:overlay", "overlay")
 #@overlay/match by=overlay.subset({"kind": "Service", "metadata": {"name": "pinniped-supervisor", "namespace": "pinniped-supervisor"}})
 ---
@@ -203,40 +210,42 @@ spec:
 ```
 
 This overlay will need to be inserted into the `pinniped-addon` secret which means that the contents need to be converted to a base64-encoded string:
-```bash
-❯ base64 -w 0 pinniped-supervisor-svc-overlay.yaml
-I0AgbG9hZCgi[...]==
+```shell
+base64 -w 0 pinniped-supervisor-svc-overlay.yaml # [tl! .cmd]
+I0AgbG9hZCgi[...]== # [tl! .nocopy]
 ```
 {{% notice note "Avoid newlines" %}}
 The `-w 0` / `--wrap=0` argument tells `base64` to *not* wrap the encoded lines after a certain number of characters. If you leave this off, the string will get a newline inserted every 76 characters, and those linebreaks would make the string a bit more tricky to work with. Avoid having to clean up the output afterwards by being more specific with the request up front!
 {{% /notice %}}
 
 I'll copy the resulting base64 string (which is much longer than the truncated form I'm using here), and paste it into the following command to patch the secret (which will be named after the management cluster name so replace the `tce-mgmt` part as appropriate):
-```bash
-❯ kubectl -n tkg-system patch secret tce-mgmt-pinniped-addon -p '{"data": {"overlays.yaml": "I0AgbG9hZCgi[...]=="}}'
-secret/tce-mgmt-pinniped-addon patched
+```shell
+kubectl -n tkg-system patch secret tce-mgmt-pinniped-addon -p '{"data": {"overlays.yaml": "I0AgbG9hZCgi[...]=="}}' # [tl! .cmd]
+secret/tce-mgmt-pinniped-addon patched # [tl! .nocopy]
 ```
 
 I can watch as the `pinniped-supervisor` and `dexsvc` services get updated with the new service type:
-```bash
-❯ kubectl get svc -A -w
-NAMESPACE               NAME                    TYPE            CLUSTER-IP       EXTERNAL-IP    PORT(S)
+```shell
+kubectl get svc -A -w # [tl! .cmd]
+NAMESPACE               NAME                    TYPE            CLUSTER-IP       EXTERNAL-IP    PORT(S) # [tl! .nocopy:start]
 pinniped-supervisor     pinniped-supervisor     NodePort        100.65.185.82    <none>         443:31234/TCP
 tanzu-system-auth       dexsvc                  NodePort        100.70.238.106   <none>         5556:30167/TCP
 tkg-system              packaging-api           ClusterIP       100.65.185.94    <none>         443/TCP
 tanzu-system-auth       dexsvc                  LoadBalancer    100.70.238.106   <pending>      443:30167/TCP
 pinniped-supervisor     pinniped-supervisor     LoadBalancer    100.65.185.82    <pending>      443:31234/TCP
 pinniped-supervisor     pinniped-supervisor     LoadBalancer    100.65.185.82    192.168.1.70   443:31234/TCP
-tanzu-system-auth       dexsvc                  LoadBalancer    100.70.238.106   192.168.1.64   443:30167/TCP
+tanzu-system-auth       dexsvc                  LoadBalancer    100.70.238.106   192.168.1.64   443:30167/TCP # [tl! .nocopy:end]
 ```
 
 I'll also need to restart the `pinniped-post-deploy-job` job to account for the changes I just made; that's accomplished by simply deleting the existing job. After a few minutes a new job will be spawned automagically. I'll just watch for the new job to be created:
-```bash
-❯ kubectl -n pinniped-supervisor delete jobs pinniped-post-deploy-job
-job.batch "pinniped-post-deploy-job" deleted
+```shell
+kubectl -n pinniped-supervisor delete jobs pinniped-post-deploy-job # [tl! .cmd]
+job.batch "pinniped-post-deploy-job" deleted # [tl! .nocopy]
+```
 
-❯ kubectl get jobs -A -w
-NAMESPACE             NAME                       COMPLETIONS   DURATION   AGE
+```shell
+kubectl get jobs -A -w # [tl! cmd]
+NAMESPACE             NAME                       COMPLETIONS   DURATION   AGE # [tl! .nocopy:4]
 pinniped-supervisor   pinniped-post-deploy-job   0/1                      0s
 pinniped-supervisor   pinniped-post-deploy-job   0/1                      0s
 pinniped-supervisor   pinniped-post-deploy-job   0/1           0s         0s
@@ -248,6 +257,7 @@ Right now, I've got all the necessary components to support LDAPS authentication
 
 I'll toss this into a file I'll call `tanzu-admins-crb.yaml`:
 ```yaml
+# torchlight! {"lineNumbers": true}
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -267,24 +277,24 @@ I have a group in Active Directory called `Tanzu-Admins` which contains a group 
 Once applied, users within that group will be granted the `cluster-admin` role[^roles].
 
 Let's do it:
-```bash
-❯ kubectl apply -f tanzu-admins-crb.yaml
-clusterrolebinding.rbac.authorization.k8s.io/tanzu-admins created
+```shell
+kubectl apply -f tanzu-admins-crb.yaml # [tl! .cmd]
+clusterrolebinding.rbac.authorization.k8s.io/tanzu-admins created # [tl! .nocopy]
 ```
 
 Thus far, I've been using the default administrator context to interact with the cluster. Now it's time to switch to the non-admin context:
-```bash
-❯ tanzu management-cluster kubeconfig get
-You can now access the cluster by running 'kubectl config use-context tanzu-cli-tce-mgmt@tce-mgmt'
+```shell
+tanzu management-cluster kubeconfig get # [tl! .cmd]
+You can now access the cluster by running 'kubectl config use-context tanzu-cli-tce-mgmt@tce-mgmt' # [tl! .nocopy:1]
 
-❯ kubectl config use-context tanzu-cli-tce-mgmt@tce-mgmt
-Switched to context "tanzu-cli-tce-mgmt@tce-mgmt".
+kubectl config use-context tanzu-cli-tce-mgmt@tce-mgmt # [tl! .cmd]
+Switched to context "tanzu-cli-tce-mgmt@tce-mgmt". # [tl! .nocopy]
 ```
 
 After assuming the non-admin context, the next time I try to interact with the cluster it should kick off the LDAPS authentication process. It won't look like anything is happening in the terminal:
-```bash
-❯ kubectl get nodes
-
+```shell
+kubectl get nodes # [tl! .cmd]
+# [tl! .nocopy]
 ```
 
 But it will shortly spawn a browser page prompting me to log in:
@@ -294,9 +304,9 @@ Doing so successfully will yield:
 ![Dex login success!](dex_login_success.png)
 
 And the `kubectl` command will return the expected details:
-```bash
-❯ kubectl get nodes
-NAME                            STATUS   ROLES                  AGE   VERSION
+```shell
+kubectl get nodes # [tl! .cmd]
+NAME                            STATUS   ROLES                  AGE   VERSION # [tl! .nocopy:2]
 tce-mgmt-control-plane-v8l8r    Ready    control-plane,master   29h   v1.21.5+vmware.1
 tce-mgmt-md-0-847db9ddc-5bwjs   Ready    <none>                 28h   v1.21.5+vmware.1
 ```
@@ -318,9 +328,9 @@ Other users hoping to work with a Tanzu Community Edition cluster will also need
 At this point, I've only configured authentication for the management cluster - not the workload cluster. The TCE community docs cover what's needed to make this configuration available in the workload cluster as well [here](https://tanzucommunityedition.io/docs/latest/vsphere-ldap-config/#configuration-steps-on-the-workload-cluster). [As before](/tanzu-community-edition-k8s-homelab/#workload-cluster), I created the deployment YAML for the workload cluster by copying the management cluster's deployment YAML and changing the `CLUSTER_NAME` and `VSPHERE_CONTROL_PLANE_ENDPOINT` values accordingly. This time I also deleted all of the `LDAP_*` and `OIDC_*` lines, but made sure to preserve the `IDENTITY_MANAGEMENT_TYPE: ldap` one.
 
 I was then able to deploy the workload cluster with:
-```bash
-❯ tanzu cluster create --file tce-work-deploy.yaml
-Validating configuration...
+```shell
+tanzu cluster create --file tce-work-deploy.yaml # [tl! .cmd]
+Validating configuration... # [tl! .nocopy:start]
 Creating workload cluster 'tce-work'...
 Waiting for cluster to be initialized...
 cluster control plane is still being initialized: WaitingForControlPlane
@@ -329,35 +339,35 @@ Waiting for cluster nodes to be available...
 Waiting for addons installation...
 Waiting for packages to be up and running...
 
-Workload cluster 'tce-work' created
+Workload cluster 'tce-work' created # [tl! .nocopy:end]
 ```
 
 Access the admin context:
-```bash
-❯ tanzu cluster kubeconfig get --admin tce-work
-Credentials of cluster 'tce-work' have been saved
+```shell
+tanzu cluster kubeconfig get --admin tce-work # [tl! .cmd]
+Credentials of cluster 'tce-work' have been saved # [tl! .nocopy:2]
 You can now access the cluster by running 'kubectl config use-context tce-work-admin@tce-work'
 
-❯ kubectl config use-context tce-work-admin@tce-work
-Switched to context "tce-work-admin@tce-work".
+kubectl config use-context tce-work-admin@tce-work # [tl! .cmd]
+Switched to context "tce-work-admin@tce-work". # [tl! .nocopy]
 ```
 
 Apply the same ClusterRoleBinding from before[^crb]:
-```bash
-❯ kubectl apply -f tanzu-admins-crb.yaml
-clusterrolebinding.rbac.authorization.k8s.io/tanzu-admins created
+```shell
+kubectl apply -f tanzu-admins-crb.yaml # [tl! .cmd]
+clusterrolebinding.rbac.authorization.k8s.io/tanzu-admins created # [tl! .nocopy]
 ```
 
 And finally switch to the non-admin context and log in with my AD account:
-```bash
-❯ tanzu cluster kubeconfig get tce-work
-ℹ  You can now access the cluster by running 'kubectl config use-context tanzu-cli-tce-work@tce-work'
+```shell
+tanzu cluster kubeconfig get tce-work # [tl! .cmd]
+ℹ  You can now access the cluster by running 'kubectl config use-context tanzu-cli-tce-work@tce-work' # [tl! .nocopy:1]
 
-❯ kubectl config use-context tanzu-cli-tce-work@tce-work
-Switched to context "tanzu-cli-tce-work@tce-work".
+kubectl config use-context tanzu-cli-tce-work@tce-work # [tl! .cmd]
+Switched to context "tanzu-cli-tce-work@tce-work". # [tl! .nocopy:1]
 
-❯ kubectl get nodes
-NAME                            STATUS   ROLES                  AGE   VERSION
+kubectl get nodes # [tl! .cmd]
+NAME                            STATUS   ROLES                  AGE   VERSION # [tl! .nocopy:2]
 tce-work-control-plane-zts6r    Ready    control-plane,master   12m   v1.21.5+vmware.1
 tce-work-md-0-bcfdc4d79-vn9xb   Ready    <none>                 11m   v1.21.5+vmware.1
 ```
@@ -376,9 +386,9 @@ It took me quite a bit of trial and error to get this far and (being a k8s novic
 #### Checking and modifying `dex` configuration
 I  had a lot of trouble figuring out how to correctly format the `member:1.2.840.113556.1.4.1941:` attribute in the LDAPS config so that it wouldn't get split into multiple attributes due to the trailing colon - and it took me forever to discover that was even the issue. What eventually did the trick for me was learning that I could look at (and modify!) the configuration for the `dex` app with:
 
-```bash
-❯ kubectl -n tanzu-system-auth edit configmaps dex
-[...]
+```shell
+kubectl -n tanzu-system-auth edit configmaps dex # [tl! .cmd]
+[...] # [tl! .nocopy:start]
             groupSearch:
                 baseDN: OU=LAB,DC=lab,DC=bowdre,DC=net
                 filter: (objectClass=group)
@@ -388,7 +398,7 @@ I  had a lot of trouble figuring out how to correctly format the `member:1.2.840
                     - userAttr: DN
                       groupAttr: 'member:1.2.840.113556.1.4.1941:'
             host: win01.lab.bowdre.net:636
-[...]
+[...] # [tl! .nocopy:end]
 ```
 
 This let me make changes on the fly until I got a working configuration and then work backwards from there to format the initial input correctly.
@@ -396,13 +406,13 @@ This let me make changes on the fly until I got a working configuration and then
 #### Reviewing `dex` logs
 Authentication attempts (at least on the LDAPS side of things) will show up in the logs for the `dex` pod running in the `tanzu-system-auth` namespace. This is a great place to look to see if the user isn't being found, credentials are invalid, or the groups aren't being enumerated correctly:
 
-```bash
-❯ kubectl -n tanzu-system-auth get pods
-NAME                   READY   STATUS    RESTARTS   AGE
+```shell
+kubectl -n tanzu-system-auth get pods # [tl! .cmd]
+NAME                   READY   STATUS    RESTARTS   AGE # [tl! .nocopy:2]
 dex-7bf4f5d4d9-k4jfl   1/1     Running   0          40h
 
-❯ kubectl -n tanzu-system-auth logs dex-7bf4f5d4d9-k4jfl
-# no such user
+kubectl -n tanzu-system-auth logs dex-7bf4f5d4d9-k4jfl # [tl! .cmd]
+# no such user # [tl! .nocopy:start]
 {"level":"info","msg":"performing ldap search OU=LAB,DC=lab,DC=bowdre,DC=net sub (\u0026(objectClass=person)(sAMAccountName=johnny))","time":"2022-03-06T22:29:57Z"}
 {"level":"error","msg":"ldap: no results returned for filter: \"(\u0026(objectClass=person)(sAMAccountName=johnny))\"","time":"2022-03-06T22:29:57Z"}
 #invalid password
@@ -413,15 +423,15 @@ dex-7bf4f5d4d9-k4jfl   1/1     Running   0          40h
 {"level":"info","msg":"performing ldap search OU=LAB,DC=lab,DC=bowdre,DC=net sub (\u0026(objectClass=person)(sAMAccountName=john))","time":"2022-03-06T22:31:21Z"}
 {"level":"info","msg":"username \"john\" mapped to entry CN=John Bowdre,OU=Users,OU=BOW,OU=LAB,DC=lab,DC=bowdre,DC=net","time":"2022-03-06T22:31:21Z"}
 {"level":"info","msg":"performing ldap search OU=LAB,DC=lab,DC=bowdre,DC=net sub (\u0026(objectClass=group)(member:1.2.840.113556.1.4.1941:=CN=John Bowdre,OU=Users,OU=BOW,OU=LAB,DC=lab,DC=bowdre,DC=net))","time":"2022-03-06T22:31:21Z"}
-{"level":"info","msg":"login successful: connector \"ldap\", username=\"john\", preferred_username=\"\", email=\"CN=John Bowdre,OU=Users,OU=BOW,OU=LAB,DC=lab,DC=bowdre,DC=net\", groups=[\"vRA-Admins\" \"Tanzu-Admins\"]","time":"2022-03-06T22:31:21Z"}
+{"level":"info","msg":"login successful: connector \"ldap\", username=\"john\", preferred_username=\"\", email=\"CN=John Bowdre,OU=Users,OU=BOW,OU=LAB,DC=lab,DC=bowdre,DC=net\", groups=[\"vRA-Admins\" \"Tanzu-Admins\"]","time":"2022-03-06T22:31:21Z"} # [tl! .nocopy:end]
 ```
 
 #### Clearing pinniped sessions
 I couldn't figure out an elegant way to log out so that I could try authenticating as a different user, but I did discover that information about authenticated sessions get stored in `~/.config/tanzu/pinniped/sessions.yaml`. The sessions expired after a while but until that happens I'm able to keep on interacting with `kubectl` - and not given an option to re-authenticate even if I wanted to.
 
 So in lieu of a handy logout option, I was able to remove the cached sessions by deleting the file:
-```bash
-rm ~/.config/tanzu/pinniped/sessions.yaml
+```shell
+rm ~/.config/tanzu/pinniped/sessions.yaml # [tl! .cmd]
 ```
 
 That let me use `kubectl get nodes` to trigger the authentication prompt again.

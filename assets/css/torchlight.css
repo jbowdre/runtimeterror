@@ -1,0 +1,147 @@
+/*********************************************
+* Basic styling for Torchlight code blocks.  *
+**********************************************/
+
+/*
+ Margin and rounding are personal preferences,
+ overflow-x-auto is recommended.
+*/
+pre {
+  border-radius: 0.25rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  padding: 0;
+}
+
+/*
+Add some vertical padding and expand the width
+to fill its container. The horizontal padding
+comes at the line level so that background
+colors extend edge to edge.
+*/
+pre.torchlight {
+  display: block;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+/*
+Horizontal line padding to match the vertical
+padding from the code block above.
+*/
+pre.torchlight .line {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/*
+Push the code away from the line numbers and
+summary caret indicators.
+*/
+pre.torchlight .line-number,
+pre.torchlight .summary-caret {
+  margin-right: 1rem;
+}
+
+/*********************************************
+* Focus styling                              *
+**********************************************/
+
+/*
+Blur and dim the lines that don't have the `.line-focus` class,
+but are within a code block that contains any focus lines.
+*/
+.torchlight.has-focus-lines .line:not(.line-focus) {
+transition: filter 0.35s, opacity 0.35s;
+filter: blur(.095rem);
+opacity: .65;
+}
+
+/*
+When the code block is hovered, bring all the lines into focus.
+*/
+.torchlight.has-focus-lines:hover .line:not(.line-focus) {
+filter: blur(0px);
+opacity: 1;
+}
+
+/*********************************************
+* Collapse styling                           *
+**********************************************/
+
+.torchlight summary:focus {
+  outline: none;
+}
+
+/* Hide the default markers, as we provide our own */
+.torchlight details > summary::marker,
+.torchlight details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.torchlight details .summary-caret::after {
+  pointer-events: none;
+}
+
+/* Add spaces to keep everything aligned */
+.torchlight .summary-caret-empty::after,
+.torchlight details .summary-caret-middle::after,
+.torchlight details .summary-caret-end::after {
+  content: " ";
+}
+
+/* Show a minus sign when the block is open. */
+.torchlight details[open] .summary-caret-start::after {
+  content: "-";
+}
+
+/* And a plus sign when the block is closed. */
+.torchlight details:not([open]) .summary-caret-start::after {
+  content: "+";
+}
+
+/* Hide the [...] indicator when open. */
+.torchlight details[open] .summary-hide-when-open {
+  display: none;
+}
+
+/* Show the [...] indicator when closed. */
+.torchlight details:not([open]) .summary-hide-when-open {
+  display: initial;
+}
+
+/*********************************************
+* Additional styling                         *
+**********************************************/
+
+/* Fix for disjointed horizontal scrollbars */
+.highlight div {
+  overflow-x: visible;
+}
+
+/*
+Insert prompt indicators on interactive shells.
+*/
+.cmd::before {
+  color: var(--base07);
+  content: "$ ";
+}
+
+.cmd_root::before {
+  color: var(--base08);
+  content: "# ";
+}
+
+.cmd_pwsh::before {
+  color: var(--base07);
+  content: "PS> ";
+}
+
+/*
+Don't copy shell outputs
+*/
+.nocopy {
+  webkit-user-select: none;
+  user-select: none;
+}
