@@ -15,6 +15,8 @@ utterancesRepo = "jbowdre/site-comments"
 utterancesIssueTerm = "og:title"
 utterancesTheme = "gruvbox-dark"
 
+analytics = true
+
 [theme]
 palette = "runtimeterror"
 
@@ -94,6 +96,7 @@ taglines = [
   "the bug stops here",
   "the system is down",
   "there's no place like $HOME",
+  "time jumped backwards, rotating",
   "tonight we test in prod",
   "unable to open display",
   "undefined reference to function",
@@ -133,3 +136,23 @@ url = "https://runtimeterror.dev/simplex"
 icon = "fa-solid fa-envelope"
 title = "Email"
 url = "mailto:ops@runtimeterror.dev"
+
+[[powerLinks]]
+title = "hugo"
+url = "https://gohugo.io"
+
+[[powerLinks]]
+title = "netlify"
+url = "https://www.netlify.com"
+
+[[powerLinks]]
+title = "risotto"
+url = "https://github.com/joeroe/risotto"
+
+[[powerLinks]]
+title = "torchlight"
+url = "https://torchlight.dev"
+
+[[powerLinks]]
+title = "cabin"
+url = "https://withcabin.com/privacy/runtimeterror.dev"

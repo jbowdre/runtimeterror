@@ -30,7 +30,7 @@ At this point, I was ready to actually kick off the deployment. Ahmet made this 
 
 ![Authorize Cloud Shell prompt](20210820_authorize_cloud_shell.png)
 
-The script prompted me to select a project and a region, and then asked for the Sheet ID that I copied earlier. 
+The script prompted me to select a project and a region, and then asked for the Sheet ID that I copied earlier.
 ![Cloud Shell deployment](20210820_cloud_shell.png)
 
 ### Grant access to the Sheet
@@ -82,10 +82,9 @@ And now I can hand out handy-dandy short links!
 
 | Link | Description|
 | --- | --- |
-| [go.bowdre.net/ghia](https://go.bowdre.net/ghia) | 1974 VW Karmann Ghia project |
+| [go.bowdre.net/coso](https://go.bowdre.net/coso) | Follow me on CounterSocial |
 | [go.bowdre.net/conedoge](https://go.bowdre.net/conedoge) | 2014 Subaru BRZ autocross videos |
-| [go.bowdre.net/matrix](https://go.bowdre.net/matrix) | Chat with me on Matrix |
-| [go.bowdre.net/twits](https://go.bowdre.net/twits) | Follow me on Twitter |
-| [go.bowdre.net/stadia](https://go.bowdre.net/stadia) | Game with me on Stadia |
+| [go.bowdre.net/cooltechshit](https://go.bowdre.net/cooltechshit) | A collection of cool tech shit (references and resources) |
+| [go.bowdre.net/stuffiuse](https://go.bowdre.net/stuffiuse) | Things that I use (and think you should use too) |
 | [go.bowdre.net/shorterer](https://go.bowdre.net/shorterer) | This post! |
 

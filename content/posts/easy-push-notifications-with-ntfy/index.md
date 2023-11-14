@@ -1,7 +1,7 @@
 ---
 title: "Easy Push Notifications With ntfy.sh"
 date: 2023-09-17
-# lastmod: 2023-09-17
+lastmod: 2023-10-21
 description: "Deploying and configuring a self-hosted pub-sub notification handler, getting another server to send a notifcation when it boots, and integrating the notification handler into Home Assistant."
 featured: false
 toc: true
@@ -43,12 +43,13 @@ I'm going to use the [Docker setup](https://docs.ntfy.sh/install/#docker) on a s
 So I'll start by creating a new directory at `/opt/ntfy/` to hold the goods, and create a compose config.
 
 ```shell
-$ sudo mkdir -p /opt/ntfy
-$ sudo vim /opt/ntfy/docker-compose.yml
+sudo mkdir -p /opt/ntfy # [tl! .cmd:1]
+sudo vim /opt/ntfy/docker-compose.yml
 ```
 
-`/opt/ntfy/docker-compose.yml`:
 ```yaml
+# torchlight! {"lineNumbers": true}
+# /opt/ntfy/docker-compose.yml
 version: "2.3"
 
 services:
@@ -58,15 +59,18 @@ services:
     command:
       - serve
     environment:
-      - TZ=UTC    # optional: set desired timezone
+      - TZ=UTC    # optional, set desired timezone
     volumes:
       - ./cache/ntfy:/var/cache/ntfy
       - ./etc/ntfy:/etc/ntfy
       - ./lib/ntf:/var/lib/ntfy
     ports:
       - 2586:80
-    healthcheck: # optional: remember to adapt the host:port to your environment
-        test: ["CMD-SHELL", "wget -q --tries=1 http://localhost:8080/v1/health -O - | grep -Eo '\"healthy\"\\s*:\\s*true' || exit 1"]
+    healthcheck:  # optional, remember to adapt the host and port to your environment
+        test: [
+          "CMD-SHELL",
+          "wget -q --tries=1 http://localhost:8080/v1/health -O - | grep -Eo '\"healthy\"\\s*:\\s*true' || exit 1"
+        ]
         interval: 60s
         timeout: 10s
         retries: 3
@@ -79,21 +83,22 @@ This config will create/mount folders in the working directory to store the ntfy
 
 I can go ahead and bring it up:
 ```shell
-$ sudo docker-compose up -d
-Creating network "ntfy_default" with the default driver
+sudo docker-compose up -d # [tl! focus:start .cmd]
+Creating network "ntfy_default" with the default driver # [tl! .nocopy:start]
 Pulling ntfy (binwiederhier/ntfy:)...
-latest: Pulling from binwiederhier/ntfy
+latest: Pulling from binwiederhier/ntfy # [tl! focus:end]
 7264a8db6415: Pull complete
 1ac6a3b2d03b: Pull complete
 Digest: sha256:da08556da89a3f7317557fd39cf302c6e4691b4f8ce3a68aa7be86c4141e11c8
-Status: Downloaded newer image for binwiederhier/ntfy:latest
-Creating ntfy ... done
+Status: Downloaded newer image for binwiederhier/ntfy:latest # [tl! focus:1]
+Creating ntfy ... done # [tl! .nocopy:end]
 ```
 
 #### Caddy Reverse Proxy
 I'll also want to add [the following](https://docs.ntfy.sh/config/#nginxapache2caddy) to my Caddy config:
-`/etc/caddy/Caddyfile`:
-```
+```text
+# torchlight! {"lineNumbers": true}
+# /etc/caddy/Caddyfile
 ntfy.runtimeterror.dev, http://ntfy.runtimeterror.dev {
   reverse_proxy localhost:2586
 
@@ -110,7 +115,7 @@ ntfy.runtimeterror.dev, http://ntfy.runtimeterror.dev {
 
 And I'll restart Caddy to apply the config:
 ```shell
-$ sudo systemctl restart caddy
+sudo systemctl restart caddy # [tl! .cmd]
 ```
 
 Now I can point my browser to `https://ntfy.runtimeterror.dev` and see the web interface:
@@ -121,9 +126,9 @@ I can subscribe to a new topic:
 ![Subscribing to a public topic](subscribe_public_topic.png)
 
 And publish a message to it:
-```shell
-$ curl -d "Hi" https://ntfy.runtimeterror.dev/testy
-{"id":"80bUl6cKwgBP","time":1694981305,"expires":1695024505,"event":"message","topic":"testy","message":"Hi"}
+```curl
+curl -d "Hi" https://ntfy.runtimeterror.dev/testy # [tl! .cmd]
+{"id":"80bUl6cKwgBP","time":1694981305,"expires":1695024505,"event":"message","topic":"testy","message":"Hi"} # [tl! .nocopy]
 ```
 
 Which will then show up as a notification in my browser:
@@ -134,8 +139,9 @@ Which will then show up as a notification in my browser:
 So now I've got my own ntfy server, and I've verified that it works for unauthenticated notifications. I don't really want to operate *anything* on the internet without requiring authentication, though, so I'm going to configure ntfy to prevent unauthenticated reads and writes.
 
 I'll start by creating a `server.yml` config file which will be mounted into the container. This config will specify where to store the user database and switch the default ACL to `deny-all`:
-`/opt/ntfy/etc/ntfy/server.yml`:
 ```yaml
+# torchlight! {"lineNumbers": true}
+# /opt/ntfy/etc/ntfy/server.yml
 auth-file: "/var/lib/ntfy/user.db"
 auth-default-access: "deny-all"
 base-url: "https://ntfy.runtimeterror.dev"
@@ -143,7 +149,7 @@ base-url: "https://ntfy.runtimeterror.dev"
 
 I can then restart the container, and try again to subscribe to the same (or any other topic):
 ```shell
-$ sudo docker-compose down && sudo docker-compose up -d
+sudo docker-compose down && sudo docker-compose up -d # [tl! .cmd]
 
 ```
 
@@ -152,31 +158,33 @@ Now I get prompted to log in:
 
 I'll need to use the ntfy CLI to create/manage entries in the user DB, and that means first grabbing a shell inside the container:
 ```shell
-$ sudo docker exec -it ntfy /bin/sh
+sudo docker exec -it ntfy /bin/sh # [tl! .cmd]
 ```
 
 For now, I'm going to create three users: one as an administrator, one as a "writer", and one as a "reader". I'll be prompted for a password for each:
 ```shell
-$ ntfy user add --role=admin administrator
-user administrator added with role admin
-$ ntfy user add writer
-user writer added with role user
-$ ntfy user add reader
-user reader added with role user
+ntfy user add --role=admin administrator # [tl! .cmd]
+user administrator added with role admin # [tl! .nocopy:1]
+
+ntfy user add writer # [tl! .cmd]
+user writer added with role user # [tl! .nocopy:1]
+
+ntfy user add reader # [tl! .cmd]
+user reader added with role user # [tl! .nocopy]
 ```
 
 The admin user has global read+write access, but right now the other two can't do anything. Let's make it so that `writer` can write to all topics, and `reader` can read from all topics:
 ```shell
-$ ntfy access writer '*' write
-$ ntfy access reader '*' read
+ntfy access writer '*' write # [tl! .cmd:1]
+ntfy access reader '*' read
 ```
 
 I could lock these down further by selecting specific topic names instead of `'*'` but this will do fine for now.
 
 Let's go ahead and verify the access as well:
 ```shell
-$ ntfy access
-user administrator (role: admin, tier: none)
+ntfy access # [tl! .cmd]
+user administrator (role: admin, tier: none) # [tl! .nocopy:8]
 - read-write access to all topics (admin role)
 user reader (role: user, tier: none)
 - read-only access to topic *
@@ -189,16 +197,16 @@ user * (role: anonymous, tier: none)
 
 While I'm at it, I also want to configure an access token to be used with the `writer` account. I'll be able to use that instead of username+password when publishing messages.
 ```shell
-$ ntfy token add writer
-token tk_mm8o6cwxmox11wrnh8miehtivxk7m created for user writer, never expires
+ntfy token add writer # [tl! .cmd]
+token tk_mm8o6cwxmox11wrnh8miehtivxk7m created for user writer, never expires # [tl! .nocopy]
 ```
 
 I can go back to the web, subscribe to the `testy` topic again using the `reader` credentials, and then test sending an authenticated notification with `curl`:
-```shell
-$ curl -H "Authorization: Bearer tk_mm8o6cwxmox11wrnh8miehtivxk7m" \
-  -d "Once more, with auth!" \
-  https://ntfy.runtimeterror.dev/testy
-{"id":"0dmX9emtehHe","time":1694987274,"expires":1695030474,"event":"message","topic":"testy","message":"Once more, with auth!"}
+```curl
+curl -H "Authorization: Bearer tk_mm8o6cwxmox11wrnh8miehtivxk7m" \ # [tl! .cmd]
+    -d "Once more, with auth!" \
+    https://ntfy.runtimeterror.dev/testy
+{"id":"0dmX9emtehHe","time":1694987274,"expires":1695030474,"event":"message","topic":"testy","message":"Once more, with auth!"} # [tl! .nocopy]
 ```
 
 ![Authenticated notification](authenticated_notification.png)
@@ -215,6 +223,7 @@ I may want to wind up having servers notify for a variety of conditions so I'll 
 
 `/usr/local/bin/ntfy_push.sh`:
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/usr/bin/env bash
 
 curl \
@@ -228,8 +237,8 @@ Note that I'm using a new topic name now: `server_alerts`. Topics are automatica
 
 Okay, now let's make it executable and then give it a quick test:
 ```shell
-$ chmod +x /usr/local/bin/ntfy_push.sh
-$ /usr/local/bin/ntfy_push.sh "Script Test" "This is a test from the magic script I just wrote."
+chmod +x /usr/local/bin/ntfy_push.sh # [tl! .cmd:1]
+/usr/local/bin/ntfy_push.sh "Script Test" "This is a test from the magic script I just wrote."
 ```
 
 ![Script test](script_test.png)
@@ -239,6 +248,7 @@ I don't know an easy way to tell a systemd service definition to pass arguments 
 
 `/usr/local/bin/ntfy_boot_complete.sh`:
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/usr/bin/env bash
 
 TITLE="$(hostname -s)"
@@ -249,13 +259,14 @@ MESSAGE="System boot complete"
 
 And this one should be executable as well:
 ```shell
-$ chmod +x /usr/local/bin/ntfy_boot_complete.sh
+chmod +x /usr/local/bin/ntfy_boot_complete.sh # [tl! .cmd]
 ```
 ##### Service Definition
 Finally I can create and register the service definition so that the script will run at each system boot.
 
 `/etc/systemd/system/ntfy_boot_complete.service`:
-```
+```ini
+# torchlight! {"lineNumbers": true}
 [Unit]
 After=network.target
 
@@ -267,7 +278,7 @@ WantedBy=default.target
 ```
 
 ```shell
-sudo systemctl daemon-reload
+sudo systemctl daemon-reload # [tl! .cmd:1]
 sudo systemctl enable --now ntfy_boot_complete.service
 ```
 
@@ -285,8 +296,9 @@ Enabling ntfy as a notification handler is pretty straight-forward, and it will 
 ##### Notify Configuration
 I'll add ntfy to Home Assistant by using the [RESTful Notifications](https://www.home-assistant.io/integrations/notify.rest/) integration. For that, I just need to update my instance's `configuration.yaml` to configure the connection.
 
-`configuration.yaml`:
 ```yaml
+# torchlight! {"lineNumbers": true}
+# configuration.yaml
 notify:
   - name: ntfy
     platform: rest
@@ -302,6 +314,8 @@ notify:
 
 The `Authorization` line references a secret stored in `secrets.yaml`:
 ```yaml
+# torchlight! {"lineNumbers": true}
+# secrets.yaml
 ntfy_token: Bearer tk_mm8o6cwxmox11wrnh8miehtivxk7m
 ```
 
@@ -319,6 +333,7 @@ I'll use the Home Assistant UI to push a notification through ntfy if any of my 
 
 The business end of this is the service call at the end:
 ```yaml
+# torchlight! {"lineNumbers": true}
 service: notify.ntfy
 data:
   title: Leak detected!

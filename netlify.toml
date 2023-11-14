@@ -5,7 +5,33 @@
   HUGO_VERSION = "0.111.3"
 
 [context.production]
-  command = "hugo"
+  command = """
+  hugo --minify
+  npm i @torchlight-api/torchlight-cli
+  npx torchlight
+  """
+
+[context.preview]
+  command = """
+  hugo --minify --environment preview
+  npm i @torchlight-api/torchlight-cli
+  npx torchlight
+  """
+  [[headers]]
+    for = "/*"
+      [headers.values]
+      X-Robots-Tag = "noindex"
+
+[context.drafts]
+  command = """
+  hugo --minify --environment drafts -D
+  npm i @torchlight-api/torchlight-cli
+  npx torchlight
+  """
+  [[headers]]
+    for = "/*"
+      [headers.values]
+      X-Robots-Tag = "noindex"
 
 [[redirects]]
   from = "/*"

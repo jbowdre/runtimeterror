@@ -13,6 +13,28 @@
   opacity: 0.80;
 }
 
+/* Footer tweaks */
+.copyright {
+  font-size: 14px;
+  line-height: 1.3rem;
+}
+
+.powered_by {
+  font-size: 12px;
+  line-height: 1.1rem;
+  color: var(--muted);
+}
+
+.powered_by a:link, .powered_by a:visited {
+  color: var(--off-fg);
+  text-decoration: none;
+}
+
+.powered_by a:hover {
+  color: var(--hover);
+  text-decoration: underline;
+}
+
 /* Notice CSS Built on hugo-notice by Nicolas Martignoni: https://github.com/martignoni/hugo-notice */
 .notice {
   --root-color: #444;
@@ -132,4 +154,18 @@ body.dark .notice {
 .icon-notice.baseline svg {
   top: 0.125em;
   position: relative;
+}
+
+/* pagination overrides */
+ul.pagination li::marker {
+  content:'';
+}
+
+ul.pagination li {
+  margin: 0 0.25rem;
+}
+
+.pagination {
+  display:flex;
+  justify-content: center;
 }

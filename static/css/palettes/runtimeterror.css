@@ -2,20 +2,20 @@
  */
 
 :root {
-	--base00: #181818;  /* background */
-	--base01: #282828;  /* alt background */
-	--base02: #383838;  /* in-text backgrounds */
-	--base03: #585858;  /* muted text */
-	--base04: #959494;  /* alt foreground */
-	--base05: #d8d8d8;  /* foreground */
+	--base00: #181818;  /* bg */
+	--base01: #282828;  /* off-bg */
+	--base02: #383838;  /* inner-bg */
+	--base03: #585858;  /* muted */
+	--base04: #959494;  /* off-fg */
+	--base05: #d8d8d8;  /* fg */
 	--base06: #e8e8e8;
-	--base07: #f8f8f8;
-	--base08: #ab4642;
+	--base07: #5f8700;  /* user prompt */
+	--base08: #ab4642;  /* root prompt */
 	--base09: #dc9656;
-	--base0A: #f7ca88;  /* highlights */
-	--base0B: #772a28;  /* primary accent */
-	--base0C: #ab2321;  /* active links */
-	--base0D: #c45a5a;  /* links */
+	--base0A: #f7ca88;  /* highlight */
+	--base0B: #772a28;  /* logo */
+	--base0C: #ab2321;  /* hover */
+	--base0D: #c45a5a;  /* link */
 	--base0E: #ba8baf;
 	--base0F: #a16946;
 }

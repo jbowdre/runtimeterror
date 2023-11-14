@@ -32,53 +32,52 @@ It took a bit of fumbling, but this article describes what it took to get a Vagr
 There are are a few packages which need to be installed before we can move on to the Vagrant-specific stuff. It's quite possible that these are already on your system.... but if they *aren't* already present you'll have a bad problem[^problem].
 
 ```shell
-sudo apt update
-sudo apt install \
-  build-essential \
-  gpg \
-  lsb-release \
-  wget
+sudo apt update && sudo apt install \ # [tl! .cmd]
+    build-essential \
+    gpg \
+    lsb-release \
+    wget
 ```
 
 [^problem]: and [will not go to space today](https://xkcd.com/1133/).
 
 I'll be configuring Vagrant to use [`libvirt`](https://libvirt.org/) to interface with the [Kernel Virtual Machine (KVM)](https://www.linux-kvm.org/page/Main_Page) virtualization solution (rather than something like VirtualBox that would bring more overhead) so I'll need to install some packages for that as well:
 ```shell
-sudo apt install virt-manager libvirt-dev
+sudo apt install virt-manager libvirt-dev # [tl! .cmd]
 ```
 
 And to avoid having to `sudo` each time I interact with `libvirt` I'll add myself to that group:
 ```shell
-sudo gpasswd -a $USER libvirt ; newgrp libvirt
+sudo gpasswd -a $USER libvirt ; newgrp libvirt # [tl! .cmd]
 ```
 
 And to avoid [this issue](https://github.com/virt-manager/virt-manager/issues/333) I'll make a tweak to the `qemu.conf` file:
 ```shell
-echo "remember_owner = 0" | sudo tee -a /etc/libvirt/qemu.conf
+echo "remember_owner = 0" | sudo tee -a /etc/libvirt/qemu.conf # [tl! .cmd:1]
 sudo systemctl restart libvirtd
 ```
 
 I'm also going to use `rsync` to share a [synced folder](https://developer.hashicorp.com/vagrant/docs/synced-folders/basic_usage) between the host and the VM guest so I'll need to make sure that's installed too:
 ```shell
-sudo apt install rsync
+sudo apt install rsync # [tl! .cmd]
 ```
 
 ### Install Vagrant
 With that out of the way, I'm ready to move on to the business of installing Vagrant. I'll start by adding the HashiCorp repository:
 ```shell
-wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg # [tl! .cmd:1]
 echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
 ```
 
 I'll then install the Vagrant package:
 ```shell
-sudo apt update
+sudo apt update # [tl! .cmd:1]
 sudo apt install vagrant
 ```
 
 I also need to install the [`vagrant-libvirt` plugin](https://github.com/vagrant-libvirt/vagrant-libvirt) so that Vagrant will know how to interact with `libvirt`:
 ```shell
-vagrant plugin install vagrant-libvirt
+vagrant plugin install vagrant-libvirt # [tl! .cmd]
 ```
 
 ### Create a lightweight VM
@@ -88,17 +87,14 @@ Vagrant VMs are distributed as Boxes, and I can browse some published Boxes at [
 
 So I'll create a new folder to contain the Vagrant configuration:
 ```shell
-mkdir vagrant-alpine
+mkdir vagrant-alpine # [tl! .cmd:1]
 cd vagrant-alpine
 ```
 
 And since I'm referencing a Vagrant Box which is published on Vagrant Cloud, downloading the config is as simple as:
 ```shell
-vagrant init generic/alpine38
-```
-
-That lets me know that
-```text
+vagrant init generic/alpine38 # [tl! .cmd]
+# [tl! .nocopy:4]
 A `Vagrantfile` has been placed in this directory. You are now
 ready to `vagrant up` your first virtual environment! Please read
 the comments in the Vagrantfile as well as documentation on
@@ -107,7 +103,7 @@ the comments in the Vagrantfile as well as documentation on
 
 Before I `vagrant up` the joint, I do need to make a quick tweak to the default Vagrantfile, which is what tells Vagrant how to configure the VM. By default, Vagrant will try to create a synced folder using NFS and will throw a nasty error when that (inevitably[^inevitable]) fails. So I'll open up the Vagrantfile to review and edit it:
 ```shell
-vim Vagrantfile
+vim Vagrantfile # [tl! .cmd]
 ```
 
 Most of the default Vagrantfile is commented out. Here's the entirey of the configuration *without* the comments:
@@ -119,8 +115,11 @@ end
 
 There's not a lot there, is there? Well I'm just going to add these two lines somewhere between the `Vagrant.configure()` and `end` lines:
 ```ruby
-  config.nfs.verify_installed = false
+Vagrant.configure("2") do |config|
+  config.vm.box = "generic/alpine38"
+  config.nfs.verify_installed = false # [tl! focus:1 highlight:1]
   config.vm.synced_folder '.', '/vagrant', type: 'rsync'
+end
 ```
 
 The first line tells Vagrant not to bother checking to see if NFS is installed, and will use `rsync` to share the local directory with the VM guest, where it will be mounted at `/vagrant`.
@@ -136,8 +135,8 @@ end
 
 With that, I'm ready to fire up this VM with `vagrant up`! Vagrant will look inside `Vagrantfile` to see the config, pull down the `generic/alpine38` Box from Vagrant Cloud, boot the VM, configure it so I can SSH in to it, and mount the synced folder:
 ```shell
-; vagrant up
-Bringing machine 'default' up with 'libvirt' provider...
+vagrant up # [tl! .cmd]
+Bringing machine 'default' up with 'libvirt' provider... # [tl! .nocopy:start]
 ==> default: Box 'generic/alpine38' could not be found. Attempting to find and install...
     default: Box Provider: libvirt
     default: Box Version: >= 0
@@ -157,14 +156,14 @@ Bringing machine 'default' up with 'libvirt' provider...
 [...]
     default: Key inserted! Disconnecting and reconnecting using new SSH key...
 ==> default: Machine booted and ready!
-==> default: Rsyncing folder: /home/john/projects/vagrant-alpine/ => /vagrant
+==> default: Rsyncing folder: /home/john/projects/vagrant-alpine/ => /vagrant # [tl! .nocopy:end]
 ```
 
 And then I can use `vagrant ssh` to log in to the new VM:
 ```shell
-; vagrant ssh
-alpine38:~$ cat /etc/os-release
-NAME="Alpine Linux"
+vagrant ssh # [tl! .cmd:1]
+cat /etc/os-release
+NAME="Alpine Linux" # [tl! .nocopy:5]
 ID=alpine
 VERSION_ID=3.8.5
 PRETTY_NAME="Alpine Linux v3.8"
@@ -174,19 +173,19 @@ BUG_REPORT_URL="http://bugs.alpinelinux.org"
 
 I can also verify that the synced folder came through as expected:
 ```shell
-alpine38:~$ ls -l /vagrant
-total 4
+ls -l /vagrant # [tl! .cmd]
+total 4 # [tl! .nocopy:1]
 -rw-r--r--    1 vagrant  vagrant       3117 Feb 20 15:51 Vagrantfile
 ```
 
 Once I'm finished poking at this VM, shutting it down is as easy as:
 ```shell
-vagrant halt
+vagrant halt # [tl! .cmd]
 ```
 
 And if I want to clean up and remove all traces of the VM, that's just:
 ```shell
-vagrant destroy
+vagrant destroy # [tl! .cmd]
 ```
 
 [^inevitable]: NFS doesn't work properly from within an LXD container, like the ChromeOS Linux development environment.
@@ -202,7 +201,7 @@ Windows 11 makes for a pretty hefty VM which will require significant storage sp
 
 Again, I'll create a new folder to hold the Vagrant configuration and do a `vagrant init`:
 ```shell
-mkdir vagrant-win11
+mkdir vagrant-win11 # [tl! .cmd:2]
 cd vagrant-win11
 vagrant init oopsme/windows11-22h2
 ```
@@ -212,7 +211,7 @@ And, again, I'll edit the Vagrantfile before starting the VM. This time, though,
 Vagrant.configure("2") do |config|
   config.vm.box = "oopsme/windows11-22h2"
   config.vm.provider :libvirt do |libvirt|
-    libvirt.cpus = 4
+    libvirt.cpus = 4 # [tl! highlight:1]
     libvirt.memory = 4096
   end
 end
@@ -222,22 +221,22 @@ end
 
 Now it's time to bring it up. This one's going to take A While as it syncs the ~12GB Box first.
 ```shell
-vagrant up
+vagrant up # [tl! .cmd]
 ```
 
 Eventually it should spit out that lovely **Machine booted and ready!** message and I can log in! I *can* do a `vagrant ssh` again to gain a shell in the Windows environment, but I'll probably want to interact with those sweet sweet graphics. That takes a little bit more effort.
 
 First, I'll use `virsh -c qemu:///system list` to see the running VM(s):
 ```shell
-; virsh -c qemu:///system list
- Id   Name                    State
+virsh -c qemu:///system list # [tl! .cmd]
+ Id   Name                    State # [tl! .nocopy:2]
 ---------------------------------------
  10   vagrant-win11_default   running
 ```
 
 Then I can tell `virt-viewer` that I'd like to attach a session there:
 ```shell
-virt-viewer -c qemu:///system -a vagrant-win11_default
+virt-viewer -c qemu:///system -a vagrant-win11_default # [tl! .cmd]
 ```
 
 I log in with the default password `vagrant`, and I'm in Windows 11 land!

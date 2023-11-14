@@ -21,20 +21,20 @@ tags:
   - python
 comment: true # Disable comment if false.
 ---
-VMware vCenter does wonders for abstracting away the layers of complexity involved in managing a large virtual infrastructure, but when something goes wrong it can be challenging to find exactly where the problem lies. And it can be even harder to proactively address potential issues before they occur. 
+VMware vCenter does wonders for abstracting away the layers of complexity involved in managing a large virtual infrastructure, but when something goes wrong it can be challenging to find exactly where the problem lies. And it can be even harder to proactively address potential issues before they occur.
 
 Fortunately there's a super-handy utility which can making diagnosing vCenter significantly easier, and it comes in the form of the [vSphere Diagnostic Tool Fling](https://flings.vmware.com/vsphere-diagnostic-tool). VDT is a Python script which can be run directly on a vCenter Server appliance (version 6.5 and newer) to quickly check for problems and misconfigurations affecting:
 - vCenter Basic Info
 - Lookup Service
 - Active Directory
-- vCenter Certificates 
+- vCenter Certificates
 - Core Files
 - Disk Health
-- vCenter DNS 
-- vCenter NTP 
-- vCenter Port 
-- Root Account 
-- vCenter Services 
+- vCenter DNS
+- vCenter NTP
+- vCenter Port
+- Root Account
+- vCenter Services
 - VCHA
 
 For any problems which are identified, VDT will provide simple instructions and/or links to Knowledge Base articles for more detailed instructions on how to proceed with resolving the issues. Sounds pretty useful, right? And yet, somehow, I keep forgetting that VDT is a thing. So here's a friendly reminder to myself of how to obtain and use VDT to fix vSphere woes. Let's get started.
@@ -55,29 +55,28 @@ This needs to be run directly on the vCenter appliance so you'll need to copy th
 
 Once that's done, just execute this on your local workstation to copy the `.zip` from your `~/Downloads/` folder to the VCSA's `/tmp/` directory:
 ```shell
-scp ~/Downloads/vdt-v1.1.4.zip root@vcsa.lab.bowdre.net:/tmp/
+scp ~/Downloads/vdt-v1.1.4.zip root@vcsa.lab.bowdre.net:/tmp/ # [tl! .cmd]
 ```
 
 ### 3. Extract
 Now pop back over to an SSH session to the VCSA, extract the `.zip`, and get ready for action:
 ```shell
-root@VCSA [ ~ ]# cd /tmp
-
-root@VCSA [ /tmp ]# unzip vdt-v1.1.4.zip
-Archive:  vdt-v1.1.4.zip
+cd /tmp # [tl! .cmd_root:1]
+unzip vdt-v1.1.4.zip
+Archive:  vdt-v1.1.4.zip # [tl! .nocopy:5]
 3557676756cffd658fd61aab5a6673269104e83c
   creating: vdt-v1.1.4/
   ...
   inflating: vdt-v1.1.4/vdt.py
 
-root@VCSA [ /tmp ]# cd vdt-v1.1.4/
+cd vdt-v1.1.4/ # [tl! .cmd_root]
 ```
 
 ### 4. Execute
 Now for the fun part:
 ```shell
-root@VCSA [ /tmp/vdt-v1.1.4 ]# python vdt.py
-_________________________
+python vdt.py # [tl! .cmd_root]
+_________________________ # [tl! .nocopy:7]
    RUNNING PULSE CHECK
 
 Today: Sunday, August 28 19:53:00
@@ -93,7 +92,7 @@ After entering the SSO password, VDT will run for a few minutes and generate an 
 Once the script has completed, it's time to look through the results and fix whatever can be found. As an example, here are some of the findings from my _deliberately-broken-for-the-purposes-of-this-post_ vCenter:
 
 #### Hostname/PNID mismatch
-```log {hl_lines=[8,9,23,24]}
+```text
    VCENTER BASIC INFO
 BASIC:
         Current Time: 2022-08-28 19:54:08.370889
@@ -101,7 +100,7 @@ BASIC:
         vCenter Load Average: 0.26, 0.19, 0.12
         Number of CPUs: 2
         Total Memory: 11.71
-        vCenter Hostname: VCSA
+        vCenter Hostname: VCSA # [tl! highlight:1]
         vCenter PNID: vcsa.lab.bowdre.net
         vCenter IP Address: 192.168.1.12
         Proxy Configured: "no"
@@ -116,16 +115,16 @@ DETAILS:
         Number of Clusters: 1
         Disabled Plugins: None
 
-[FAIL]  The hostname and PNID do not match!
+[FAIL]  The hostname and PNID do not match! # [tl! highlight:1]
         Please see https://kb.vmware.com/s/article/2130599 for more details.
 ```
 Silly me - I must have changed the hostname at some point, which is not generally a Thing Which Should Be done. I can quickly [consult the referenced KB](https://kb.vmware.com/s/article/2130599) to figure out how to fix my mistake using the `/opt/vmware/share/vami/vami_config_net` utility.
 
 #### Missing DNS
-```log {hl_lines=[3,4,5,12,13]}
+```text
 Nameserver Queries
 192.168.1.5
- [FAIL] DNS with UDP - unable to resolve vcsa to 192.168.1.12
+ [FAIL] DNS with UDP - unable to resolve vcsa to 192.168.1.12 # [tl! highlight:2]
  [FAIL] Reverse DNS - unable to resolve 192.168.1.12 to vcsa
  [FAIL] DNS with TCP - unable to resolve vcsa to 192.168.1.12
 
@@ -134,13 +133,13 @@ Nameserver Queries
   dig +noall +answer -x <ip> <namserver>
   dig +short +tcp <fqdn> <nameserver>
 
-RESULT: [FAIL]
+RESULT: [FAIL] # [tl! highlight:1]
 Please see KB: https://kb.vmware.com/s/article/54682
 ```
 Whoops - I guess I should go recreate the appropriate DNS records.
 
 #### Old core files
-```log
+```text
    CORE FILE CHECK
 INFO:
 These core files are older than 72 hours.  consider deleting them
@@ -166,18 +165,18 @@ at your discretion to reduce the size of log bundles.
 Those core files can be useful for investigating specific issues, but holding on to them long-term doesn't really do much good. _After checking to be sure I don't need them_, I can get rid of them all pretty easily like so:
 
 ```shell
-find /storage/core/ -name "core.*" -type f -mtime +3 -exec rm {} \;
+find /storage/core/ -name "core.*" -type f -mtime +3 -exec rm {} \; # [tl! .cmd_root]
 ```
 
 #### NTP status
-```log
+```text
    VC NTP CHECK
 [FAIL] NTP and Host time are both disabled!
 ```
 Oh yeah, let's turn that back on with `systemctl start ntpd`.
 
 #### Account status
-```log
+```text
    Root Account Check
 [FAIL]  Root password expires in 13 days
         Please search for 'Change the Password of the Root User'
@@ -186,13 +185,13 @@ Oh yeah, let's turn that back on with `systemctl start ntpd`.
 That's a good thing to know. I'll [take care of that](https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.vcenter.configuration.doc/GUID-48BAF973-4FD3-4FF3-B1B6-5F7286C9B59A.html) while I'm thinking about it.
 
 ```shell
-chage -M -1 -E -1 root
+chage -M -1 -E -1 root # [tl! .cmd_root]
 ```
 
 #### Recheck
 Now that I've corrected these issues, I can run VDT again to confirm that everything is back in a good state:
 
-```log {hl_lines=[8,9,"25-27",32,35,"55-56",59]}
+```text {hl_lines=[8,9,"25-27",32,35,"55-56",59]}
    VCENTER BASIC INFO
   BASIC:
         Current Time: 2022-08-28 20:13:25.192503
@@ -200,7 +199,7 @@ Now that I've corrected these issues, I can run VDT again to confirm that everyt
         vCenter Load Average: 0.28, 0.14, 0.10
         Number of CPUs: 2
         Total Memory: 11.71
-        vCenter Hostname: vcsa.lab.bowdre.net
+        vCenter Hostname: vcsa.lab.bowdre.net # [tl! highlight:1]
         vCenter PNID: vcsa.lab.bowdre.net
         vCenter IP Address: 192.168.1.12
         Proxy Configured: "no"
@@ -217,20 +216,20 @@ DETAILS:
 [...]
 Nameserver Queries
 192.168.1.5
- [PASS] DNS with UDP - resolved vcsa.lab.bowdre.net to 192.168.1.12
+ [PASS] DNS with UDP - resolved vcsa.lab.bowdre.net to 192.168.1.12 # [tl! highlight:2]
  [PASS] Reverse DNS - resolved 192.168.1.12 to vcsa.lab.bowdre.net
  [PASS] DNS with TCP - resolved vcsa.lab.bowdre.net to 192.168.1.12
  Commands used:
   dig +short <fqdn> <nameserver>
   dig +noall +answer -x <ip> <namserver>
   dig +short +tcp <fqdn> <nameserver>
-RESULT: [PASS]
+RESULT: [PASS] # [tl! highlight]
 [...]
    CORE FILE CHECK
-[PASS]  Number of core files: 0
+[PASS]  Number of core files: 0 # [tl! highlight:1]
 [PASS]  Number of hprof files: 0
 [...]
-NTP Status Check
+NTP Status Check # [tl! collapse:start]
 +-----------------------------------LEGEND-----------------------------------+
 | remote: NTP peer server                                                    |
 | refid: server that this peer gets its time from                            |
@@ -244,16 +243,16 @@ NTP Status Check
 | + Peer selected for possible synchronization                               |
 | – Peer is a candidate for selection                                        |
 | ~ Peer is statically configured                                            |
-+----------------------------------------------------------------------------+
++----------------------------------------------------------------------------+ # [tl! collapse:end]
      remote           refid      st t when poll reach   delay   offset  jitter
 ==============================================================================
 *104.171.113.34  130.207.244.240  2 u    1   64   17   16.831  -34.597   0.038
-RESULT: [PASS]
+RESULT: [PASS] # [tl! highlight]
 [...]
    Root Account Check
-[PASS]  Root password never expires
+[PASS]  Root password never expires # [tl! highlight]
 ```
 All better!
 
 ### Conclusion
-The vSphere Diagnostic Tool makes a great addition to your arsenal of troubleshooting skills and utilities. It makes it easy to troubleshoot errors which might occur in your vSphere environment, as well as to uncover dormant issues which could cause serious problems in the future. 
+The vSphere Diagnostic Tool makes a great addition to your arsenal of troubleshooting skills and utilities. It makes it easy to troubleshoot errors which might occur in your vSphere environment, as well as to uncover dormant issues which could cause serious problems in the future.

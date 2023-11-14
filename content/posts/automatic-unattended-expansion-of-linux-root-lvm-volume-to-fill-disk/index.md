@@ -30,6 +30,7 @@ When I cobbled together this script I was primarily targeting the Enterprise Lin
 {{% /notice %}}
 
 ```shell
+# torchlight! {"lineNumbers": true}
 #!/bin/bash
 # This will attempt to automatically detect the LVM logical volume where / is mounted and then
 # expand the underlying physical partition, LVM physical volume, LVM volume group, LVM logical

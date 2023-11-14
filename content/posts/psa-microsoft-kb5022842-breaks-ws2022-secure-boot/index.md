@@ -38,6 +38,7 @@ If you've got any **Windows Server 2022** VMs with **[Secure Boot](https://docs.
 
 I put together a quick PowerCLI query to help identify impacted VMs in my environment:
 ```powershell
+# torchlight! {"lineNumbers": true}
 $secureBoot2022VMs = foreach($datacenter in (Get-Datacenter)) {
   $datacenter | Get-VM |
     Where-Object {$_.Guest.OsFullName -Match 'Microsoft Windows Server 2022' -And $_.ExtensionData.Config.BootOptions.EfiSecureBootEnabled} |

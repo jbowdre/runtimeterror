@@ -11,7 +11,7 @@
   {{ .Content }}
 </header>
 
-{{ range $pages }}
+{{- range (.Paginate $pages).Pages }}
 {{- $postDate := .Date.Format "2006-01-02" }}
 {{- $updateDate := .Lastmod.Format "2006-01-02" }}
 <article class="post">
@@ -28,3 +28,4 @@
   <br>
 </article>
 {{ end }}
+{{- template "_internal/pagination.html" . }}

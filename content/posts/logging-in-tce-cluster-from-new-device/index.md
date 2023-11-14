@@ -25,7 +25,7 @@ When I [set up my Tanzu Community Edition environment](/tanzu-community-edition-
 
 The Tanzu CLI actually makes that pretty easy - once I figured out the appropriate incantation. I just needed to use the `tanzu management-cluster kubeconfig get` command on my Linux VM to export the `kubeconfig` of my management (`tce-mgmt`) cluster to a file:
 ```shell
-tanzu management-cluster kubeconfig get --admin --export-file tce-mgmt-kubeconfig.yaml
+tanzu management-cluster kubeconfig get --admin --export-file tce-mgmt-kubeconfig.yaml # [tl! .cmd]
 ```
 
 I then used `scp` to pull the file from the VM into my local Linux environment, and proceeded to [install `kubectl`](/tanzu-community-edition-k8s-homelab/#kubectl-binary) and the [`tanzu` CLI](/tanzu-community-edition-k8s-homelab/#tanzu-cli) (making sure to also [enable shell auto-completion](/enable-tanzu-cli-auto-completion-bash-zsh/) along the way!).
@@ -33,8 +33,9 @@ I then used `scp` to pull the file from the VM into my local Linux environment, 
 Now I'm ready to import the configuration locally with `tanzu login` on my Chromebook:
 
 ```shell
-❯ tanzu login --kubeconfig ~/projects/tanzu-homelab/tanzu-setup/tce-mgmt-kubeconfig.yaml --context tce-mgmt-admin@tce-mgmt --name tce-mgmt
-✔  successfully logged in to management cluster using the kubeconfig tce-mgmt
+tanzu login --kubeconfig ~/projects/tanzu-homelab/tanzu-setup/tce-mgmt-kubeconfig.yaml \ # [tl! .cmd]
+  --context tce-mgmt-admin@tce-mgmt --name tce-mgmt
+✔  successfully logged in to management cluster using the kubeconfig tce-mgmt # [tl! .nocopy]
 ```
 
 {{% notice tip "Use the absolute path" %}}
@@ -43,12 +44,12 @@ Pass in the full path to the exported kubeconfig file. This will help the Tanzu 
 
 Even though that's just importing the management cluster it actually grants access to both the management and workload clusters:
 ```shell
-❯ tanzu cluster list
-  NAME      NAMESPACE  STATUS   CONTROLPLANE  WORKERS  KUBERNETES        ROLES   PLAN
+tanzu cluster list # [tl! .cmd]
+  NAME      NAMESPACE  STATUS   CONTROLPLANE  WORKERS  KUBERNETES        ROLES   PLAN # [tl! .nocopy:2]
   tce-work  default    running  1/1           1/1      v1.21.2+vmware.1  <none>  dev
 
-❯ tanzu cluster get tce-work
-  NAME      NAMESPACE  STATUS   CONTROLPLANE  WORKERS  KUBERNETES        ROLES
+tanzu cluster get tce-work # [tl! .cmd]
+  NAME      NAMESPACE  STATUS   CONTROLPLANE  WORKERS  KUBERNETES        ROLES # [tl! .nocopy:start]
   tce-work  default    running  1/1           1/1      v1.21.2+vmware.1  <none>
 ℹ
 
@@ -62,9 +63,9 @@ NAME                                                         READY  SEVERITY  RE
 └─Workers
   └─MachineDeployment/tce-work-md-0
     └─Machine/tce-work-md-0-687444b744-crc9q                 True                     24h
-
-❯ tanzu management-cluster get
-  NAME      NAMESPACE   STATUS   CONTROLPLANE  WORKERS  KUBERNETES        ROLES
+# [tl! .nocopy:end]
+tanzu management-cluster get # [tl! .cmd]
+  NAME      NAMESPACE   STATUS   CONTROLPLANE  WORKERS  KUBERNETES        ROLES # [tl! .nocopy:start]
   tce-mgmt  tkg-system  running  1/1           1/1      v1.21.2+vmware.1  management
 
 
@@ -86,29 +87,29 @@ Providers:
   capi-kubeadm-bootstrap-system      bootstrap-kubeadm       BootstrapProvider       kubeadm       v0.3.23
   capi-kubeadm-control-plane-system  control-plane-kubeadm   ControlPlaneProvider    kubeadm       v0.3.23
   capi-system                        cluster-api             CoreProvider            cluster-api   v0.3.23
-  capv-system                        infrastructure-vsphere  InfrastructureProvider  vsphere       v0.7.10
+  capv-system                        infrastructure-vsphere  InfrastructureProvider  vsphere       v0.7.10 # [tl! .nocopy:end]
 ```
 
 And I can then tell `kubectl` about the two clusters:
 ```shell
-❯ tanzu management-cluster kubeconfig get tce-mgmt --admin
-Credentials of cluster 'tce-mgmt' have been saved
+tanzu management-cluster kubeconfig get tce-mgmt --admin # [tl! .cmd]
+Credentials of cluster 'tce-mgmt' have been saved # [tl! .nocopy:2]
 You can now access the cluster by running 'kubectl config use-context tce-mgmt-admin@tce-mgmt'
 
-❯ tanzu cluster kubeconfig get tce-work --admin
-Credentials of cluster 'tce-work' have been saved
+tanzu cluster kubeconfig get tce-work --admin # [tl! .cmd]
+Credentials of cluster 'tce-work' have been saved  # [tl! .nocopy:1]
 You can now access the cluster by running 'kubectl config use-context tce-work-admin@tce-work'
 ```
 
 And sure enough, there are my contexts:
 ```shell
-❯ kubectl config get-contexts
-CURRENT   NAME                      CLUSTER    AUTHINFO         NAMESPACE
+kubectl config get-contexts # [tl! .cmd]
+CURRENT   NAME                      CLUSTER    AUTHINFO         NAMESPACE # [tl! .nocopy:3]
           tce-mgmt-admin@tce-mgmt   tce-mgmt   tce-mgmt-admin
 *         tce-work-admin@tce-work   tce-work   tce-work-admin
 
-❯ kubectl get nodes -o wide
-NAME                             STATUS   ROLES                  AGE   VERSION            INTERNAL-IP     EXTERNAL-IP     OS-IMAGE                 KERNEL-VERSION   CONTAINER-RUNTIME
+kubectl get nodes -o wide # [tl! .cmd]
+NAME                             STATUS   ROLES                  AGE   VERSION            INTERNAL-IP     EXTERNAL-IP     OS-IMAGE                 KERNEL-VERSION   CONTAINER-RUNTIME # [tl! .nocopy:2]
 tce-work-control-plane-vc2pb     Ready    control-plane,master   23h   v1.21.2+vmware.1   192.168.1.132   192.168.1.132   VMware Photon OS/Linux   4.19.198-1.ph3   containerd://1.4.6
 tce-work-md-0-687444b744-crc9q   Ready    <none>                 23h   v1.21.2+vmware.1   192.168.1.133   192.168.1.133   VMware Photon OS/Linux   4.19.198-1.ph3   containerd://1.4.6
 ```

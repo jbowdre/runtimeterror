@@ -30,12 +30,13 @@ I will also add some properties to tell PowerCLI (and the `Invoke-VmScript` cmdl
 ##### Inputs section
 I'll kick this off by going into Cloud Assembly and editing the `WindowsDemo` template I've been working on for the past few eons. I'll add a `diskSize` input:
 ```yaml
+# torchlight! {"lineNumbers": true}
 formatVersion: 1
 inputs:
   site: [...]
   image: [...]
   size: [...]
-  diskSize:
+  diskSize: # [tl! focus:5]
     title: 'System drive size'
     default: 60
     type: integer
@@ -46,14 +47,15 @@ inputs:
 [...]
 ```
 
-The default value is set to 60GB to match the VMDK attached to the source template; that's also the minimum value since shrinking disks gets messy. 
+The default value is set to 60GB to match the VMDK attached to the source template; that's also the minimum value since shrinking disks gets messy.
 
 I'll also drop in an `adminsList` input at the bottom of the section:
 ```yaml
+# torchlight! {"lineNumbers": true}
 [...]
   poc_email: [...]
   ticket: [...]
-  adminsList: 
+  adminsList: # [tl! focus:4]
     type: string
     title: Administrators
     description: Comma-separated list of domain accounts/groups which need admin access to this server.
@@ -64,7 +66,7 @@ resources:
 ```
 
 ##### Resources section
-In the Resources section of the cloud template, I'm going to add a few properties that will tell the ABX script how to connect to the appropriate vCenter and then the VM. 
+In the Resources section of the cloud template, I'm going to add a few properties that will tell the ABX script how to connect to the appropriate vCenter and then the VM.
 - `vCenter`: The vCenter server where the VM will be deployed, and thus the server which PowerCLI will authenticate against. In this case, I've only got one vCenter, but a larger environment might have multiples. Defining this in the cloud template makes it easy to select automagically if needed. (For instance, if I had a `bow-vcsa` and a `dre-vcsa` for my different sites, I could do something like `vCenter: '${input.site}-vcsa.lab.bowdre.net'` here.)
 - `vCenterUser`: The username with rights to the VM in vCenter. Again, this doesn't have to be a static assignment.
 - `templateUser`: This is the account that will be used by `Invoke-VmScript` to log in to the guest OS. My template will use the default `Administrator` account for non-domain systems, but the `lab\vra` service account on domain-joined systems (using the `adJoin` input I [set up earlier](/joining-vms-to-active-directory-in-site-specific-ous-with-vra8#cloud-template)).
@@ -72,6 +74,7 @@ In the Resources section of the cloud template, I'm going to add a few propertie
 I'll also include the `adminsList` input from earlier so that can get passed to ABX as well. And I'm going to add in an `adJoin` property (mapped to the [existing `input.adJoin`](/joining-vms-to-active-directory-in-site-specific-ous-with-vra8#cloud-template)) so that I'll have that to work with later.
 
 ```yaml
+# torchlight! {"lineNumbers": true}
 [...]
 resources:
   Cloud_vSphere_Machine_1:
@@ -80,7 +83,7 @@ resources:
       image: '${input.image}'
       flavor: '${input.size}'
       site: '${input.site}'
-      vCenter: vcsa.lab.bowdre.net
+      vCenter: vcsa.lab.bowdre.net # [tl! focus:3]
       vCenterUser: vra@lab.bowdre.net
       templateUser: '${input.adJoin ? "vra@lab" : "Administrator"}'
       adminsList: '${input.adminsList}'
@@ -89,16 +92,17 @@ resources:
       app: '${input.app}'
       adJoin: '${input.adJoin}'
       ignoreActiveDirectory: '${!input.adJoin}'
-[...]      
+[...]
 ```
 
 And I will add in a `storage` property as well which will automatically adjust the deployed VMDK size to match the specified input:
 ```yaml
+# torchlight! {"lineNumbers": true}
 [...]
       description: '${input.description}'
       networks: [...]
       constraints: [...]
-      storage:
+      storage: # [tl! focus:1]
         bootDiskCapacityInGB: '${input.diskSize}'
   Cloud_vSphere_Network_1:
     type: Cloud.vSphere.Network
@@ -109,6 +113,7 @@ And I will add in a `storage` property as well which will automatically adjust t
 ##### Complete template
 Okay, all together now:
 ```yaml
+# torchlight! {"lineNumbers": true}
 formatVersion: 1
 inputs:
   site:
@@ -196,13 +201,13 @@ inputs:
   poc_email:
     type: string
     title: Point of Contact Email
-    default: jack.shephard@virtuallypotato.com
+    default: jack.shephard@example.com
     pattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
   ticket:
     type: string
     title: Ticket/Request Number
     default: 4815162342
-  adminsList: 
+  adminsList:
     type: string
     title: Administrators
     description: Comma-separated list of domain accounts/groups which need admin access to this server.
@@ -297,6 +302,7 @@ And I'll pop over to the right side to map the Action Constants I created earlie
 
 Now for The Script:
 ```powershell
+# torchlight! {"lineNumbers": true}
 <# vRA 8.x ABX action to perform certain in-guest actions post-deploy:
     Windows:
         - auto-update VM tools
@@ -304,12 +310,12 @@ Now for The Script:
         - extend C: volume to fill disk
         - set up remote access
         - create a scheduled task to (attempt to) apply Windows updates
-    
+
     ## Action Secrets:
         templatePassWinDomain                   # password for domain account with admin rights to the template (domain-joined deployments)
         templatePassWinWorkgroup                # password for local account with admin rights to the template (standalone deployments)
         vCenterPassword                         # password for vCenter account passed from the cloud template
-    
+
     ## Action Inputs:
     ## Inputs from deployment:
         resourceNames[0]                        # VM name [BOW-DVRT-XXX003]
@@ -326,8 +332,8 @@ function handler($context, $inputs) {
     $vcUser = $inputs.customProperties.vCenterUser
     $vcPassword = $context.getSecret($inputs."vCenterPassword")
     $vCenter = $inputs.customProperties.vCenter
-    
-    # Create vmtools connection to the VM 
+
+    # Create vmtools connection to the VM
     $vmName = $inputs.resourceNames[0]
     Connect-ViServer -Server $vCenter -User $vcUser -Password $vcPassword -Force
     $vm = Get-VM -Name $vmName
@@ -335,13 +341,13 @@ function handler($context, $inputs) {
     if (-not (Wait-Tools -VM $vm -TimeoutSeconds 180)) {
         Write-Error "Unable to establish connection with VM tools" -ErrorAction Stop
     }
-    
+
     # Detect OS type
     $count = 0
     While (!$osType) {
         Try {
             $osType = ($vm | Get-View).Guest.GuestFamily.ToString()
-            $toolsStatus = ($vm | Get-View).Guest.ToolsStatus.ToString()        
+            $toolsStatus = ($vm | Get-View).Guest.ToolsStatus.ToString()
         } Catch {
             # 60s timeout
             if ($count -ge 12) {
@@ -354,7 +360,7 @@ function handler($context, $inputs) {
         }
     }
     Write-Host "$vmName is a $osType and its tools status is $toolsStatus."
-    
+
     # Update tools on Windows if out of date
     if ($osType.Equals("windowsGuest") -And $toolsStatus.Equals("toolsOld")) {
         Write-Host "Updating VM Tools..."
@@ -364,7 +370,7 @@ function handler($context, $inputs) {
             Write-Error "Unable to establish connection with VM tools" -ErrorAction Stop
         }
     }
-    
+
     # Run OS-specific tasks
     if ($osType.Equals("windowsGuest")) {
         # Initialize Windows variables
@@ -373,7 +379,7 @@ function handler($context, $inputs) {
         $adJoin = $inputs.customProperties.adJoin
         $templateUser = $inputs.customProperties.templateUser
         $templatePassword = $adJoin.Equals("true") ? $context.getSecret($inputs."templatePassWinDomain") : $context.getSecret($inputs."templatePassWinWorkgroup")
-      
+
         # Add domain accounts to local administrators group
         if ($adminsList.Length -gt 0 -And $adJoin.Equals("true")) {
             # Standardize users entered without domain as DOMAIN\username
@@ -440,7 +446,7 @@ function handler($context, $inputs) {
         Start-Sleep -s 10
         Write-Host "Creating a scheduled task to apply updates..."
         $runUpdateScript = Invoke-VMScript -VM $vm -ScriptText $updateScript -GuestUser $templateUser -GuestPassword $templatePassword
-        Write-Host "Created task:`n" $runUpdateScript.ScriptOutput "`n"            
+        Write-Host "Created task:`n" $runUpdateScript.ScriptOutput "`n"
     } elseif ($osType.Equals("linuxGuest")) {
         #TODO
         Write-Host "Linux systems not supported by this action... yet"
@@ -479,7 +485,7 @@ I do have another subsciption on that event already, [`VM Post-Provisioning`](/a
 After hitting the **Save** button, I go back to that other `VM Post-Provisioning` subscription, set it to enable blocking, and give it a priority of `1`:
 ![Blocking VM Post-Provisioning](20210903_old_subscription_blocking.png)
 
-This will ensure that the new subscription fires after the older one completes, and that should avoid any conflicts between the two. 
+This will ensure that the new subscription fires after the older one completes, and that should avoid any conflicts between the two.
 
 ### Testing
 Alright, now let's see if it worked. I head into Service Broker to submit the deployment request:
@@ -499,50 +505,50 @@ Logging in to server.
 logged in to server vcsa.lab.bowdre.net:443
 Read-only file system
 09/03/2021 19:08:27	Get-VM	Finished execution
-09/03/2021 19:08:27	Get-VM	
+09/03/2021 19:08:27	Get-VM
 Waiting for VM Tools to start...
-09/03/2021 19:08:29	Wait-Tools	5222b516-ae2c-5740-2926-77cd21441f27	
+09/03/2021 19:08:29	Wait-Tools	5222b516-ae2c-5740-2926-77cd21441f27
 09/03/2021 19:08:29	Wait-Tools	Finished execution
-09/03/2021 19:08:29	Wait-Tools	
+09/03/2021 19:08:29	Wait-Tools
 09/03/2021 19:08:29	Get-View	Finished execution
-09/03/2021 19:08:29	Get-View	
+09/03/2021 19:08:29	Get-View
 09/03/2021 19:08:29	Get-View	Finished execution
-09/03/2021 19:08:29	Get-View	
+09/03/2021 19:08:29	Get-View
 BOW-PSVS-XXX001 is a windowsGuest and its tools status is toolsOld.
 Updating VM Tools...
-09/03/2021 19:08:30	Update-Tools	5222b516-ae2c-5740-2926-77cd21441f27	
+09/03/2021 19:08:30	Update-Tools	5222b516-ae2c-5740-2926-77cd21441f27
 09/03/2021 19:08:30	Update-Tools	Finished execution
-09/03/2021 19:08:30	Update-Tools	
+09/03/2021 19:08:30	Update-Tools
 Waiting for VM Tools to start...
-09/03/2021 19:09:00	Wait-Tools	5222b516-ae2c-5740-2926-77cd21441f27	
+09/03/2021 19:09:00	Wait-Tools	5222b516-ae2c-5740-2926-77cd21441f27
 09/03/2021 19:09:00	Wait-Tools	Finished execution
-09/03/2021 19:09:00	Wait-Tools	
+09/03/2021 19:09:00	Wait-Tools
 Administrators: "lab\testy"
 Attempting to add administrator accounts...
-09/03/2021 19:09:10	Invoke-VMScript	5222b516-ae2c-5740-2926-77cd21441f27	
+09/03/2021 19:09:10	Invoke-VMScript	5222b516-ae2c-5740-2926-77cd21441f27
 09/03/2021 19:09:10	Invoke-VMScript	Finished execution
-09/03/2021 19:09:10	Invoke-VMScript	
+09/03/2021 19:09:10	Invoke-VMScript
 Successfully added ["lab\testy"] to Administrators group.
 Attempting to extend system volume...
-09/03/2021 19:09:27	Invoke-VMScript	5222b516-ae2c-5740-2926-77cd21441f27	
+09/03/2021 19:09:27	Invoke-VMScript	5222b516-ae2c-5740-2926-77cd21441f27
 09/03/2021 19:09:27	Invoke-VMScript	Finished execution
-09/03/2021 19:09:27	Invoke-VMScript	
+09/03/2021 19:09:27	Invoke-VMScript
 Successfully extended system partition.
 Attempting to enable remote access (RDP, WMI, File and Printer Sharing, PSRemoting)...
-09/03/2021 19:09:49	Invoke-VMScript	5222b516-ae2c-5740-2926-77cd21441f27	
+09/03/2021 19:09:49	Invoke-VMScript	5222b516-ae2c-5740-2926-77cd21441f27
 09/03/2021 19:09:49	Invoke-VMScript	Finished execution
-09/03/2021 19:09:49	Invoke-VMScript	
+09/03/2021 19:09:49	Invoke-VMScript
 Successfully enabled remote access.
 Creating a scheduled task to apply updates...
-09/03/2021 19:10:12	Invoke-VMScript	5222b516-ae2c-5740-2926-77cd21441f27	
+09/03/2021 19:10:12	Invoke-VMScript	5222b516-ae2c-5740-2926-77cd21441f27
 09/03/2021 19:10:12	Invoke-VMScript	Finished execution
-09/03/2021 19:10:12	Invoke-VMScript	
+09/03/2021 19:10:12	Invoke-VMScript
 Created task:
- 
-TaskPath                                       TaskName                          State     
---------                                       --------                          -----     
-\                                              Initial_Updates                   Ready     
-\                                              Initial_Updates                   Ready     
+
+TaskPath                                       TaskName                          State
+--------                                       --------                          -----
+\                                              Initial_Updates                   Ready
+\                                              Initial_Updates                   Ready
 ```
 
 So it *claims* to have successfully updated the VM tools, added `lab\testy` to the local `Administrators` group, extended the `C:` volume to fill the 65GB virtual disk, added firewall rules to permit remote access, and created a scheduled task to apply updates. I can open a console session to the VM to spot-check the results.
