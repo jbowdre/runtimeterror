@@ -2,9 +2,8 @@
 title: "Automating Security Camera Notifications With Home Assistant and Ntfy"
 date: 2023-11-25
 # lastmod: 2023-11-23
-draft: true
-description: "This is a new post about..."
-featured: false
+description: "Using the power of Home Assistant automations and Ntfy push notifications to level-up security camera motion detections."
+featured: true
 toc: true
 comment: true
 thumbnail: thumbnail.png
