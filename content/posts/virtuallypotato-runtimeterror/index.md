@@ -5,7 +5,6 @@ date: 2023-09-13
 timeless: true
 draft: false
 description: "This blog has migrated from virtuallypotato.com to runtimeterror.dev."
-featured: true
 toc: false
 comment: true
 tags:
