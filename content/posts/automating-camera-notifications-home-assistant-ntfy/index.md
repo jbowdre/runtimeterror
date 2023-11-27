@@ -1,9 +1,10 @@
 ---
 title: "Automating Security Camera Notifications With Home Assistant and Ntfy"
 date: 2023-11-25
-# lastmod: 2023-11-23
+lastmod: 2023-11-27
 description: "Using the power of Home Assistant automations and Ntfy push notifications to level-up security camera motion detections."
 featured: true
+alias: automating-security-camera-notifications-with-home-assistant-and-ntfy
 toc: true
 comment: true
 thumbnail: thumbnail.png
@@ -407,7 +408,7 @@ variables: # [tl! collapse:start]
     binary_sensor.garage_vehicle: timer.garage_vehicle # [tl! collapse:end]
 ```
 
-I'd also like to ensure that the interior motion alerts are also activated whenever our [Abode](https://goabode.com/) security system is set to "Away", regardless of what time that may be. That will make the condition a little bit trickier: alerts should be pushed if the timer isn't running AND the schedule is active OR the security system is armed. So here's what that will look like:
+I'd also like to ensure that the interior motion alerts are also activated whenever our [Abode](https://goabode.com/) security system is armed, regardless of what time that may be. That will make the condition a little bit trickier: alerts should be pushed if the timer isn't running AND the schedule is active OR the security system is armed (in either "Home" or "Away" mode). So here's what that will look like:
 
 ```yaml
 # torchlight! {"lineNumbers": true}
@@ -440,6 +441,9 @@ condition: # [tl! focus:start]
             state: "on"
           - condition: state
             state: armed_away
+            entity_id: alarm_control_panel.abode_alarm
+          - condition: state
+            state: armed_home
             entity_id: alarm_control_panel.abode_alarm # [tl! ++:end focus:end]
 action: # [tl! collapse:start]
   - service: camera.snapshot
