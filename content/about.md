@@ -30,7 +30,7 @@ See what I've been up to on:
 Connect with me via:
 - [SimpleX Chat](/simplex/)
 - [Matrix](https://matrix.to/#/@jbowdre:omg.lol)
-- [Email](mailto:jbowdre@omg.lol)
+- [Electronic Mail](mailto:jbowdre@omg.lol)
   - [PGP: 613F B70C 4FA7 A077](https://home.omg.lol/keychain/jbowdre/pgp)
 
 
