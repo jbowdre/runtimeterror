@@ -25,7 +25,7 @@ See what I've been up to on:
 - [GitHub](https://github.com/jbowdre)
 - [CounterSocial](https://counter.social/@john_b)
 - [status.lol](https://status.lol/jbowdre)
-- [/now page](https://jbowdre.omg.lol/now)
+- [/meanwhile](https://meanwhile.jbowdre.omg.lol)
 
 Connect with me via:
 - [SimpleX Chat](/simplex/)
