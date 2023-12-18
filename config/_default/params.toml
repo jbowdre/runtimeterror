@@ -135,7 +135,12 @@ url = "https://runtimeterror.dev/simplex"
 [[socialLinks]]
 icon = "fa-solid fa-envelope"
 title = "Email"
-url = "mailto:ops@runtimeterror.dev"
+url = "mailto:jbowdre@omg.lol"
+
+[[socialLinks]]
+icon = "fa-solid fa-heart"
+title = "omg.lol"
+url = "https://jbowdre.omg.lol"
 
 [[powerLinks]]
 title = "hugo"

@@ -24,9 +24,14 @@ And in the free time I have left, I game on my Steam Deck.
 See what I've been up to on:
 - [GitHub](https://github.com/jbowdre)
 - [CounterSocial](https://counter.social/@john_b)
+- [status.lol](https://status.lol/jbowdre)
+- [/now page](https://jbowdre.omg.lol/now)
 
-Securely chat with me via:
+Connect with me via:
 - [SimpleX Chat](/simplex/)
+- [Matrix](https://matrix.to/#/@jbowdre:omg.lol)
+- [Electronic Mail](mailto:jbowdre@omg.lol)
+  - [PGP: 613F B70C 4FA7 A077](https://home.omg.lol/keychain/jbowdre/pgp)
 
 
 [^1]: Congrats? And also, *thank you.*

@@ -11,7 +11,7 @@ module.exports = {
 
   // Which theme you want to use. You can find all of the themes at
   // https://torchlight.dev/docs/themes.
-  theme: 'one-dark-pro',
+  theme: 'synthwave-84',
 
   // The Host of the API.
   host: 'https://api.torchlight.dev',
@@ -34,7 +34,7 @@ module.exports = {
 
     // When lines are collapsed, this is the text that will
     // be shown to indicate that they can be expanded.
-    summaryCollapsedIndicator: 'Click to expand...',
+    summaryCollapsedIndicator: '{ ... }',
   },
 
   // Options for the highlight command.

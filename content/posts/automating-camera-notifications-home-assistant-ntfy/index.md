@@ -1,9 +1,10 @@
 ---
 title: "Automating Security Camera Notifications With Home Assistant and Ntfy"
 date: 2023-11-25
-# lastmod: 2023-11-23
+lastmod: 2023-11-27
 description: "Using the power of Home Assistant automations and Ntfy push notifications to level-up security camera motion detections."
 featured: true
+alias: automating-security-camera-notifications-with-home-assistant-and-ntfy
 toc: true
 comment: true
 thumbnail: thumbnail.png
@@ -47,7 +48,7 @@ notify:
 
 The Reolink integration exposes a number of entities for each camera. For triggering a notification on motion detection, I'll be interested in the [binary sensor](https://www.home-assistant.io/integrations/binary_sensor/) entities named like `binary_sensor.$location_$type` (like `binary_sensor.backyard_person` and `binary_sensor.driveway_vehicle`), the state of which will transition from `off` to `on` when the selected motion type is detected.
 
-So I'll craft start with a simple automation which will push out a notification whenever any of the listed cameras detect a person (or vehicle):
+So I'll begin by crafting a simple automation which will push out a notification whenever any of the listed cameras detect a person or vehicle[^vehicle]:
 ```yaml
 # torchlight! {"lineNumbers": true}
 # exterior_motion.yaml
@@ -71,6 +72,8 @@ action:
       title: Motion detected!
       message: "{{ trigger.to_state.attributes.friendly_name }}"
 ```
+
+[^vehicle]: Hopefully I only need to worry about vehicles in the driveway. _Please don't drive through my backyard, thanks._
 
 {{% notice tip "Templating" %}}
 That last line is taking advantage of Jinja templating and [trigger variables](https://www.home-assistant.io/docs/automation/templating/#state) so that the resulting notification displays the friendly name of whichever `binary_sensor` triggered the automation run. This way, I'll see something like "Backyard Person" instead of the entity ID listed earlier.
@@ -407,7 +410,7 @@ variables: # [tl! collapse:start]
     binary_sensor.garage_vehicle: timer.garage_vehicle # [tl! collapse:end]
 ```
 
-I'd also like to ensure that the interior motion alerts are also activated whenever our [Abode](https://goabode.com/) security system is set to "Away", regardless of what time that may be. That will make the condition a little bit trickier: alerts should be pushed if the timer isn't running AND the schedule is active OR the security system is armed. So here's what that will look like:
+I'd also like to ensure that the interior motion alerts are also activated whenever our [Abode](https://goabode.com/) security system is armed, regardless of what time that may be. That will make the condition a little bit trickier: alerts should be pushed if the timer isn't running AND the schedule is active OR the security system is armed (in either "Home" or "Away" mode). So here's what that will look like:
 
 ```yaml
 # torchlight! {"lineNumbers": true}
@@ -440,6 +443,9 @@ condition: # [tl! focus:start]
             state: "on"
           - condition: state
             state: armed_away
+            entity_id: alarm_control_panel.abode_alarm
+          - condition: state
+            state: armed_home
             entity_id: alarm_control_panel.abode_alarm # [tl! ++:end focus:end]
 action: # [tl! collapse:start]
   - service: camera.snapshot
