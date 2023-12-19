@@ -1,8 +1,7 @@
 ---
 title: "Tailscale Feature Highlight: SSH, Serve, and Funnel"
-date: 2023-12-18
+date: 2023-12-20
 # lastmod: 2023-12-18
-draft: true
 description: "Exploring some of my favorite Tailscale bonus features: SSH, Serve, and Funnel."
 featured: false
 toc: true
