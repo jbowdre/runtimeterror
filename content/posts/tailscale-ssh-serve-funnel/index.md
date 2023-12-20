@@ -2,7 +2,7 @@
 title: "Tailscale Feature Highlight: SSH, Serve, and Funnel"
 date: 2023-12-20
 # lastmod: 2023-12-18
-description: "Exploring some of my favorite Tailscale bonus features: SSH, Serve, and Funnel."
+description: "Exploring some of my favorite Tailscale addon features: SSH, Serve, and Funnel."
 featured: false
 toc: true
 comment: true
@@ -14,7 +14,7 @@ tags:
   - vpn
 ---
 
-I've spent the past two years in love with [Tailscale](https://tailscale.com/), which builds on the [secure and high-performance Wireguard VPN protocol](/cloud-based-wireguard-vpn-remote-homelab-access/) and makes it [really easy to configure and manage](/secure-networking-made-simple-with-tailscale/). Being able to easily (and securely) access remote devices as if they were on the same LAN pretty awesome to begin with, but Tailscale is packed with an ever-expanding set of features that can really help to streamline your operations too. Here are three of my favorites.
+I've spent the past two years in love with [Tailscale](https://tailscale.com/), which builds on the [secure and high-performance Wireguard VPN protocol](/cloud-based-wireguard-vpn-remote-homelab-access/) and makes it [really easy to configure and manage](/secure-networking-made-simple-with-tailscale/). Being able to easily (and securely) access remote devices as if they were on the same LAN is pretty awesome to begin with, but Tailscale is packed with an ever-expanding set of features that can really help to streamline your operations too. Here are three of my favorites.
 
 ### Tailscale SSH
 Tailscale already takes care of issuing, rotating, and otherwise managing the Wireguard keys used for securing communications between the systems in your tailnet. [Tailscale SSH](https://tailscale.com/kb/1193/tailscale-ssh) lets it do the same for your SSH keys as well. No more manually dropping public keys on systems you're setting up for remote access. No more scrambling to figure out how to get your private key onto your mobile device so you can SSH to a server. No more worrying about who has access to what. Tailscale can solve all those concerns for you - and it does it without impacting traditional SSH operations:
@@ -33,7 +33,7 @@ To actually use the feature, though, you'll need to make sure that your Tailscal
     // Allow all connections.
     { "action": "accept", "src": ["*"], "dst": ["*:*"] },
   ],
-  "ssh": [
+  "ssh": [ // [tl! highlight:start]
     // Allow all users to SSH into their own devices in check mode.
     {
       "action": "check",
@@ -41,7 +41,7 @@ To actually use the feature, though, you'll need to make sure that your Tailscal
       "dst": ["autogroup:self"],
       "users": ["autogroup:nonroot", "root"]
     }
-  ]
+  ] // [tl! highlight:end]
 }
 ```
 
@@ -85,7 +85,13 @@ Most of my tailnet nodes are tagged with a location (`internal`/`external`) inst
 }
 ```
 
-These ACLs can get [pretty granular](https://tailscale.com/kb/1018/acls), and I think it's pretty cool to be able to codify your SSH access rules in a centrally-managed policy instead of having to manually keep track of which keys are on which systems.
+This way, SSH connections originating from `internal` systems will be accepted, while those originating from untagged systems[^web1] will have the extra check for tailnet authentication. You might also note that this policy prevents connections from tagged systems as the `root` user, requiring instead that the user log in with their own account and then escalate as needed.
+
+[^web1]: Or the Tailscale admin web console - as we'll soon see.
+
+These ACLs can get [pretty granular](https://tailscale.com/kb/1018/acls), and I think it's pretty cool to be able to codify your SSH access rules in a centrally-managed[^vcs] policy instead of having to manually keep track of which keys are on which systems.
+
+[^vcs]: And potentially [version-controlled](https://tailscale.com/kb/1204/gitops-acls).
 
 Once SSH is enabled on a tailnet node and the ACL rules are in place, you can SSH from a Tailscale-protected system to another as easily as `ssh [hostname]` and you'll be connected right away - no worrying about keys or fumbling to enter credentials. I think this is doubly cool when implemented on systems running in The Cloud; Tailscale provides the connectivity so I don't need to open up port 22 to the world.
 
@@ -100,19 +106,21 @@ Last login: Tue Dec 19 04:17:15 UTC 2023 from 100.73.92.61 on pts/3
 john@tsdemo:~$ # [tl! .nocopy:end]
 ```
 
-As a bonus, I can also open an SSH session from the Tailscale [admin console](https://login.tailscale.com/admin/machines):
+As a bonus, I can also open an SSH session from the Tailscale [admin console](https://login.tailscale.com/admin/machines)[^web2]:
 ![web_ssh_1](web_ssh_1.png)
 
 ![web_ssh_2](web_ssh_2.png)
 
 ![web_ssh_3](web_ssh_3.png)
 
+[^web2]: SSH connections originating from the admin portal are associated with that logon, so they will follow the `check` portion of the policy. The first attempt to connect will require reauthentication with Tailscale, and subsequent connections will auto-connect for the next 12 hours.
+
 That even works from mobile devices, too!
 
 ### Tailscale Serve
 I've [mentioned in the past](/federated-matrix-server-synapse-on-oracle-clouds-free-tier/#reverse-proxy-setup) how impressed I was (and still am!) by the [Caddy webserver](https://caddyserver.com/) and how effortless it makes configuring a reverse proxy with automatic TLS. I've used it for a *lot* of my externally-facing projects.
 
-Caddy is great, but it's not quite as easy to use for internal stuff - I'd need a public DNS record and inbound HTTP access in order for the ACME challenge to complete and a cert to be issued and installed. That's probably not a great fit for wanting to proxy my [Proxmox host](/ditching-vsphere-for-proxmox/#on-the-host). That's where the capabilities of [Tailscale Serve](https://tailscale.com/kb/1312/serve) really come in handy.
+Caddy is great, but it's not quite as easy to use for internal stuff - I'd need a public DNS record and inbound HTTP access in order for the ACME challenge to complete and a cert to be issued and installed, or I would have to manually create a certificate and load it in the Caddy config. That's probably not a great fit for wanting to proxy my [Proxmox host](/ditching-vsphere-for-proxmox/#on-the-host). And that is where the capabilities of [Tailscale Serve](https://tailscale.com/kb/1312/serve) really come in handy.
 
 > *Tailscale Serve is a feature that allows you to route traffic from other devices on your Tailscale network (known as a tailnet) to a local service running on your device. You can think of this as sharing the service, such as a website, with the rest of your tailnet.*
 
@@ -144,7 +152,7 @@ The command also supports some useful flags:
         Update without interactive prompts (default false)
 ```
 
-Tailscale serve be used for spawning a simple file server (like this one which shares the contents of the `/demo` directory):
+Tailscale Serve can be used for spawning a simple file server (like this one which shares the contents of the `/demo` directory):
 ```shell
 sudo tailscale serve /demo # [tl! .cmd]
 Available within your tailnet: # [tl! .nocopy:5]
@@ -157,7 +165,9 @@ Press Ctrl+C to exit.
 
 ![file server](file_server.png)
 
-Or for proxying another web server, like [Cockpit](https://cockpit-project.org/) which runs on `https://localhost:9090`:
+Note that this server is running in the foreground, and that it's serving the site with an automatically-generated automatically-trusted [Let's Encrypt](https://letsencrypt.org/) certificate.
+
+I can also use Tailscale Serve for proxying another web server, like [Cockpit](https://cockpit-project.org/), which runs on `http://localhost:9090`:
 ```shell
 sudo tailscale serve --bg 9090 # [tl! .cmd]
 Available within your tailnet: # [tl! .nocopy:6]
@@ -171,7 +181,9 @@ To disable the proxy, run: tailscale serve --https=443 off
 
 ![cockpit](cockpit.png)
 
-But what if I want to proxy another service (like [netdata](https://www.netdata.cloud/), which runs on `http://localhost:19999`) at the same time? I can either proxy it on another port:
+This time, I included the `--bg` flag so that the server would run in the background, and I told it to proxy port `9090` instead of a file path.
+
+But what if I want to proxy *another* service (like [netdata](https://www.netdata.cloud/), which runs on `http://localhost:19999`) at the same time? I can either proxy it on another port, like `8443`:
 ```shell
 sudo tailscale serve --bg --https 8443 19999 # [tl! .cmd]
 Available within your tailnet: # [tl! .nocopy:9]
@@ -204,7 +216,7 @@ To disable the proxy, run: tailscale serve --https=443 off
 ![netdata](netdata.png)
 
 {{% notice note "Stubborn Apps" %}}
-Not all web apps adapt well to being served at a different path than they expect. It works fine for netadata, but did not work with Cockpit (at least not without digging deeper into the configuration to change the base URL). But hey, that's why we've got options.
+Not all web apps adapt well to being served at a different path than they expect. It works fine for netadata, but did not work with Cockpit (at least not without digging deeper into the configuration to change the base URL). But hey, that's why we've got options!
 {{% /notice %}}
 
 ### Tailscale Funnel
@@ -274,8 +286,8 @@ Now only nodes with the `funnel` tag will be able to enable Funnel.
 
 From there, the process to activate Tailscale Funnel is basically identical to that of Tailscale Serve - you just use `tailscale funnel` instead of `tailscale serve`.
 
-{{% notice warning "Serve vs Funnel" %}}
-A given port can be served via Serve (only available within the tailnet) *or* Funnel (available within the tailnet and to the internet), but not both. If you want to Serve one resource and Funnel another, you'll need to use different ports for that.
+{{% notice warning "Funnel Ports, Not Resources" %}}
+A Funnel configuration is applied to the **port** that Tailscale Serve uses to make a resource available, not the resource itself. In the example above, I have both Cockpit and netdata being served over port `443`. If I try to use `sudo tailscale funnel --set-path /netdata 19999` to Funnel just the netdata instance, that will actually Funnel *both* resources instead of just the one.
 {{% /notice %}}
 
 If I want to make the netdata instance available publicly while keeping Cockpit internal-only, I'll need to serve netdata on a different port. Funnel [only supports](https://tailscale.com/kb/1223/funnel#limitations) ports `443`, `8443`, and `10000`, so I'll use `8443`:
@@ -292,7 +304,7 @@ To disable the proxy, run: tailscale funnel --https=8443 off
 
 It will take 10 or so minutes for the public DNS record to get created, but after that anyone on the internet (not just within my tailnet!) would be able to access the resource I've shared.
 
-I can use `tailscale serve status` to confirm that both Cockpit and netdata are served internally on port `443`, and just netdata is published externally on port `8443`:
+I can use `tailscale serve status` to confirm that both Cockpit and netdata are served internally on port `443`, but only netdata is published externally on port `8443`:
 ```shell
 sudo tailscale serve status # [tl! .cmd]
 # [tl! .nocopy:9]
