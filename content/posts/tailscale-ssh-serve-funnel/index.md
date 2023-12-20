@@ -183,7 +183,7 @@ To disable the proxy, run: tailscale serve --https=443 off
 
 This time, I included the `--bg` flag so that the server would run in the background, and I told it to proxy port `9090` instead of a file path.
 
-But what if I want to proxy *another* service (like [netdata](https://www.netdata.cloud/), which runs on `http://localhost:19999`) at the same time? I can either proxy it on another port, like `8443`:
+But what if I want to proxy *another* service (like [netdata](https://github.com/netdata/netdata), which runs on `http://localhost:19999`) at the same time? I can either proxy it on another port, like `8443`:
 ```shell
 sudo tailscale serve --bg --https 8443 19999 # [tl! .cmd]
 Available within your tailnet: # [tl! .nocopy:9]
