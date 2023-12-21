@@ -15,7 +15,7 @@ title: Setting up Linux on a new Lenovo Chromebook Duet (bonus arm64 complicatio
 featured: false
 ---
 
-I've [written in the past](/3d-modeling-and-printing-on-chrome-os) about the Linux setup I've been using on my Pixel Slate. My Slate's keyboard stopped working over the weekend, though, and there don't seem to be any replacements (either Google or Brydge) to be found. And then I saw that [Walmart had the 64GB Lenovo Chromebook Duet temporarily marked down](https://twitter.com/johndotbowdre/status/1320733614426988544) to a mere $200 - just slightly more than the Slate's *keyboard* originally cost. So I jumped on that deal, and the little Chromeblet showed up today.
+I've [written in the past](/3d-modeling-and-printing-on-chrome-os) about the Linux setup I've been using on my Pixel Slate. My Slate's keyboard stopped working over the weekend, though, and there don't seem to be any replacements (either Google or Brydge) to be found. And then I saw that Walmart had the 64GB Lenovo Chromebook Duet temporarily marked down to a mere $200 - just slightly more than the Slate's *keyboard* originally cost. So I jumped on that deal, and the little Chromeblet showed up today.
 
 ![Aww, it's so cute!](kULHPeDuc.jpeg)
 
@@ -102,7 +102,7 @@ Once you connect the phone to Linux, check the phone to approve the debugging co
 
 ### Microsoft PowerShell and VMware PowerCLI
 *[Updated 5/20/2021 with Microsoft's newer instructions]*
-I'm working on setting up a [VMware homelab on an Intel NUC 9](https://twitter.com/johndotbowdre/status/1317558182936563714) so being able to automate things with PowerCLI will be handy.
+I'm working on setting up a VMware homelab on an Intel NUC 9 so being able to automate things with PowerCLI will be handy.
 
 PowerShell for ARM is still in an early stage so while [it is supported](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.2#support-for-arm-processors) it must be installed manually. Microsoft has instructions for installing PowerShell from binary archives [here](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.2#linux), and I grabbed the latest `-linux-arm64.tar.gz` release I could find [here](https://github.com/PowerShell/PowerShell/releases).
 ```shell

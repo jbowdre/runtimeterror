@@ -128,19 +128,29 @@ title = "CounterSocial"
 url = "https://counter.social/@john_b"
 
 [[socialLinks]]
-icon = "fa-solid fa-comments"
-title = "SimpleX Chat"
-url = "https://runtimeterror.dev/simplex"
-
-[[socialLinks]]
-icon = "fa-solid fa-envelope"
-title = "Email"
-url = "mailto:jbowdre@omg.lol"
+icon = "fa fa-mastodon"
+title = "Mastodon"
+url = "https://social.lol/@jbowdre"
 
 [[socialLinks]]
 icon = "fa-solid fa-heart"
 title = "omg.lol"
 url = "https://jbowdre.omg.lol"
+
+[[socialLinks]]
+icon = "fa-solid fa-comments"
+title = "SimpleX Chat"
+url = "https://runtimeterror.dev/simplex"
+
+[[socialLinks]]
+icon = "fa fa-matrix-org"
+title = "Matrix"
+url = "https://matrix.to/#/@jbowdre:omg.lol"
+
+[[socialLinks]]
+icon = "fa-solid fa-envelope"
+title = "Email"
+url = "mailto:jbowdre@omg.lol"
 
 [[powerLinks]]
 title = "hugo"
