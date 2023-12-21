@@ -2,7 +2,6 @@
 title: "Quick Salt State to Deploy Netdata"
 date: 2023-12-21
 # lastmod: 2023-12-21
-draft: true
 description: "A hasty Salt state to deploy netdata monitoring and publish it internally on my tailnet with Tailscale Serve"
 featured: false
 toc: true
