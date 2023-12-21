@@ -22,7 +22,7 @@ Fortunately, vRA 8 supports adding an Active Directory integration to handle sta
 | `DRE` | `lab.bowre.net/LAB/DRE/Computers/Servers` |
 
 
-I didn't find a lot of documentation on how make this work, though, so here's how I've implemented it in my lab (now [running vRA 8.4.2](https://twitter.com/johndotbowdre/status/1416037317052178436)).
+I didn't find a lot of documentation on how make this work, though, so here's how I've implemented it in my lab (now running vRA 8.4.2).
 
 ### Adding the AD integration
 First things first: connecting vRA to AD. I do this by opening the Cloud Assembly interface, navigating to **Infrastructure > Connections > Integrations**, and clicking the **Add Integration** button. I'm then prompted to choose the integration type so I select the **Active Directory** one, and then I fill in the required information: a name (`Lab AD` seems appropriate), my domain controller as the LDAP host (`ldap://win01.lab.bowdre.net:389`), credentials for an account with sufficient privileges to create and delete computer objects (`lab\vra`), and finally the base DN to be used for the LDAP connection (`DC=lab,DC=bowdre,DC=net`).
