@@ -169,3 +169,8 @@ ul.pagination li {
   display:flex;
   justify-content: center;
 }
+
+/* statuslol overrides */
+.statuslol_content a {
+  overflow-wrap: break-word;
+}
