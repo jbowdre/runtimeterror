@@ -5,8 +5,16 @@
 <meta charset="UTF-8"/>
 {{ if or (.Site.Params.noindex) (.Params.noindex) }}<meta name="robots" content="noindex" /> {{ end }}
 
+<!-- RSS -->
 {{ with .OutputFormats.Get "rss" -}}
   {{ printf `<link rel=%q type=%q href=%q title=%q>` .Rel .MediaType.Type .Permalink site.Title | safeHTML }}
+{{ end }}
+
+<!-- verification links -->
+{{ if .IsHome }}
+{{ range $item := .Site.Params.verifyLinks }}
+<link rel="me" title="{{ $item.title }}" href="{{ $item.url }}">
+{{ end }}
 {{ end }}
 
 {{ partialCached "favicon" . }}
