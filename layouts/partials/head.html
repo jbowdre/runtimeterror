@@ -5,6 +5,10 @@
 <meta charset="UTF-8"/>
 {{ if or (.Site.Params.noindex) (.Params.noindex) }}<meta name="robots" content="noindex" /> {{ end }}
 
+{{ with .OutputFormats.Get "rss" -}}
+  {{ printf `<link rel=%q type=%q href=%q title=%q>` .Rel .MediaType.Type .Permalink site.Title | safeHTML }}
+{{ end }}
+
 {{ partialCached "favicon" . }}
 {{ partial "opengraph" . }}
 

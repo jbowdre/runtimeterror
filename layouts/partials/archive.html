@@ -6,7 +6,7 @@
 {{ if .IsHome }}
   <h1>{{ site.Params.indexTitle | markdownify }}</h1>
 {{ else }}
-  <h1>{{ .Title | markdownify }}</h1>
+  <h1>{{ .Title | markdownify }}{{ if eq .Kind "term" }}&nbsp;<a target="_blank" href="index.xml" aria-label="Category RSS"><i class="fa-solid fa-square-rss"></i></a>&nbsp;</h1>{{ end }}
 {{ end }}
   {{ .Content }}
 </header>
