@@ -171,3 +171,19 @@ url = "https://torchlight.dev"
 [[powerLinks]]
 title = "cabin"
 url = "https://withcabin.com/privacy/runtimeterror.dev"
+
+[[verifyLinks]]
+title = "omg.lol"
+url = "https://proven.lol/cd10d3"
+
+[[verifyLinks]]
+title = "CounterSocial"
+url = "https://counter.social/@john_b"
+
+[[verifyLinks]]
+title = "Mastodon"
+url = "https://social.lol/@jbowdre"
+
+[[verifyLinks]]
+title = "GitHub"
+url = "https://github.com/jbowdre"
