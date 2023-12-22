@@ -11,6 +11,7 @@
   {{ .Content }}
 </header>
 
+{{- if ne .Title "Tags"}}
 {{- range (.Paginate $pages).Pages }}
 {{- $postDate := .Date.Format "2006-01-02" }}
 {{- $updateDate := .Lastmod.Format "2006-01-02" }}
@@ -29,3 +30,8 @@
 </article>
 {{ end }}
 {{- template "_internal/pagination.html" . }}
+{{- else }}
+{{- range .Pages.ByTitle }}
+  [<a href="{{ .Permalink }}">{{ .Title | markdownify }}</a>]
+{{- end }}
+{{- end }}
