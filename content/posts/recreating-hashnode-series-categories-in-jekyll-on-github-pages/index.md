@@ -286,8 +286,8 @@ main:
     url: /series/vra8
   - title: "Projects"
     url: /series/projects
-  - title: "Scripts"
-    url: /series/scripts
+  - title: "Code"
+    url: /series/code
   - title: "Tips & Tricks"
     url: /series/tips
   - title: "Tags"
