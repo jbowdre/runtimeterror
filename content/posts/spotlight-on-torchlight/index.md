@@ -6,7 +6,7 @@ description: "Syntax highlighting powered by the Torchlight.dev API makes it eas
 featured: false
 toc: true
 comment: true
-series: Projects # Projects, Scripts
+series: Projects # Projects, Code
 tags:
   - javascript
   - hugo

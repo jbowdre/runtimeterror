@@ -5,7 +5,7 @@ description: "I moved my homelab from VMware vSphere to Proxmox VE, and my only 
 featured: false
 toc: true
 comment: true
-series: Tips # Projects, Scripts
+series: Tips # Projects, Code
 tags:
   - homelab
   - linux

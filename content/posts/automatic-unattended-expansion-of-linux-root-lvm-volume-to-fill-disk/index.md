@@ -1,5 +1,5 @@
 ---
-series: Scripts
+series: Code
 date: "2021-04-29T08:34:30Z"
 usePageBundles: true
 thumbnail: 20210723-script.png

@@ -7,7 +7,7 @@ description: "This is a new post about..."
 featured: false
 toc: true
 comment: true
-series: Tips # Projects, Scripts
+series: Tips # Projects, Code
 tags:
   - 3dprinting
   - activedirectory

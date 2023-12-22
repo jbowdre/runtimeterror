@@ -17,9 +17,9 @@
   weight = 1
 
 [[main]]
-  identifier = "scripts"
-  name = "scripts"
-  url = "/series/scripts/"
+  identifier = "code"
+  name = "code"
+  url = "/series/code/"
   weight = 1
 
 [[main]]
