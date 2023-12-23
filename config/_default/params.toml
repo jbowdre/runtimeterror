@@ -140,7 +140,7 @@ url = "https://jbowdre.omg.lol"
 [[socialLinks]]
 icon = "fa-solid fa-comments"
 title = "SimpleX Chat"
-url = "https://runtimeterror.dev/simplex"
+url = "/simplex"
 
 [[socialLinks]]
 icon = "fa fa-matrix-org"
