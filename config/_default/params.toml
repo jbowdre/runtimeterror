@@ -2,7 +2,7 @@ noindex = false
 usePageBundles = true
 description = "while (true) { bugs++; }"
 mainSections = ["posts"]
-fallBackOgImage = "images/broken-computer.svg"
+fallBackOgImage = "images/broken-computer.png"
 numberOfFeaturedPosts = 5
 numberOfRelatedPosts = 5
 author = "jbowdre"
@@ -140,7 +140,7 @@ url = "https://jbowdre.omg.lol"
 [[socialLinks]]
 icon = "fa-solid fa-comments"
 title = "SimpleX Chat"
-url = "https://runtimeterror.dev/simplex"
+url = "/simplex"
 
 [[socialLinks]]
 icon = "fa fa-matrix-org"
@@ -171,3 +171,19 @@ url = "https://torchlight.dev"
 [[powerLinks]]
 title = "cabin"
 url = "https://withcabin.com/privacy/runtimeterror.dev"
+
+[[verifyLinks]]
+title = "omg.lol"
+url = "https://proven.lol/cd10d3"
+
+[[verifyLinks]]
+title = "CounterSocial"
+url = "https://counter.social/@john_b"
+
+[[verifyLinks]]
+title = "Mastodon"
+url = "https://social.lol/@jbowdre"
+
+[[verifyLinks]]
+title = "GitHub"
+url = "https://github.com/jbowdre"

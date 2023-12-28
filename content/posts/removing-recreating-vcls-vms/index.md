@@ -14,15 +14,15 @@ featureImage: "basic-architecture.png" # Sets featured image on blog post.
 thumbnail: "basic-architecture.png" # Sets thumbnail image appearing inside card on homepage.
 # shareImage: "share.png" # Designate a separate image for social media sharing.
 codeLineNumbers: false # Override global value for showing of line numbers within code block.
-series: Tips # Projects, Scripts, vRA8
+series: Tips # Projects, Code, vRA8
 tags:
   - vmware
-  - vsphere 
+  - vsphere
   - homelab
 comment: true # Disable comment if false.
 ---
 
-Way back in 2020, VMware released vSphere 7 Update 1 and introduced the new [vSphere Clustering Services (vCLS)](https://core.vmware.com/resource/introduction-vsphere-clustering-service-vcls) to improve how cluster services like the Distributed Resource Scheduler (DRS) operate. vCLS deploys lightweight agent VMs directly on the cluster being managed, and those VMs provide a decoupled and distributed control plane to offload some of the management responsibilities from the vCenter server. 
+Way back in 2020, VMware released vSphere 7 Update 1 and introduced the new [vSphere Clustering Services (vCLS)](https://core.vmware.com/resource/introduction-vsphere-clustering-service-vcls) to improve how cluster services like the Distributed Resource Scheduler (DRS) operate. vCLS deploys lightweight agent VMs directly on the cluster being managed, and those VMs provide a decoupled and distributed control plane to offload some of the management responsibilities from the vCenter server.
 
 ![vCLS VM](vcls-vm.png)
 
@@ -42,10 +42,10 @@ Disabling vCLS will break DRS, and could have other unintended side effects. Don
 It starts with determining the affected cluster's domain ID, which is very easy to do once you know where to look. Simply browse to the cluster object in the vSphere inventory, and look at the URL:
 ![Cluster domain ID](cluster-domain-id.png)
 
-That `ClusterComputeResource:domain-c13` portion tells me exactly what I need to know: the ID for the `NUC Cluster` is `domain-c13`. 
+That `ClusterComputeResource:domain-c13` portion tells me exactly what I need to know: the ID for the `NUC Cluster` is `domain-c13`.
 
 ### Disable vCLS for a cluster
-With that information gathered, you're ready to do the deed. Select the vCenter object in your vSphere inventory, head to the **Configure** tab, and open the **Advanced Settings** item. 
+With that information gathered, you're ready to do the deed. Select the vCenter object in your vSphere inventory, head to the **Configure** tab, and open the **Advanced Settings** item.
 
 ![vCenter Advanced Settings](vcenter-advanced-settings.png)
 
