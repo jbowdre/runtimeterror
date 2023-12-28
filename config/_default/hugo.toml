@@ -11,7 +11,16 @@ enableInlineShortcodes = true
 # sectionPagesMenu = "main"
 
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+  home = ['html', 'rss', 'json']
+  section = ['html']
+  taxonomy = ['html',]
+  term = ['html', 'rss']
+
+# rename rss output from index.xml to feed.xml
+[outputFormats]
+  [outputFormats.rss]
+    mediatype = "application/rss"
+    baseName = "feed"
 
 [permalinks]
   posts = ":filename"
@@ -40,6 +49,9 @@ enableInlineShortcodes = true
 
   [services.instagram]
     disableInlineCSS = true
+
+  [services.rss]
+    limit = 20
 
   [services.twitter]
     disableInlineCSS = true

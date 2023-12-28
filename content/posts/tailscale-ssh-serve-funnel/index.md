@@ -6,7 +6,7 @@ description: "Exploring some of my favorite Tailscale addon features: SSH, Serve
 featured: false
 toc: true
 comment: true
-series: Tips # Projects, Scripts
+series: Tips # Projects, Code
 tags:
   - homelab
   - networking

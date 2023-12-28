@@ -1,7 +1,7 @@
 ---
 title: "Easy Push Notifications With ntfy.sh"
 date: 2023-09-17
-lastmod: 2023-10-21
+lastmod: 2023-12-22
 description: "Deploying and configuring a self-hosted pub-sub notification handler, getting another server to send a notifcation when it boots, and integrating the notification handler into Home Assistant."
 featured: false
 toc: true
@@ -66,10 +66,10 @@ services:
       - ./lib/ntf:/var/lib/ntfy
     ports:
       - 2586:80
-    healthcheck:  # optional, remember to adapt the host and port to your environment
+    healthcheck:  # this should be the port inside the container, not the host port
         test: [
           "CMD-SHELL",
-          "wget -q --tries=1 http://localhost:8080/v1/health -O - | grep -Eo '\"healthy\"\\s*:\\s*true' || exit 1"
+          "wget -q --tries=1 http://localhost:80/v1/health -O - | grep -Eo '\"healthy\"\\s*:\\s*true' || exit 1"
         ]
         interval: 60s
         timeout: 10s

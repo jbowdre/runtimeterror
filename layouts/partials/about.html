@@ -1,7 +1,7 @@
 {{ with .Site.Params.about }}
 <div class="aside__about">
     {{ with .logo }}<img class="about__logo" src="{{ . | absURL }}" alt="Logo">{{ end }}
-<h1 class="about__title">{{ .title }}</h1>
+<h1 class="about__title">{{ .title }}&nbsp;<a target="_blank" href="/feed.xml" aria-label="RSS"><i class="fa-solid fa-square-rss"></i></a>&nbsp;</h1>
 {{ partial "tagline.html" . }}
 <br>
 <a href="about"><i class="fa-regular fa-user"></i></a>&nbsp;<a href="/about">{{ site.Params.Author }}</a>

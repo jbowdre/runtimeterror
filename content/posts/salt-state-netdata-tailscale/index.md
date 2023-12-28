@@ -1,12 +1,12 @@
 ---
 title: "Quick Salt State to Deploy Netdata"
 date: 2023-12-21
-# lastmod: 2023-12-21
+lastmod: 2023-12-22
 description: "A hasty Salt state to deploy netdata monitoring and publish it internally on my tailnet with Tailscale Serve"
 featured: false
 toc: true
 comment: true
-series: Scripts
+series: Code
 tags:
   - homelab
   - iac
@@ -25,7 +25,7 @@ It simply installs netdata using the [handy-dandy kickstart script](https://lear
 # torchlight! {"lineNumbers": true}
 # -*- coding: utf-8 -*-
 # vim: ft=sls
-# Hasty Salt config to install Netdata and make it available within a Tailscale tailnet
+# Hasty Salt config to install Netdata and make it available within a tailnet
 # at https://[hostname].[tailnet-name].ts.net:8443/netdata
 
 curl:

@@ -169,3 +169,30 @@ ul.pagination li {
   display:flex;
   justify-content: center;
 }
+
+/* statuslol overrides */
+.statuslol {
+  background: var(--inner-bg) !important;
+}
+
+.statuslol_content p,
+.statuslol_content li,
+.statuslol_content em,
+.statuslol_content strong {
+  overflow-wrap: break-word;
+  font-size: 0.8em;
+  line-height:normal;
+  margin: 0.2em auto;
+  color: var(--fg);
+}
+
+.statuslol_time a:link,
+.statuslol_time a:visited {
+  color: var(--link) !important;
+}
+
+.statuslol_time a:hover,
+.statuslol_time a:active,
+.statuslol_time a.active {
+  color: var(--hover) !important;
+}
