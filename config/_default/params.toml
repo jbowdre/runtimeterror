@@ -5,9 +5,13 @@ mainSections = ["posts"]
 fallBackOgImage = "images/broken-computer.png"
 numberOfFeaturedPosts = 5
 numberOfRelatedPosts = 5
-author = "jbowdre"
 
 indexTitle = ".-. ..- -. - .. -- . - . .-. .-. --- .-."
+
+[author]
+  name = "John Bowdre"
+  email = "jbowdre@omg.lol"
+  username = "jbowdre"
 
 # Comments
 comments = true
