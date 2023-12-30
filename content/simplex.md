@@ -32,7 +32,7 @@ Just add these in the SimpleX app at **Settings > Network & servers > SMP server
 
 | | |
 | --- | --- |
-| [![](https://status.vpota.to/api/badge/6/uptime)](https://status.vpota.to/status/simplex) | [[details](https://smp-vpota-to.tetra-gamma.ts.net/netdata/)] |
+| [![](https://status.vpota.to/api/badge/6/uptime)](https://status.vpota.to/status/simplex) | [[details](https://jbowdre.url.lol/smp_status)] |
 
 ---
 
@@ -42,7 +42,7 @@ Just add these in the SimpleX app at **Settings > Network & servers > SMP server
 
 | | |
 | --- | --- |
-| [![](https://status.vpota.to/api/badge/4/uptime)](https://status.vpota.to/status/simplex) | [[details](https://smp1-vpota-to.tetra-gamma.ts.net/netdata/)] |
+| [![](https://status.vpota.to/api/badge/4/uptime)](https://status.vpota.to/status/simplex) | [[details](https://jbowdre.url.lol/smp1_status)] |
 
 ---
 
@@ -52,4 +52,4 @@ Just add these in the SimpleX app at **Settings > Network & servers > SMP server
 
 | | |
 | --- | --- |
-| [![](https://status.vpota.to/api/badge/5/uptime)](https://status.vpota.to/status/simplex) | [[details](https://smp2-vpota-to.tetra-gamma.ts.net/netdata/)] |
+| [![](https://status.vpota.to/api/badge/5/uptime)](https://status.vpota.to/status/simplex) | [[details](https://jbowdre.url.lol/smp2_status)] |
