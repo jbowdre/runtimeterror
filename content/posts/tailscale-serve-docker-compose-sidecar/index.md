@@ -134,7 +134,13 @@ services:
     network_mode: "service:tailscale"
 ```
 
-The variables can be defined in a `.env` file stored alongside `docker-compose.yaml` to avoid having to store them in the compose file:
+You'll note that most of those environment variables aren't actually defined in this YAML. Instead, they'll be inherited from the environment used for spawning the containers. This provides a few benefits. First, it lets the `tailscale` service definition block function as a template to allow copying it into other Compose files without having to modify. Second, it avoids holding sensitive data in the YAML itself. And third, it allows us to set default values for undefined variables (if `TS_HOSTNAME` is empty it will be automatically replaced with `ts-docker`) or throw an error if a required value isn't set (an empty `TS_AUTHKEY` will throw an error and abort).
+
+You can create the required variables by exporting them at the command line (`export TS_HOSTNAME=ts-docker`) - but that runs the risk of having sensitive values like an authkey stored in your shell history. It's not a great habit.
+
+Perhaps a better approach is to set the variables in a `.env` file stored alongside the `docker-compose.yaml` but with stricter permissions. This file can be owned and only readable by root (or the defined Docker user), while the Compose file can be owned by your own user or the `docker`` group.
+
+Here's how the `.env` for this setup might look:
 
 ```shell
 # torchlight! {"lineNumbers": true}
@@ -149,24 +155,35 @@ TS_FUNNEL=1
 | Variable Name | Example | Description |
 | --- | --- | --- |
 | `TS_AUTHKEY` | `tskey-auth-somestring-somelongerstring` | used for unattended auth of the new node, get one [here](https://login.tailscale.com/admin/settings/keys) |
-| `TS_HOSTNAME` | `tsdemo` | optional Tailscale hostname for the new node |
+| `TS_HOSTNAME` | `tsdemo` | optional Tailscale hostname for the new node[^hostname] |
 | `TS_STATE_DIR` | `/var/lib/tailscale/` | required directory for storing Tailscale state, this should be mounted to the container for persistence |
-| `TS_TAILSCALED_EXTRA_ARGS` | `--verbose=1` | optional additional [flags](https://tailscale.com/kb/1278/tailscaled#flags-to-tailscaled) for `tailscaled` |
-| `TS_EXTRA_ARGS` | `--ssh` | optional additional [flags](https://tailscale.com/kb/1241/tailscale-up) for `tailscale up` |
+| `TS_TAILSCALED_EXTRA_ARGS` | `--verbose=1`[^verbose] | optional additional [flags](https://tailscale.com/kb/1278/tailscaled#flags-to-tailscaled) for `tailscaled` |
+| `TS_EXTRA_ARGS` | `--ssh`[^ssh] | optional additional [flags](https://tailscale.com/kb/1241/tailscale-up) for `tailscale up` |
 | `TS_SERVE_PORT` | `8080` | optional application port to expose with [Tailscale Serve](https://tailscale.com/kb/1312/serve) |
 | `TS_FUNNEL` | `1` | if set (to anything), will proxy `TS_SERVE_PORT` **publicly** with [Tailscale Funnel](https://tailscale.com/kb/1223/funnel) |
 
+[^hostname]: This hostname will determine the fully-qualified domain name where the resource will be served: `https://[hostname].[tailnet-name].ts.net`. So you'll want to make sure it's a good one for what you're trying to do.
+[^verbose]: Passing the `--verbose` flag to `tailscaled` increases the logging verbosity, which can be helpful if you need to troubleshoot.
+[^ssh]: The `--ssh` flag to `tailscale up` will enable Tailscale SSH and (ACLs permitting) allow you to easily SSH directly into the *Tailscale* container without having to talk to the Docker host and spawn a shell from there.
 
+A few implementation notes:
 - If you want to use Funnel with this configuration, it might be a good idea to associate the [Funnel ACL policy](https://tailscale.com/kb/1223/funnel#tailnet-policy-file-requirement) with a tag (like `tag:funnel`), as I discussed a bit [here](/tailscale-ssh-serve-funnel/#tailscale-funnel). And then when you create the [pre-auth key](https://tailscale.com/kb/1085/auth-keys), you can set it to automatically apply the tag so it can enable Funnel.
 - It's very important that the path designated by `TS_STATE_DIR` is a volume mounted into the container. Otherwise, the container will lose its Tailscale configuration when it stops. That could be inconvenient.
-- Linking `network_mode` on the application container back to the `service:tailscale` definition is the magic that lets the sidecar proxy traffic for the app. This way the two containers effectively share the same network interface, allowing them to share the same ports. So port `8080` on the app container is available on the tailscale container, and that enables `tailscale serve --bg 8080` to work.
+- Linking `network_mode` on the application container back to the `service:tailscale` definition is [the magic](https://docs.docker.com/compose/compose-file/05-services/#network_mode) that lets the sidecar proxy traffic for the app. This way the two containers effectively share the same network interface, allowing them to share the same ports. So port `8080` on the app container is available on the tailscale container, and that enables `tailscale serve --bg 8080` to work.
 
 ### Usage
 
-#### CyberChef
-To tie it all together, here are the steps that I took to publish a CyberChef instances with Funnel.
+To tie this all together, I'm going to quickly run through the steps to create and publish two container-based services without having to do any interactive configuration.
 
-I started by going to the [Tailscale Admin Portal](https://login.tailscale.com/admin/settings/keys) and generating a new auth key. I gave it a description, ticked the option to pre-approve whatever device authenticates with this key (since I have [Device Approval](https://tailscale.com/kb/1099/device-approval) enabled on my tailnet). I also used the option to auto-apply the `tag:internal` tag I used for grouping my on-prem systems as well as the `tag:funnel` tag I use for approving Funnel devices in the ACL.
+#### CyberChef
+
+I'll start with my [CyberChef](https://github.com/gchq/CyberChef) instance.
+
+> CyberChef is a simple, intuitive web app for carrying out all manner of "cyber" operations within a web browser. These operations include simple encoding like XOR and Base64, more complex encryption like AES, DES and Blowfish, creating binary and hexdumps, compression and decompression of data, calculating hashes and checksums, IPv6 and X.509 parsing, changing character encodings, and much more.
+
+This will be served publicly with Funnel so that my friends can use this instance if they need it.
+
+I'll need a pre-auth key so that the Tailscale container can authenticate to my Tailnet. I can get that by going to the [Tailscale Admin Portal](https://login.tailscale.com/admin/settings/keys) and generating a new auth key. I gave it a description, ticked the option to pre-approve whatever device authenticates with this key (since I have [Device Approval](https://tailscale.com/kb/1099/device-approval) enabled on my tailnet). I also used the option to auto-apply the `tag:internal` tag I used for grouping my on-prem systems as well as the `tag:funnel` tag I use for approving Funnel devices in the ACL.
 
 ![authkey creation](authkey1.png)
 
@@ -179,7 +196,7 @@ I'll use that new key as well as the knowledge that CyberChef is served by defau
 ```shell
 # torchlight! {"lineNumbers": true}
 TS_AUTHKEY=tskey-auth-somestring-somelongerstring
-TS_HOSTNAME=cyberchef
+TS_HOSTNAME=cyber
 TS_EXTRA_ARGS=--ssh
 TS_SERVE_PORT=8000
 TS_FUNNEL=true
@@ -190,7 +207,7 @@ And I can add the corresponding `docker-compose.yml` to go with it. Note that I'
 ```yaml
 # torchlight! {"lineNumbers": true}
 services:
-  tailscale:
+  tailscale: # [tl! focus:start]
     build: # [tl! --:1 .nocopy:1]
       context: ./image/
     image: ghcr.io/jbowdre/tailscale-docker:latest # [tl! ++ reindex(-2)]
@@ -204,12 +221,12 @@ services:
       TS_SERVE_PORT: ${TS_SERVE_PORT:-}
       TS_FUNNEL: ${TS_FUNNEL:-}
     volumes:
-      - ./ts_data:/var/lib/tailscale/
+      - ./ts_data:/var/lib/tailscale/ # [tl! focus:end]
   cyberchef:
     container_name: cyberchef
     image: mpepping/cyberchef:latest
     restart: unless-stopped
-    network_mode: service:tailscale
+    network_mode: service:tailscale # [tl! focus]
 ```
 
 I can just bring it online like so:
@@ -221,13 +238,17 @@ docker compose up -d # [tl! .cmd .nocopy:1,4]
  ✔ Container cyberchef            Started
 ```
 
-And after ~10 minutes or so (it sometimes takes a bit longer for the DNS and SSL to start working outside the tailnet), I'll be able to hit the instance at `https://cyberchef.tailnet-name.ts.net` from anywhere on the web.
+And after ~10 minutes or so (it sometimes takes a bit longer for the DNS and SSL to start working outside the tailnet), I'll be able to hit the instance at `https://cyber.tailnet-name.ts.net` from anywhere on the web.
+
+![cyberchef](cyberchef.png)
+
 
 #### Miniflux
-Similarly, here's my setup for serving Miniflux internal to my tailnet.
+I've lately been playing quite a bit with [my omg.lol address](https://jbowdre.omg.lol/) and [associated services](https://home.omg.lol/referred-by/jbowdre), and that's inspired me to [revisit the world](https://rknight.me/blog/the-web-is-fantastic/) of curating RSS feeds instead of relying on algorithms to keep me informed. Through that, I learned about [Miniflux](https://github.com/miniflux/v2), which is a "Minimalist and opinionated feed reader". It's written in Go, is fast and lightweight, and works really well as a PWA installed on mobile devices, too.
 
-`.env`:
+It will be great for keeping track of my feeds, but I don't see a need to expose it publicly. So I'll serve it up with Tailscale Serve.
 
+Here's the `.env` that I'll use:
 ```shell
 # torchlight! {"lineNumbers": true}
 DB_USER=db-username
@@ -240,11 +261,13 @@ TS_EXTRA_ARGS=--ssh
 TS_SERVE_PORT=8080
 ```
 
-`docker-compose.yml`:
+You may note that this one doesn't define `TS_FUNNEL` so Funnel will not be configured, just Serve.
+
+And the `docker-compose.yml` to go with it:
 ```yaml
 # torchlight! {"lineNumbers": true}
 services:
-  tailscale:
+  tailscale: # [tl! focus:start]
     image: ghcr.io/jbowdre/tailscale-docker:latest
     container_name: miniflux-tailscale
     environment:
@@ -256,7 +279,7 @@ services:
       TS_SERVE_PORT: ${TS_SERVE_PORT:-}
       TS_FUNNEL: ${TS_FUNNEL:-}
     volumes:
-      - ./ts_data:/var/lib/tailscale/
+      - ./ts_data:/var/lib/tailscale/ # [tl! focus:end]
   miniflux:
     image: miniflux/miniflux:latest
     container_name: miniflux
@@ -269,7 +292,7 @@ services:
       - CREATE_ADMIN=1
       - ADMIN_USERNAME=${ADMIN_USER}
       - ADMIN_PASSWORD=${ADMIN_PASS}
-    network_mode: "service:tailscale"
+    network_mode: "service:tailscale" # [tl! focus]
   db:
     image: postgres:15
     container_name: miniflux-db
@@ -283,9 +306,9 @@ services:
       interval: 10s
       start_period: 30s
 ```
+This is based on the [example](https://miniflux.app/docs/dacker.html#docker-compose) from Miniflux. I've just templated some of the variables and added in my Tailscale bits.
 
-This one doesn't have `TS_FUNNEL` defined in `.env` so it will just use Tailscale Serve internally.
-
+I can bring it up with:
 ```shell
 docker compose up -d # [tl! .cmd .nocopy:1,5]
 [+] Running 4/4
@@ -294,3 +317,8 @@ docker compose up -d # [tl! .cmd .nocopy:1,5]
  ✔ Container miniflux-tailscale   Started
  ✔ Container miniflux             Created
 ```
+
+And I can hit it at `https://miniflux.tailnet-name.ts.net` from within my tailnet:
+
+![miniflux](miniflux.png)
+
