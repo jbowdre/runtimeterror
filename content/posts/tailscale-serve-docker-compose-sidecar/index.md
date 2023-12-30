@@ -238,6 +238,23 @@ docker compose up -d # [tl! .cmd .nocopy:1,4]
  ✔ Container cyberchef            Started
 ```
 
+I can review the logs for the `tailscale` service to confirm that the Funnel configuration was applied:
+```shell
+docker compose logs tailscale # [tl! .cmd .nocopy:1,12 focus]
+cyberchef-tailscale  | # Health check:
+cyberchef-tailscale  | #     - not connected to home DERP region 12
+cyberchef-tailscale  | #     - Some peers are advertising routes but --accept-routes is false
+cyberchef-tailscale  | 2023/12/30 17:44:48 serve: creating a new proxy handler for http://127.0.0.1:8000
+cyberchef-tailscale  | 2023/12/30 17:44:48 Hostinfo.WireIngress changed to true
+cyberchef-tailscale  | Available on the internet: # [tl! focus:6]
+cyberchef-tailscale  |
+cyberchef-tailscale  | https://cyber.tailnet-name.ts.net/
+cyberchef-tailscale  | |-- proxy http://127.0.0.1:8000
+cyberchef-tailscale  |
+cyberchef-tailscale  | Funnel started and running in the background.
+cyberchef-tailscale  | To disable the proxy, run: tailscale funnel --https=443 off
+```
+
 And after ~10 minutes or so (it sometimes takes a bit longer for the DNS and SSL to start working outside the tailnet), I'll be able to hit the instance at `https://cyber.tailnet-name.ts.net` from anywhere on the web.
 
 ![cyberchef](cyberchef.png)
@@ -322,3 +339,4 @@ And I can hit it at `https://miniflux.tailnet-name.ts.net` from within my tailne
 
 ![miniflux](miniflux.png)
 
+Nice, right? Now to just convert all of my other containerized apps that don't really need to be public. Fortunately that shouldn't take too long since I've got this nice, portable, repeatable Docker Compose setup I can use.
