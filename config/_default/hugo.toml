@@ -1,7 +1,7 @@
 baseURL = "https://runtimeterror.dev"
 theme = "risotto"
 title = "runtimeterror"
-copyright = "© 2018-2023 [runtimeterror](https://runtimeterror.dev)"
+copyright = "© 2023 runtimeterror"
 paginate = 10
 languageCode = "en"
 DefaultContentLanguage = "en"
