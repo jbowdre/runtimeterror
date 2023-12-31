@@ -17,7 +17,7 @@ I'm now part of a small platform engineering team within that same large corpora
 
 On my off time, I tinker with new [projects](/series/projects) in my little homelab (and share some of those adventures here). I also help out on Google's product support forums as a [Product Expert](https://productexperts.withgoogle.com/what-it-is), where I support Pixel phones, earbuds, and watches, as well as Chromebooks (primarily with Linux-related queries). Helping users troubleshoot their issues scratches my problem-solving itch, and it keeps me connected with some really great like-minded tech enthusiasts.
 
-On weekends, I race my daily-driven 2014 Subaru BRZ in local [autocross events](https://www.youtube.com/playlist?list=PLwzr4uKY-x-EwCv-rWNGefdikuW6Oy9O_) or wrench on my 1974 Volkswagen Karmann Ghia.
+On weekends, I race my daily-driven 2014 Subaru BRZ in local [autocross events](https://l.runtimeterror.dev/my-autox-vids) or wrench on my 1974 Volkswagen Karmann Ghia.
 
 And in the free time I have left, I game on my Steam Deck.
 
@@ -31,7 +31,7 @@ Connect with me via:
 - [SimpleX Chat](/simplex/)
 - [Matrix](https://matrix.to/#/@jbowdre:omg.lol)
 - [Electronic Mail](mailto:jbowdre@omg.lol)
-  - [PGP: 613F B70C 4FA7 A077](https://home.omg.lol/keychain/jbowdre/pgp)
+  - [PGP: 613F B70C 4FA7 A077](https://l.runtimeterror.dev/pgp)
 
 
 [^1]: Congrats? And also, *thank you.*
