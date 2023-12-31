@@ -10,9 +10,19 @@ indexTitle = ".-. ..- -. - .. -- . - . .-. .-. --- .-."
 
 # Comments
 comments = true
-utterancesRepo = "jbowdre/site-comments"
-utterancesIssueTerm = "og:title"
-utterancesTheme = "gruvbox-dark"
+giscusCategory = "Announcements"
+giscusCategoryId = "DIC_kwDOKKEGD84CcG89"
+giscusCrossOrigin = "anonymous"
+giscusEmitMetadata = "0"
+giscusInputPosition = "bottom"
+giscusLang = "en"
+giscusLoading = "lazy"
+giscusMapping = "og:title"
+giscusReactions = "1"
+giscusRepo = "jbowdre/site-comments"
+giscusRepoId = "R_kgDOKKEGDw"
+giscusStrict = "0"
+giscusTheme = "noborder_gray"
 
 analytics = true
 
