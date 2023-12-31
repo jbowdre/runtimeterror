@@ -57,7 +57,7 @@ Once that's done, I can try my redirect again - and, after a brief moment, it su
 ![Successful redirect](20210820_successful_redirect.png)
 
 ### Link custom domain
-The whole point of this project is to *shorten* URLs, but I haven't done that yet. I'll want to link in my `go.bowdre.net` domain to use that in place of the rather unwieldy `https://sheets-url-shortener-vrw7x6wdzq-uc.a.run.app`. I do that by going back to the [Cloud Run console](https://console.cloud.google.com/run) and selecting the option at the top to **Manage Custom Domains**.
+The whole point of this project is to *shorten* URLs, but I haven't done that yet. I'll want to link in my `go.bowdre.net` domain to use that in place of the rather unwieldy `https://sheets-url-shortener-somestring-uc.a.run.app`. I do that by going back to the [Cloud Run console](https://console.cloud.google.com/run) and selecting the option at the top to **Manage Custom Domains**.
 ![Manage custom domains](20210820_manage_custom_domain.png)
 
 I can then use the **Add Mapping** button, select my `sheets-url-shortener` service, choose one of my verified domains (which I *think* are already verified since they're registered through Google Domains with the same account), and then specify the desired subdomain.
@@ -73,8 +73,6 @@ It took a while for the domain mapping to go live once I've updated the record.
 Once it did finally update, I was able to hit `https://go.bowdre.net` to get the error/landing page, complete with a valid SSL cert:
 ![Successful error!](20210820_landing_page.png)
 
-And testing [go.bowdre.net/ghia](https://go.bowdre.net/ghia) works as well!
-
 ### Outro
 I'm very pleased with how this quick little project turned out. Managing my shortened links with a Google Sheet is quite convenient, and I really like the complete lack of tracking or analytics. Plus I'm a sucker for an excuse to use a cloud technology I haven't played a lot with yet.
 
@@ -82,9 +80,9 @@ And now I can hand out handy-dandy short links!
 
 | Link | Description|
 | --- | --- |
-| [go.bowdre.net/coso](https://go.bowdre.net/coso) | Follow me on CounterSocial |
-| [go.bowdre.net/conedoge](https://go.bowdre.net/conedoge) | 2014 Subaru BRZ autocross videos |
-| [go.bowdre.net/cooltechshit](https://go.bowdre.net/cooltechshit) | A collection of cool tech shit (references and resources) |
-| [go.bowdre.net/stuffiuse](https://go.bowdre.net/stuffiuse) | Things that I use (and think you should use too) |
-| [go.bowdre.net/shorterer](https://go.bowdre.net/shorterer) | This post! |
+| [go.bowdre.net/coso](https://l.runtimeterror.dev/coso) | Follow me on CounterSocial |
+| [go.bowdre.net/conedoge](https://l.runtimeterror.dev/conedoge) | 2014 Subaru BRZ autocross videos |
+| [go.bowdre.net/cooltechshit](https://l.runtimeterror.dev/cooltechshit) | A collection of cool tech shit (references and resources) |
+| [go.bowdre.net/stuffiuse](https://l.runtimeterror.dev/stuffiuse) | Things that I use (and think you should use too) |
+| [go.bowdre.net/shorterer](https://l.runtimeterror.dev/shorterer) | This post! |
 
