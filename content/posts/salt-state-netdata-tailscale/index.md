@@ -5,7 +5,7 @@ lastmod: 2023-12-22
 description: "A hasty Salt state to deploy netdata monitoring and publish it internally on my tailnet with Tailscale Serve"
 featured: false
 toc: true
-comment: true
+comments: true
 series: Code
 tags:
   - homelab

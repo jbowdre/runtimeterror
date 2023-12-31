@@ -5,7 +5,7 @@ date: 2023-12-30
 description: "Using Docker Compose to deploy containerized applications and make them available via Tailscale Serve and Tailscale Funnel"
 featured: false
 toc: true
-comment: true
+comments: true
 series: Projects
 tags:
   - containers

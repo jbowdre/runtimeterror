@@ -21,7 +21,7 @@ tags:
   - python
   - api
   - phpipam
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 
 I [recently wrote](/tanzu-community-edition-k8s-homelab/#a-real-workload---phpipam) about getting started with VMware's [Tanzu Community Edition](https://tanzucommunityedition.io/) and deploying [phpIPAM](https://phpipam.net/) as my first real-world Kubernetes workload. Well I've spent much of my time since then working on a script which would help to populate my phpIPAM instance with a list of networks to monitor.

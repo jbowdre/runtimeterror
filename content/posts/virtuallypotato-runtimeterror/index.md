@@ -6,7 +6,7 @@ timeless: true
 draft: false
 description: "This blog has migrated from virtuallypotato.com to runtimeterror.dev."
 toc: false
-comment: true
+comments: true
 tags:
   - meta
 ---

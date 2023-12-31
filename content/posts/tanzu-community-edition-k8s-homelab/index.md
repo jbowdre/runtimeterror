@@ -23,7 +23,7 @@ tags:
   - containers
   - tanzu
   - homelab
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 
 Back in October, VMware [announced](https://tanzu.vmware.com/content/blog/vmware-tanzu-community-edition-announcement) [Tanzu Community Edition](https://tanzucommunityedition.io/) as way to provide "a full-featured, easy-to-manage Kubernetes platform that’s perfect for users and learners alike." TCE bundles a bunch of open-source components together in a modular, "batteries included but swappable" way:

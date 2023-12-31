@@ -19,7 +19,7 @@ tags:
   - vmware
   - vsphere
   - homelab
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 
 Way back in 2020, VMware released vSphere 7 Update 1 and introduced the new [vSphere Clustering Services (vCLS)](https://core.vmware.com/resource/introduction-vsphere-clustering-service-vcls) to improve how cluster services like the Distributed Resource Scheduler (DRS) operate. vCLS deploys lightweight agent VMs directly on the cluster being managed, and those VMs provide a decoupled and distributed control plane to offload some of the management responsibilities from the vCenter server.

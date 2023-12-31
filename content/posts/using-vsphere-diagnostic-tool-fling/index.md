@@ -19,7 +19,7 @@ tags:
   - vmware
   - vsphere
   - python
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 VMware vCenter does wonders for abstracting away the layers of complexity involved in managing a large virtual infrastructure, but when something goes wrong it can be challenging to find exactly where the problem lies. And it can be even harder to proactively address potential issues before they occur.
 

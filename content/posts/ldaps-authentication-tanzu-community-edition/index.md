@@ -23,7 +23,7 @@ tags:
   - certs
   - cluster
   - containers
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 Not long ago, I [deployed a Tanzu Community Edition Kubernetes cluster in my homelab](/tanzu-community-edition-k8s-homelab/), and then I fumbled through figuring out how to [log into it from a different device](/logging-in-tce-cluster-from-new-device/) than the one I'd used for deploying the cluster from the `tanzu` cli. That setup works great for playing with Kubernetes in my homelab but I'd love to do some Kubernetes with my team at work and I really need the ability to authenticate multiple users with domain credentials for that.
 
