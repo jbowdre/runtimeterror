@@ -8,16 +8,8 @@ numberOfRelatedPosts = 5
 
 indexTitle = ".-. ..- -. - .. -- . - . .-. .-. --- .-."
 
-[author]
-  name = "John Bowdre"
-  email = "jbowdre@omg.lol"
-  username = "jbowdre"
-
 # Comments
 comments = true
-utterancesRepo = "jbowdre/site-comments"
-utterancesIssueTerm = "og:title"
-utterancesTheme = "gruvbox-dark"
 giscusCategory = "Announcements"
 giscusCategoryId = "DIC_kwDOKKEGD84CcG89"
 giscusCrossOrigin = "anonymous"
@@ -30,9 +22,14 @@ giscusReactions = "1"
 giscusRepo = "jbowdre/site-comments"
 giscusRepoId = "R_kgDOKKEGDw"
 giscusStrict = "0"
-giscusTheme = "dark"
+giscusTheme = "noborder_gray"
 
 analytics = true
+
+[author]
+name = "John Bowdre"
+email = "jbowdre@omg.lol"
+username = "jbowdre"
 
 [theme]
 palette = "runtimeterror"
