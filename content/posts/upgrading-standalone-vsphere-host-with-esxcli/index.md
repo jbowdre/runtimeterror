@@ -19,7 +19,7 @@ tags:
   - vmware
   - homelab
   - vsphere
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 You may have heard that there's a new vSphere release out in the wild - [vSphere 8, which just reached Initial Availability this week](https://advocacy.vmware.com/Article/Redirect/9cfbc1b1-207f-4885-a520-cc0bfafcd6c0?uc=197618&g=2d17264e-593a-492d-8d91-3a2155e835f1&f=3104867). Upgrading the vCenter in my single-host homelab is a very straightforward task, and using the included Lifecycle Manager would make quick work of patching a cluster of hosts... but things get a little trickier with a single host. I could write the installer ISO to a USB drive, boot the host off of that, and go through the install interactively, but what if physical access to the host is kind of inconvenient?
 

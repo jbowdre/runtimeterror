@@ -19,7 +19,7 @@ tags:
   - vmware
   - powercli
   - powershell
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 
 I recently needed to export a list of all the Linux VMs in a rather large vSphere environment spanning multiple vCenters (and the entire globe), and I wanted to include information about which virtual datacenter each VM lived in to make it easier to map VMs to their physical location.

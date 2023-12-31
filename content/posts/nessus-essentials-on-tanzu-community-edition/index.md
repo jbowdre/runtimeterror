@@ -21,7 +21,7 @@ tags:
   - tanzu
   - containers
   - security
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 Now that VMware [has released](https://blogs.vmware.com/vsphere/2022/01/announcing-availability-of-vsphere-7-update-3c.html) [vCenter 7.0U3c](https://docs.vmware.com/en/VMware-vSphere/7.0/rn/vsphere-vcenter-server-70u3c-release-notes.html) to resolve the Log4Shell vulnerabilities I thought it might be fun to run a security scan against the upgraded VCSA in my homelab to see how it looks. Of course, I don't actually have a security scanner in that environment so I'll need to deploy one.
 

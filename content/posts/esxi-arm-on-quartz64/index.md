@@ -23,7 +23,7 @@ tags:
   - tailscale
   - photon
   - vpn
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 {{% notice note "ESXi-ARM Fling v1.10 Update" %}}
 On July 20, 2022, VMware released a [major update](https://blogs.vmware.com/arm/2022/07/20/1-10/) for the ESXi-ARM Fling. Among [other fixes and improvements](https://flings.vmware.com/esxi-arm-edition#changelog), this version enables **in-place ESXi upgrades** and [adds support for the Quartz64's **on-board NIC**](https://twitter.com/jmcwhatever/status/1549935971822706688). To update, I:

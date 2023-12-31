@@ -20,7 +20,7 @@ tags:
   - powershell
   - windows
   - powercli
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 {{% notice note "Fix available" %}}
 VMware has released a fix for this problem in the form of [ESXi 7.0 Update 3k](https://docs.vmware.com/en/VMware-vSphere/7.0/rn/vsphere-esxi-70u3k-release-notes.html#resolvedissues):

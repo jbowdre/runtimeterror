@@ -22,7 +22,7 @@ tags:
   - networking
   - security
   - tailscale
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 You might remember that I'm a [pretty big fan](/secure-networking-made-simple-with-tailscale/) of [Tailscale](https://tailscale.com), which makes it easy to connect your various devices together in a secure [tailnet](https://tailscale.com/kb/1136/tailnet/), or private network. Tailscale is super simple to set up on most platforms, but you'll need to [install it manually](https://tailscale.com/download/linux/static) if there isn't a prebuilt package for your system.
 

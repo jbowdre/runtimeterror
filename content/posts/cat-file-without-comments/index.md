@@ -19,7 +19,7 @@ tags:
   - linux
   - shell
   - regex
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 It's super handy when a Linux config file is loaded with comments to tell you precisely how to configure the thing, but all those comments can really get in the way when you're trying to review the current configuration.
 

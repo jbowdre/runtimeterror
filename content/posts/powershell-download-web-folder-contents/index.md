@@ -18,7 +18,7 @@ series: Code
 tags:
   - powershell
   - windows
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 We've been working lately to use [HashiCorp Packer](https://www.packer.io/) to standardize and automate our VM template builds, and we found a need to pull in all of the contents of a specific directory on an internal web server. This would be pretty simple for Linux systems using `wget -r`, but we needed to find another solution for our Windows builds.
 

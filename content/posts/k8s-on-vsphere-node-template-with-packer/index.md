@@ -24,7 +24,7 @@ tags:
   - containers
   - iac
   - packer
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 I've been leveraging the open-source Tanzu Community Edition Kubernetes distribution for a little while now, both [in my home lab](/tanzu-community-edition-k8s-homelab) and at work, so I was disappointed to learn that VMware was [abandoning the project](https://github.com/vmware-tanzu/community-edition). TCE had been a pretty good fit for my needs, and now I needed to search for a replacement. VMware is offering a free version of Tanzu Kubernetes Grid as a replacement, but it comes with a license solely for non-commercial use so I wouldn't be able to use it at work. And I'd really like to use the same solution in both environments to make development and testing easier on me.
 
