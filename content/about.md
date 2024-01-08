@@ -24,8 +24,8 @@ And in the free time I have left, I game on my Steam Deck.
 See what I've been up to on:
 - [GitHub](https://github.com/jbowdre)
 - [CounterSocial](https://counter.social/@john_b)
-- [status.lol](https://status.lol/jbowdre)
-- [/now](https://jbowdre.omg.lol/now)
+- [status.lol](https://status.jbowdre.lol)
+- [/now](https://now.jbowdre.lol)
 
 Connect with me via:
 - [SimpleX Chat](/simplex/)
