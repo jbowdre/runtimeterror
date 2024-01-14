@@ -23,7 +23,7 @@ tags:
   - automation
   - rest
   - api
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 I've been doing a bit of work lately to make my vRealize Automation setup more flexible and dynamic and less dependent upon hardcoded values. To that end, I thought it was probably about time to learn how to interact with the vRA REST API. I wrote this post to share what I've learned and give a quick crash course on how to start doing things with the API.
 

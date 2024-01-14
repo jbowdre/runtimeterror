@@ -1,11 +1,11 @@
 ---
 title: "Tailscale Serve in a Docker Compose Sidecar"
 date: 2023-12-30
-# lastmod: 2023-12-28
+lastmod: 2024-01-01
 description: "Using Docker Compose to deploy containerized applications and make them available via Tailscale Serve and Tailscale Funnel"
 featured: false
 toc: true
-comment: true
+comments: true
 series: Projects
 tags:
   - containers
@@ -120,6 +120,7 @@ There's also a [sample `docker-compose.yml`](https://github.com/jbowdre/tailscal
 services:
   tailscale:
     image: ghcr.io/jbowdre/tailscale-docker:latest
+    restart: unless-stopped
     container_name: tailscale
     environment:
       TS_AUTHKEY: ${TS_AUTHKEY:?err} # from https://login.tailscale.com/admin/settings/authkeys
@@ -133,6 +134,7 @@ services:
       - ./ts_data:/var/lib/tailscale/   # the mount point should match TS_STATE_DIR
   myservice:
     image: nginxdemos/hello
+    restart: unless-stopped
     network_mode: "service:tailscale" # use the tailscale network service's network
 ```
 
@@ -211,6 +213,7 @@ And I can add the corresponding `docker-compose.yml` to go with it:
 services:
   tailscale: # [tl! focus:start]
     image: ghcr.io/jbowdre/tailscale-docker:latest
+    restart: unless-stopped
     container_name: cyberchef-tailscale
     environment:
       TS_AUTHKEY: ${TS_AUTHKEY:?err}
@@ -286,6 +289,7 @@ I adapted the [example `docker-compose.yml`](https://miniflux.app/docs/dacker.ht
 services:
   tailscale: # [tl! focus:start]
     image: ghcr.io/jbowdre/tailscale-docker:latest
+    restart: unless-stopped
     container_name: miniflux-tailscale
     environment:
       TS_AUTHKEY: ${TS_AUTHKEY:?err}
@@ -299,6 +303,7 @@ services:
       - ./ts_data:/var/lib/tailscale/ # [tl! focus:end]
   miniflux:
     image: miniflux/miniflux:latest
+    restart: unless-stopped
     container_name: miniflux
     depends_on:
       db:
@@ -312,6 +317,7 @@ services:
     network_mode: "service:tailscale" # [tl! focus]
   db:
     image: postgres:15
+    restart: unless-stopped
     container_name: miniflux-db
     environment:
       - POSTGRES_USER=${DB_USER}

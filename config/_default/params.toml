@@ -5,17 +5,31 @@ mainSections = ["posts"]
 fallBackOgImage = "images/broken-computer.png"
 numberOfFeaturedPosts = 5
 numberOfRelatedPosts = 5
-author = "jbowdre"
 
 indexTitle = ".-. ..- -. - .. -- . - . .-. .-. --- .-."
 
 # Comments
 comments = true
-utterancesRepo = "jbowdre/site-comments"
-utterancesIssueTerm = "og:title"
-utterancesTheme = "gruvbox-dark"
+giscusCategory = "Announcements"
+giscusCategoryId = "DIC_kwDOKKEGD84CcG89"
+giscusCrossOrigin = "anonymous"
+giscusEmitMetadata = "0"
+giscusInputPosition = "bottom"
+giscusLang = "en"
+giscusLoading = "lazy"
+giscusMapping = "og:title"
+giscusReactions = "1"
+giscusRepo = "jbowdre/site-comments"
+giscusRepoId = "R_kgDOKKEGDw"
+giscusStrict = "0"
+giscusTheme = "noborder_gray"
 
 analytics = true
+
+[author]
+name = "John Bowdre"
+email = "jbowdre@omg.lol"
+username = "jbowdre"
 
 [theme]
 palette = "runtimeterror"
@@ -135,7 +149,7 @@ url = "https://social.lol/@jbowdre"
 [[socialLinks]]
 icon = "fa-solid fa-heart"
 title = "omg.lol"
-url = "https://jbowdre.omg.lol"
+url = "https://jbowdre.lol"
 
 [[socialLinks]]
 icon = "fa-solid fa-comments"

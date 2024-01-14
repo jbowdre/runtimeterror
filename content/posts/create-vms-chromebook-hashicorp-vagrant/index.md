@@ -20,7 +20,7 @@ tags:
   - chromeos
   - homelab
   - iac
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 I've lately been trying to do more with [Salt](https://saltproject.io/) at work, but I'm still very much a novice with that tool. I thought it would be great to have a nice little portable lab environment where I could deploy a few lightweight VMs and practice managing them with Salt - without impacting any systems that are actually being used for anything. Along the way, I figured I'd leverage [HashiCorp Vagrant](https://www.vagrantup.com/) to create and manage the VMs, which would provide a declarative way to define what the VMs should look like. The VM (or even groups of VMs) would be specified in a single file, and I'd bypass all the tedious steps of creating the virtual hardware, attaching the installation media, installing the OS, and performing the initial configuration. Vagrant will help me build up, destroy, and redeploy a development environment in a simple and repeatable way.
 

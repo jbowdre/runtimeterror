@@ -22,7 +22,7 @@ tags:
   - wireguard
   - containers
   - selfhosting
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 I've shared in the past about how I use [custom search engines in Chrome](/abusing-chromes-custom-search-engines-for-fun-and-profit/) as quick web shortcuts. And I may have mentioned [my love for Tailscale](/tags/tailscale/) a time or two as well. Well I recently learned of a way to combine these two passions: [Tailscale golink](https://github.com/tailscale/golink). The [golink announcement post on the Tailscale blog](https://tailscale.com/blog/golink/) offers a great overview of the service:
 > Using golink, you can create and share simple go/name links for commonly accessed websites, so that anyone in your network can access them no matter the device they’re on — without requiring browser extensions or fiddling with DNS settings. And because golink integrates with Tailscale, links are private to users in your tailnet without any separate user management, logins, or security policies.

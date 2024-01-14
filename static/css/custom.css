@@ -197,7 +197,10 @@ ul.pagination li {
 }
 
 .statuslol_time a:hover,
-.statuslol_time a:active,
-.statuslol_time a.active {
+.statuslol_time a:active {
   color: var(--hover) !important;
+}
+
+small[style^="opacity: .5"] {
+  opacity: 1 !important;
 }

@@ -6,7 +6,7 @@ draft: true
 description: "This is a new post about..."
 featured: false
 toc: true
-comment: true
+comments: true
 series: Tips # Projects, Code
 tags:
   - 3dprinting

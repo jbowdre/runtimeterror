@@ -21,7 +21,7 @@ tags:
   - tanzu
   - kubernetes
   - shell
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 
 Lately I've been spending some time [getting more familiar](/tanzu-community-edition-k8s-homelab/) with VMware's [Tanzu Community Edition](https://tanzucommunityedition.io/) Kubernetes distribution, but I'm still not quite familiar enough with the `tanzu` command line. If only there were a better way for me to discover the available commands for a given context and help me type them correctly...

@@ -5,7 +5,7 @@ lastmod: 2023-11-13
 description: "Syntax highlighting powered by the Torchlight.dev API makes it easier to dress up code blocks. Here's an overview of what I did to replace this blog's built-in Hugo highlighter (Chroma) with Torchlight."
 featured: false
 toc: true
-comment: true
+comments: true
 series: Projects # Projects, Code
 tags:
   - javascript
