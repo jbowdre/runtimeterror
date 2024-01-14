@@ -19,7 +19,7 @@ tags:
   - vmware
   - kubernetes
   - tanzu
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 When I [set up my Tanzu Community Edition environment](/tanzu-community-edition-k8s-homelab/), I did so from a Linux VM since the containerized Linux environment on my Chromebook doesn't support the `kind` bootstrap cluster used for the deployment. But now that the Kubernetes cluster is up and running, I'd like to be able to connect to it directly without the aid of a jumpbox. How do I get the appropriate cluster configuration over to my Chromebook?
 

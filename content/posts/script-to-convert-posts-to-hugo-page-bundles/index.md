@@ -20,7 +20,7 @@ tags:
   - hugo
   - meta
   - shell
-comment: true # Disable comment if false.
+comments: true # Disable comment if false.
 ---
 In case you missed [the news](/hello-hugo), I recently migrated this blog from a site built with Jekyll to one built with Hugo. One of Hugo's cool features is the concept of [Page Bundles](https://gohugo.io/content-management/page-bundles/), which _bundle_ a page's resources together in one place instead of scattering them all over the place.
 
