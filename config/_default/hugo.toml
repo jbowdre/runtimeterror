@@ -60,3 +60,6 @@ enableInlineShortcodes = true
   tag = "tags"
   series = "series"
 
+[minify]
+  disableXML = true
+  minifyOutput = true
