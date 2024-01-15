@@ -1,6 +1,6 @@
 ---
-title: "Securing Web Servers with Cloudflare Tunnel"
-date: 2024-01-14
+title: "Publish Services with Cloudflare Tunnel"
+date: 2024-01-15
 # lastmod: 2024-01-13
 description: "Exploring Cloudflare Tunnel as an alternative to Tailscale Funnel for secure public access to internal resources."
 featured: false
