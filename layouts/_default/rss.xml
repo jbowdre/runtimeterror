@@ -42,7 +42,7 @@
       <category>{{ .LinkTitle }}</category>{{ end }}
       <guid>{{ .Permalink }}</guid>
       <description>{{ "<![CDATA[" | safeHTML }} {{ .Summary }}]]></description>
-      <content:encoded>{{ "<![CDATA[" | safeHTML }} {{ .Content }}]]></content:encoded>
+      <content:encoded>{{ "<![CDATA[" | safeHTML }} {{ replaceRE "img src=\"(.*?)\"" (printf "%s%s%s" "img src=\"" .Permalink "$1\"") .Content }}]]></content:encoded>
     </item>
     {{ end }}
   </channel>
