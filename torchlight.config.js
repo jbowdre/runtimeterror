@@ -50,7 +50,8 @@ module.exports = {
     // Globs to include when looking for files to highlight.
     includeGlobs: [
       '**/*.htm',
-      '**/*.html'
+      '**/*.html',
+      '**/feed.xml'
     ],
 
     // String patterns to ignore (not globs). The entire file
