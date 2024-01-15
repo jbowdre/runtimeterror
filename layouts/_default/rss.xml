@@ -10,7 +10,7 @@
 {{- if ge $limit 1 -}}
 {{- $pages = $pages | first $limit -}}
 {{- end -}}
-{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<!-- {{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }} -->
 <rss version="2.0"
   xmlns:atom="http://www.w3.org/2005/Atom"
   xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -41,8 +41,9 @@
       {{ range (.GetTerms "tags") }}
       <category>{{ .LinkTitle }}</category>{{ end }}
       <guid>{{ .Permalink }}</guid>
-      <description>{{ "<![CDATA[" | safeHTML }} {{ .Summary }}]]></description>
-      <content:encoded>{{ "<![CDATA[" | safeHTML }} {{ replaceRE "img src=\"(.*?)\"" (printf "%s%s%s" "img src=\"" .Permalink "$1\"") .Content }}]]></content:encoded>
+      {{- $content := replaceRE "a href=\"(#.*?)\"" (printf "%s%s%s" "a href=\"" .Permalink "$1\"") .Content -}}
+      {{- $content = replaceRE "img src=\"(.*?)\"" (printf "%s%s%s" "img src=\"" .Permalink "$1\"") $content -}}
+      <description>{{ $content | html }}</description>
     </item>
     {{ end }}
   </channel>
