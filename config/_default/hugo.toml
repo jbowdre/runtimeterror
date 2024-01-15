@@ -60,30 +60,3 @@ enableInlineShortcodes = true
   tag = "tags"
   series = "series"
 
-# Copied from https://gohugo.io/getting-started/configuration/#configure-minify
-# Only change made is xml keepWhitespace = true
-[minify]
-  disableCSS = false
-  disableHTML = false
-  disableJS = false
-  disableJSON = false
-  disableSVG = false
-  disableXML = false
-  minifyOutput = false
-  [minify.tdewolff]
-    [minify.tdewolff.css]
-      decimals = -1
-      keepCSS2 = true
-    [minify.tdewolff.html]
-      keepConditionalComments = true
-      keepDefaultAttrVals = true
-      keepDocumentTags = true
-      keepEndTags = true
-      keepQuotes = false
-      keepWhitespace = false
-    [minify.tdewolff.js]
-    [minify.tdewolff.json]
-    [minify.tdewolff.svg]
-      decimals = -1
-    [minify.tdewolff.xml]
-      keepWhitespace = true
