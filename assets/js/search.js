@@ -15,7 +15,7 @@ function displayResults (results, store) {
 const params = new URLSearchParams(window.location.search);
 const query = params.get('query');
 if (query) {
-  document.getElementById('search-input').setAttribute('value', query);
+  document.getElementById('search-query').setAttribute('value', query);
   const idx = lunr(function () {
     this.ref('id')
     this.field('title', {

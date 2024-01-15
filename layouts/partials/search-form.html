@@ -1,7 +1,5 @@
 <form id="search"
-  action='{{ with .GetPage "/search" }}{{.Permalink}}{{end}}' method="get">
-  <label hidden for="search-input">Search site</label>
-  <input type="text" id="search-input" name="query"
-  placeholder="Type here to search">
-  <input type="submit" value="search">
+  action='{{ with .GetPage "/search" }}{{ .Permalink }}{{ end }}' method="get">
+  <input type="search" id="search-query" name="query" placeholder="Looking for something?" aria-label="search text">
+  <button type="submit" aria-label="search button"><i class="fa-solid fa-magnifying-glass"></i></button>
 </form>
