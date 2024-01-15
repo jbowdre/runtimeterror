@@ -40,7 +40,7 @@
       {{ range (.GetTerms "tags") }}
       <category>{{ .LinkTitle }}</category>{{ end }}
       <guid>{{ .Permalink }}</guid>
-      <description>{{ .Summary | plainify }}</description>
+      <description>{{- .Content | html -}}</description>
     </item>
     {{ end }}
   </channel>
