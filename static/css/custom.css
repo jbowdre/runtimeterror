@@ -177,7 +177,7 @@ ul.pagination li {
 
 /* statuslol overrides */
 .statuslol {
-  background: var(--inner-bg) !important;
+  background: var(--off-bg) !important;
   flex-direction:column
 }
 
