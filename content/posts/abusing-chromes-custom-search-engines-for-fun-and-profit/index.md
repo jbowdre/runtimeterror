@@ -17,7 +17,7 @@ Point your browser to `chrome://settings/searchEngines` to see which sites are r
 Each of these search engine entries has three parts: a name ("Search engine"), a Keyword, and a Query URL. The "Search engine" title is just what will appear in the Omnibox when the search engine gets triggered, the Keyword is what you'll type in the Omnibox to trigger it, and the Query URL tells Chrome how to handle the search. All you have to do is type the keyword, hit your Tab key to activate the search, input your query, and hit Enter:
 ![Using a custom search engine](o_o7rt4pA.gif)
 
-For sites which register themselves automatically, the keyword is often set to something like `domain.tld` so it might make sense to assign it as something shorter or more descriptive. 
+For sites which register themselves automatically, the keyword is often set to something like `domain.tld` so it might make sense to assign it as something shorter or more descriptive.
 
 The Query URL is basically just what appears in the address bar when you search the site directly, with `%s` placed where your query text would normally go. You can view these details for a given search entry by tapping the three-dot menu button and selecting "Edit", and you can manually create new entries by hitting that big friendly "Add" button:
 ![Editing a search engine](fmLDUWjia.png)
@@ -55,7 +55,7 @@ This works for pretty much any site which parses the URL to render certain conte
 Your Query URL doesn't even need to include a query at all! You can use the Custom Search Engines as a sort of hyper-fast shortcut to pages you visit frequently. If I create a new entry with the Keyword `searchax` and `abusing-chromes-custom-search-engines-for-fun-and-profit` as the query URL, I can quickly open to this page by typing `searchax[tab][enter]`:
 ![Custom search shortener](YilNCaHil.png)
 
-I use that trick pretty regularly for getting back to vCenter appliance management interfaces without having to type out the full FQDN and port number and all that. 
+I use that trick pretty regularly for getting back to vCenter appliance management interfaces without having to type out the full FQDN and port number and all that.
 
 ------
 
