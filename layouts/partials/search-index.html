@@ -5,6 +5,7 @@
       "title": "{{ .Title }}",
       "tags": [{{ range .Params.Tags }}"{{ . }}",{{ end }}],
       "content": {{ .Content | plainify }},
+      "description": {{ .Description | plainify }},
       "url": "{{ .Permalink }}"
     },
     {{ end }}
