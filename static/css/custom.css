@@ -217,3 +217,37 @@ kbd,
 samp {
   color: var(--code);
 }
+
+/* search box styling */
+form {
+  display: flex;
+  flex-direction: row;
+  border-radius: 0.25rem;
+  outline: 0.25rem solid var(--bg);
+}
+
+input {
+  flex-grow: 2;
+  border: none;
+  background-color: var(--off-bg);
+  color: var(--off-fg);
+  height: 1.5rem;
+  border-radius: 0.25rem;
+  padding-left: 0.5rem;
+  font-family: var(--font-monospace);
+}
+
+input:focus {
+  outline: none;
+}
+
+form:focus-within {
+  outline: 1px solid var(--logo);
+}
+
+form button {
+  outline: none;
+  border: none;
+  background-color: var(--off-bg);
+  color: var(--link);
+}
