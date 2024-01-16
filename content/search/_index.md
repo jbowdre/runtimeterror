@@ -1,3 +1,3 @@
 ---
-title: Search me!
+title: Search Results Page
 ---
