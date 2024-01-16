@@ -224,6 +224,8 @@ form {
   flex-direction: row;
   border-radius: 0.25rem;
   outline: 0.25rem solid var(--bg);
+  width: 240px;
+  transition: width .2s ease-in-out, outline .2s ease-in-out;
 }
 
 input {
@@ -243,6 +245,7 @@ input:focus {
 
 form:focus-within {
   outline: 1px solid var(--logo);
+  width: 100%;
 }
 
 form button {
