@@ -3,7 +3,19 @@
 <p class="powered_by">{"powered_by": [{{- range $i, $link :=  .Site.Params.powerLinks }}{{ if $i }}, {{ end }}&quot;<a target="_blank" href="{{ $link.url }}">{{ $link.title }}</a>&quot;{{ end }}]}
 <br>&lt;<a target="_blank" href="https://github.com/jbowdre/runtimeterror">view source</a>&gt;</p>
 
+<!-- Back to Top button via https://github.com/vfeskov/vanilla-back-to-top -->
+{{ $jsToTop := resources.Get "js/back-to-top.js" | minify }}
+<script src="{{ $jsToTop.RelPermalink }}"></script>
+<script>addBackToTop({
+  diameter: 56,
+  backgroundColor: '#383838',
+  textColor: '#c45a5a'
+})</script>
+
+<!-- Search index via https://victoria.dev/blog/add-search-to-hugo-static-sites-with-lunr/ -->
 {{ partial "search-index.html" .}}
+
+<!-- Code Copy button via https://digitaldrummerj.me/hugo-add-copy-code-snippet-button/ -->
 {{ if (findRE "<pre" .Content 1) }}
   {{ $jsCopy := resources.Get "js/code-copy-button.js" | minify }}
   <script src="{{ $jsCopy.RelPermalink }}"></script>
