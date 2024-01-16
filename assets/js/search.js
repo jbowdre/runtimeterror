@@ -5,7 +5,10 @@ function displayResults (results, store) {
     for (const n in results) {
       const item = store[results[n].ref];
       resultList += '<li><a href="' + item.url + '">' + item.title + '</a></li>'
-      resultList += '<p>' + item.content.substring(0, 150) + '...</p>'
+      if (item.description)
+        resultList += '<p>' + item.description + '</p>'
+      else
+        resultList += '<p>' + item.content.substring(0, 150) + '...</p>'
     }
     searchResults.innerHTML = resultList;
   } else {
