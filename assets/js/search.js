@@ -1,3 +1,4 @@
+// based on https://victoria.dev/blog/add-search-to-hugo-static-sites-with-lunr/
 function displayResults (results, store) {
   const searchResults = document.getElementById('results');
   if (results.length) {
