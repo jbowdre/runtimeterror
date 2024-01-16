@@ -983,7 +983,8 @@ I'll define the new subnet as `192.168.1.0/24`. Once I enable the option to *Che
 ![A new (but empty) subnet](new_subnet_pre_scan.png)
 
 It shows the scanner associated with the subnet, but no data yet. I'll need to wait a few minutes for the first scan to kick off (at the five-minute interval I defined in the configuration).
-![](five_minutes.gif)
+
+![GIF which says 'Five Minutes Later!'](five_minutes.gif)
 ![Newly discovered IPs!](newly-discovered_IPs.png)
 
 Woah, it actually works!

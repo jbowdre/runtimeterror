@@ -536,7 +536,7 @@ Serving HTTP on 0.0.0.0 port 1313 (http://0.0.0.0:1313/) ... # [tl! focus:1]
 #### Netlify
 Setting up Netlify to leverage the Torchlight API is kind of similar. I'll start with logging in to the [Netlify dashboard](https://app.netlify.com) and navigating to **Site Configuration > Environment Variables**. There, I'll click on **Add a variable > Add a ingle variable**. I'll give the new variable a key of `TORCHLIGHT_TOKEN` and set its value to the token I obtained earlier.
 
-![](netlify-env-var.png)
+![Screenshot showing the creation of the 'TORCHLIGHT_TOKEN' variable in Netlify](netlify-env-var.png)
 
 Once that's done, I edit the `netlify.toml` file at the root of my site repo to alter the build commands:
 ```toml
