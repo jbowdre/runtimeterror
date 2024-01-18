@@ -11,27 +11,38 @@
   {{ .Content }}
 </header>
 
-{{- if ne .Title "Tags"}}
-{{- range (.Paginate $pages).Pages }}
-{{- $postDate := .Date.Format "2006-01-02" }}
-{{- $updateDate := .Lastmod.Format "2006-01-02" }}
-<article class="post">
-  <header class="post__header">
-      <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
-      <p class="post__meta">
-          <span class="date">["{{- $postDate }}"{{- if ne $postDate $updateDate }}, "{{ $updateDate }}"{{ end }}]</span>
-      </p>
-  </header>
-
-  <section class="post__summary">
-      {{ .Summary }}
-  </section>
-  <br>
-</article>
-{{ end }}
-{{- template "_internal/pagination.html" . }}
+{{- if eq .Kind "taxonomy" }}
+  {{- if eq .Title "Tags" }}
+    {{- range $key, $value := .Site.Taxonomies }}
+      {{- $slicedTags := ($value.ByCount) }}
+      {{- range $slicedTags }}
+        {{- if eq $key "tags"}}
+          [<a href='/{{ $key }}/{{ (replace .Name "#" "%23") | urlize }}/' title="{{ .Name }}">{{ .Name }}</a><sup>{{ .Count }}</sup>]
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- else }}
+    {{- range .Pages }}
+      <a href="{{ .Permalink }}">{{ .Title | markdownify }}</a><br>
+    {{ end }}
+  {{- end }}
 {{- else }}
-{{- range .Pages.ByTitle }}
-  [<a href="{{ .Permalink }}">{{ .Title | markdownify }}</a>]
-{{- end }}
+  {{- range (.Paginate $pages).Pages }}
+    {{- $postDate := .Date.Format "2006-01-02" }}
+    {{- $updateDate := .Lastmod.Format "2006-01-02" }}
+    <article class="post">
+      <header class="post__header">
+          <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
+          <p class="post__meta">
+              <span class="date">["{{- $postDate }}"{{- if ne $postDate $updateDate }}, "{{ $updateDate }}"{{ end }}]</span>
+          </p>
+      </header>
+
+      <section class="post__summary">
+          {{ .Summary }}
+      </section>
+      <br>
+    </article>
+  {{- end }}
+  {{- template "_internal/pagination.html" . }}
 {{- end }}

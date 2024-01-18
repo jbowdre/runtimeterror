@@ -7,6 +7,7 @@ draft: false
 description: "This blog has migrated from virtuallypotato.com to runtimeterror.dev."
 toc: false
 comments: true
+categories: Blog
 tags:
   - meta
 ---
@@ -19,7 +20,7 @@ ln -s virtuallypotato.com runtimeterror.dev
 
 If you've noticed that things look a bit different around here, you might *also* have noticed that my posts about VMware products had become less and less frequent over the past year or so. That wasn't intentional, but a side-effect of some shifting priorities with a new position at work. I'm no longer on the team responsible for our VMware environment and am now more focused on cloud-native technologies and open-source DevOps solutions. The new role keeps me pretty busy, and I'm using what free time I have to learn more about and experiment with the technologies I use at work.
 
-That (unfortunately) means that I won't be posting much (if at all) about VMware-related things (including the [vRA8 series of posts](/series/vra8/))[^vra8] going forward. Instead, expect to see more posts about things like [containers](/tags/containers/), [infrastructure-as-code](/tags/iac/), [self-hosting](/tags/selfhosting/), and [miscellaneous tech projects](/series/projects/) that I play with.
+That (unfortunately) means that I won't be posting much (if at all) about VMware-related things (including the [vRA8 series of posts](/categories/vmware/))[^vra8] going forward. Instead, expect to see more posts about things like [containers](/tags/containers/), [infrastructure-as-code](/tags/iac/), [self-hosting](/tags/selfhosting/), and [miscellaneous tech projects](/categories/self-hosting/) that I play with.
 
 I decided to migrate, rebrand, and re-theme my blog to reflect this change in focus. virtuallypotato used a [theme heavily inspired by VMware design language](https://github.com/chipzoller/hugo-clarity), and I don't think it's a great fit for the current (and future) content anymore. That theme is also very feature-rich which provides a lot of capability out of the box but makes it a bit tricky to modify (and maintain) my personal tweaks. The new runtimeterror[^pun] site uses a [more minimal theme](https://github.com/joeroe/risotto) which takes cues from terminals and markdown formatting. It's also simpler and thus easier for me to tweak. I've done a lot of that already and anticipating doing a bit more in the coming weeks, but I wanted to go ahead and make this thing "live" for now.
 

@@ -14,7 +14,7 @@ featureImage: "tanzu.png" # Sets featured image on blog post.
 thumbnail: "tanzu.png" # Sets thumbnail image appearing inside card on homepage.
 # shareImage: "share.png" # Designate a separate image for social media sharing.
 codeLineNumbers: false # Override global value for showing of line numbers within code block.
-series: Tips
+categories: VMware
 tags:
   - vmware
   - kubernetes

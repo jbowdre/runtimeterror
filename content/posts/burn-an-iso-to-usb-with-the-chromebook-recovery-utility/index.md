@@ -1,5 +1,5 @@
 ---
-series: Tips
+categories: ChromeOS
 date: "2020-12-23T08:34:30Z"
 thumbnail: -lp1-DGiM.png
 usePageBundles: true

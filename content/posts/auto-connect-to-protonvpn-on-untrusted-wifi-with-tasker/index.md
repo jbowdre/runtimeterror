@@ -1,5 +1,5 @@
 ---
-series: Projects
+categories: Automation
 date: "2020-11-24T08:34:30Z"
 lastmod: "2021-03-12"
 thumbnail: Ki7jo65t3.png
@@ -37,7 +37,7 @@ It's important to use the [open-source](https://github.com/schwabe/ics-openvpn) 
 ### OpenVPN config file
 You can find instructions for configuring the OpenVPN client to work with ProtonVPN [here](https://protonvpn.com/support/android-vpn-setup/) but I'll go ahead and hit the highlights. You'll probably want to go ahead and do all this from your phone so you don't have to fuss with transferring files around, but hey, *you do you*.
 
-1. Log in to your ProtonVPN account (or sign up for a new free one) at https://account.protonvpn.com/login. 
+1. Log in to your ProtonVPN account (or sign up for a new free one) at https://account.protonvpn.com/login.
 2. Use the panel on the left side to navigate to **[Downloads > OpenVPN configuration files](https://account.protonvpn.com/downloads#openvpn-configuration-files)**.
 3. Select the **Android** platform and **UDP** as the protocol, unless you have a [particular reason to use TCP](https://protonvpn.com/support/udp-tcp/#:~:text=When%20to%20use%20UDP%20vs.%20TCP).
 4. Select and download the desired config file:
@@ -49,7 +49,7 @@ You can find instructions for configuring the OpenVPN client to work with Proton
 
 Feel free to download more than one if you'd like to have different profiles available within the OpenVPN app.
 
-ProtonVPN automatically generates a set of user credentials to use with a third-party VPN client so that you don't have to share your personal creds. You'll want to make a note of that randomly-generated username and password so you can plug them in to the OpenVPN app later. You can find the details at **[Account > OpenVPN / IKEv2 username](https://account.protonvpn.com/account#openvpn)**. 
+ProtonVPN automatically generates a set of user credentials to use with a third-party VPN client so that you don't have to share your personal creds. You'll want to make a note of that randomly-generated username and password so you can plug them in to the OpenVPN app later. You can find the details at **[Account > OpenVPN / IKEv2 username](https://account.protonvpn.com/account#openvpn)**.
 
 **Now that you've got the profile file, skip on down to [The Update](#update) to import it into OpenVPN Connect.**
 
@@ -67,7 +67,7 @@ Now what you've got the config file(s) and your client credentials, it's time to
 
 Success!
 
-I don't like to have a bunch of persistent notification icons hanging around (and Android already shows a persistent status icon when a VPN connection is active). If you're like me, long-press the OpenVPN notification and tap the gear icon. Then tap on the **Connection statistics** category and activate the **Minimized** slider. The notification will still appear, but it will collapse to the bottom of your notification stack and you won't get bugged by the icon. 
+I don't like to have a bunch of persistent notification icons hanging around (and Android already shows a persistent status icon when a VPN connection is active). If you're like me, long-press the OpenVPN notification and tap the gear icon. Then tap on the **Connection statistics** category and activate the **Minimized** slider. The notification will still appear, but it will collapse to the bottom of your notification stack and you won't get bugged by the icon.
 
 ![Notification settings](WWuHwVvrk.png)
 
@@ -76,21 +76,21 @@ Open up Tasker and get ready to automate! We're going to wind up with at least t
 
 Let's start with a profile to track whether or not we're connected to one of our preferred/trusted WiFi networks:
 
-#### Trusted WiFi 
+#### Trusted WiFi
 1. Tap the '+' sign to create a new profile, and add a new **State > Net > Wifi Connected** context. This profile will become active whenever your phone connects to WiFi.
 2. Tap the magnifying glass next to the **SSID** field, which will pop up a list of all detected nearby network identifiers. Tap to select whichever network(s) you'd like to be considered "safe". You can also manually enter the SSID names, separating multiple options with a `/` (ex, `FBI Surveillance Van/TellMyWifiLoveHer/Pretty fly for a WiFi`). Or, for more security, identify the networks based on the MACs instead of the SSIDs - just be sure to capture the MACs for any extenders or mesh nodes too!
-3. Once you've got your networks added, tap the back button to move *forward* to the next task (Ah, Android!): configuring the *action* which will occur when the context is satisfied. 
-4. Tap the **New Task** option and then tap the check mark to skip giving it a name (no need). 
+3. Once you've got your networks added, tap the back button to move *forward* to the next task (Ah, Android!): configuring the *action* which will occur when the context is satisfied.
+4. Tap the **New Task** option and then tap the check mark to skip giving it a name (no need).
 5. Hit the '+' button to add an action and select **Variables > Variable Set**.
-6. For **Name**, enter `%TRUSTED_WIFI` (all caps to make it a "public" variable), and for the **To** field just enter `1`. 
-7. Hit back to save the action, and back again to save the profile. 
+6. For **Name**, enter `%TRUSTED_WIFI` (all caps to make it a "public" variable), and for the **To** field just enter `1`.
+7. Hit back to save the action, and back again to save the profile.
 8. Back at the profile list, long-press on the **Variable Set...** action and then select **Add Exit Task**.
 9. We want to un-set the variable when no longer connected to a trusted WiFi network so add a new **Variables > Variable Clear** action and set the name to `%TRUSTED_WIFI`.
 10. And back back out to admire your handiwork. Here's a recap of the profile:
 ```
 Profile: Trusted Wifi
 State: Wifi Connected [ SSID:FBI Surveillance Van/TellMyWifiLoveHer/Pretty fly for a WiFi MAC:* IP:* Active:Any ]
-Enter: Anon 
+Enter: Anon
 A1: Variable Set [ Name:%TRUSTED_WIFI To:1 Recurse Variables:Off Do Maths:Off Append:Off Max Rounding Digits:0 ]
 Exit: Anon
 A1: Variable Clear [ Name:%TRUSTED_WIFI Pattern Matching:Off Local Variables Only:Off Clear All Variables:Off ]
@@ -103,7 +103,7 @@ This profile will kick in if the phone connects to a WiFi network which isn't on
 1. It starts out the same way by creating a new profile with the **State > Net > Wifi Connected** context but this time don't add any network names to the list.
 2. For the action, select **Plugin > OpenVpn Tasker Plugin**, tap the pencil icon to edit the configuration, and select your VPN profile from the list under **Connect using profile**
 3. Back at the Action Edit screen, tap the checkbox next to **If** and enter the variable name `%TRUSTED_WIFI`. Tap the '~' button to change the condition operator to **Isn't Set**. So while this profile will activate every time you connect to WiFi, the action which connects to the VPN will only fire if the WiFi isn't a trusted network.
-4. Back out to the profile list and add a new Exit Task. 
+4. Back out to the profile list and add a new Exit Task.
 5. Add another **Plugin > OpenVpn Tasker Plugin** task and this time configure it to **Disconnect VPN**.
 
 To recap:
@@ -149,7 +149,7 @@ After installing and launching the official [OpenVPN Connect app](https://play.g
 ![Creating a profile in OpenVPN Connect](KjGOX8Yiv.png)
 
 #### Tasker profiles
-Go ahead and create the [Trusted Wifi profile](#trusted-wifi) as described above. 
+Go ahead and create the [Trusted Wifi profile](#trusted-wifi) as described above.
 
 The condition for the [VPN on Strange Wifi profile](#vpn-on-strange-wifi) will be the same, but the task will be different. This time, add a **System > Send Intent** action. You'll need to enter the following details, leaving the other fields blank/default:
 
@@ -176,4 +176,4 @@ Class: net.openvpn.unified.MainActivity
 Target: Activity
 ```
 
-All set! You can pop back up to the [Epilogue](#epilogue-working-with-googles-vpn) section to continue tweaking to avoid conflicts with Google's auto-connect VPN if you'd like. 
+All set! You can pop back up to the [Epilogue](#epilogue-working-with-googles-vpn) section to continue tweaking to avoid conflicts with Google's auto-connect VPN if you'd like.

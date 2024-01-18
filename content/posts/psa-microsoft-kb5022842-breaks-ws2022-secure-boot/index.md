@@ -14,7 +14,7 @@ usePageBundles: true
 # thumbnail: "thumbnail.png" # Sets thumbnail image appearing inside card on homepage.
 # shareImage: "share.png" # Designate a separate image for social media sharing.
 codeLineNumbers: false # Override global value for showing of line numbers within code block.
-series: Tips # Projects, Code, vRA8, K8s on vSphere
+categories: VMware # Projects, Code, vRA8, K8s on vSphere
 tags:
   - vmware
   - powershell

@@ -1,5 +1,5 @@
 ---
-series: vRA8
+categories: VMware
 date: "2021-02-05T08:34:30Z"
 thumbnail: SIDah-Lag.png
 usePageBundles: true

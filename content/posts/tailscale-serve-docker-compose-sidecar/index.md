@@ -6,7 +6,7 @@ description: "Using Docker Compose to deploy containerized applications and make
 featured: false
 toc: true
 comments: true
-series: Projects
+categories: Self-Hosting
 tags:
   - containers
   - docker

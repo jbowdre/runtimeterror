@@ -1,5 +1,5 @@
 ---
-series: Projects
+categories: ChromeOS
 date: "2020-10-27T08:34:30Z"
 lastmod: "2021-05-20"
 thumbnail: XtmaR9Z0J.png
