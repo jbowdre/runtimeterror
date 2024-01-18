@@ -6,7 +6,7 @@ description: "Exploring Cloudflare Tunnel as an alternative to Tailscale Funnel 
 featured: false
 toc: true
 comments: true
-series: Tips # Projects, Code
+categories: Self-Hosting
 tags:
   - cloud
   - containers

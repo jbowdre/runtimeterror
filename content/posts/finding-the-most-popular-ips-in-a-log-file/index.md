@@ -1,5 +1,5 @@
 ---
-series: Tips
+categories: Tips
 date: "2020-09-13T08:34:30Z"
 usePageBundles: true
 tags:

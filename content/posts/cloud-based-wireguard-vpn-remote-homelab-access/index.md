@@ -1,5 +1,5 @@
 ---
-series: Projects
+categories: Self-Hosting
 date: "2021-10-28T00:00:00Z"
 thumbnail: 20211028_wireguard_in_the_cloud.jpg
 usePageBundles: true

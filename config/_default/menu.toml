@@ -5,22 +5,28 @@
 #   weight = 10
 
 [[main]]
-  identifier = "projects"
-  name = "projects"
-  url = "/series/projects/"
+  identifier = "posts"
+  name = "posts"
+  url = "/"
   weight = 1
 
 [[main]]
-  identifier = "tips"
-  name = "tips"
-  url = "/series/tips/"
-  weight = 1
+  identifier = "categories"
+  name = "categories"
+  url = "/categories/"
+  weight = 2
 
 [[main]]
-  identifier = "code"
-  name = "code"
-  url = "/series/code/"
-  weight = 1
+  identifier = "tags"
+  name = "tags"
+  url = "/tags/"
+  weight = 3
+
+[[main]]
+  identifier = "about"
+  name = "about"
+  url = "/about/"
+  weight = 4
 
 [[main]]
   identifier = "virtuallypotato"

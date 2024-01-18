@@ -1,5 +1,5 @@
 ---
-series: Code
+categories: Blog
 date: "2021-07-19T16:03:30Z"
 usePageBundles: true
 tags:

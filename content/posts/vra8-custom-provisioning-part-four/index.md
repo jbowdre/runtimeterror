@@ -1,5 +1,5 @@
 ---
-series: vRA8
+categories: VMware
 date: "2021-05-18T08:34:30Z"
 lastmod: "2021-05-20"
 thumbnail: hFPeakMxn.png

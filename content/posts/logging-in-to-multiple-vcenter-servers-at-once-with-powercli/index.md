@@ -1,5 +1,5 @@
 ---
-series: Code
+categories: Code
 date: "2020-09-16T08:34:30Z"
 thumbnail: LJOcy2oqc.png
 usePageBundles: true

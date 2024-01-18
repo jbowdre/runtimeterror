@@ -1,5 +1,5 @@
 ---
-series: Tips
+categories: Tips
 date: "2020-09-24T08:34:30Z"
 thumbnail: fmLDUWjia.png
 usePageBundles: true
