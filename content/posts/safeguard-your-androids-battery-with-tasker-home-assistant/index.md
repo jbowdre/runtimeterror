@@ -1,5 +1,5 @@
 ---
-categories: Automation
+categories: Code
 date: "2020-11-14T08:34:30Z"
 thumbnail: aeIOr8w6k.png
 usePageBundles: true

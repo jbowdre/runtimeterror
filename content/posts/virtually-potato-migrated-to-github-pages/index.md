@@ -2,7 +2,7 @@
 date: "2021-07-20T22:20:00Z"
 thumbnail: 20210720-jekyll.png
 usePageBundles: true
-categories: Blog
+categories: Backstage
 tags:
 - linux
 - meta
