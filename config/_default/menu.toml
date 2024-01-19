@@ -5,21 +5,21 @@
 #   weight = 10
 
 [[main]]
-  identifier = "projects"
-  name = "projects"
-  url = "/series/projects/"
+  identifier = "self-hosting"
+  name = "self-hosting"
+  url = "/categories/self-hosting/"
   weight = 1
 
 [[main]]
   identifier = "tips"
   name = "tips"
-  url = "/series/tips/"
+  url = "/categories/tips/"
   weight = 1
 
 [[main]]
   identifier = "code"
   name = "code"
-  url = "/series/code/"
+  url = "/categories/code/"
   weight = 1
 
 [[main]]
