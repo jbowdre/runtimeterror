@@ -6,7 +6,7 @@ timeless: true
 description: There are no dumb questions - but there are smarter (and dumber) ways to ask them.
 featured: true
 aliases: ["how2ask"]
-series: Tips
+categories: Tips
 ---
 I spend a lot of my time and energy answering technical questions, both professionally and "for fun" as a way to scratch that troubleshooting itch. How a question is asked plays a big factor in how effectively I'll be able to answer it.
 

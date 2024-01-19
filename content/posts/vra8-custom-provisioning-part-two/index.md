@@ -1,5 +1,5 @@
 ---
-series: vRA8
+categories: VMware
 date: "2021-04-02T08:34:30Z"
 lastmod: "2022-03-23"
 thumbnail: HXrAMJrH.png

@@ -1,5 +1,5 @@
 ---
-series: vRA8
+categories: VMware
 date: "2021-07-21T00:00:00Z"
 thumbnail: 20210721-successful-ad_machine.png
 usePageBundles: true

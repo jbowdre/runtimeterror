@@ -1,5 +1,5 @@
 ---
-series: vRA8
+categories: VMware
 date: "2021-02-22T08:34:30Z"
 lastmod: 2022-07-25
 thumbnail: 7_QI-Ti8g.png

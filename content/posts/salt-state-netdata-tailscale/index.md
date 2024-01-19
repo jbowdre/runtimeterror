@@ -6,7 +6,7 @@ description: "A hasty Salt state to deploy netdata monitoring and publish it int
 featured: false
 toc: true
 comments: true
-series: Code
+categories: Code
 tags:
   - homelab
   - iac

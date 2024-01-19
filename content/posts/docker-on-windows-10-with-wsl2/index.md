@@ -2,6 +2,7 @@
 date: "2020-09-22T08:34:30Z"
 thumbnail: 8p-PSHx1R.png
 usePageBundles: true
+categories: Tips
 tags:
 - docker
 - windows

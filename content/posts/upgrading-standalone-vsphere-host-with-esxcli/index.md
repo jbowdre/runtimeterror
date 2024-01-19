@@ -14,7 +14,7 @@ featureImage: "esxi8.png" # Sets featured image on blog post.
 # thumbnail: "thumbnail.png" # Sets thumbnail image appearing inside card on homepage.
 # shareImage: "share.png" # Designate a separate image for social media sharing.
 codeLineNumbers: false # Override global value for showing of line numbers within code block.
-series: Tips # Projects, Code, vRA8
+categories: VMware # Projects, Code, vRA8
 tags:
   - vmware
   - homelab

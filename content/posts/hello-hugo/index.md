@@ -16,6 +16,7 @@ shareImage: "/hugo-logo-wide.png"
 # shareImage: "/images/path/share.png" # Designate a separate image for social media sharing.
 codeMaxLines: 10 # Override global value for how many lines within a code block before auto-collapsing.
 codeLineNumbers: false # Override global value for showing of line numbers within code block.
+categories: Backstage
 tags:
   - meta
   - hugo

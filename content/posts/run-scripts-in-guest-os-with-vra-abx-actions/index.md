@@ -1,5 +1,5 @@
 ---
-series: vRA8
+categories: VMware
 date: "2021-09-03T00:00:00Z"
 thumbnail: 20210903_action_run_success.png
 usePageBundles: true
@@ -11,7 +11,7 @@ tags:
 - vmware
 title: Run scripts in guest OS with vRA ABX Actions
 ---
-Thus far in my [vRealize Automation project](/series/vra8), I've primarily been handing the payload over to vRealize Orchestrator to do the heavy lifting on the back end. This approach works really well for complex multi-part workflows (like when [generating unique hostnames](/vra8-custom-provisioning-part-two#the-vro-workflow)), but it may be overkill for more linear tasks (such as just running some simple commands inside of a deployed guest OS). In this post, I'll explore how I use [vRA Action Based eXtensibility (ABX)](https://blogs.vmware.com/management/2020/09/vra-abx-flow.html) to do just that.
+Thus far in my [vRealize Automation project](/categories/vmware), I've primarily been handing the payload over to vRealize Orchestrator to do the heavy lifting on the back end. This approach works really well for complex multi-part workflows (like when [generating unique hostnames](/vra8-custom-provisioning-part-two#the-vro-workflow)), but it may be overkill for more linear tasks (such as just running some simple commands inside of a deployed guest OS). In this post, I'll explore how I use [vRA Action Based eXtensibility (ABX)](https://blogs.vmware.com/management/2020/09/vra-abx-flow.html) to do just that.
 
 ### The Goal
 My ABX action is going to use PowerCLI to perform a few steps inside a deployed guest OS (Windows-only for this demonstration):

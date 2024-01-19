@@ -3,6 +3,7 @@ date: "2020-09-14T08:34:30Z"
 thumbnail: qDTXt1jp3.png
 featureImage: qDTXt1jp3.png
 usePageBundles: true
+categories: ChromeOS
 tags:
 - linux
 - chromeos

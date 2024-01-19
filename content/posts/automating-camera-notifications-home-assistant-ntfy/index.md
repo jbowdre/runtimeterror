@@ -8,7 +8,7 @@ alias: automating-security-camera-notifications-with-home-assistant-and-ntfy
 toc: true
 comments: true
 thumbnail: thumbnail.png
-series: Projects
+categories: Self-Hosting
 tags:
   - api
   - automation

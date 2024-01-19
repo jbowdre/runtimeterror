@@ -1,5 +1,5 @@
 ---
-series: Projects
+categories: Self-Hosting
 date: "2021-08-20T00:00:00Z"
 lastmod: 2022-02-03
 usePageBundles: true

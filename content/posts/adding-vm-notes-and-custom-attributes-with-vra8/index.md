@@ -1,5 +1,5 @@
 ---
-series: vRA8
+categories: VMware
 date: "2021-06-01T08:34:30Z"
 thumbnail: -Fuvz-GmF.png
 usePageBundles: true
@@ -11,7 +11,7 @@ tags:
 title: Adding VM Notes and Custom Attributes with vRA8
 ---
 
-*In [past posts](/series/vra8), I started by [creating a basic deployment infrastructure](/vra8-custom-provisioning-part-one) in Cloud Assembly and using tags to group those resources. I then [wrote an integration](/integrating-phpipam-with-vrealize-automation-8) to let vRA8 use phpIPAM for static address assignments. I [implemented a vRO workflow](/vra8-custom-provisioning-part-two) for generating unique VM names which fit an organization's established naming standard, and then [extended the workflow](/vra8-custom-provisioning-part-three) to avoid any naming conflicts in Active Directory and DNS. And, finally, I [created an intelligent provisioning request form in Service Broker](/vra8-custom-provisioning-part-four) to make it easy for users to get the servers they need. That's got the core functionality pretty well sorted, so moving forward I'll be detailing additions that enable new capabilities and enhance the experience.*
+*In [past posts](/categories/vmware), I started by [creating a basic deployment infrastructure](/vra8-custom-provisioning-part-one) in Cloud Assembly and using tags to group those resources. I then [wrote an integration](/integrating-phpipam-with-vrealize-automation-8) to let vRA8 use phpIPAM for static address assignments. I [implemented a vRO workflow](/vra8-custom-provisioning-part-two) for generating unique VM names which fit an organization's established naming standard, and then [extended the workflow](/vra8-custom-provisioning-part-three) to avoid any naming conflicts in Active Directory and DNS. And, finally, I [created an intelligent provisioning request form in Service Broker](/vra8-custom-provisioning-part-four) to make it easy for users to get the servers they need. That's got the core functionality pretty well sorted, so moving forward I'll be detailing additions that enable new capabilities and enhance the experience.*
 
 In this post, I'll describe how to get certain details from the Service Broker request form and into the VM's properties in vCenter. The obvious application of this is adding descriptive notes so I can remember what purpose a VM serves, but I will also be using [Custom Attributes](https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.vcenterhost.doc/GUID-73606C4C-763C-4E27-A1DA-032E4C46219D.html) to store the server's Point of Contact information and a record of which ticketing system request resulted in the server's creation.
 
