@@ -13,14 +13,16 @@
 
 {{- if eq .Kind "taxonomy" }}
   {{- if eq .Title "Tags" }}
+    <div class="tagsArchive">
     {{- range $key, $value := .Site.Taxonomies }}
       {{- $slicedTags := ($value.ByCount) }}
       {{- range $slicedTags }}
         {{- if eq $key "tags"}}
-          [<a href='/{{ $key }}/{{ (replace .Name "#" "%23") | urlize }}/' title="{{ .Name }}">{{ .Name }}</a><sup>{{ .Count }}</sup>]
+          <div><a href='/{{ $key }}/{{ (replace .Name "#" "%23") | urlize }}/' title="{{ .Name }}">{{ .Name }}</a><sup>{{ .Count }}</sup></div>
         {{- end }}
       {{- end }}
     {{- end }}
+  </div>
   {{- else }}
     {{- range .Pages }}
       <a href="{{ .Permalink }}">{{ .Title | markdownify }}</a><br>
