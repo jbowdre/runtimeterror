@@ -275,3 +275,10 @@ form button {
   font-size: 0.8rem;
   color: var(--off-fg);
 }
+
+/* blockquote styling */
+blockquote {
+  font-style: italic;
+  border-left: 0.25rem solid var(--logo);
+  padding-left: 0.25rem;
+}
