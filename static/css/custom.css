@@ -254,3 +254,19 @@ form button {
   background-color: var(--off-bg);
   color: var(--link);
 }
+
+/* tags list styling */
+.tagsArchive {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  grid-gap: 0.5rem;
+  /* justify-content: center; */
+  margin: 0.5rem 0;
+
+}
+
+.tagsArchive sup {
+  font-size: 0.75rem;
+  margin-left: 0.2rem;
+  margin-right: 0.5rem;
+}
