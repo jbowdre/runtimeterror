@@ -1,5 +1,5 @@
 ---
-categories: Blog
+categories: Backstage
 date: "2021-07-24T16:46:00Z"
 thumbnail: 20210724-series-navigation.png
 usePageBundles: true

@@ -15,7 +15,7 @@ thumbnail: "thumbnail.png" # Sets thumbnail image appearing inside card on homep
 # shareImage: "/images/path/share.png" # Designate a separate image for social media sharing.
 codeLineNumbers: false # Override global value for showing of line numbers within code block.
 codeMaxLines: 30
-categories: Blog
+categories: Backstage
 tags:
   - hugo
   - meta

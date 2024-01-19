@@ -1,5 +1,5 @@
 ---
-categories: Automation
+categories: Code
 date: "2020-11-24T08:34:30Z"
 lastmod: "2021-03-12"
 thumbnail: Ki7jo65t3.png
