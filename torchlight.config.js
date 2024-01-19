@@ -59,7 +59,7 @@ module.exports = {
     excludePatterns: [
       '/node_modules/',
       '/vendor/',
-      '/series/',
+      '/categories/',
       '/tags/'
     ]
   }

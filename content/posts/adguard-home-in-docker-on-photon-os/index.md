@@ -1,5 +1,5 @@
 ---
-series: Projects
+categories: Self-Hosting
 date: "2021-05-27T08:34:30Z"
 thumbnail: HRRpFOKuN.png
 usePageBundles: true
