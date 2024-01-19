@@ -16,6 +16,7 @@
     <div class="content__body">
         {{ .Content }}
     </div>
+    <span class="post_kudos">Kudoses:<button class="tinylytics_kudos"></button></span>
     {{- $showComments := true }}
     {{- if eq .Site.Params.comments false }}
       {{- $showComments = false }}
