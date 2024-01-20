@@ -34,7 +34,7 @@
 <link rel="stylesheet" href="{{ "css/risotto.css" | absURL }}">
 <link rel="stylesheet" href="{{ "css/custom.css" | absURL }}">
 
-{{ if .Site.Params.analytics }}
+{{ if eq .Site.Params.analytics trues }}
 <!-- tinylytics -->
 <script src="https://tinylytics.app/embed/z4bwvaCBkF39NcDDLsRu.js?kudos" defer></script>
 {{ end }}
