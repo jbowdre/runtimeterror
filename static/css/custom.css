@@ -303,3 +303,34 @@ button.tinylytics_kudos:hover {
   transform: scale(1.1);
   text-shadow: var(--off-fg) 0 0 1px;
 }
+
+/* post front matter styling*/
+.frontmatter hr {
+  margin-bottom: 0rem;
+  margin-top: 0rem;
+}
+
+.frontmatter h1 {
+  margin-top: 0rem;
+}
+
+.frontmatter .label {
+  color: var(--off-fg);
+  font-size: 0.8rem;
+}
+
+.frontmatter .title {
+  color: var(--fg);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.frontmatter table {
+  overflow-wrap: break-word;
+  margin-bottom: 0rem;
+}
+
+.frontmatter_tags {
+  font-size: 0.8rem;
+  color: var(--off-fg);
+}
