@@ -26,7 +26,7 @@
     {{- if ne $showComments false }}
       <hr>
       {{- if eq .Site.Params.analytics true }}
-      <span class="post_kudos">Enjoyed this post?<button class="tinylytics_kudos"></button></span>
+      <span class="post_kudos">Enjoyed this post?&nbsp;<button class="tinylytics_kudos"></button></span>
       {{- end }}
       {{- partial "comments" . }}
     {{- end }}
