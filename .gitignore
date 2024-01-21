@@ -5,4 +5,5 @@
 /public/
 /resources/
 /.env*
+/.torchlight-cache
 

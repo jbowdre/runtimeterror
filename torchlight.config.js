@@ -7,7 +7,7 @@ module.exports = {
   // want to add this directory to your .gitignore. Set to
   // `false` to use an in-memory cache. You may also
   // provide a full cache implementation.
-  cache: false,
+  cache: '.torchlight-cache',
 
   // Which theme you want to use. You can find all of the themes at
   // https://torchlight.dev/docs/themes.
