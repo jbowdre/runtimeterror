@@ -40,8 +40,7 @@ jobs:
           HUGO_ENV: production
         run: |
           hugo \
-            --minify \
-            --baseURL "https://runtimeterror.dev/"
+            --minify
       - name: Highlight with Torchlight
         run: |
           npm i @torchlight-api/torchlight-cli
