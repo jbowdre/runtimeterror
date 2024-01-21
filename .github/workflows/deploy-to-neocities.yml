@@ -41,7 +41,7 @@ jobs:
         run: |
           hugo \
             --minify \
-            --baseURL "https://runtimeterror.neocities.org/"
+            --baseURL "https://runtimeterror.dev/"
       - name: Highlight with Torchlight
         run: |
           npm i @torchlight-api/torchlight-cli
