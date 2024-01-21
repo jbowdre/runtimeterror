@@ -17,7 +17,7 @@ defaults:
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     env:
       HUGO_VERSION: "0.121.1"
     steps:
