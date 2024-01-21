@@ -11,8 +11,10 @@ categories: Backstage
 tags:
   - hugo
   - meta
+  - serverless
 ---
-Neocities: https://neocities.org/about
+
+
 
 Supporter: https://neocities.org/supporter
 
@@ -39,7 +41,7 @@ Hugo starter workflow: https://github.com/actions/starter-workflows/blob/main/pa
 ```yaml
 # torchlight! {"lineNumbers": true}
 # .github/workflows/deploy-to-neocities.yml
-name: Deploy to neocities
+name: Deploy to Neocities
 
 # only run on changes to main
 on:
@@ -57,7 +59,8 @@ defaults:
     shell: bash
 
 jobs:
-  deploy:
+  build:
+    name: Build Hugo site
     runs-on: ubuntu-latest
     env:
       HUGO_VERSION: "0.121.1"
@@ -81,12 +84,54 @@ jobs:
           HUGO_ENV: production
         run: |
           hugo \
-            --minify \
-            --baseURL "https://runtimeterror.dev/"
+            --minify
+      - name: Insert 404 page
+        run: |
+          cp public/not_found/index.html public/not_found.html
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: public
+          retention-days: 1
+
+  highlight:
+    name: Highlight code with Torchlight
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install Node.js dependencies
+        run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: public
       - name: Highlight with Torchlight
         run: |
           npm i @torchlight-api/torchlight-cli
           npx torchlight
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: highlight
+          path: public
+          retention-days: 1
+
+  deploy:
+    name: Publish to Neocities
+    runs-on: ubuntu-latest
+    needs: highlight
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: highlight
+          path: public
       - name: Deploy to neocities
         uses: bcomnes/deploy-to-neocities@v1
         with:
