@@ -44,7 +44,7 @@ jobs:
             --baseURL "https://codesplice.neocities.org/"
       - name: Highlight with Torchlight
         run: |
-          npm i @torchlight-api/torchlight-api
+          npm i @torchlight-api/torchlight-cli
           npx torchlight
       - name: Deploy to neocities
         uses: bcomnes/deploy-to-neocities@v1
