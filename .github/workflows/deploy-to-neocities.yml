@@ -16,82 +16,31 @@ defaults:
     shell: bash
 
 jobs:
-  build:
-    name: Build Hugo site
+  deploy:
+    name: Build and deploy Hugo site
     runs-on: ubuntu-latest
-    env:
-      HUGO_VERSION: "0.121.1"
     steps:
-      - name: Install Hugo CLI
-        run: |
-          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
-          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
-      - name: Install Dart Sass
-        run: sudo snap install dart-sass
+      - name: Hugo setup
+        uses: peaceiris/actions-hugo@v2.6.0
+        with:
+          hugo-version: '0.121.1'
+          extended: true
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Install Node.js dependencies
-        run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
       - name: Build with Hugo
-        env:
-          # For maximum backward compatibility with Hugo modules
-          HUGO_ENVIRONMENT: production
-          HUGO_ENV: production
-        run: |
-          hugo \
-            --minify
+        run: hugo --minify
       - name: Insert 404 page
         run: |
           cp public/not_found/index.html public/not_found.html
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: public
-          retention-days: 1
-
-  highlight:
-    name: Highlight code with Torchlight
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - name: Install Node.js dependencies
-        run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: build
-          path: public
       - name: Highlight with Torchlight
         run: |
           npm i @torchlight-api/torchlight-cli
           npx torchlight
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: highlight
-          path: public
-          retention-days: 1
-
-  deploy:
-    name: Publish to Neocities
-    runs-on: ubuntu-latest
-    needs: highlight
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: highlight
-          path: public
-      - name: Deploy to neocities
+      - name: Deploy to Neocities
         uses: bcomnes/deploy-to-neocities@v1
         with:
           api_token: ${{ secrets.NEOCITIES_API_TOKEN }}
-          cleanup: false
+          cleanup: true
           dist_dir: public
