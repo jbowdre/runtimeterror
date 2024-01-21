@@ -97,6 +97,7 @@ resources:
 
 And I will add in a `storage` property as well which will automatically adjust the deployed VMDK size to match the specified input:
 ```yaml
+# torchlight! {"torchlightAnnotations": false}
 # torchlight! {"lineNumbers": true}
 [...]
       description: '${input.description}'
@@ -202,7 +203,6 @@ inputs:
     type: string
     title: Point of Contact Email
     default: jack.shephard@example.com
-    pattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
   ticket:
     type: string
     title: Ticket/Request Number
@@ -292,7 +292,7 @@ Once all those constants are created I can move on to the meat of this little pr
 
 #### ABX Action
 I'll click back to **Extensibility > Library > Actions** and then **+ New Action**. I give the new action a clever title and description:
-![Create a new action](20210901_create_action.png)]
+![Create a new action](20210901_create_action.png)
 
 I then hit the language dropdown near the top left and select to use `powershell` so that I can use those sweet, sweet PowerCLI cmdlets.
 ![Language selection](20210901_action_select_language.png)
