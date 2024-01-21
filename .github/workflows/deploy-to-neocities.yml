@@ -16,7 +16,8 @@ defaults:
     shell: bash
 
 jobs:
-  deploy:
+  build:
+    name: Build Hugo site
     runs-on: ubuntu-latest
     env:
       HUGO_VERSION: "0.121.1"
@@ -44,10 +45,44 @@ jobs:
       - name: Insert 404 page
         run: |
           cp public/not_found/index.html public/not_found.html
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: public
+          path: public
+          retention-days: 1
+
+  highlight:
+    name: Highlight code with Torchlight
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: public
+          path: public
       - name: Highlight with Torchlight
         run: |
           npm i @torchlight-api/torchlight-cli
           npx torchlight
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: public
+          path: public
+          retention-days: 1
+
+  deploy:
+    name: Publish to Neocities
+    runs-on: ubuntu-latest
+    needs: highlight
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: public
+          path: public
       - name: Deploy to neocities
         uses: bcomnes/deploy-to-neocities@v1
         with:
