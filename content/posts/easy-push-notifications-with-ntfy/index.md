@@ -6,7 +6,7 @@ description: "Deploying and configuring a self-hosted pub-sub notification handl
 featured: false
 toc: true
 comments: true
-series: Projects
+categories: Self-Hosting
 tags:
   - android
   - api

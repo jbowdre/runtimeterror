@@ -1,5 +1,5 @@
 ---
-series: vRA8
+categories: VMware
 date: "2021-08-25T00:00:00Z"
 usePageBundles: true
 tags:
@@ -13,7 +13,7 @@ title: Notes on vRA HA with NSX-ALB
 This is going to be a pretty quick recap of the steps I recently took to convert a single-node instance of vRealize Automation 8.4.2 into a 3-node High-Availability vRA cluster behind a standalone NSX Advanced Load Balancer (without NSX being deployed in the environment). No screenshots or specific details since I ran through this in the lab at work and didn't capture anything along the way, and my poor NUC homelab struggles enough to run a single instance of memory-hogging vRA.
 
 ### Getting started with NSX-ALB
-I found a lot of information on how to use NSX-ALB as a component of a broader NSX-equipped environment, but not a lot of detail on how to use the ALB *without* NSX - until I found [Rudi Martinsen's blog on the subject](https://rudimartinsen.com/2021/06/25/load-balancing-with-nsx-alb/). That turned out to be a great reference for the ALB configuration so be sure to check it out if you need more details than what I provide in this section. 
+I found a lot of information on how to use NSX-ALB as a component of a broader NSX-equipped environment, but not a lot of detail on how to use the ALB *without* NSX - until I found [Rudi Martinsen's blog on the subject](https://rudimartinsen.com/2021/06/25/load-balancing-with-nsx-alb/). That turned out to be a great reference for the ALB configuration so be sure to check it out if you need more details than what I provide in this section.
 
 #### Download
 NSX-ALB is/was formerly known as the Avi Vantage Controller, and downloads are available [here](https://portal.avipulse.vmware.com/software/vantage). You'll need to log in with your VMware Customer Connect account to access the download, and then grab the latest VMware Controller OVA. Be sure to make a note of the default password listed on the right-hand side since you'll need that to log in post-deployment.
@@ -45,7 +45,7 @@ Then go back to **Infastructure > Clouds**, edit the Cloud, and select the IPAM 
 Navigate to **Infrastructure > Cloud Resources > Service Engine Group** and edit the *Default-Group*. I left everything on the *Basic Settings* tab at the defaults. On the *Advanced* tab, I specified which vSphere cluster the Service Engines should be deployed to. And I left everything else with the default settings.
 
 #### SSL Certificate
-Hop over to **Templates > Security > SSL/TLS Certificates** and click **Create > Application Certificate**. Give the new cert a name and change the **Type** to `CSR` to generate a new signing request. Enter the **Common Name** you're going to want to use for the load balancer VIP (something like `vra`, perhaps?) and all the usual cert fields. Use the **Subject Alternate Name (SAN)** section at the bottom to add all the other components, like the individual vRA cluster members by both hostname and FQDN. I went ahead and included those IPs as well for good measure. 
+Hop over to **Templates > Security > SSL/TLS Certificates** and click **Create > Application Certificate**. Give the new cert a name and change the **Type** to `CSR` to generate a new signing request. Enter the **Common Name** you're going to want to use for the load balancer VIP (something like `vra`, perhaps?) and all the usual cert fields. Use the **Subject Alternate Name (SAN)** section at the bottom to add all the other components, like the individual vRA cluster members by both hostname and FQDN. I went ahead and included those IPs as well for good measure.
 
 | Name                 |
 |----------------------|
@@ -60,14 +60,14 @@ Hop over to **Templates > Security > SSL/TLS Certificates** and click **Create >
 | `vra03`              |
 | `192.168.1.43`       |
 
-Click **Save**. 
+Click **Save**.
 
 Click **Create** again, but this time select **Root/Intermediate CA Certificate** and upload/paste your CA's cert so it can be trusted. Save your work.
 
 Back at the cert list, find your new application cert and click the pencil icon to edit it. Copy the **Certificate Signing Request** field and go get it signed by your CA. Be sure to grab the certificate chain (base64-encoded) as well if you can. Come back and paste in / upload your shiny new CA-signed certificate file.
 
 #### Virtual Service
-Now it's finally time to create the Virtual Service that will function as the load balancer front-end. Pop over to **Applications > Virtual Services** and click **Create Virtual Service > Basic Setup**. Give it a name and set the **Application Type** to `HTTPS`, which will automatically set the port and bind a default self-signed certificate. 
+Now it's finally time to create the Virtual Service that will function as the load balancer front-end. Pop over to **Applications > Virtual Services** and click **Create Virtual Service > Basic Setup**. Give it a name and set the **Application Type** to `HTTPS`, which will automatically set the port and bind a default self-signed certificate.
 
 Click on the **Certificate** field and select the new cert you created above. Be sure to remove the default cert.
 
@@ -81,12 +81,12 @@ Now that the Virtual Service is created, make a note of the IP address assigned 
 Log into LifeCycle Manager in a new browser tab/window. Make sure that you've mapped an *Install* product binary for your current version of vRA; the upgrade binary that you probably used to do your last update won't cut it. It's probably also a good idea to go make a snapshot of your vRA and IDM instances just in case.
 
 #### Adding new certificate
-In LCM, go to **Locker > Certificates** and select the option to **Import**. Switch back to the NSX-ALB tab and go to **Templates > Security > SSL/TLS Certificates**. Click the little down-arrow-in-a-circle "Export" icon next to the application certificate you created earlier. Copy the key section and paste that into LCM. Then open the file containing the certificate chain you got from your CA, copy its contents, and paste it into LCM as well. Do *not* try to upload a certificate file directly to LCM; that will fail unless the file includes both the cert and the private key and that's silly. 
+In LCM, go to **Locker > Certificates** and select the option to **Import**. Switch back to the NSX-ALB tab and go to **Templates > Security > SSL/TLS Certificates**. Click the little down-arrow-in-a-circle "Export" icon next to the application certificate you created earlier. Copy the key section and paste that into LCM. Then open the file containing the certificate chain you got from your CA, copy its contents, and paste it into LCM as well. Do *not* try to upload a certificate file directly to LCM; that will fail unless the file includes both the cert and the private key and that's silly.
 
 Once the cert is successfully imported, go to the **Lifecycle Operations** component of LCM and navigate to the environment containing your vRA instance. Select the vRA product, hit the three-dot menu, and use the **Replace Certificate** option to replace the old and busted cert with the new HA-ready one. It will take a little bit for this to get applied. Don't move on until vRA services are back up.
 
 #### Scale out vRA
-Still on the vRA product page, click on the **+ Add Components** button. 
+Still on the vRA product page, click on the **+ Add Components** button.
 
 On the **Infrastructure** page, tell LCM where to put the new VRA VMs.
 

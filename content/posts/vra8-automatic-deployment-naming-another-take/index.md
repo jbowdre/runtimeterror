@@ -1,5 +1,5 @@
 ---
-series: vRA8
+categories: VMware
 date: "2021-05-20T08:34:30Z"
 thumbnail: wl-WPQpEl.png
 usePageBundles: true

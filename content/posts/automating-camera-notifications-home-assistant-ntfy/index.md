@@ -1,14 +1,14 @@
 ---
 title: "Automating Security Camera Notifications With Home Assistant and Ntfy"
 date: 2023-11-25
-lastmod: 2023-11-27
+lastmod: 2024-01-15
 description: "Using the power of Home Assistant automations and Ntfy push notifications to level-up security camera motion detections."
 featured: true
 alias: automating-security-camera-notifications-with-home-assistant-and-ntfy
 toc: true
 comments: true
 thumbnail: thumbnail.png
-series: Projects
+categories: Self-Hosting
 tags:
   - api
   - automation
@@ -25,7 +25,7 @@ I figured I could combine the excellent [Reolink integration for Home Assistant]
 
 ### Alert on motion detection
 {{% notice note "Ntfy Integration" %}}
-Since manually configuring ntfy in Home Assistant via the [RESTful Notifications integration](easy-push-notifications-with-ntfy/#notify-configuration), I found that a [ntfy-specific integration](https://github.com/ivanmihov/homeassistant-ntfy.sh) was available through the [Home Assistant Community Store](https://hacs.xyz/) addon. That setup is a bit more flexible so I've switched my setup to use it instead:
+Since manually configuring ntfy in Home Assistant via the [RESTful Notifications integration](/easy-push-notifications-with-ntfy#notify-configuration), I found that a [ntfy-specific integration](https://github.com/ivanmihov/homeassistant-ntfy.sh) was available through the [Home Assistant Community Store](https://hacs.xyz/) addon. That setup is a bit more flexible so I've switched my setup to use it instead:
 ```yaml
 # configuration.yaml
 notify:

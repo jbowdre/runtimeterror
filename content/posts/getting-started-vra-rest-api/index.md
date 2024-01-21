@@ -14,7 +14,7 @@ usePageBundles: true
 thumbnail: "thumbnail.png" # Sets thumbnail image appearing inside card on homepage.
 # shareImage: "share.png" # Designate a separate image for social media sharing.
 codeLineNumbers: false # Override global value for showing of line numbers within code block.
-series: vRA8 # Projects, Code, vRA8
+categories: VMware # Projects, Code, vRA8
 tags:
   - vmware
   - vra
@@ -312,7 +312,7 @@ This doesn't give me the *name* of the regions, but I could use the `_links.regi
 You'll notice that HTTPie also prettifies the JSON response to make it easy for humans to parse. This is great for experimenting with requests against different API endpoints and getting a feel for what data can be found where. And firing off tests in HTTPie can be a lot quicker (and easier to format) than with other tools.
 
 Now let's take what we've learned and see about implementing it as vRO actions.
-[^pie]: ![](pie.gif)
+[^pie]: ![GIF from Supernatural wherein Dean ogles some delicious pie.](pie.gif)
 [^token]: Well, most of it.
 [^foreshadowing]: That knowledge will come in handy later.
 ### vRealize Orchestrator actions

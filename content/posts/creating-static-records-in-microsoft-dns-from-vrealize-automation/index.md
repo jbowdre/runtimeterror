@@ -1,5 +1,5 @@
 ---
-series: vRA8
+categories: VMware
 date: "2021-08-13T00:00:00Z"
 lastmod: "2022-01-18"
 usePageBundles: true

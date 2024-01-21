@@ -11,7 +11,7 @@ enableInlineShortcodes = true
 # sectionPagesMenu = "main"
 
 [outputs]
-  home = ['html', 'rss', 'json']
+  home = ['html', 'rss']
   section = ['html']
   taxonomy = ['html',]
   term = ['html', 'rss']
@@ -58,5 +58,8 @@ enableInlineShortcodes = true
 
 [taxonomies]
   tag = "tags"
-  series = "series"
+  category = "categories"
 
+[minify]
+  disableXML = true
+  minifyOutput = true

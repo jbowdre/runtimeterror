@@ -1,7 +1,7 @@
 ---
 title: "Create Virtual Machines on a Chromebook with HashiCorp Vagrant" # Title of the blog post.
 date: 2023-02-20 # Date of post creation.
-lastmod: 2023-02-25
+lastmod: 2024-01-17
 description: "Pairing the powerful Linux Development Environment on modern Chromebooks with HashiCorp Vagrant to create and manage local virtual machines for development and testing" # Description used for search engine.
 featured: true # Sets if post is a featured post, making appear on the home page side bar.
 draft: false # Sets whether to render this page. Draft of true will not be rendered.
@@ -14,7 +14,7 @@ usePageBundles: true
 thumbnail: "thumbnail.png" # Sets thumbnail image appearing inside card on homepage.
 # shareImage: "share.png" # Designate a separate image for social media sharing.
 codeLineNumbers: false # Override global value for showing of line numbers within code block.
-series: Projects
+categories: ChromeOS
 tags:
   - linux
   - chromeos
@@ -56,6 +56,16 @@ And to avoid [this issue](https://github.com/virt-manager/virt-manager/issues/33
 echo "remember_owner = 0" | sudo tee -a /etc/libvirt/qemu.conf # [tl! .cmd:1]
 sudo systemctl restart libvirtd
 ```
+
+{{% notice note "Update 2024-01-17" %}}
+There seems to be an [issue with libvirt in LXC containers on Debian Bookworm](https://gitlab.com/libvirt/libvirt/-/issues/556), which explains why I was getting errors on `vagrant up` after updating my Crostini environment.
+
+The workaround is to add another line to `qemu.conf`:
+```shell
+echo "namespaces = []" | sudo tee -a /etc/libvirt/qemu.conf # [tl! .cmd:1]
+sudo systemctl restart libvirtd
+```
+{{% /notice %}}
 
 I'm also going to use `rsync` to share a [synced folder](https://developer.hashicorp.com/vagrant/docs/synced-folders/basic_usage) between the host and the VM guest so I'll need to make sure that's installed too:
 ```shell

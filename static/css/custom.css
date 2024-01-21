@@ -1,3 +1,8 @@
+/* color overrides */
+:root {
+  --code: var(--base06);
+}
+
 /* override page max-width */
 .page {
   max-width: 72rem;
@@ -172,7 +177,7 @@ ul.pagination li {
 
 /* statuslol overrides */
 .statuslol {
-  background: var(--inner-bg) !important;
+  background: var(--off-bg) !important;
   flex-direction:column
 }
 
@@ -203,4 +208,129 @@ ul.pagination li {
 
 small[style^="opacity: .5"] {
   opacity: 1 !important;
+}
+
+/* code overrides */
+pre,
+code,
+kbd,
+samp {
+  color: var(--code);
+}
+
+/* search box styling */
+form {
+  display: flex;
+  flex-direction: row;
+  border-radius: 0.25rem;
+  outline: 0.25rem solid var(--bg);
+  width: 240px;
+  transition: width .2s ease-in-out, outline .2s ease-in-out;
+}
+
+input {
+  flex-grow: 2;
+  border: none;
+  background-color: var(--off-bg);
+  color: var(--off-fg);
+  height: 1.5rem;
+  border-radius: 0.25rem;
+  padding-left: 0.5rem;
+  font-family: var(--font-monospace);
+}
+
+input:focus {
+  outline: none;
+}
+
+form:focus-within {
+  outline: 1px solid var(--logo);
+  width: 100%;
+}
+
+form button {
+  outline: none;
+  border: none;
+  background-color: var(--off-bg);
+  color: var(--link);
+}
+
+/* tags list styling */
+.tagsArchive {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  grid-gap: 0.5rem;
+  /* justify-content: center; */
+  margin: 0.5rem 0;
+
+}
+
+.tagsArchive sup {
+  font-size: 0.75rem;
+  margin-left: 0.2rem;
+  margin-right: 0.5rem;
+}
+
+.date {
+  font-size: 0.8rem;
+  color: var(--off-fg);
+}
+
+/* blockquote styling */
+blockquote {
+  font-style: italic;
+  border-left: 0.25rem solid var(--logo);
+  padding-left: 0.25rem;
+}
+
+/* tinylytics kudos styling*/
+.post_kudos {
+  display: flex;
+}
+
+button.tinylytics_kudos {
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  color: var(--off-fg);
+  font-size: 1.2rem;
+  padding: 0;
+  transition: all .2s ease-in-out;
+}
+
+button.tinylytics_kudos:hover {
+  transform: scale(1.1);
+  text-shadow: var(--off-fg) 0 0 1px;
+}
+
+/* post front matter styling*/
+.frontmatter hr {
+  margin-bottom: 0rem;
+  margin-top: 0rem;
+}
+
+.frontmatter h1 {
+  margin-top: 0rem;
+}
+
+.frontmatter .label {
+  color: var(--off-fg);
+  font-size: 0.8rem;
+}
+
+.frontmatter .title {
+  color: var(--fg);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.frontmatter table {
+  overflow-wrap: break-word;
+  margin-bottom: 0rem;
+}
+
+.frontmatter_tags {
+  font-size: 0.8rem;
+  color: var(--off-fg);
 }

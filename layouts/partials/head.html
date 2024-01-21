@@ -34,9 +34,9 @@
 <link rel="stylesheet" href="{{ "css/risotto.css" | absURL }}">
 <link rel="stylesheet" href="{{ "css/custom.css" | absURL }}">
 
-{{ if .Site.Params.analytics }}
-<!-- cabin analytics -->
-<script async defer src="https://scripts.withcabin.com/hello.js"></script>
+{{ if eq .Site.Params.analytics true }}
+<!-- tinylytics -->
+<script src="https://tinylytics.app/embed/z4bwvaCBkF39NcDDLsRu.js?kudos=🎉" defer></script>
 {{ end }}
 
 <!-- syntax highlighting -->

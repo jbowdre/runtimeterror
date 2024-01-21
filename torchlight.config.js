@@ -58,7 +58,9 @@ module.exports = {
     // appear, the file will be ignored.
     excludePatterns: [
       '/node_modules/',
-      '/vendor/'
+      '/vendor/',
+      '/categories/',
+      '/tags/'
     ]
   }
 }

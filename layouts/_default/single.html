@@ -1,7 +1,24 @@
 {{ define "main" }}
 {{- $ageDays := div (sub now.Unix .Date.Unix) 86400 -}}
     <header class="content__header">
-        <h1>{{ .Title | markdownify }}</h1>
+      <div class="frontmatter">
+        <hr>
+        <table class="frontmatter">
+          <tr><td class="label">title:</td><td class="title">{{ .Title | markdownify }}</td></tr>
+          {{- if .Params.date }}
+            {{- $postDate := .Date.Format "2006-01-02" }}
+            {{- $updateDate := .Lastmod.Format "2006-01-02" }}
+            <tr><td class="label">posted:</td><td class="content">{{ $postDate }}</td></tr>
+            {{- if ne $postDate $updateDate }}
+              <tr><td class="label">updated:</td><td class="content">{{ $updateDate }}</td></tr>
+            {{ end }}
+          {{ end }}
+          {{- with .Params.tags }}{{- $tagCount := len . }}
+            <tr class="frontmatter_tags"><td>tags:</td><td>{{- if gt $tagCount 5 }}<details><summary>See all {{ $tagCount }} tags...</summary>{{- end }}[&quot;<a href="/tags">all</a>&quot; {{- range . }}{{- $tag := urlize . }}{{ if $tag }}, {{ end }}&quot;<a href='{{ absLangURL (printf "tags/%s" $tag) }}'>{{ . }}</a>&quot;{{- end }}]{{- if gt $tagCount 5 }}</details>{{- end }}</td></tr>
+          {{- end }}
+        </table>
+        <hr>
+      </div>
     </header>
     {{- with .Param "lastmod" -}}
       {{- $ageDays = div (sub now.Unix .Unix) 86400 -}}
@@ -16,6 +33,7 @@
     <div class="content__body">
         {{ .Content }}
     </div>
+
     {{- $showComments := true }}
     {{- if eq .Site.Params.comments false }}
       {{- $showComments = false }}
@@ -23,6 +41,10 @@
       {{- $showComments = false }}
     {{- end }}
     {{- if ne $showComments false }}
+      <hr>
+      {{- if eq .Site.Params.analytics true }}
+      <span class="post_kudos">Enjoyed this post?&nbsp;<button class="tinylytics_kudos"></button></span>
+      {{- end }}
       {{- partial "comments" . }}
     {{- end }}
     <footer class="content__footer"></footer>
