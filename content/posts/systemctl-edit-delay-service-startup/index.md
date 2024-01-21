@@ -6,7 +6,7 @@ description: "Quick notes on using `systemctl edit` to override a systemd servic
 featured: false
 toc: false
 comments: true
-series: Tips # Projects, Code
+categories: Tips # Projects, Code
 tags:
   - crostini
   - linux

@@ -14,7 +14,7 @@ featureImage: "basic-architecture.png" # Sets featured image on blog post.
 thumbnail: "basic-architecture.png" # Sets thumbnail image appearing inside card on homepage.
 # shareImage: "share.png" # Designate a separate image for social media sharing.
 codeLineNumbers: false # Override global value for showing of line numbers within code block.
-series: Tips # Projects, Code, vRA8
+categories: VMware # Projects, Code, vRA8
 tags:
   - vmware
   - vsphere
@@ -36,7 +36,7 @@ Fortunately there's a somewhat-hidden way to disable (and re-enable) vCLS on a p
 Disabling vCLS will break DRS, and could have other unintended side effects. Don't do this in prod if you can avoid it.
 {{% /notice %}}
 
-[^off-and-on]: ![](off-and-on.gif)
+[^off-and-on]: ![GIF from The IT Crowd: "Have you tried turning it off and back on again?"](off-and-on.gif)
 
 ### Find the cluster's domain ID
 It starts with determining the affected cluster's domain ID, which is very easy to do once you know where to look. Simply browse to the cluster object in the vSphere inventory, and look at the URL:

@@ -1,36 +1,16 @@
-{{- $postDate := .Date.Format "2006-01-02" }}
-{{- $updateDate := .Lastmod.Format "2006-01-02" }}
-{{ if or (.Params.description) (.Params.date) }}
-  {{ if .Params.description }}<p>{{ .Params.description }}</p>{{ end }}
-  <p>
-    {{ if .Params.date }}<table><tr><td>posted:</td><td>{{ $postDate }}</td></tr>{{- if ne $postDate $updateDate }}<tr><td>updated:</td><td>{{ $updateDate }}</td></tr>{{ end }}</table>{{ end }}
-  </p>
+{{ if .Params.description }}<p>{{ .Params.description }}</p><hr>{{ end }}
+{{ if and (gt .WordCount 400 ) (gt (len .TableOfContents) 180) }}
+<p>
+  <h3>On this page</h3>
+  {{ .TableOfContents }}
   <hr>
-  {{ if and (gt .WordCount 400 ) (gt (len .TableOfContents) 180) }}
-  <p>
-    <h3>On this page</h3>
-    {{ .TableOfContents }}
-    <hr>
-  </p>
-  {{ end }}
-  {{- with .Params.tags -}}
-  <p>
-    <h3>Tags</h3>
-    [<a href="/tags">all</a>]
-    {{- range . }}
-      {{- $tag := urlize . -}}
-      [<a href='{{ absLangURL (printf "tags/%s" $tag) }}' title="{{ . }}">{{ . }}</a>]
-    {{- end }}
-    <br><br>
-    <hr>
-  </p>
-  {{- end }}
+</p>
 {{ end }}
 
-{{ if isset .Params "series" }}
-{{$related := where .Site.RegularPages ".Params.series" "eq" .Params.series }}
+{{ if isset .Params "categories" }}
+{{$related := where .Site.RegularPages ".Params.categories" "eq" .Params.categories }}
 {{- $relatedLimit := default 8 .Site.Params.numberOfRelatedPosts }}
-<h3>More {{ .Params.series }}</h3>
+<h3>More {{ .Params.categories }}</h3>
 <ul>
   {{- range first $relatedLimit $related }}
   <li>
@@ -39,7 +19,7 @@
   {{ end }}
   {{ if gt (len $related) $relatedLimit }}
     <li>
-      <a href="/series/{{ lower .Params.series }}/"><i>See all {{ .Params.series }}</i></a>
+      <a href="/categories/{{ lower .Params.categories }}/"><i>See all {{ .Params.categories }}</i></a>
     </li>
   {{ end }}
 </ul>

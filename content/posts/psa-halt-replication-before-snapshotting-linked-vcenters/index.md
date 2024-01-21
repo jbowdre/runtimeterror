@@ -1,5 +1,5 @@
 ---
-series: Tips
+categories: VMware
 date: "2021-01-30T08:34:30Z"
 thumbnail: XTaU9VDy8.png
 usePageBundles: true

@@ -18,7 +18,7 @@ giscusInputPosition = "bottom"
 giscusLang = "en"
 giscusLoading = "lazy"
 giscusMapping = "og:title"
-giscusReactions = "1"
+giscusReactions = "0"
 giscusRepo = "jbowdre/site-comments"
 giscusRepoId = "R_kgDOKKEGDw"
 giscusStrict = "0"
@@ -171,8 +171,8 @@ title = "hugo"
 url = "https://gohugo.io"
 
 [[powerLinks]]
-title = "netlify"
-url = "https://www.netlify.com"
+title = "neocities"
+url = "https://neocities.org/about"
 
 [[powerLinks]]
 title = "risotto"
@@ -183,8 +183,8 @@ title = "torchlight"
 url = "https://torchlight.dev"
 
 [[powerLinks]]
-title = "cabin"
-url = "https://withcabin.com/privacy/runtimeterror.dev"
+title = "tinylytics"
+url = "https://tinylytics.app/home"
 
 [[verifyLinks]]
 title = "omg.lol"

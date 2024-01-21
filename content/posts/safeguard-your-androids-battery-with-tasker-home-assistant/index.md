@@ -1,5 +1,5 @@
 ---
-series: Projects
+categories: Code
 date: "2020-11-14T08:34:30Z"
 thumbnail: aeIOr8w6k.png
 usePageBundles: true
@@ -11,11 +11,11 @@ tags:
 title: Safeguard your Android's battery with Tasker + Home Assistant
 ---
 
-A few months ago, I started using the [AccuBattery app](https://play.google.com/store/apps/details?id=com.digibites.accubattery) to keep a closer eye on how I'd been charging my phones. The app has a handy feature that notifies you once the battery level reaches a certain threshold so you can pull the phone off the charger and extend the lithium battery's service life, and it even offers an estimate for what that impact might be. For instance, right now the app indicates that charging my Pixel 5 from 51% to 100% would cause 0.92 wear cycles, while stopping the charge at 80% would impose just 0.17 cycles. 
+A few months ago, I started using the [AccuBattery app](https://play.google.com/store/apps/details?id=com.digibites.accubattery) to keep a closer eye on how I'd been charging my phones. The app has a handy feature that notifies you once the battery level reaches a certain threshold so you can pull the phone off the charger and extend the lithium battery's service life, and it even offers an estimate for what that impact might be. For instance, right now the app indicates that charging my Pixel 5 from 51% to 100% would cause 0.92 wear cycles, while stopping the charge at 80% would impose just 0.17 cycles.
 
 ![AccuBattery screenshot](aeIOr8w6k.png)
 
-But that depends on me being near my phone and conscious so I can take action when the notification goes off. That's often a big assumption to make - and, frankly, I'm lazy. 
+But that depends on me being near my phone and conscious so I can take action when the notification goes off. That's often a big assumption to make - and, frankly, I'm lazy.
 
 I'm fortunately also fairly crafty, so I came up with a way to combine my favorite Android automation app with my chosen home automation platform to take my laziness out of the picture.
 
@@ -25,7 +25,7 @@ I'm fortunately also fairly crafty, so I came up with a way to combine my favori
 - [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm)
 - [Home Assistant Plug-In for Tasker](https://play.google.com/store/apps/details?id=com.markadamson.taskerplugin.homeassistant)
 
-I'm not going to go through how to install Home Assistant on the Pi or how to configure it beyond what's strictly necessary for this particular recipe. The official [getting started documentation](https://www.home-assistant.io/getting-started/) is a great place to start. 
+I'm not going to go through how to install Home Assistant on the Pi or how to configure it beyond what's strictly necessary for this particular recipe. The official [getting started documentation](https://www.home-assistant.io/getting-started/) is a great place to start.
 
 ### The Recipe
 1. Plug the Wemo into a wall outlet, and plug a phone charger into the Wemo. Add the Belkin Wemo integration in Home Assistant, and configure the device and entity. I named mine `switchy`. Make a note of the Entity ID: `switch.switchy`. We'll need that later.
@@ -37,7 +37,7 @@ For the Service field, you need to tell HA what you want it to do. We want it to
 ```json
 {"entity_id": "switch.switchy"}
 ```
-Tap Test Service to make sure it works - and verify that the switch does indeed turn off. 
+Tap Test Service to make sure it works - and verify that the switch does indeed turn off.
 ![Creating and testing the service](U3LfmEJ_7.png)
 4. Hard part is over. Now we just need to set up a profile in Tasker to fire our new task. I named mine 'Charge Limiter'. I started with `State > Power > Battery Level` and set it to trigger between 81-100%., and also added `State > Power > Source: Any` so it will only be active while charging. I also only want this to trigger while my phone is charging at home, so I added `State > Net > Wifi Connected` and then specified my home SSID. Link this profile to the Task you created earlier, and never worry about overcharging your phone again.
 ![Tasker profile to kill power above 80%](h7tl6facr.png)
