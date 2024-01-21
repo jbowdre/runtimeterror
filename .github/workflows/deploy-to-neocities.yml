@@ -27,8 +27,6 @@ jobs:
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
       - name: Install Dart Sass
         run: sudo snap install dart-sass
-      - name: Install Torchlight CLI
-        run: npm i @torchlight-api/torchlight-cli
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -45,12 +43,9 @@ jobs:
             --minify \
             --baseURL "https://runtimeterror.dev/"
       - name: Highlight with Torchlight
-        uses: nick-fields/retry@v2
-        with:
-          timeout_seconds: 120
-          max_attempts: 3
-          retry_wait_seconds: 15
-          command: npx torchlight
+        run: |
+          npm i @torchlight-api/torchlight-cli
+          npx torchlight
       - name: Deploy to neocities
         uses: bcomnes/deploy-to-neocities@v1
         with:
