@@ -41,6 +41,9 @@ jobs:
         run: |
           hugo \
             --minify
+      - name: Insert 404 page
+        run: |
+          cp public/not_found/index.html public/not_found.html
       - name: Highlight with Torchlight
         run: |
           npm i @torchlight-api/torchlight-cli
