@@ -2,10 +2,10 @@
  */
 
 :root {
-	--base00: #181818;  /* bg */
-	--base01: #282828;  /* off-bg */
-	--base02: #383838;  /* inner-bg */
-	--base03: #585858;  /* muted */
+	--base00: #090909;  /* bg */
+	--base01: #1c1c1c;  /* off-bg */
+	--base02: #292929;  /* inner-bg */
+	--base03: #6d6c6c;  /* muted */
 	--base04: #abaaaa;  /* off-fg */
 	--base05: #d8d8d8;  /* fg */
 	--base06: #cfcfcf;  /* code */
@@ -13,9 +13,9 @@
 	--base08: #ab4642;  /* root prompt */
 	--base09: #dc9656;
 	--base0A: #f7ca88;  /* highlight */
-	--base0B: #772a28;  /* logo */
+	--base0B: #682523;  /* logo */
 	--base0C: #ab2321;  /* hover */
-	--base0D: #c45a5a;  /* link */
+	--base0D: #d36060;  /* link */
 	--base0E: #ba8baf;
 	--base0F: #a16946;
 }
