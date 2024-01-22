@@ -344,3 +344,8 @@ button.tinylytics_kudos:hover {
 #back-to-top svg {
   fill: var(--link);
 }
+
+/* footnote link styling */
+.footnote-backref {
+  text-decoration: none;
+}
