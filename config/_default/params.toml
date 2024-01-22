@@ -25,6 +25,7 @@ giscusStrict = "0"
 giscusTheme = "noborder_gray"
 
 analytics = true
+kudos = true
 
 [author]
 name = "John Bowdre"
