@@ -2,8 +2,7 @@
 title: "Deploying a Hugo Site to Neocities with GitHub Actions"
 date: 2024-01-21
 # lastmod: 2024-01-21
-draft: true
-description: "This is a new post about..."
+description: "Using GitHub Actions to automatically deploy a Hugo website to Neocities."
 featured: false
 toc: true
 comments: true
