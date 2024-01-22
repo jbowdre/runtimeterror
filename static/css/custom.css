@@ -260,7 +260,6 @@ form button {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
   grid-gap: 0.5rem;
-  /* justify-content: center; */
   margin: 0.5rem 0;
 
 }
@@ -333,4 +332,15 @@ button.tinylytics_kudos:hover {
 .frontmatter_tags {
   font-size: 0.8rem;
   color: var(--off-fg);
+}
+
+/* back-to-top styling */
+#back-to-top {
+  background: var(--inner-bg);
+  height: 56px;
+  width: 56px;
+}
+
+#back-to-top svg {
+  fill: var(--link);
 }
