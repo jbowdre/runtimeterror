@@ -6,11 +6,7 @@
 <!-- Back to Top button via https://github.com/vfeskov/vanilla-back-to-top -->
 {{ $jsToTop := resources.Get "js/back-to-top.js" | minify }}
 <script src="{{ $jsToTop.RelPermalink }}"></script>
-<script>addBackToTop({
-  diameter: 56,
-  backgroundColor: '#383838',
-  textColor: '#c45a5a'
-})</script>
+<script>addBackToTop()</script>
 
 <!-- Search index via https://victoria.dev/blog/add-search-to-hugo-static-sites-with-lunr/ -->
 {{ partial "search-index.html" .}}
