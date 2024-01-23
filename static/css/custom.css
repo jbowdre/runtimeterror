@@ -357,3 +357,8 @@ img.tinylytics_webring_avatar {
 .footnote-backref {
   text-decoration: none;
 }
+
+/* hr override */
+hr {
+  margin-top: 1.5rem;
+}
