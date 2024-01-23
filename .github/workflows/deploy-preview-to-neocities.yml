@@ -30,7 +30,7 @@ jobs:
         with:
           submodules: recursive
       - name: Build with Hugo
-        run: hugo --minify
+        run: hugo --minify --environment preview
       - name: Insert 404 page
         run: |
           cp public/404/index.html public/not_found.html
