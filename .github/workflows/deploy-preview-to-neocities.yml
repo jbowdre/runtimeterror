@@ -1,0 +1,46 @@
+name: Deploy to Neocities
+
+# only run on changes to preview
+on:
+  push:
+    branches:
+      - preview
+
+concurrency: # prevent concurrent deploys doing strange things
+  group: deploy-preview-to-neocities
+  cancel-in-progress: true
+
+# Default to bash
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  deploy:
+    name: Build and deploy Hugo site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hugo setup
+        uses: peaceiris/actions-hugo@v2.6.0
+        with:
+          hugo-version: '0.121.1'
+          extended: true
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Build with Hugo
+        run: hugo --minify
+      - name: Insert 404 page
+        run: |
+          cp public/404/index.html public/not_found.html
+      - name: Highlight with Torchlight
+        run: |
+          npm i @torchlight-api/torchlight-cli
+          npx torchlight
+      - name: Deploy to Neocities
+        uses: bcomnes/deploy-to-neocities@v1
+        with:
+          api_token: ${{ secrets.NEOCITIES_PREVIEW_API_TOKEN }}
+          cleanup: true
+          dist_dir: public
