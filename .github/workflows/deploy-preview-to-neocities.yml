@@ -1,4 +1,4 @@
-name: Deploy to Neocities
+name: Deploy Preview to Neocities
 
 # only run on changes to preview
 on:
