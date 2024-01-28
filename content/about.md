@@ -23,13 +23,17 @@ And in the free time I have left, I game on my Steam Deck.
 
 See what I've been up to on:
 - [GitHub](https://github.com/jbowdre)
-- [CounterSocial](https://counter.social/@john_b)
+- [Scribbles 'n Bits](https://scribbes.jbowdre.lol)
 - [status.lol](https://status.jbowdre.lol)
+- [social.lol](https://social.lol/@jbowdre)
+- [CounterSocial](https://counter.social/@john_b)
 - [/now](https://now.jbowdre.lol)
 
 Connect with me via:
 - [SimpleX Chat](/simplex/)
+- [Session](https://p.runtimeterror.dev/session-id)
 - [Matrix](https://matrix.to/#/@jbowdre:omg.lol)
+- [XMPP](xmpp://john@chat.vpota.to)
 - [Electronic Mail](mailto:jbowdre@omg.lol)
   - [PGP: 613F B70C 4FA7 A077](https://l.runtimeterror.dev/pgp)
 

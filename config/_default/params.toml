@@ -138,6 +138,16 @@ title = "GitHub"
 url = "https://github.com/jbowdre"
 
 [[socialLinks]]
+icon = "fa-solid fa-heart"
+title = "omg.lol"
+url = "https://jbowdre.lol"
+
+[[socialLinks]]
+icon = "fa-solid fa-sticky-note"
+title = "Scribbles 'n Bits"
+url = "https://scribbles.jbowdre.lol"
+
+[[socialLinks]]
 icon = "fa-solid fa-circle-user"
 title = "CounterSocial"
 url = "https://counter.social/@john_b"
@@ -146,21 +156,6 @@ url = "https://counter.social/@john_b"
 icon = "fa fa-mastodon"
 title = "Mastodon"
 url = "https://social.lol/@jbowdre"
-
-[[socialLinks]]
-icon = "fa-solid fa-heart"
-title = "omg.lol"
-url = "https://jbowdre.lol"
-
-[[socialLinks]]
-icon = "fa-solid fa-comments"
-title = "SimpleX Chat"
-url = "/simplex"
-
-[[socialLinks]]
-icon = "fa fa-matrix-org"
-title = "Matrix"
-url = "https://matrix.to/#/@jbowdre:omg.lol"
 
 [[socialLinks]]
 icon = "fa-solid fa-envelope"
