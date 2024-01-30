@@ -30,7 +30,7 @@ Just add these in the SimpleX app at **Settings > Network & servers > SMP server
 
 | | |
 | --- | --- |
-| [![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp-vpota-to%2Fuptime.json)](https://uptime.runtimeterror.dev) | [[netdata](https://l.runtimeterror.dev/smp_status)] |
+| [![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp-vpota-to%2Fuptime.json)](https://status.runtimeterror.dev) | [[netdata](https://l.runtimeterror.dev/smp_status)] |
 
 ---
 
@@ -40,7 +40,7 @@ Just add these in the SimpleX app at **Settings > Network & servers > SMP server
 
 | | |
 | --- | --- |
-| [![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp1-vpota-to%2Fuptime.json)](https://uptime.runtimeterror.dev) | [[netdata](https://l.runtimeterror.dev/smp1_status)] |
+| [![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp1-vpota-to%2Fuptime.json)](https://status.runtimeterror.dev) | [[netdata](https://l.runtimeterror.dev/smp1_status)] |
 
 ---
 
@@ -50,4 +50,4 @@ Just add these in the SimpleX app at **Settings > Network & servers > SMP server
 
 | | |
 | --- | --- |
-| [![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp2-vpota-to%2Fuptime.json)](https://uptime.runtimeterror.dev) | [[netdata](https://l.runtimeterror.dev/smp2_status)] |
+| [![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp2-vpota-to%2Fuptime.json)](https://status.runtimeterror.dev) | [[netdata](https://l.runtimeterror.dev/smp2_status)] |
