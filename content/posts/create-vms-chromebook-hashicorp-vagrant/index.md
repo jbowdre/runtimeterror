@@ -41,7 +41,7 @@ sudo apt update && sudo apt install \ # [tl! .cmd]
 
 [^problem]: and [will not go to space today](https://xkcd.com/1133/).
 
-I'll be configuring Vagrant to use [`libvirt`](https://libvirt.org/) to interface with the [Kernel Virtual Machine (KVM)](https://www.linux-kvm.org/page/Main_Page) virtualization solution (rather than something like VirtualBox that would bring more overhead) so I'll need to install some packages for that as well:
+I'll be configuring Vagrant to use [`libvirt`](https://libvirt.org/) to interface with the [Kernel Virtual Machine (KVM)](https://www.linux-kvm.org/page/Main_Page) virtualization solution (rather than something like VirtualBox which would require kernel modules that can't be loaded in ChromeOS) so I'll need to install some packages for that as well:
 ```shell
 sudo apt install virt-manager libvirt-dev # [tl! .cmd]
 ```
