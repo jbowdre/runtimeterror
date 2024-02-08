@@ -1,7 +1,7 @@
 ---
 title: "Tailscale Serve in a Docker Compose Sidecar"
 date: 2023-12-30
-lastmod: 2024-01-01
+lastmod: 2024-02-07
 description: "Using Docker Compose to deploy containerized applications and make them available via Tailscale Serve and Tailscale Funnel"
 featured: false
 toc: true
@@ -58,6 +58,63 @@ https://tsdemo.tailnet-name.ts.net:8443/
 ```
 
 It would be really great if I could directly attach each container to my tailnet and then access the apps with addresses like `https://miniflux.tailnet-name.ts.net` or `https://cyber.tailnet-name.ts.net`. Tailscale does have an [official Docker image](https://hub.docker.com/r/tailscale/tailscale), and at first glance it seems like that would solve my needs pretty directly. Unfortunately, it looks like trying to leverage that container image directly would still require me to configure Tailscale Serve interactively.[^ts_serve_config].
+
+{{% notice note "Update: 2024-02-07" %}}
+Tailscale [just published a blog post](https://tailscale.com/blog/docker-tailscale-guide) which shares some details about how to configure Funnel and Serve within the official image. The short version is that the `TS_SERVE_CONFIG` variable should point to a `serve-config.json` file. The name of the file doesn't actually matter, but the contents do - and you can generate a config by running `tailscale serve status -json` on a functioning system... or just copy-pasta'ing this example I just made for the [Cyberchef](#cyberchef) setup I describe later in this post:
+
+```json
+// torchlight! {"lineNumbers": true}
+{
+  "TCP": {
+    "443": {
+      "HTTPS": true
+    }
+  },
+  "Web": {
+    "cyber.tailnet-name.ts.net:443": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://127.0.0.1:8000"
+        }
+      }
+    }
+  }//, uncomment to enable funnel
+  // "AllowFunnel": {
+  //   "cyber.tailnet-name.ts.net:443": true
+  // }
+}
+```
+
+Replace the ports and protocols and hostnames and such, and you'll be good to go.
+
+A compose config using this setup might look something like this:
+
+```yaml
+# torchlight! {"lineNumbers": true}
+services:
+  tailscale:
+    image: tailscale/tailscale:latest # [tl! highlight]
+    container_name: cyberchef-tailscale
+    restart: unless-stopped
+    environment:
+      TS_AUTHKEY: ${TS_AUTHKEY:?err}
+      TS_HOSTNAME: ${TS_HOSTNAME:-ts-docker}
+      TS_EXTRA_ARGS: ${TS_EXTRA_ARGS:-}
+      TS_STATE_DIR: /var/lib/tailscale/
+      TS_SERVE_CONFIG: /config/serve-config.json # [tl! highlight]
+    volumes:
+      - ./ts_data:/var/lib/tailscale/
+      - ./serve-config.json:/config/serve-config.json # [tl! highlight]
+
+  cyberchef:
+    container_name: cyberchef
+    image: mpepping/cyberchef:latest
+    restart: unless-stopped
+    network_mode: service:tailscale
+```
+
+That's a bit cleaner than the workaround I'd put together, but you're totally welcome to keep on reading if you want to see how it compares.
+{{% /notice %}}
 
 [^ts_serve_config]: While not documented for the image itself, the `containerboot` binary seems like it should accept a [`TS_SERVE_CONFIG` argument](https://github.com/tailscale/tailscale/blob/5812093d31c8a7f9c5e3a455f0fd20dcc011d8cd/cmd/containerboot/main.go#L43) to designate the file path of the `ipn.ServeConfig`... but I couldn't find any information on how to actually configure that.
 
