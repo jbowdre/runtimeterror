@@ -1,7 +1,7 @@
 ---
 title: "Quick Salt State to Deploy Netdata"
 date: 2023-12-21
-lastmod: 2023-12-22
+lastmod: 2024-02-03
 description: "A hasty Salt state to deploy netdata monitoring and publish it internally on my tailnet with Tailscale Serve"
 featured: false
 toc: true
@@ -37,7 +37,7 @@ tailscale:
 
 netdata-kickstart:
   cmd.run:
-    - name: curl -Ss https://my-netdata.io/kickstart.sh | sh -s -- --dont-wait
+    - name: curl -Ss https://get.netdata.cloud/kickstart.sh | sh -s -- --dont-wait
     - require:
       - pkg: curl
     # don't run this block if netdata is already running
@@ -77,9 +77,9 @@ minion-name: # [tl! .nocopy:start collapse:start]
 ----------
           ID: netdata-kickstart
     Function: cmd.run
-        Name: curl -Ss https://my-netdata.io/kickstart.sh | sh -s -- --dont-wait
+        Name: curl -Ss https://get.netdata.cloud/kickstart.sh | sh -s -- --dont-wait
       Result: True
-     Comment: Command "curl -Ss https://my-netdata.io/kickstart.sh | sh -s -- --dont-wait" run
+     Comment: Command "curl -Ss https://get.netdata.cloud/kickstart.sh | sh -s -- --dont-wait" run
      Started: 22:59:05.441217
     Duration: 10617.082 ms
      Changes:

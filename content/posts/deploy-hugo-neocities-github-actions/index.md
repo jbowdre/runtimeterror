@@ -12,19 +12,19 @@ tags:
   - meta
   - serverless
 ---
-I came across [Neocities](https://neocities.org) many months ago, and got really excited by the premise: a free web host with the mission to bring back the *"fun, creativity and independence that made the web great."* I spent a while scrolling through the [gallery](https://neocities.org/browse) of personal sites and was amazed by both the nostalgic vibes and the creativity on display. It's like a portal back to when the web was fun. Neocities seemed like something I wanted to be a part of, so I signed up for an account... and soon realized that I didn't *really* want to go back to crafting artisinal HTML by hand like I did in the early '00s. I didn't see an easy way to leverage my preferred static site generator[^lazy] so I filed it away and moved on.
+I came across [Neocities](https://neocities.org) many months ago, and got really excited by the premise: a free web host with the mission to bring back the *"fun, creativity and independence that made the web great."* I spent a while scrolling through the [gallery](https://neocities.org/browse) of personal sites and was amazed by both the nostalgic vibes and the creativity on display. It's like a portal back to when the web was fun. Neocities seemed like something I wanted to be a part of so I signed up for an account... and soon realized that I didn't *really* want to go back to crafting artisinal HTML by hand like I did in the early '00s. I didn't see an easy way to leverage my preferred static site generator[^lazy] so I filed it away and moved on.
 
-[^lazy]: Also I'm kind of lazy, and not actually much of a web design person anyway.
+[^lazy]: Also I'm kind of lazy, and not actually very good at web design anyway. I mean, you've seen my work.
 
-Until yesterday, when I saw [Sophie](https://social.lol/@sophie)'s post, [How I deploy my Eleventy site to Neocities](https://localghost.dev/blog/how-i-deploy-my-eleventy-site-to-neocities/). I hadn't realized that Neocities had an [API](https://neocities.org/api), or that there was a [deploy-to-neocities](https://github.com/bcomnes/deploy-to-neocities) GitHub Action which uses that API to push content to Neocities. With that new-to-me information, I thought I'd give Neocities another try - a real one this time.
+Until yesterday, when I saw a post from [Sophie](https://social.lol/@sophie) on [How I deploy my Eleventy site to Neocities](https://localghost.dev/blog/how-i-deploy-my-eleventy-site-to-neocities/). I hadn't realized that Neocities had an [API](https://neocities.org/api), or that there was a [deploy-to-neocities](https://github.com/bcomnes/deploy-to-neocities) GitHub Action which uses that API to push content to Neocities. With that new-to-me information, I thought I'd give Neocities another try - a real one this time.
 
-I'd been hosting this site on Netlify's free plan [for a couple of year](/hello-hugo/) and haven't really had any problems. But I saw Neocities as a better vision of the internet, and I wanted to be a part of that[^passion]. So last night I signed up for the $5/month [Neocities Supporter](https://neocities.org/supporter) plan, which comes with support for custom domains and more bandwidth than even a paid Netlify plan.
+I had been hosting this site on Netlify's free plan [for a couple of years](/hello-hugo/) and haven't really encountered any problems. But I saw Neocities as a better vision of the internet, and I wanted to be a part of that[^passion]. So last night I upgraded to the $5/month [Neocities Supporter](https://neocities.org/supporter) plan which would let me use a custom domain for my site (along with higher storage and bandwidth limits).
 
 [^passion]: Plus I love supporting passion projects.
 
-I knew I'd need to make some changes to Sophie's workflow since I build my site with Hugo rather than Eleventy. I did some poking around and found [GitHub Actions for Hugo](https://github.com/peaceiris/actions-hugo) which would take care of installing Hugo for me. Then I'd just need to render the HTML with `hugo --minify` and use the [Torchlight](/spotlight-on-torchlight/) CLI to mark up the code blocks. Along the way, I discovered that I needed to overwrite `/not_found.html` to insert my custom 404 page so I included an extra step to do that. And then I'd finally be ready to push the results to Neocities.
+I knew I'd need to make some changes to Sophie's workflow since my site is built with Hugo rather than Eleventy. I did some poking around and found [GitHub Actions for Hugo](https://github.com/peaceiris/actions-hugo) which would take care of installing Hugo for me. Then I'd just need to render the HTML with `hugo --minify` and use the [Torchlight](/spotlight-on-torchlight/) CLI to mark up the code blocks. Along the way, I also discovered that I'd need to overwrite `/not_found.html` to insert my custom 404 page so I included an extra step to do that. After that, I'll finally be ready to push the results to Neocities.
 
-So after some trial and error, I came up with this workflow:
+It took a bit of trial and error, but I eventually adapted this workflow which does the trick:
 
 ### The Workflow
 ```yaml
@@ -33,8 +33,10 @@ So after some trial and error, I came up with this workflow:
 name: Deploy to Neocities
 
 on:
+  # Daily build to catch any future-dated posts
   schedule:
     - cron: 0 13 * * *
+  # Build on pushes to the main branch only
   push:
     branches:
       - main

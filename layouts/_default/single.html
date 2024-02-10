@@ -42,8 +42,14 @@
     {{- end }}
     {{- if ne $showComments false }}
       <hr>
-      {{- if eq .Site.Params.analytics true }}
-      <span class="post_kudos">Enjoyed this post?&nbsp;<button class="tinylytics_kudos"></button></span>
+      {{- $showKudos := true }}
+      {{- if eq .Site.Params.kudos false }}
+        {{- $showKudos = false }}
+      {{- else if eq .Params.kudos false }}
+        {{- $showKudos = false }}
+      {{- end }}
+      {{- if and (eq .Site.Params.analytics true) (ne $showKudos false) }}
+      <span class="post_kudos">Celebrate this post:&nbsp;<button class="tinylytics_kudos"></button></span>
       {{- end }}
       {{- partial "comments" . }}
     {{- end }}

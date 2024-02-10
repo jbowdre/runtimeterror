@@ -19,8 +19,6 @@ Incoming messages are routed through a pool of servers so that your conversation
 The app is also packed with other features like disappearing messages, encrypted file transfers, encrypted voice messages, encrypted audio and video calls, decentralized private groups, and a cool incognito mode which connects new conversations to a randomly-generated profile instead of your primary one. There's even a [CLI client](https://github.com/simplex-chat/simplex-chat/blob/stable/docs/CLI.md)!
 
 ## Servers
-[![Status badge](https://status.runtimeterror.dev/api/badge/11/status)](https://status.runtimeterror.dev/status/simplex)
-
 You can easily host your own [simplexmq server](https://github.com/simplex-chat/simplexmq) for handling your inbound message queue, and I've done just that; in fact, I've deployed three! And, as one of my closest internet friends, *you're welcome to use them as well.*
 
 Just add these in the SimpleX app at **Settings > Network & servers > SMP servers > + Add server...**. Enable the option to use them for new connections, and they'll be added to the pool used for incoming messages in new conversations. If you want to use them immediately for existing conversations, go into each conversation's options menu and use the **Switch receiving address** option. You can also *disable* the option to use the default servers for new conversations if you only want messages to be routed through specific servers, but that does increase the likelikhood of concurrent conversations being routed the same way. More servers, more path options, less metadata in any one place.
@@ -32,7 +30,7 @@ Just add these in the SimpleX app at **Settings > Network & servers > SMP server
 
 | | |
 | --- | --- |
-| [![Status badge](https://status.runtimeterror.dev/api/badge/6/uptime)](https://status.runtimeterror.dev/status/simplex) | [[details](https://l.runtimeterror.dev/smp_status)] |
+| [![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp-vpota-to-5223%2Fuptime.json)](https://status.runtimeterror.dev/history/smp-vpota-to-5223) | [[netdata](https://l.runtimeterror.dev/smp_status)] |
 
 ---
 
@@ -42,7 +40,7 @@ Just add these in the SimpleX app at **Settings > Network & servers > SMP server
 
 | | |
 | --- | --- |
-| [![Status badge](https://status.runtimeterror.dev/api/badge/4/uptime)](https://status.runtimeterror.dev/status/simplex) | [[details](https://l.runtimeterror.dev/smp1_status)] |
+| [![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp1-vpota-to-5223%2Fuptime.json)](https://status.runtimeterror.dev/history/smp1-vpota-to-5223) | [[netdata](https://l.runtimeterror.dev/smp1_status)] |
 
 ---
 
@@ -52,4 +50,4 @@ Just add these in the SimpleX app at **Settings > Network & servers > SMP server
 
 | | |
 | --- | --- |
-| [![Status badge](https://status.runtimeterror.dev/api/badge/5/uptime)](https://status.runtimeterror.dev/status/simplex) | [[details](https://l.runtimeterror.dev/smp2_status)] |
+| [![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp2-vpota-to-5223%2Fuptime.json)](https://status.runtimeterror.dev/history/smp2-vpota-to-5223) | [[netdata](https://l.runtimeterror.dev/smp2_status)] |
