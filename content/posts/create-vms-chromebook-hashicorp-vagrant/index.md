@@ -1,7 +1,7 @@
 ---
 title: "Create Virtual Machines on a Chromebook with HashiCorp Vagrant" # Title of the blog post.
 date: 2023-02-20 # Date of post creation.
-lastmod: 2024-01-17
+lastmod: 2024-02-06
 description: "Pairing the powerful Linux Development Environment on modern Chromebooks with HashiCorp Vagrant to create and manage local virtual machines for development and testing" # Description used for search engine.
 featured: true # Sets if post is a featured post, making appear on the home page side bar.
 draft: false # Sets whether to render this page. Draft of true will not be rendered.
@@ -29,7 +29,16 @@ Also, because I'm a bit of a sadist, I wanted to do this all on my new [Framewor
 It took a bit of fumbling, but this article describes what it took to get a Vagrant-powered VM up and running in the [Linux Development Environment](https://chromeos.dev/en/linux) on my Chromebook (which is currently running ChromeOS v111 beta).
 
 ### Install the prerequisites
-There are are a few packages which need to be installed before we can move on to the Vagrant-specific stuff. It's quite possible that these are already on your system.... but if they *aren't* already present you'll have a bad problem[^problem].
+First things first: you should make sure your Chromebook supports nested virtualization. Many newer ones do, but it's not a universal thing. It's easy to check just by looking for the `kvm` device file:
+
+```shell
+ls -l /dev/kvm # [tl! .cmd]
+crw-rw---- 10,232 root  6 Feb 08:03 /dev/kvm # [tl! .nocopy]
+```
+
+As long as you don't get an error like `No such file or directory` then you should be good to go.
+
+With that out of the way, there are are a few packages which need to be installed before we can move on to the Vagrant-specific stuff. It's quite possible that these are already on your system.... but if they *aren't* already present you'll have a bad problem[^problem].
 
 ```shell
 sudo apt update && sudo apt install \ # [tl! .cmd]
@@ -41,7 +50,7 @@ sudo apt update && sudo apt install \ # [tl! .cmd]
 
 [^problem]: and [will not go to space today](https://xkcd.com/1133/).
 
-I'll be configuring Vagrant to use [`libvirt`](https://libvirt.org/) to interface with the [Kernel Virtual Machine (KVM)](https://www.linux-kvm.org/page/Main_Page) virtualization solution (rather than something like VirtualBox that would bring more overhead) so I'll need to install some packages for that as well:
+I'll be configuring Vagrant to use [`libvirt`](https://libvirt.org/) to interface with the [Kernel Virtual Machine (KVM)](https://www.linux-kvm.org/page/Main_Page) virtualization solution (rather than something like VirtualBox which would require kernel modules that can't be loaded in ChromeOS) so I'll need to install some packages for that as well:
 ```shell
 sudo apt install virt-manager libvirt-dev # [tl! .cmd]
 ```

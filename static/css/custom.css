@@ -260,7 +260,6 @@ form button {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
   grid-gap: 0.5rem;
-  /* justify-content: center; */
   margin: 0.5rem 0;
 
 }
@@ -283,7 +282,7 @@ blockquote {
   padding-left: 0.25rem;
 }
 
-/* tinylytics kudos styling*/
+/* tinylytics styling*/
 .post_kudos {
   display: flex;
 }
@@ -302,6 +301,18 @@ button.tinylytics_kudos {
 button.tinylytics_kudos:hover {
   transform: scale(1.1);
   text-shadow: var(--off-fg) 0 0 1px;
+}
+
+img.tinylytics_webring_avatar {
+  border-radius: 100%;
+  height: 2rem;
+  width: 2rem;
+  vertical-align:middle;
+}
+
+a.tinylytics_webring {
+  text-decoration: none;
+  font-size: 1.5rem;
 }
 
 /* post front matter styling*/
@@ -333,4 +344,25 @@ button.tinylytics_kudos:hover {
 .frontmatter_tags {
   font-size: 0.8rem;
   color: var(--off-fg);
+}
+
+/* back-to-top styling */
+#back-to-top {
+  background: var(--inner-bg);
+  height: 56px;
+  width: 56px;
+}
+
+#back-to-top svg {
+  fill: var(--link);
+}
+
+/* footnote link styling */
+.footnote-backref {
+  text-decoration: none;
+}
+
+/* hr override */
+hr {
+  margin-top: 1.5rem;
 }
