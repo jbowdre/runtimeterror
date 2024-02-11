@@ -1,8 +1,7 @@
 ---
 title: "Displaying Data from Tempest Weather Station on a Static Site"
-date: 2024-02-10
+date: "2024-02-11T20:48:49Z"
 # lastmod: 2024-02-10
-draft: true
 description: "Using a GitHub Actions workflow to retrieve data from an authenticated API, posting results to a publicly-accessible pastebin, and displaying them on a static web site."
 featured: false
 toc: true
