@@ -4,6 +4,7 @@ date: "2024-02-11T20:48:49Z"
 # lastmod: 2024-02-10
 description: "Using a GitHub Actions workflow to retrieve data from an authenticated API, posting results to a publicly-accessible pastebin, and displaying them on a static web site."
 featured: false
+thumbnail: "finished-product.png"
 toc: true
 comments: true
 categories: Backstage
