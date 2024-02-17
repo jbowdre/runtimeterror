@@ -1,9 +1,17 @@
 ---
+<<<<<<< HEAD
 title: "Displaying Data from Tempest Weather Station on a Static Site"
+=======
+title: "Displaying Data from a Tempest Weather Station on a Static Site"
+>>>>>>> main
 date: "2024-02-11T20:48:49Z"
 # lastmod: 2024-02-10
 description: "Using a GitHub Actions workflow to retrieve data from an authenticated API, posting results to a publicly-accessible pastebin, and displaying them on a static web site."
 featured: false
+<<<<<<< HEAD
+=======
+thumbnail: "finished-product.png"
+>>>>>>> main
 toc: true
 comments: true
 categories: Backstage
@@ -13,7 +21,11 @@ tags:
   - meta
   - serverless
 ---
+<<<<<<< HEAD
 As I covered briefly [in a recent Scribble](https://scribbles.jbowdre.lol/post/near-realtime-weather-on-profile-lol-ku4yq-zr), I was inspired by the way [Kris's omg.lol page](https://kris.omg.lol/) displays realtime data from his [Weatherflow Tempest weather station](https://shop.weatherflow.com/products/tempest). I thought that was really neat and wanted to do the same on [my omg.lol page](https://jbowdre.lol) with data from my own Tempest, but I wanted to do it without including my station ID or API token directly in the client-side JavaScript.
+=======
+As I covered briefly [in a recent Scribble](https://scribbles.jbowdre.lol/post/near-realtime-weather-on-profile-lol-ku4yq-zr), I was inspired by the way [Kris's omg.lol page](https://kris.omg.lol/) displays realtime data from his [Weatherflow Tempest weather station](https://shop.weatherflow.com/products/tempest). I thought that was really neat and wanted to do the same on [my omg.lol page](https://jbowdre.lol) with data from my own Tempest, but I wanted to find a way to do it without needing to include an authenticated API call in the client-side JavaScript.
+>>>>>>> main
 
 I realized I could use a GitHub Actions workflow to retrieve the data from the authenticated Tempest API, post it somewhere publicly accessible, and then have the client-side code fetch the data from there without needing any authentication. After a few days of tinkering, I came up with a presentation I'm happy with.
 
@@ -607,10 +619,17 @@ For testing this, I can manually alter[^alter] the contents of the pastebin to e
 ![Local test page reflecting "57°f (13.9°c), feels 67°f (19.4°c)" and "no rain today"](local-test-conditional.png)
 
 The final touch will be to change the icons depending on the values of certain fields:
+<<<<<<< HEAD
 - The conditions icon will vary from <i class="fa-solid fa-sun"></i> to <i class="fa-solid fa-cloud-bolt"></i>, roughly corresponding to the `icon` value from the Tempest API.
 - The temperature icon will range from <i class="fa-solid fa-thermometer-empty"></i> to <i class="fa-solid fa-thermometer-full"></i> depending on the temperature.
 - The precipitation icon will be <i class="fa-solid fa-droplet-slash"></i> for no precipitation, and progress through <i class="fa-solid fa-glass-water-droplet"></i> and <i class="fa-solid fa-glass-water"></i> for a bit more rain, and cap out at <i class="fa-solid fa-bucket"></i> for lots of rain[^rain].
 - The pressure icon should change based on the trend: <i class="fa-solid fa-arrow-trend-up"></i>, <i class="fa-solid fa-arrow-right-long"></i>, and <i class="fa-solid fa-arrow-trend-down"></i>.
+=======
+- The conditions icon will vary from <i class='fa-solid fa-cloud-sun'></i> to <i class='fa-solid fa-cloud-showers-heavy'></i>, roughly corresponding to the `icon` value from the Tempest API.
+- The temperature icon will range from <i class='fa-solid fa-thermometer-empty'></i> to <i class='fa-solid fa-thermometer-full'></i> depending on the temperature.
+- The precipitation icon will be <i class='fa-solid fa-droplet-slash'></i> for no precipitation, and progress through <i class='fa-solid fa-glass-water-droplet'></i> and <i class='fa-solid fa-glass-water'></i> for a bit more rain, and cap out at <i class='fa-solid fa-bucket'></i> for lots of rain[^rain].
+- The pressure icon should change based on the trend: <i class='fa-solid fa-arrow-trend-up'></i>, <i class='fa-solid fa-arrow-right-long'></i>, and <i class='fa-solid fa-arrow-trend-down'></i>.
+>>>>>>> main
 
 [^rain]: Okay, admittedly this progression isn't perfect, but it's the best I could come up with within the free FA icon set.
 
