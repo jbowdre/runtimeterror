@@ -1,5 +1,5 @@
 ---
-title: "Dynamic OpenGraph Images With Hugo"
+title: "Dynamically Generating OpenGraph Images With Hugo"
 date: "2024-02-19T04:12:27Z"
 # lastmod: 2024-02-18
 description: "Using Hugo built-in functions to dynamically generate OpenGraph share images for every post."
