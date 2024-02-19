@@ -7,22 +7,24 @@
 <meta property="og:url" content="{{ .Permalink }}" />
 <meta property="og:locale" content="{{ .Lang }}" />
 {{- if .IsHome }}
-{{ $text = .Site.Params.Description }}
+  {{ $text = .Site.Params.Description }}
 {{- end }}
 
 {{- if .IsPage }}
-{{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
-<meta property="article:section" content="{{ .Section }}" />
-{{ with .PublishDate }}<meta property="article:published_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }} />{{ end }}
-{{ with .Lastmod }}<meta property="article:modified_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }} />{{ end }}
-{{ $text = .Page.Title }}
+  {{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
+  <meta property="article:section" content="{{ .Section }}" />
+  {{ with .PublishDate }}<meta property="article:published_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }} />{{ end }}
+  {{ with .Lastmod }}<meta property="article:modified_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }} />{{ end }}
+  {{ $text = .Page.Title }}
 {{ end }}
 
 {{- with .Params.thumbnail }}
-{{ $thumbnail := $.Resources.Get . }}
-{{ with $thumbnail }}
-{{ $img = $img.Filter (images.Overlay (.Process "fit 300x250") 875 38 )}}
-{{ end }}{{ end }}
+  {{ $thumbnail := $.Resources.Get . }}
+  {{ with $thumbnail }}
+    {{ $img = $img.Filter (images.Overlay (.Process "fit 300x250") 875 38 )}}
+  {{ end }}
+{{ end }}
+
 {{ $img = $img.Filter (images.Text $text (dict
   "color" "#d8d8d8"
   "size" 64
