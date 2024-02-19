@@ -132,25 +132,23 @@ This is a great starting point for what I want to accomplish, but I'm going to m
 ### My tweaks
 As I mentioned earlier, I want to have basically three recipes for baking my OG images: one for the homepage, one for standard posts, and one for posts with an associated thumbnail. They'll all use the same basic code, though, so I wanted to be sure that my setup didn't repeat itself too much.
 
+I'll start with fetching my resources up front, and initializing a `$text` variable:
+
 ```jinja-html
-// torchlight! {"lineNumbers": true}
 {{ $img := resources.Get "og_base.png" }}
 {{ $font := resources.Get "/FiraMono-Regular.ttf" }}
 {{ $text := "" }}
-<meta property="og:title" content="{{ .Title }}" />
-<meta property="og:description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end }}" />
-<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}" />
-<meta property="og:url" content="{{ .Permalink }}" />
-<meta property="og:locale" content="{{ .Lang }}" />
+```
+
+If it's the homepage, I'll set `$text` to hold the site description:
+
+```jinja-html
 {{- if .IsHome }}
 {{ $text = .Site.Params.Description }}
 {{- end }}
+```
 
 {{- if .IsPage }}
-{{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
-<meta property="article:section" content="{{ .Section }}" />
-{{ with .PublishDate }}<meta property="article:published_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }} />{{ end }}
-{{ with .Lastmod }}<meta property="article:modified_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }} />{{ end }}
 {{ $text = .Page.Title }}
 {{ end }}
 
