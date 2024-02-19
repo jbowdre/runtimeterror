@@ -16,16 +16,21 @@ tags:
 ---
 I've lately seen some folks on [social.lol](https://social.lol) posting about their various strategies for automatically generating [Open Graph images](https://ogp.me/) for their [Eleventy](https://11ty.dev) sites. So this weekend I started exploring ways to do that for my [Hugo](https://gohugo.io) site.
 
-During my search, I came across a few different approaches using external services or additional scripts to run at build time. I eventually came across a post from Aaro titled [Generating OpenGraph images with Hugo](https://aarol.dev/posts/hugo-og-image/) which seemed like exactly what I was after, as it uses Hugo's built-in [image functions](https://gohugo.io/functions/images/filter/) to dynamically create the image.
+During my search, I came across a few different approaches using external services or additional scripts to run at build time. I eventually came across a post from Aaro titled [Generating OpenGraph images with Hugo](https://aarol.dev/posts/hugo-og-image/) which seemed like exactly what I was after, as it uses Hugo's built-in [image functions](https://gohugo.io/functions/images/filter/) to dynamically create the image by layering text on top of a base.
 
-I wound up borrowing heavily from Aaro's approach and then adding a few additional capabilities, notably the ability to overlay a designated thumbnail image on top of the resulting OpenGraph image. I'm sure this could be further optimized by someone who knows what they're doing[^future].
+I ended up borrowing heavily from Aaro's approach with a few variants for the OpenGraph image:
+- When sharing the home page, the image includes the site description.
+- When sharing a post, the image includes the post title.
+- ... but if the post has a thumbnail listed in the front matter, that gets added to the corner of the `og:image`.
+
+I'm sure this could be further optimized by someone who knows what they're doing[^future]. In any case, here's what I did to get this working.
 
 [^future]: Like Future John, perhaps? Past John loves leaving stuff for that guy to figure out.
 
-In any case, here's what I did to get this working.
-
 ### New resources
-Based on Aaro's suggestions, I started by creating a 1200x600 image to use as the base. I used [GIMP](https://www.gimp.org/) for this. I'm not a graphic designer[^web] so I kept it simple while emulating the "logo" displayed at the top of the page:
+Based on Aaro's suggestions, I started by creating a 1200x600 image to use as the base. I used [GIMP](https://www.gimp.org/) for this.
+
+I'm not a graphic designer[^web] so I kept it simple. I wanted to be sure that the text matched the font used on the site, so I downloaded the [Fira Mono `.ttf`](https://github.com/mozilla/Fira/blob/master/ttf/FiraMono-Regular.ttf) to `~/.fonts/` to make it available within GIMP. And then I emulated the colors and style of the "logo" displayed at the top of the page.
 
 ![Red background with a command prompt displaying "[runtimeterror.dev] $" in white and red font.](og_base.png)
 
@@ -33,9 +38,7 @@ Based on Aaro's suggestions, I started by creating a 1200x600 image to use as th
 
 That fits with the theme of the site, and leaves plenty of room for text to be added to the image.
 
-The site uses the Fira Mono font family, and I'd like to use that to ensure the share image is consistent with the site styling. So I also grabbed `FiraMono-Regular.ttf` from the [Fira GitHub](https://github.com/mozilla/Fira).
-
-I stashed both of those resources in my `assets/` folder:
+I'll want to also use that font for the text overlay, so I stashed both of those resources in my `assets/` folder:
 ![File explorer window showing a directory structure with folders such as '.github/workflows', 'archetypes', 'assets' with subfolders 'css', 'js', and files 'FiraMono-Regular.ttf', 'og_base.png' under 'RUNTIMETERROR'.](new_resources.png)
 
 ### OpenGraph partial
@@ -62,4 +65,133 @@ Hugo uses an [internal template](https://github.com/gohugoio/hugo/blob/master/tp
 {{- with .Params.videos }}{{- range . }}
 <meta property="og:video" content="{{ . | absURL }}" />
 {{ end }}{{ end }}
+```
+
+To use this new partial, I'll add it to my `layouts/partials/head.html`:
+
+```jinja-html
+{{ partial "opengraph" . }}
+```
+
+which is in turn loaded by `layouts/_defaults/baseof.html`:
+
+```jinja-html
+    <head>
+        {{- partial "head.html" . -}}
+    </head>
+```
+
+### Home page OG
+
+```jinja-html
+// torchlight! {"lineNumbers": true}
+{{ $base := resources.Get "og_base.png" }} <!-- [tl! **:1] -->
+{{ $font := resources.Get "/FiraMono-Regular.ttf" }}
+<meta property="og:title" content="{{ .Title }}" /> <!-- [tl! collapse:4] -->
+<meta property="og:description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end }}" />
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}" />
+<meta property="og:url" content="{{ .Permalink }}" />
+<meta property="og:locale" content="{{ .Lang }}" />
+
+{{- if .IsHome }} <!-- [tl! **:start] -->
+{{ $img := $base.Filter (images.Text .Site.Params.Description (dict
+  "color" "#d8d8d8"
+  "size" 64
+  "linespacing" 2
+  "x" 40
+  "y" 300
+  "font" $font
+))}}
+{{ $img = resources.Copy "og.png" $img }}
+{{ .Scratch.Set "og_image" $img }}
+{{- end }} <!-- [tl! **:end] -->
+
+{{- if .IsPage }} <!-- [tl! collapse:start] -->
+{{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
+<meta property="article:section" content="{{ .Section }}" />
+{{ with .PublishDate }}<meta property="article:published_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }} />{{ end }}
+{{ with .Lastmod }}<meta property="article:modified_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }} />{{ end }}
+{{- end -}}
+
+{{- with .Params.audio }}<meta property="og:audio" content="{{ . }}" />{{ end }}
+{{- with .Params.locale }}<meta property="og:locale" content="{{ . }}" />{{ end }}
+{{- with .Site.Params.title }}<meta property="og:site_name" content="{{ . }}" />{{ end }}
+{{- with .Params.videos }}{{- range . }}
+<meta property="og:video" content="{{ . | absURL }}" />
+{{ end }}{{ end }} <!-- [tl! collapse:end] -->
+```
+
+### Post OG
+
+```jinja-html
+{{ $base := resources.Get "og_base.png" }}
+{{ $font := resources.Get "/FiraMono-Regular.ttf" }}
+<meta property="og:title" content="{{ .Title }}" />
+<meta property="og:description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end }}" />
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}" />
+<meta property="og:url" content="{{ .Permalink }}" />
+<meta property="og:locale" content="{{ .Lang }}" />
+
+{{- if .IsHome }}
+{{ $img := $base.Filter (images.Text .Site.Params.Description (dict
+  "color" "#d8d8d8"
+  "size" 64
+  "linespacing" 2
+  "x" 40
+  "y" 300
+  "font" $font
+))}}
+{{ $img = resources.Copy "og.png" $img }}
+{{ .Scratch.Set "og_image" $img }}
+{{- end }}
+
+{{- if .IsPage }}
+{{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
+<meta property="article:section" content="{{ .Section }}" />
+{{ with .PublishDate }}<meta property="article:published_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }} />{{ end }}
+{{ with .Lastmod }}<meta property="article:modified_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }} />{{ end }}
+{{ with .Params.thumbnail }}
+{{ $thumbnail := $.Resources.Get . }}
+{{ with $thumbnail }}
+{{ $img := $base.Filter (images.Overlay (.Process "fit 300x250") 875 38 )}}
+{{ $img = $img.Filter (images.Text $.Page.Title (dict
+  "color" "#d8d8d8"
+  "size" 64
+  "linespacing" 2
+  "x" 40
+  "y" 300
+  "font" $font
+))}}
+{{ $img = resources.Copy (path.Join $.Page.RelPermalink "og.png") $img }}
+{{ $.Scratch.Set "og_image" $img }}
+{{ end }}
+{{ else }}
+{{ $img := $base.Filter (images.Text .Page.Title (dict
+  "color" "#d8d8d8"
+  "size" 64
+  "linespacing" 2
+  "x" 40
+  "y" 300
+  "font" $font
+))}}
+{{ $img = resources.Copy (path.Join $.Page.RelPermalink "og.png") $img }}
+{{ .Scratch.Set "og_image" $img }}
+{{ end }}
+{{- end -}}
+{{ $img := .Scratch.Get "og_image" }}
+
+<meta property="og:image" content="{{$img.Permalink}}">
+<meta property="og:image:width" content="{{$img.Width}}" />
+<meta property="og:image:height" content="{{$img.Height}}" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{{ .Title }}" />
+<meta name="twitter:description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end -}}"/>
+<meta name="twitter:image" content="{{$img.Permalink}}" />
+
+{{- with .Params.audio }}<meta property="og:audio" content="{{ . }}" />{{ end }}
+{{- with .Site.Params.title }}<meta property="og:site_name" content="{{ . }}" />{{ end }}
+{{- with .Params.videos }}{{- range . }}
+<meta property="og:video" content="{{ . | absURL }}" />
+{{ end }}{{ end }}
+
 ```
