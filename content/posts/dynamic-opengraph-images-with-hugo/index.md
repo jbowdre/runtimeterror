@@ -1,5 +1,5 @@
 ---
-title: "Dynamic Opengraph Images With Hugo"
+title: "Dynamic OpenGraph Images With Hugo"
 date: 2024-02-18
 # lastmod: 2024-02-18
 draft: true
@@ -7,7 +7,7 @@ description: "This is a new post about..."
 featured: false
 toc: true
 comments: true
-thumbnail: thumbnail.png
+thumbnail: hugo-logo-wide.png
 categories: Backstage
 tags:
   - hugo
@@ -144,19 +144,34 @@ If it's the homepage, I'll set `$text` to hold the site description:
 
 ```jinja-html
 {{- if .IsHome }}
-{{ $text = .Site.Params.Description }}
+  {{ $text = .Site.Params.Description }}
 {{- end }}
 ```
 
-{{- if .IsPage }}
-{{ $text = .Page.Title }}
-{{ end }}
+If it's a standard post page, then I want to use the page title instead:
 
+```jinja-html
+{{- if .IsPage }}
+  {{ $text = .Page.Title }}
+{{ end }}
+```
+
+Now we get to some more interesting stuff. If the page has a `thumbnail` defined in the front matter, I'll use `$.Resources.Get` to grab the image. Note that the [`resources.Get` function](https://gohugo.io/functions/resources/get/) I used earlier works on global resources, like the image and font I had stashed in the sites `assets/` directory. The [`Resources.Get` method](https://gohugo.io/methods/page/resources/) is used for loading page resources, like the file indicated by the page's `thumbnail` parameter. Since I'm calling this method from within a `with` branch I have to put a `$` in front since the `.` would otherwise refer directly to the `thumbnail` parameter (which isn't a page and so doesn't have the method available). Hugo scoping is kind of wild.
+
+Anyhoo, once I've got the thumbnail I use the [`Fit` image processing](https://gohugo.io/content-management/image-processing/#fit) to scale down the thumbnail (while preserving the aspect ration) and then the [`images.Overlay` function](https://gohugo.io/functions/images/overlay/) to stick it at the top right corner of the `og_base.png` image.
+
+```jinja-html
 {{- with .Params.thumbnail }}
-{{ $thumbnail := $.Resources.Get . }}
-{{ with $thumbnail }}
-{{ $img = $img.Filter (images.Overlay (.Process "fit 300x250") 875 38 )}}
-{{ end }}{{ end }}
+  {{ $thumbnail := $.Resources.Get . }}
+  {{ with $thumbnail }}
+    {{ $img = $img.Filter (images.Overlay (.Process "fit 300x250") 875 38 )}}
+  {{ end }}
+{{ end }}
+```
+
+Then I can apply the desired text:
+
+```jinja-html
 {{ $img = $img.Filter (images.Text $text (dict
   "color" "#d8d8d8"
   "size" 64
@@ -166,6 +181,50 @@ If it's the homepage, I'll set `$text` to hold the site description:
   "font" $font
 ))}}
 {{ $img = resources.Copy (path.Join $.Page.RelPermalink "og.png") $img }}
+```
+
+### All together now
+
+Now I just need to merge my code in with the existing `layouts/partials/opengraph.html`
+
+```jinja-html
+// torchlight! {"lineNumbers": true}
+{{ $img := resources.Get "og_base.png" }} <!-- [tl! **:2] -->
+{{ $font := resources.Get "/FiraMono-Regular.ttf" }}
+{{ $text := "" }}
+<meta property="og:title" content="{{ .Title }}" />
+<meta property="og:description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end }}" />
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}" />
+<meta property="og:url" content="{{ .Permalink }}" />
+<meta property="og:locale" content="{{ .Lang }}" />
+{{- if .IsHome }} <!-- [tl! **:2] -->
+  {{ $text = .Site.Params.Description }}
+{{- end }}
+
+{{- if .IsPage }}
+  {{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
+  <meta property="article:section" content="{{ .Section }}" />
+  {{ with .PublishDate }}<meta property="article:published_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }} />{{ end }}
+  {{ with .Lastmod }}<meta property="article:modified_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }} />{{ end }}
+  {{ $text = .Page.Title }} <!-- [tl! ** ] -->
+{{ end }}
+
+{{- with .Params.thumbnail }} <!-- [tl! **:start] -->
+  {{ $thumbnail := $.Resources.Get . }}
+  {{ with $thumbnail }}
+    {{ $img = $img.Filter (images.Overlay (.Process "fit 300x250") 875 38 )}}
+  {{ end }}
+{{ end }}
+
+{{ $img = $img.Filter (images.Text $text (dict
+  "color" "#d8d8d8"
+  "size" 64
+  "linespacing" 2
+  "x" 40
+  "y" 300
+  "font" $font
+))}}
+{{ $img = resources.Copy (path.Join $.Page.RelPermalink "og.png") $img }} <!-- [tl! **:end] -->
 
 <meta property="og:image" content="{{$img.Permalink}}">
 <meta property="og:image:width" content="{{$img.Width}}" />
@@ -181,3 +240,7 @@ If it's the homepage, I'll set `$text` to hold the site description:
 <meta property="og:video" content="{{ . | absURL }}" />
 {{ end }}{{ end }}
 ```
+
+And it works!
+![Black background with text "Dynamic Opengraph Images With Hugo", a command prompt "[runtimeterror.dev] $", and colorful hexagon shapes with "HUGO" letters.](og-demo.png)
+
