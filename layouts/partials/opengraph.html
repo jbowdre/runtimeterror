@@ -24,7 +24,6 @@
 {{ with .PublishDate }}<meta property="article:published_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }} />{{ end }}
 {{ with .Lastmod }}<meta property="article:modified_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }} />{{ end }}
 {{ with .Params.thumbnail }}
-{{/* $thumbPath := (add $.Page.RelPermalink . ) */}}
 {{ $thumbnail := $.Resources.Get . }}
 {{ with $thumbnail }}
 {{ $img := $base.Filter (images.Overlay (.Process "fit 300x250") 875 38 )}}
