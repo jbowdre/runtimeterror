@@ -25,6 +25,7 @@
 
 ---
 Written by John Bowdre {{ if .Params.Date }} on {{ .Lastmod.Format "2006-01-02" }}.{{ end}}
+=> mailto:blog@runtimeterror.dev 📧 Reply via email
 
 ## Links
 {{ $scratch.Set "ref" (add (len $links) 1) }}{{ range $refs }}{{ $ref := $scratch.Get "ref" }}{{ $url := (printf "%s #%d" . $ref) }}
