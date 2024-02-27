@@ -6,4 +6,4 @@
 /resources/
 /.env
 /.direnv/
-
+/.certificates/

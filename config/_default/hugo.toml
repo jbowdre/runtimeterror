@@ -7,20 +7,32 @@ languageCode = "en"
 DefaultContentLanguage = "en"
 enableInlineShortcodes = true
 
+# define gemini media type
+[mediaTypes]
+  [mediaTypes.'text/gemini']
+    suffixes = ["gmi"]
+
 # Automatically add content sections to main menu
 # sectionPagesMenu = "main"
 
 [outputs]
-  home = ['html', 'rss']
+  home = ['html', 'rss', 'gemini']
   section = ['html']
-  taxonomy = ['html',]
+  taxonomy = ['html']
   term = ['html', 'rss']
+  page = ['html', 'rss', 'gemini']
 
 # rename rss output from index.xml to feed.xml
 [outputFormats]
   [outputFormats.rss]
     mediatype = "application/rss"
     baseName = "feed"
+  [outputFormats.gemini]
+    mediatype = "text/gemini"
+    isPlainText = true
+    isHTML = false
+    protocol = "gemini://"
+    permalinkable = true
 
 [permalinks]
   posts = ":filename"
