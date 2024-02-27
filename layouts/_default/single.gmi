@@ -5,7 +5,7 @@
 {{ $content := $content | replaceRE `#### ` "### " -}}
 {{ $content := $content | replaceRE `\n- (.+?)` "\n* $1" -}}
 {{ $content := $content | replaceRE `\n(\d+). (.+?)` "\n* $2" -}}
-{{ $content := $content | replaceRE `\[\^(.+?)\]:.*\n?\n` "" -}}
+{{ $content := $content | replaceRE `\[\^(.+?)\]:.*\n?\n?` "" -}}
 {{ $content := $content | replaceRE `\[\^(.+?)\]` "" -}}
 {{ $content := $content | replaceRE `<br/??>` "\n" -}}
 {{ $content := $content | replaceRE `\{\{%\s\/?notice.*%\}\}` "***" -}}
