@@ -1,4 +1,4 @@
-=> / 🏡 [runtimeterror $]
+=> / 💻 [runtimeterror $]
 
 # {{ .Title }}{{ $scratch := newScratch }}
 {{ $content := .RawContent -}}
