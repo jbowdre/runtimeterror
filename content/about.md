@@ -5,6 +5,7 @@ timeless = true
 comments = false
 aliases = ["tldr", "bio"]
 +++
+
 ![Me, +/- a few decades](/images/john.jpg)
 
 You've (somehow) managed to stumble upon my dark corner of the internet[^1].
@@ -36,7 +37,5 @@ Connect with me via:
 - [XMPP](https://conversations.im/i/jbowdre@omg.lol?omemo-sid-1374125881=a620f3c57733601a6646f6f13a71c86fc9be8dd4126fd158ef3e0a26beb0b434)
 - [Electronic Mail](mailto:jbowdre@omg.lol)
   - [PGP: 613F B70C 4FA7 A077](https://l.runtimeterror.dev/pgp)
-
-
 [^1]: Congrats? And also, *thank you.*
 [^2]: A bit. I'm still in the "fake it until you make" it phase of adulthood.

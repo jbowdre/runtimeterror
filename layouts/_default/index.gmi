@@ -1,0 +1,7 @@
+## [runtimeterror $]
+{{ $pages := .Pages -}}
+{{ $pages = where site.RegularPages "Type" "in" site.Params.mainSections -}}
+
+{{ range $pages }}
+=> {{ .RelPermalink }} [{{ .Date.Format "2006-01-02" }}] {{ .Title }}
+{{- end }}
