@@ -1,6 +1,12 @@
 => / 💻 [runtimeterror $]
 
 # {{ .Title }}{{ $scratch := newScratch }}
+{{- if .Params.Date }}
+  {{- $postDate := .Date.Format "2006-01-02" }}
+  {{- $updateDate := .Lastmod.Format "2006-01-02" }}
+  {{ $postDate }}{{ if ne $postDate $updateDate }} ~ {{ $updateDate }}{{ end }}
+{{- end }}
+{{/* The bulk of this regex magic is derived from https://brainbaking.com/post/2021/04/using-hugo-to-launch-a-gemini-capsule/ */}}
 {{ $content := .RawContent -}}
 {{ $content := $content | replaceRE `#### ` "### " -}}
 {{ $content := $content | replaceRE `\n- (.+?)` "\n* $1" -}}
@@ -24,10 +30,9 @@
 {{ $content | safeHTML }}
 
 ---
-Written by John Bowdre {{ if .Params.Date }} on {{ .Lastmod.Format "2006-01-02" }}.{{ end}}
 => mailto:blog@runtimeterror.dev 📧 Reply via email
 
-## Links
+## Bibliography
 {{ $scratch.Set "ref" (add (len $links) 1) }}{{ range $refs }}{{ $ref := $scratch.Get "ref" }}{{ $url := (printf "%s #%d" . $ref) }}
 => {{ $url | replaceRE `\[(.+?)\]\((.+?)\) #(\d+)` "$2 [$3] $1 ($2)" -}}
 {{ $scratch.Set "ref" (add $ref 1) }}{{ end}}
@@ -38,5 +43,5 @@ Written by John Bowdre {{ if .Params.Date }} on {{ .Lastmod.Format "2006-01-02" 
 => {{ replace .RelPermalink "/gemini" "" 1}} {{ .Title }}{{ end }}{{ end }}
 ---
 
-=> / Back to the Index
-=> https://runtimeterror.dev{{ replace (replace .RelPermalink "/gemini" "" 1) "index.gmi" "" }} View this article on the WWW
+=> / Home
+=> https://runtimeterror.dev{{ replace (replace .RelPermalink "/gemini" "" 1) "index.gmi" "" }} This article on the big web
