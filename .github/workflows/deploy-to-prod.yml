@@ -52,9 +52,12 @@ jobs:
           oauth-client-id: ${{ secrets.TS_API_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_API_CLIENT_SECRET }}
           tags: ${{ secrets.TS_TAG }}
-      - name: Deploy GMI to Agate
+      - name: Cache SSH known hosts
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.GMI_HOST }} >> ~/.ssh/known_hosts
-          rsync -avz --delete --exclude='*.html' --exclude='*.css' --exclude='*.js' -e ssh public/ ${{ secrets.GMI_USER}}@${{ secrets.GMI_HOST }}:${{ secrets.GMI_CONTENT_PATH }}
+      - name: Deploy GMI to Agate
+        run: |
+          which rsync
+          rsync -avz --delete --exclude='*.html' --exclude='*.css' --exclude='*.js' -e ssh public/ ${{ secrets.GMI_USER }}@${{ secrets.GMI_HOST }}:${{ secrets.GMI_CONTENT_PATH }}
 
