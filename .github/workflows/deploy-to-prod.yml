@@ -54,6 +54,7 @@ jobs:
           tags: ${{ secrets.TS_TAG }}
       - name: Deploy GMI to Agate
         run: |
+          mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.GMI_HOST }} >> ~/.ssh/known_hosts
           rsync -avz --delete --exclude='*.html' --exclude='*.css' --exclude='*.js' -e ssh public/ ${{ secrets.GMI_HOST }}:${{ secrets.GMI_CONTENT_PATH }}
 
