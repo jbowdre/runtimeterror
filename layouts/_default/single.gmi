@@ -21,9 +21,10 @@
 {{ $content := $content | replaceRE `#\s*\[tl!.*\]` "" -}}
 {{ $content := $content | replaceRE `<a .*href="(.+?)".*>(.+?)</a>` "[$2]($1)" -}}
 {{ $content := $content | replaceRE `\sgemini://(\S*)` " [gemini://$1](gemini://$1)" -}}
+{{ $content := $content | replaceRE `\n\*\s+\[(.+?)\]\((.+?)\)` "\n=> $2 $1" -}}
 {{/* $content := $content | replaceRE "([^`])<.*?>([^`])" "$1$2" -*/}}
-{{ $content := $content | replaceRE `\n?\n!\[.*\]\((.+?) \"(.+?)\"\)` "\n\n=> $1 Image: $2" -}}
-{{ $content := $content | replaceRE `\n?\n!\[.*\]\((.+?)\)` "\n\n=> $1 Embedded Image: $1" -}}
+{{ $content := $content | replaceRE `\n?\n!\[.*\]\((.+?) \"(.+?)\"\)` "\n=> $1 Image: $2" -}}
+{{ $content := $content | replaceRE `\n?\n!\[.*\]\((.+?)\)` "\n=> $1 Embedded Image: $1" -}}
 {{ $links := findRE `\n=> ` $content }}{{ $scratch.Set "ref" (add (len $links) 1) }}
 {{ $refs := findRE `\[.+?\]\(.+?\)` $content }}
 {{ $scratch.Set "content" $content }}{{ range $refs }}{{ $ref := $scratch.Get "ref" }}{{ $contentInLoop := $scratch.Get "content" }}{{ $url := (printf "%s #%d" . $ref) }}{{ $contentInLoop := replace $contentInLoop . $url -}}{{ $scratch.Set "content" $contentInLoop }}{{ $scratch.Set "ref" (add $ref 1) }}{{ end }}{{ $content := $scratch.Get "content" | replaceRE `\[(.+?)\]\((.+?)\) #(\d+)` "$1 [$3]" -}}
