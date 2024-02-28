@@ -60,5 +60,5 @@ jobs:
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
       - name: Deploy GMI to Agate
         run: |
-          rsync -az --delete --exclude='*.html' --exclude='*.css' --exclude='*.js' -e ssh public/ deploy@${{ secrets.GMI_HOST }}:${{ secrets.GMI_CONTENT_PATH }}
+          rsync -avz --delete --exclude='*.html' --exclude='*.css' --exclude='*.js' -e ssh public/ deploy@${{ secrets.GMI_HOST }}:${{ secrets.GMI_CONTENT_PATH }}
 
