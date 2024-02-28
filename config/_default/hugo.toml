@@ -27,6 +27,7 @@ enableInlineShortcodes = true
   [outputFormats.rss]
     mediatype = "application/rss"
     baseName = "feed"
+  # gemini output
   [outputFormats.gemini]
     mediatype = "text/gemini"
     isPlainText = true
