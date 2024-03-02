@@ -1,5 +1,4 @@
 => / 💻 [runtimeterror $]
-
 # {{ .Title }}{{ $scratch := newScratch }}
 {{- if .Params.Date }}
   {{- $postDate := .Date.Format "2006-01-02" }}
@@ -8,35 +7,44 @@
 {{- end }}
 {{/* The bulk of this regex magic is derived from https://brainbaking.com/post/2021/04/using-hugo-to-launch-a-gemini-capsule/ */}}
 {{ $content := .RawContent -}}
-{{ $content := $content | replaceRE `#### ` "### " -}}
-{{ $content := $content | replaceRE `\n- (.+?)` "\n* $1" -}}
-{{ $content := $content | replaceRE `\n(\d+). (.+?)` "\n* $2" -}}
-{{ $content := $content | replaceRE `\[\^(.+?)\]:.*\n?\n?` "" -}}
-{{ $content := $content | replaceRE `\[\^(.+?)\]` "" -}}
-{{ $content := $content | replaceRE `<br/??>` "\n" -}}
-{{ $content := $content | replaceRE `\{\{%\s\/?notice.*%\}\}` "***" -}}
-{{ $content := $content | replaceRE `((\/\/)|#)\s*torchlight!.*` "" -}}
-{{ $content := $content | replaceRE `<!--\s*\[tl!.*\]\s*-->` "" -}}
-{{ $content := $content | replaceRE `\/\/\s*\[tl!.*\]` "" -}}
-{{ $content := $content | replaceRE `#\s*\[tl!.*\]` "" -}}
-{{ $content := $content | replaceRE `<a .*href="(.+?)".*>(.+?)</a>` "[$2]($1)" -}}
-{{ $content := $content | replaceRE `\sgemini://(\S*)` " [gemini://$1](gemini://$1)" -}}
-{{ $content := $content | replaceRE `\n\*\s+\[(.+?)\]\((.+?)\)` "\n=> $2 $1" -}}
-{{/* $content := $content | replaceRE "([^`])<.*?>([^`])" "$1$2" -*/}}
-{{ $content := $content | replaceRE `\n+!\[.*\]\((.+?) \"(.+?)\"\)` "\n\n=> $1 Image: $2" -}}
-{{ $content := $content | replaceRE `\n+!\[.*\]\((.+?)\)` "\n\n=> $1 Embedded Image: $1" -}}
-{{ $links := findRE `\n=> ` $content }}{{ $scratch.Set "ref" (add (len $links) 1) }}
-{{ $refs := findRE `\[.+?\]\(.+?\)` $content }}
-{{ $scratch.Set "content" $content }}{{ range $refs }}{{ $ref := $scratch.Get "ref" }}{{ $contentInLoop := $scratch.Get "content" }}{{ $url := (printf "%s #%d" . $ref) }}{{ $contentInLoop := replace $contentInLoop . $url -}}{{ $scratch.Set "content" $contentInLoop }}{{ $scratch.Set "ref" (add $ref 1) }}{{ end }}{{ $content := $scratch.Get "content" | replaceRE `\[(.+?)\]\((.+?)\) #(\d+)` "$1 [$3]" -}}
-{{ $content | safeHTML }}
-
+{{- $content := $content | replaceRE `#{4,} ` "### " -}}{{/* reduce headings to a max of 3 levels */}}
+{{- $content := $content | replaceRE `(?m:^- (.+?)$)` "\n* $1" -}}{{/* convert unordered lists */}}
+{{- $content := $content | replaceRE `(?m:^(?:\d+). (.+?)$)` "* $1" -}}{{/* convert ordered lists */}}
+{{- $content := $content | replaceRE `\n\[\^(.+?)\]:\s.*` "" -}}{{/* remove footnote definitions */}}
+{{- $content := $content | replaceRE `\[\^(.+?)\]` "" -}}{{/* remove footnote anchors */}}
+{{- $content := $content | replaceRE "(?m:^`([^`]*)`$)" "```\n$1\n```\n" -}}{{/* convert single-line inline code to blocks */}}
+{{- $content := $content | replaceRE `\{\{%\snotice.*%\}\}` "<-- note -->" -}}{{/* convert hugo notices */}}
+{{- $content := $content | replaceRE `\{\{%\s/notice.*%\}\}` "<-- /note -->" -}}
+{{- $content := $content | replaceRE `((\/\/)|#)\s*torchlight!.*\n` "" -}}{{/* remove torchlight markup */}}
+{{- $content := $content | replaceRE `(?:(?:<!--)|(?:#)|(?:\/\/))*\s*\[tl!.*\].*` "" -}}
+{{- $content := $content | replaceRE `(?m:^\[!\[(.*)\]\(.*\)\]\((.*)\)$)` "=> $2 $1" -}}{{/* remove images from uptime links */}}
+{{- $content := $content | replaceRE `(?m:^\s*(?:(?:\*|\-)\s+)?\[(.*)\]\((.*)\)$)` "=> $2 $1" -}}{{/* convert links already on own line */}}
+{{- $content := $content | replaceRE `(?m:^!\[(.*)\]\((.+?)\)$)` "=> $2 Image: $1" -}}{{/* convert embedded images */}}
+{{- $content := $content | replaceRE `\n{3,}` "\n\n" -}}{{/* try to ensure we don't get more than two newlines in a row */}}
+{{- $scratch.Set "ref" 1 -}}
+{{- $refs := findRE `\[.+?\]\(.+?\)` $content -}}{{/* find remaining inline links */}}
+{{- $scratch.Set "content" $content -}}
+{{- range $refs -}}
+  {{- $ref := $scratch.Get "ref" -}}
+  {{- $contentInLoop := $scratch.Get "content" -}}
+  {{- $url := (printf "%s #%d" . $ref) -}}
+  {{- $contentInLoop := replace $contentInLoop . $url -}}
+  {{- $scratch.Set "content" $contentInLoop -}}
+  {{- $scratch.Set "ref" (add $ref 1) -}}
+{{- end -}}
+{{- $content := $scratch.Get "content" | replaceRE `\[(.+?)\]\((.+?)\) #(\d+)` "$1 [$3]" -}}{{/* replace inline links with footnote */}}
+{{- $content | safeHTML -}}
 ---
 => mailto:blog@runtimeterror.dev 📧 Reply via email
 
 ## Bibliography
-{{ $scratch.Set "ref" (add (len $links) 1) }}{{ range $refs }}{{ $ref := $scratch.Get "ref" }}{{ $url := (printf "%s #%d" . $ref) }}
-=> {{ $url | replaceRE `\[(.+?)\]\((.+?)\) #(\d+)` "$2 [$3] $1 ($2)" -}}
-{{ $scratch.Set "ref" (add $ref 1) }}{{ end}}
+{{ $scratch.Set "ref" 1 -}}
+{{ range $refs -}}
+  {{- $ref := $scratch.Get "ref" -}}
+  {{- $url := (printf "%s #%d" . $ref) -}}
+=> {{ $url | replaceRE `\[(.+?)\]\((.+?)\) #(\d+)` "$2 [$3] $1" }}{{/* render links in biblio footer */}}
+  {{- $scratch.Set "ref" (add $ref 1) }}
+{{ end -}}
 {{ $related := first 3 (where (where .Site.RegularPages.ByDate.Reverse ".Params.tags" "intersect" .Params.tags) "Permalink" "!=" .Permalink) }}
 {{ if $related }}
 ## Related articles
