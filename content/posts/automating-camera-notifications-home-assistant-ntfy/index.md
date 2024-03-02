@@ -134,6 +134,7 @@ homeassistant:
 ```
 
 I'm using the [Home Assistant Operating System virtual appliance](https://www.home-assistant.io/installation/alternative#install-home-assistant-operating-system), so `/media` is already symlinked to `/root/media` inside the Home Assistant installation directory. So I'll just log into that shell and create the `snaps` subdirectory:
+
 ```shell
 mkdir -p /media/snaps # [tl! .cmd_root]
 ```
@@ -149,6 +150,7 @@ Now that I've captured the snap, I need to figure out how to attach it to the no
 I can't use the handy `!secret` expansion inside of the shell command, though, so I'll need a workaround to avoid sticking sensitive details directly in my `configuration.yaml`. I can use a dummy sensor to hold the value, and then use the `{{ states('sensor.$sensor_name') }}` template to retrieve it.
 
 So here we go:
+
 ```yaml
 # configuration.yaml [tl! focus:start]
 
@@ -180,6 +182,7 @@ shell_command: # [tl! focus:9 highlight:6,1]
 ```
 
 Now I just need to replace the service call in the automation with the new `shell_command.ntfy_put` one:
+
 ```yaml
 # torchlight! {"lineNumbers": true}
 # exterior_motion.yaml # [tl! focus]
@@ -230,6 +233,7 @@ Well that guy seems sus - but hey, it worked!
 Of course, I'll also continue to get notified about that creeper in the backyard about every 15-20 seconds or so. That's not quite what I want. The _easy_ way to prevent an automation from firing constantly would be to [insert a `delay`](https://www.home-assistant.io/docs/scripts/#wait-for-time-to-pass-delay) action, but that would be a global delay rather than per-camera. I don't necessarily need to know every time the weirdo in the backyard moves, but I would like to know if he moves around to the side yard or driveway. So I needed something more flexible than an automation-wide delay.
 
 Instead, I'll create a 5-minute [`timer`](https://www.home-assistant.io/integrations/timer/) for each camera by simply adding this to my `configuration.yaml`:
+
 ```yaml
 # configuration.yaml
 timer:
@@ -310,6 +314,7 @@ That pretty much takes care of my needs for exterior motion alerts, and should k
 
 ### Managing interior alerts
 I've got a few interior cameras which I'd like to monitor too, so I'll start by just copying the exterior automation and updating the entity IDs:
+
 ```yaml
 # torchlight! {"lineNumbers": true}
 # interior_motion.yaml
@@ -361,6 +366,7 @@ But I don't typically want to get alerted by these cameras if my wife or I are h
 ![calendar](schedule.png)
 
 So then I'll just add another condition so that the automation will only fire during those calendar events:
+
 ```yaml
 # torchlight! {"lineNumbers": true}
 # interior_motion.yaml [tl! focus]
@@ -517,6 +523,7 @@ icon: mdi:alarm-snooze
 I can then add that script to the camera dashboard in Home Assistant or pin it to the home controls on my Android phone for easy access.
 
 I'll also create another script for manually toggling interior alerts for when we're home at an odd time:
+
 ```yaml
 # torchlight! {"lineNumbers": true}
 # toggle_interior_alerts.yaml
