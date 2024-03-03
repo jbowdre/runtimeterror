@@ -19,7 +19,7 @@ enableInlineShortcodes = true
   home = ['html', 'rss', 'gemini']
   section = ['html']
   taxonomy = ['html']
-  term = ['html', 'rss']
+  term = ['html', 'rss', 'gemini']
   page = ['html', 'rss', 'gemini']
 
 # rename rss output from index.xml to feed.xml
