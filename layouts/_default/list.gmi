@@ -7,4 +7,4 @@
 
 ---
 => / Home
-=> https://runtimeterror.dev{{ replace (replace .RelPermalink "/gemini" "" 1) "index.gmi" "" }} This article on the big web
+=> https://runtimeterror.dev{{ replace (replace .RelPermalink "/gemini" "" 1) "index.gmi" "" }} This page on the big web
