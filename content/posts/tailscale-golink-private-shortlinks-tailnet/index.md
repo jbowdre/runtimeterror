@@ -133,15 +133,15 @@ Now if I just enter `go/vcenter` I will go to the vSphere UI, while if I enter s
 
 Some of my other golinks:
 
-| Shortlink | Destination URL | Description |
-| --- | --- | --- |
-| `code` | `https://github.com/search?type=code&q=user:jbowdre{{with .Path}}+{{.}}{{end}}` | searches my code on Github |
-| `ipam` | `https://ipam.lab.bowdre.net/{{with .Path}}tools/search/{{.}}{{end}}` | searches my lab phpIPAM instance |
-| `pdb` | `https://www.protondb.com/{{with .Path}}search?q={{.}}{{end}}` | searches [protondb](https://www.protondb.com/), super-handy for checking game compatibility when [Tailscale is installed on a Steam Deck](https://tailscale.com/blog/steam-deck/) |
-| `tailnet` | `https://login.tailscale.com/admin/machines?q={{.Path}}` | searches my Tailscale admin panel for a machine name |
-| `sho` | `https://www.shodan.io/{{with .Path}}search?query={{.}}{{end}}` | searches Shodan for interesting internet-connected systems |
-| `randpass` | `https://www.random.org/passwords/?num=1\u0026len=24\u0026format=plain\u0026rnd=new` | generates a random 24-character string suitable for use as a password (`curl`-friendly) |
-| `wx` | `https://wttr.in/{{ .Path }}` | local weather report based on geolocation or weather for a designated city (`curl`-friendly) |
+| Shortlink  | Destination URL                                                                      | Description                                                                                  |
+|------------|--------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| `code`     | `https://github.com/search?type=code&q=user:jbowdre{{with .Path}}+{{.}}{{end}}`      | searches my code on Github                                                                   |
+| `ipam`     | `https://ipam.lab.bowdre.net/{{with .Path}}tools/search/{{.}}{{end}}`                | searches my lab phpIPAM instance                                                             |
+| `pdb`      | `https://www.protondb.com/{{with .Path}}search?q={{.}}{{end}}`                       | searches protondb                                                                            |
+| `tailnet`  | `https://login.tailscale.com/admin/machines?q={{.Path}}`                             | searches my Tailscale admin panel for a machine name                                         |
+| `sho`      | `https://www.shodan.io/{{with .Path}}search?query={{.}}{{end}}`                      | searches Shodan for interesting internet-connected systems                                   |
+| `randpass` | `https://www.random.org/passwords/?num=1\u0026len=24\u0026format=plain\u0026rnd=new` | generates a random 24-character string suitable for use as a password (`curl`-friendly)      |
+| `wx`       | `https://wttr.in/{{ .Path }}`                                                        | local weather report based on geolocation or weather for a designated city (`curl`-friendly) |
 
 #### Back up and restore
 You can browse to `go/.export` to see a JSON-formatted listing of all configured shortcuts - or, if you're clever, you could do something like `curl http://go/.export -o links.json` to download a copy.

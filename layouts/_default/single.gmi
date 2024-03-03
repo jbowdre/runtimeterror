@@ -12,6 +12,7 @@
 {{- $content := $content | replaceRE `(?m:^(?:\d+). (.+?)$)` "* $1" -}}{{/* convert ordered lists */}}
 {{- $content := $content | replaceRE `\n\[\^(.+?)\]:\s.*` "" -}}{{/* remove footnote definitions */}}
 {{- $content := $content | replaceRE `\[\^(.+?)\]` "" -}}{{/* remove footnote anchors */}}
+{{- $content := $content | replaceRE `((?m:^(?:\|.*\|)+\n)+)` "```\n$1\n```\n" -}}{{/* convert markdown tables to plaintext ascii */}}
 {{- $content := $content | replaceRE "(?m:^`([^`]*)`$)" "```\n$1\n```\n" -}}{{/* convert single-line inline code to blocks */}}
 {{- $content := $content | replaceRE `\{\{%\snotice.*%\}\}` "<-- note -->" -}}{{/* convert hugo notices */}}
 {{- $content := $content | replaceRE `\{\{%\s/notice.*%\}\}` "<-- /note -->" -}}
