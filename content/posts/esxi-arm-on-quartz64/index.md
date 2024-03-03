@@ -61,24 +61,23 @@ All that is to say that (as usual) I'll be embarking upon this project in Hard M
 ### Bill of Materials
 Let's start with the gear (hardware and software) I needed to make this work:
 
-| Hardware | Purpose |
-| --- | --- |
-| [PINE64 Quartz64 Model-A 8GB Single Board Computer](https://pine64.com/product/quartz64-model-a-8gb-single-board-computer/) | kind of the whole point |
-| [ROCKPro64 12V 5A US Power Supply](https://pine64.com/product/rockpro64-12v-5a-us-power-supply/) | provies power for the the SBC |
-| [Serial Console “Woodpecker” Edition](https://pine64.com/product/serial-console-woodpecker-edition/) | allows for serial console access |
-| [Google USB-C Adapter](https://www.amazon.com/dp/B071G6NLHJ/) | connects the console adapter to my Chromebook |
-| [Sandisk 64GB Micro SD Memory Card](https://www.amazon.com/dp/B00M55C1I2) | only holds the firmware; a much smaller size would be fine |
-| [Monoprice USB-C MicroSD Reader](https://www.amazon.com/dp/B00YQM8352/) | to write firmware to the SD card from my Chromebook |
-| [Samsung MUF-256AB/AM FIT Plus 256GB USB 3.1 Drive](https://www.amazon.com/dp/B07D7Q41PM) | ESXi boot device and local VMFS datastore |
-| ~~[Cable Matters 3 Port USB 3.0 Hub with Ethernet](https://www.amazon.com/gp/product/B01J6583NK)~~ | ~~for network connectivity and to host the above USB drive~~[^v1.10] |
-| [3D-printed open enclosure for QUARTZ64](https://www.thingiverse.com/thing:5308499) | protect the board a little bit while allowing for plenty of passive airflow |
+| Hardware                                               | Purpose                                                                     |
+|--------------------------------------------------------|-----------------------------------------------------------------------------|
+| [PINE64 Quartz64 Model-A 8GB Single Board Computer](https://pine64.com/product/quartz64-model-a-8gb-single-board-computer/) | kind of the whole point                                                     |
+| [ROCKPro64 12V 5A US Power Supply](https://pine64.com/product/rockpro64-12v-5a-us-power-supply/)                  | provides power for the the SBC                                              |
+| [Serial Console “Woodpecker” Edition](https://pine64.com/product/serial-console-woodpecker-edition/)               | allows for serial console access                                            |
+| [Google USB-C Adapter](https://www.amazon.com/dp/B071G6NLHJ/)                              | connects the console adapter to my Chromebook                               |
+| [Sandisk 64GB Micro SD Memory Card](https://www.amazon.com/dp/B00M55C1I2)                 | only holds the firmware; a much smaller size would be fine                  |
+| [Monoprice USB-C MicroSD Reader](https://www.amazon.com/dp/B00YQM8352/)                    | to write firmware to the SD card from my Chromebook                         |
+| [Samsung MUF-256AB/AM FIT Plus 256GB USB 3.1 Drive](https://www.amazon.com/dp/B07D7Q41PM) | ESXi boot device and local VMFS datastore                                   |
+| [3D-printed open enclosure for QUARTZ64](https://www.thingiverse.com/thing:5308499)            | protect the board a little bit while allowing for plenty of passive airflow |
 
-| Downloads | Purpose |
-| --- | --- |
-| [ESXi ARM Edition](https://customerconnect.vmware.com/downloads/get-download?downloadGroup=ESXI-ARM) (v1.10) | hypervisor |
-| [Tianocore EDK II firmware for Quartz64](https://github.com/jaredmcneill/quartz64_uefi/releases) (2022-07-20) | firmare image |
-| [Chromebook Recovery Utility](https://chrome.google.com/webstore/detail/chromebook-recovery-utili/pocpnlppkickgojjlmhdmidojbmbodfm) | easy way to write filesystem images to external media |
-| [Beagle Term](https://chrome.google.com/webstore/detail/beagle-term/gkdofhllgfohlddimiiildbgoggdpoea) | for accessing the Quartz64 serial console |
+| Downloads                                                | Purpose                                               |
+|----------------------------------------------------------|-------------------------------------------------------|
+| [ESXi ARM Edition](https://customerconnect.vmware.com/downloads/get-download?downloadGroup=ESXI-ARM) (v1.10)                            | hypervisor                                            |
+| [Tianocore EDK II firmware for Quartz64](https://github.com/jaredmcneill/quartz64_uefi/releases) (2022-07-20) | firmare image                                         |
+| [Chromebook Recovery Utility](https://chrome.google.com/webstore/detail/chromebook-recovery-utili/pocpnlppkickgojjlmhdmidojbmbodfm)                         | easy way to write filesystem images to external media |
+| [Beagle Term](https://chrome.google.com/webstore/detail/beagle-term/gkdofhllgfohlddimiiildbgoggdpoea)                                     | for accessing the Quartz64 serial console             |
 
 ### Preparation
 #### Firmware media
@@ -110,10 +109,10 @@ Then it's time to write the image onto the USB drive:
 I'll need to use the Quartz64 serial console interface and ["Woodpecker" edition console USB adapter](https://pine64.com/product/serial-console-woodpecker-edition/) to interact with the board until I get ESXi installed and can connect to it with the web interface or SSH. The adapter comes with a short breakout cable, and I connect it thusly:
 
 | Quartz64 GPIO pin | Console adapter pin | Wire color |
-| --- | --- | --- |
-| 6 | `GND` | Brown |
-| 8 | `RXD` | Red |
-| 10 | `TXD` | Orange |
+|-------------------|---------------------|------------|
+| 6                 | `GND`               | Brown      |
+| 8                 | `RXD`               | Red        |
+| 10                | `TXD`               | Orange     |
 
 I leave the yellow wire dangling free on both ends since I don't need a `+V` connection for the console to work.
 ![Console connection](console_connection.jpg)
@@ -122,14 +121,14 @@ To verify that I've got things working, I go ahead and pop the micro SD card con
 
 I'll need to use these settings for the connection (which are the defaults selected by Beagle Term):
 
-| Setting | Value |
-| -- | --- |
-| Port | `/dev/ttyUSB0` |
-| Bitrate | `115200` |
-| Data Bit | `8 bit` |
-| Parity | `none` |
-| Stop Bit | `1` |
-| Flow Control | `none` |
+| Setting      | Value          |
+|--------------|----------------|
+| Port         | `/dev/ttyUSB0` |
+| Bitrate      | `115200`       |
+| Data Bit     | `8 bit`        |
+| Parity       | `none`         |
+| Stop Bit     | `1`            |
+| Flow Control | `none`         |
 
 ![Beagle Term settings](beagle_term_settings.png)
 

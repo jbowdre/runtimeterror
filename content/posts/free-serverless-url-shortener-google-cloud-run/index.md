@@ -78,11 +78,11 @@ I'm very pleased with how this quick little project turned out. Managing my shor
 
 And now I can hand out handy-dandy short links!
 
-| Link | Description|
-| --- | --- |
-| [go.bowdre.net/coso](https://l.runtimeterror.dev/coso) | Follow me on CounterSocial |
-| [go.bowdre.net/conedoge](https://l.runtimeterror.dev/conedoge) | 2014 Subaru BRZ autocross videos |
+| Link                            | Description                                               |
+|---------------------------------|-----------------------------------------------------------|
+| [go.bowdre.net/coso](https://l.runtimeterror.dev/coso)         | Follow me on CounterSocial                                |
+| [go.bowdre.net/conedoge](https://l.runtimeterror.dev/conedoge)     | 2014 Subaru BRZ autocross videos                          |
 | [go.bowdre.net/cooltechshit](https://l.runtimeterror.dev/cooltechshit) | A collection of cool tech shit (references and resources) |
-| [go.bowdre.net/stuffiuse](https://l.runtimeterror.dev/stuffiuse) | Things that I use (and think you should use too) |
-| [go.bowdre.net/shorterer](https://l.runtimeterror.dev/shorterer) | This post! |
+| [go.bowdre.net/stuffiuse](https://l.runtimeterror.dev/stuffiuse)    | Things that I use (and think you should use too)          |
+| [go.bowdre.net/shorterer](https://l.runtimeterror.dev/shorterer)    | This post!                                                |
 

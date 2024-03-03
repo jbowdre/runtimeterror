@@ -36,13 +36,13 @@ In this post, I'll describe what I did to get Gitea up and running on a tiny ARM
 ### Create the server
 I'll be deploying this on a cloud server with these specs:
 
-| | |
-| --- | --- |
-| Shape | `VM.Standard.A1.Flex` |
-| Image | Ubuntu 22.04 |
-| CPU Count | 1 |
-| Memory (GB) | 6 |
-| Boot Volume (GB) | 50 |
+|                  |                       |
+|------------------|-----------------------|
+| Shape            | `VM.Standard.A1.Flex` |
+| Image            | Ubuntu 22.04          |
+| CPU Count        | 1                     |
+| Memory (GB)      | 6                     |
+| Boot Volume (GB) | 50                    |
 
 I've described the [process of creating a new instance on OCI in a past post](/federated-matrix-server-synapse-on-oracle-clouds-free-tier/#instance-creation) so I won't reiterate that here. The only gotcha this time is switching the shape to `VM.Standard.A1.Flex`; the [OCI free tier](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm) allows two AMD Compute VMs (which I've already used up) as well as *up to four* ARM Ampere A1 instances[^free_ampere].
 
@@ -259,23 +259,23 @@ The format of PostgreSQL data changes with new releases, and that means that the
 {{% /notice %}}
 
 Let's go through the extra configs in a bit more detail:
-| Variable setting | Purpose |
-|:--- |:--- |
-|`USER_UID=1003` | User ID of the `git` user on the container host |
-|`USER_GID=1003` | GroupID of the `git` user on the container host |
-|`GITEA____APP_NAME=Gitea` | Sets the title of the site. I shortened it from `Gitea: Git with a cup of tea` because that seems unnecessarily long. |
-|`GITEA__log__MODE=file` | Enable logging |
-|`GITEA__openid__ENABLE_OPENID_SIGNIN=false` | Disable signin through OpenID |
-|`GITEA__other__SHOW_FOOTER_VERSION=false` | Anyone who hits the web interface doesn't need to know the version |
-|`GITEA__repository__DEFAULT_PRIVATE=private` | All repos will default to private unless I explicitly override that |
-|`GITEA__repository__DISABLE_HTTP_GIT=true` | Require that all Git operations occur over SSH |
-|`GITEA__server__DOMAIN=git.bowdre.net` | Domain name of the server |
-|`GITEA__server__SSH_DOMAIN=git.tadpole-jazz.ts.net` | Leverage Tailscale's [MagicDNS](https://tailscale.com/kb/1081/magicdns/) to tell clients how to SSH to the Tailscale internal IP |
-|`GITEA__server__ROOT_URL=https://git.bowdre.net/` | Public-facing URL |
-|`GITEA__server__LANDING_PAGE=explore` | Defaults to showing the "Explore" page (listing any public repos) instead of the "Home" page (which just tells about the Gitea project) |
-|`GITEA__service__DISABLE_REGISTRATION=true` | New users will not be able to self-register for access; they will have to be manually added by the Administrator account that will be created during the initial setup |
-|`GITEA__service_0X2E_explore__DISABLE_USERS_PAGE=true` | Don't allow browsing of user accounts |
-|`GITEA__ui__DEFAULT_THEME=arc-green` | Default to the darker theme |
+| Variable setting                                       | Purpose                                                                                                                                                                |
+|:-------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `USER_UID=1003`                                        | User ID of the `git` user on the container host                                                                                                                        |
+| `USER_GID=1003`                                        | GroupID of the `git` user on the container host                                                                                                                        |
+| `GITEA____APP_NAME=Gitea`                              | Sets the title of the site. I shortened it from `Gitea: Git with a cup of tea` because that seems unnecessarily long.                                                  |
+| `GITEA__log__MODE=file`                                | Enable logging                                                                                                                                                         |
+| `GITEA__openid__ENABLE_OPENID_SIGNIN=false`            | Disable signin through OpenID                                                                                                                                          |
+| `GITEA__other__SHOW_FOOTER_VERSION=false`              | Anyone who hits the web interface doesn't need to know the version                                                                                                     |
+| `GITEA__repository__DEFAULT_PRIVATE=private`           | All repos will default to private unless I explicitly override that                                                                                                    |
+| `GITEA__repository__DISABLE_HTTP_GIT=true`             | Require that all Git operations occur over SSH                                                                                                                         |
+| `GITEA__server__DOMAIN=git.bowdre.net`                 | Domain name of the server                                                                                                                                              |
+| `GITEA__server__SSH_DOMAIN=git.tadpole-jazz.ts.net`    | Leverage Tailscale's [MagicDNS](https://tailscale.com/kb/1081/magicdns/) to tell clients how to SSH to the Tailscale internal IP                                       |
+| `GITEA__server__ROOT_URL=https://git.bowdre.net/`      | Public-facing URL                                                                                                                                                      |
+| `GITEA__server__LANDING_PAGE=explore`                  | Defaults to showing the "Explore" page (listing any public repos) instead of the "Home" page (which just tells about the Gitea project)                                |
+| `GITEA__service__DISABLE_REGISTRATION=true`            | New users will not be able to self-register for access; they will have to be manually added by the Administrator account that will be created during the initial setup |
+| `GITEA__service_0X2E_explore__DISABLE_USERS_PAGE=true` | Don't allow browsing of user accounts                                                                                                                                  |
+| `GITEA__ui__DEFAULT_THEME=arc-green`                   | Default to the darker theme                                                                                                                                            |
 
 Beyond the environment variables, I also defined a few additional options to allow the SSH passthrough to function. Mounting the `git` user's SSH config directory into the container will ensure that user keys defined in Gitea will also be reflected outside of the container, and setting the container to listen on local port `2222` will allow it to receive the forwarded SSH connections:
 

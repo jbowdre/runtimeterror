@@ -67,22 +67,22 @@ I've now got a fully-functioning VMware lab, complete with a physical hypervisor
 #### Overview
 My home network uses the generic `192.168.1.0/24` address space, with internet router providing DHCP addresses in the range `.100-.250`. I'm using the range `192.168.1.2-.99` for statically-configured IPs, particularly those within my lab environment. Here are the addresses being used by the lab so far:
 
-| IP Address | Hostname | Purpose |
-| ---- | ---- | ---- |
-| `192.168.1.1` |  | Gateway |
-| `192.168.1.5` | `win01` | AD DC, DNS |
+| IP Address     | Hostname  | Purpose            |
+|----------------|-----------|--------------------|
+| `192.168.1.1`  |           | Gateway            |
+| `192.168.1.5`  | `win01`   | AD DC, DNS         |
 | `192.168.1.11` | `nuchost` | Physical ESXi host |
-| `192.168.1.12` | `vcsa` | vCenter Server |
+| `192.168.1.12` | `vcsa`    | vCenter Server     |
 
 Of course, not everything that I'm going to deploy in the lab will need to be accessible from outside the lab environment. This goes for obvious things like the vMotion and vSAN networks of the nested ESXi hosts, but it will also be useful to have internal networks that can be used by VMs provisioned by vRA. So I'll be creating these networks:
 
-| VLAN ID | Network | Purpose |
-| ---- | ---- | ---- |
-| 1610 | `172.16.10.0/24` | Management |
-| 1620 | `172.16.20.0/24` | Servers-1 |
-| 1630 | `172.16.30.0/24` | Servers-2 |
-| 1698 | `172.16.98.0/24` | vSAN |
-| 1699 | `172.16.99.0/24` | vMotion |
+| VLAN ID | Network          | Purpose    |
+|---------|------------------|------------|
+| 1610    | `172.16.10.0/24` | Management |
+| 1620    | `172.16.20.0/24` | Servers-1  |
+| 1630    | `172.16.30.0/24` | Servers-2  |
+| 1698    | `172.16.98.0/24` | vSAN       |
+| 1699    | `172.16.99.0/24` | vMotion    |
 
 #### vSwitch1
 I'll start by adding a second vSwitch to the physical host. It doesn't need a physical adapter assigned since this switch will be for internal traffic. I create two port groups: one tagged for the VLAN 1610 Management traffic, which will be useful for attaching VMs on the physical host to the internal network; and the second will use VLAN 4095 to pass all VLAN traffic to the nested ESXi hosts. And again, this vSwitch needs to have its security policy set to allow Promiscuous Mode and Forged Transmits. I also set the vSwitch to support an MTU of 9000 so I can use Jumbo Frames on the vMotion and vSAN networks.
@@ -182,11 +182,11 @@ Satisfied with my work, I ran the `commit` and `save` commands. BOOM, this serve
 ### Nested vSAN Cluster
 Alright, it's time to start building up the nested environment. To start, I grabbed the latest [Nested ESXi Virtual Appliance .ova](https://williamlam.com/nested-virtualization/nested-esxi-virtual-appliance), courtesy of William Lam. I went ahead and created DNS records for the hosts I'd be deploying, and I mapped out what IPs would be used on each VLAN:
 
-|Hostname|1610-Management|1698-vSAN|1699-vMotion|
-|----|----|----|----|
-|`esxi01.lab.bowdre.net`|`172.16.10.21`|`172.16.98.21`|`172.16.99.21`|
-|`esxi02.lab.bowdre.net`|`172.16.10.22`|`172.16.98.22`|`172.16.99.22`|
-|`esxi03.lab.bowdre.net`|`172.16.10.23`|`172.16.98.23`|`172.16.99.23`|
+| Hostname                | 1610-Management | 1698-vSAN      | 1699-vMotion   |
+|-------------------------|-----------------|----------------|----------------|
+| `esxi01.lab.bowdre.net` | `172.16.10.21`  | `172.16.98.21` | `172.16.99.21` |
+| `esxi02.lab.bowdre.net` | `172.16.10.22`  | `172.16.98.22` | `172.16.99.22` |
+| `esxi03.lab.bowdre.net` | `172.16.10.23`  | `172.16.98.23` | `172.16.99.23` |
 
 Deploying the virtual appliances is just like any other "Deploy OVF Template" action. I placed the VMs on the `physical-cluster` compute resource, and selected to thin provision the VMDKs on the local datastore. I chose the "Isolated" VM network which uses VLAN 4095 to make all the internal VLANs available on a single portgroup.
 
@@ -246,11 +246,11 @@ The [vRealize Easy Installer](https://docs.vmware.com/en/vRealize-Automation/8.2
 
 Anyhoo, each of these VMs will need to be resolvable in DNS so I started by creating some A records:
 
-|FQDN|IP|
-|----|----|
-|`lcm.lab.bowdre.net`|`192.168.1.40`|
-|`idm.lab.bowdre.net`|`192.168.1.41`|
-|`vra.lab.bowdre.net`|`192.168.1.42`|
+| FQDN                 | IP             |
+|----------------------|----------------|
+| `lcm.lab.bowdre.net` | `192.168.1.40` |
+| `idm.lab.bowdre.net` | `192.168.1.41` |
+| `vra.lab.bowdre.net` | `192.168.1.42` |
 
 I then attached the installer ISO to my Windows VM and ran through the installation from there.
 ![vRealize Easy Installer](42n3aMim5.png)

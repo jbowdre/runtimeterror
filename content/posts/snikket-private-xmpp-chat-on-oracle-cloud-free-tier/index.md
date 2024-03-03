@@ -47,15 +47,15 @@ A few days ago I migrated my original Snikket instance from Google Cloud (GCP) t
 ### Infrastructure setup
 You can refer to my notes from last time for details on how I [created the Ubuntu 20.04 VM](/federated-matrix-server-synapse-on-oracle-clouds-free-tier/#instance-creation) and [configured the firewall rules](/federated-matrix-server-synapse-on-oracle-clouds-free-tier/#firewall-configuration) both at the cloud infrastructure level as well as within the host using `iptables`. Snikket does need a few additional [firewall ports](https://github.com/snikket-im/snikket-server/blob/master/docs/advanced/firewall.md) beyond what was needed for my Matrix setup:
 
-| Port(s) | Transport | Purpose |
-| --- | --- | --- |
-| `80, 443` | TCP | Web interface and group file sharing |
-| `3478-3479` | TCP/UDP | Audio/Video data proxy negotiation and discovery ([STUN/TURN](https://www.twilio.com/docs/stun-turn/faq)) |
-| `5349-5350` | TCP/UDP | Audio/Video data proxy negotiation and discovery (STUN/TURN over TLS) |
-| `5000` | TCP | File transfer proxy |
-| `5222` | TCP | Connections from clients |
-| `5269` | TCP | Connections from other servers |
-| `60000-60100`[^4] | UDP | Audio/Video data proxy (TURN data) |
+| Port(s)           | Transport | Purpose                                                               |
+|-------------------|-----------|-----------------------------------------------------------------------|
+| `80, 443`         | TCP       | Web interface and group file sharing                                  |
+| `3478-3479`       | TCP/UDP   | Audio/Video data proxy negotiation and discovery ([STUN/TURN](https://www.twilio.com/docs/stun-turn/faq))     |
+| `5349-5350`       | TCP/UDP   | Audio/Video data proxy negotiation and discovery (STUN/TURN over TLS) |
+| `5000`            | TCP       | File transfer proxy                                                   |
+| `5222`            | TCP       | Connections from clients                                              |
+| `5269`            | TCP       | Connections from other servers                                        |
+| `60000-60100`[^4]     | UDP       | Audio/Video data proxy (TURN data)                                    |
 
 As a gentle reminder, Oracle's `iptables` configuration inserts a `REJECT all` rule at the bottom of each chain. I needed to make sure that each of my `ALLOW` rules get inserted above that point. So I used `iptables -L INPUT --line-numbers` to identify which line held the `REJECT` rule, and then used `iptables -I INPUT [LINE_NUMBER] -m state --state NEW -p [PROTOCOL] --dport [PORT] -j ACCEPT` to insert the new rules above that point.
 ```shell
@@ -165,10 +165,10 @@ sudo vi snikket.conf # [tl! .cmd]
 
 A basic config only needs two parameters:
 
-| Parameter | Description |
-| --- | --- |
-| `SNIKKET_DOMAIN` | The fully-qualified domain name that clients will connect to |
-| `SNIKKET_ADMIN_EMAIL` | An admin contact for the server |
+| Parameter             | Description                                                  |
+|-----------------------|--------------------------------------------------------------|
+| `SNIKKET_DOMAIN`      | The fully-qualified domain name that clients will connect to |
+| `SNIKKET_ADMIN_EMAIL` | An admin contact for the server                              |
 
 That's it.
 
