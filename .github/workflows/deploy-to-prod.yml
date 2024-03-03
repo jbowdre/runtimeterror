@@ -4,6 +4,7 @@ name: Deploy to Production
 on:
   schedule:
     - cron: 0 13 * * *
+  workflow_dispatch:
   push:
     branches:
       - main
