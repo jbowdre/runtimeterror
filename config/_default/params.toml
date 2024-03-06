@@ -143,9 +143,9 @@ title = "omg.lol"
 url = "https://jbowdre.lol"
 
 [[socialLinks]]
-icon = "fa-solid fa-sticky-note"
-title = "Scribbles 'n Bits"
-url = "https://scribbles.jbowdre.lol"
+icon = "fa-solid fa-satellite"
+title = "Gemlog"
+url = "https://capsule.jbowdre.lol/gemlog/"
 
 [[socialLinks]]
 icon = "fa-solid fa-circle-user"
