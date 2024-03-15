@@ -15,7 +15,7 @@ Once I grew up[^2], I found a career in system administration, and I leveraged m
 
 I'm now part of a small platform engineering team within that same large corporation, focused on leveraging DevOps thinking and tools to help our internal customers modernize how they operate IT, build code, and ship products, while designing solutions to help them accomplish those goals. It's a great blend of my virtual infrastructure operations background, hobbyist development experience, and hunger for solving problems, and I really enjoy applying these skills to solve interesting challenges at scale.
 
-On my off time, I tinker with new [projects](/categories/self-hosting) in my little homelab (and share some of those adventures here). I also help out on Google's product support forums as a [Product Expert](https://productexperts.withgoogle.com/what-it-is), where I support Pixel phones, earbuds, and watches, as well as Chromebooks (primarily with Linux-related queries). Helping users troubleshoot their issues scratches my problem-solving itch, and it keeps me connected with some really great like-minded tech enthusiasts.
+On my off time, I tinker with new [projects](/categories/self-hosting) in my little homelab (and share some of those adventures here). I love experimenting with new (to me) technologies, and I've found that actually _using_ something is typically the best way to learn it.
 
 On weekends, I race my daily-driven 2014 Subaru BRZ in local [autocross events](https://l.runtimeterror.dev/my-autox-vids) or wrench on my 1974 Volkswagen Karmann Ghia.
 
