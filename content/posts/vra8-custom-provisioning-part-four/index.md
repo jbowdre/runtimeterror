@@ -89,33 +89,33 @@ So far, vRA has been automatically placing VMs on networks based solely on  [whi
 
 As a quick recap, I've got five networks available for vRA, split across my two sites using tags:
 
-|Name |Subnet |Site |Tags |
-| --- | --- | --- | --- |
-| d1620-Servers-1 | 172.16.20.0/24 | BOW | `net:bow` |
-| d1630-Servers-2 | 172.16.30.0/24 | BOW | `net:bow` |
-| d1640-Servers-3 | 172.16.40.0/24 | BOW | `net:bow` |
-| d1650-Servers-4 | 172.16.50.0/24 | DRE | `net:dre` |
-| d1660-Servers-5 | 172.16.60.0/24 | DRE | `net:dre` |
+| Name            | Subnet         | Site | Tags      |
+|-----------------|----------------|------|-----------|
+| d1620-Servers-1 | 172.16.20.0/24 | BOW  | `net:bow` |
+| d1630-Servers-2 | 172.16.30.0/24 | BOW  | `net:bow` |
+| d1640-Servers-3 | 172.16.40.0/24 | BOW  | `net:bow` |
+| d1650-Servers-4 | 172.16.50.0/24 | DRE  | `net:dre` |
+| d1660-Servers-5 | 172.16.60.0/24 | DRE  | `net:dre` |
 
 I'm going to add additional tags to these networks to further define their purpose.
 
-|Name |Purpose |Tags |
-| --- | --- | --- |
-| d1620-Servers-1 |Management | `net:bow`, `net:mgmt` |
-| d1630-Servers-2 | Front-end | `net:bow`, `net:front` |
-| d1640-Servers-3 | Back-end | `net:bow`, `net:back` |
-| d1650-Servers-4 | Front-end | `net:dre`, `net:front` |
-| d1660-Servers-5 |  Back-end | `net:dre`, `net:back` |
+| Name            | Purpose    | Tags                   |
+|-----------------|------------|------------------------|
+| d1620-Servers-1 | Management | `net:bow`, `net:mgmt`  |
+| d1630-Servers-2 | Front-end  | `net:bow`, `net:front` |
+| d1640-Servers-3 | Back-end   | `net:bow`, `net:back`  |
+| d1650-Servers-4 | Front-end  | `net:dre`, `net:front` |
+| d1660-Servers-5 | Back-end   | `net:dre`, `net:back`  |
 
 I *could* just use those tags to let users pick the appropriate network, but I've found that a lot of times users don't know why they're picking a certain network, they just know the IP range they need to use. So I'll take it a step further and add a giant tag to include the Site, Purpose, and Subnet, and this is what will ultimately be presented to the users:
 
-|Name |Tags |
-| --- | --- |
-| d1620-Servers-1 | `net:bow`, `net:mgmt`, `net:bow-mgmt-172.16.20.0` |
+| Name            | Tags                                                |
+|-----------------|-----------------------------------------------------|
+| d1620-Servers-1 | `net:bow`, `net:mgmt`, `net:bow-mgmt-172.16.20.0`   |
 | d1630-Servers-2 | `net:bow`, `net:front`, `net:bow-front-172.16.30.0` |
-| d1640-Servers-3 | `net:bow`, `net:back`, `net:bow-back-172.16.40.0` |
+| d1640-Servers-3 | `net:bow`, `net:back`, `net:bow-back-172.16.40.0`   |
 | d1650-Servers-4 | `net:dre`, `net:front`, `net:dre-front-172.16.50.0` |
-| d1660-Servers-5 | `net:dre`, `net:back`, `net:dre-back-172.16.60.0` |
+| d1660-Servers-5 | `net:dre`, `net:back`, `net:dre-back-172.16.60.0`   |
 
 ![Tagged networks](J_RG9JNPz.png)
 

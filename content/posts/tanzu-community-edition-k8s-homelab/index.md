@@ -45,11 +45,11 @@ The Kubernetes node VMs will need to be attached to a network with a DHCP server
 
 I'll also need to set aside a few static IPs for this project. These will need to be routable and within the same subnet as the DHCP range, but excluded from that DHCP range.
 
-| IP Address | Purpose |
-| --- | --- |
-| `192.168.1.60` | Control plane for Management cluster |
-| `192.168.1.61` | Control plane for Workload cluster |
-| `192.168.1.64 - 192.168.1.80` | IP range for Workload load balancer |
+| IP Address                    | Purpose                              |
+|-------------------------------|--------------------------------------|
+| `192.168.1.60`                | Control plane for Management cluster |
+| `192.168.1.61`                | Control plane for Workload cluster   |
+| `192.168.1.64 - 192.168.1.80` | IP range for Workload load balancer  |
 
 
 ### Prerequisites

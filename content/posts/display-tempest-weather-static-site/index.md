@@ -1,7 +1,7 @@
 ---
 title: "Displaying Data from a Tempest Weather Station on a Static Site"
 date: "2024-02-11T20:48:49Z"
-# lastmod: 2024-02-10
+lastmod: "2024-02-23T22:00:22Z"
 description: "Using a GitHub Actions workflow to retrieve data from an authenticated API, posting results to a publicly-accessible pastebin, and displaying them on a static web site."
 featured: false
 thumbnail: "finished-product.png"
@@ -674,8 +674,8 @@ const CLASS_MAP_WX = {
   'clear-night': 'fa-solid fa-moon',
   'cloudy': 'fa-solid fa-cloud',
   'foggy': 'fa-solid fa-cloud-showers-smog',
-  'partly-cloudy-day': 'fa-solid fa-clouds-sun',
-  'partly-cloudy-night': 'fa-solid fa-clouds-moon',
+  'partly-cloudy-day': 'fa-solid fa-cloud-sun',
+  'partly-cloudy-night': 'fa-solid fa-cloud-moon',
   'possibly-rainy-day': 'fa-solid fa-cloud-sun-rain',
   'possibly-rainy-night': 'fa-solid fa-cloud-moon-rain',
   'possibly-sleet-day': 'fa-solid fa-cloud-meatball',

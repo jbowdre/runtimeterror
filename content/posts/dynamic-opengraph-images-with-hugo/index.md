@@ -13,23 +13,25 @@ tags:
   - meta
   - selfhosting
 ---
-I've lately seen some folks on [social.lol](https://social.lol) posting about their various strategies for automatically generating [Open Graph images](https://ogp.me/) for their [Eleventy](https://11ty.dev) sites. So this weekend I started exploring ways to do that for my [Hugo](https://gohugo.io) site.
+I've lately seen some folks on [social.lol](https://social.lol) posting about their various strategies for automatically generating [Open Graph images](https://ogp.me/) for their [Eleventy](https://11ty.dev) sites. So this weekend I started exploring how I could do that for my [Hugo](https://gohugo.io) site[^site].
 
-During my search, I came across a few different approaches using external services or additional scripts to run at build time, but I was hoping for a way to do this with Hugo's built-in tooling. I eventually came across a tremendously helpful post from Aaro titled [Generating OpenGraph images with Hugo](https://aarol.dev/posts/hugo-og-image/). This solution was exactly what I was after, as it uses Hugo's [image functions](https://gohugo.io/functions/images/filter/) to dynamically create a share image for each page.
+[^site]: You're looking at it.
+
+During my search, I came across a few different approaches using external services or additional scripts to run at build time, but I was hoping for a way to do this with Hugo's built-in tooling. I eventually came across a tremendously helpful post from [Aaro](https://aarol.dev/about/) titled [Generating OpenGraph images with Hugo](https://aarol.dev/posts/hugo-og-image/). This solution was exactly what I was after, as it uses Hugo's [image functions](https://gohugo.io/functions/images/filter/) to dynamically create a share image for each page.
 
 I ended up borrowing heavily from Aaro's approach while adding a few small variations for my OpenGraph images.
 - When sharing the home page, the image includes the site description.
 - When sharing a post, the image includes the post title.
-- ... but if the post has a thumbnail[^thumbnail] listed in the front matter, that gets overlaid in the corner.
+- ... and if the post has a thumbnail[^thumbnail] listed in the front matter, that gets overlaid in the corner.
 
 [^thumbnail]: My current theme doesn't make use of the thumbnails, but a previous theme did so I've got a bunch of posts with thumbnails still assigned. And now I've got a use for them again!
 
 Here's how I did it.
 
 ### New resources
-Based on Aaro's suggestions, I used [GIMP](https://www.gimp.org/) to create a 1200x600 image for the base. I'm not a graphic designer[^web] so I kept it simple while trying to match the theme, font, and colors used on the site.
+Based on Aaro's suggestions, I used [GIMP](https://www.gimp.org/) to create a 1200x600 image for the base. I'm not a graphic designer[^web] so I kept it simple while trying to match the site's theme.
 
-I had to install the Fira Mono font [Fira Mono `.ttf`](https://github.com/mozilla/Fira/blob/master/ttf/FiraMono-Regular.ttf) to my `~/.fonts/` folder so I could use it in GIMP.
+I had to install the Fira Mono font [Fira Mono `.ttf`](https://github.com/mozilla/Fira/blob/master/ttf/FiraMono-Regular.ttf) to my `~/.fonts/` folder so I could use it in GIMP, and I wound up with a decent recreation of the little "logo" at the top of the page.
 
 ![Red background with a command prompt displaying "[runtimeterror.dev] $" in white and red font.](og_base.png)
 
@@ -81,8 +83,10 @@ which is in turn loaded by `layouts/_defaults/baseof.html`:
   </head>
 ```
 
+So now the customized OpenGraph content will be loaded for each page.
+
 ### Aaro's OG image generation
-[Aaro's code](https://aarol.dev/posts/hugo-og-image/) provided the base functionality for what I need:
+[Aaro's code](https://aarol.dev/posts/hugo-og-image/) provided the base functionality for what I needed:
 
 ```jinja-html
 {{/* Generate opengraph image */}}
@@ -121,16 +125,16 @@ which is in turn loaded by `layouts/_defaults/baseof.html`:
 
 The [`resources.Get`](https://gohugo.io/functions/resources/get/) bits import the image and font resources to make them available to the [`images.Text`](https://gohugo.io/functions/images/text/) functions, which add the site and page title texts to the image using the designated color, size, placement, and font.
 
-The `resources.Copy` line moves the generated OG image into the post bundle directory and gives it a clean `og.png` name rather than the very-long randomly-generated name it would have by default.
+The `resources.Copy` line moves the generated OG image alongside the post itself and gives it a clean `og.png` name rather than the very-long randomly-generated name it would have by default.
 
-And then the `<meta ... />` lines insert the generated image into the page's `<head>` block so it can be rendered when the link is shared on sites which support OpenGraph.
+And then the `<meta />` lines insert the generated image into the page's `<head>` block so it can be rendered when the link is shared on sites which support OpenGraph.
 
-This is a great starting point for what I wanted to accomplish, but made some changes in my `opengraph.html` partial to tailor it to my needs.
+This is a great starting point for what I wanted to accomplish, but I made some changes to my `opengraph.html` partial to tailor it to my needs.
 
 ### My tweaks
 As I mentioned earlier, I wanted to have three slightly-different recipes for baking my OG images: one for the homepage, one for standard posts, and one for posts with an associated thumbnail. They all use the same basic code, though, so I wanted to be sure that my setup didn't repeat itself too much.
 
-My code starts with fetching my resources up front, and initializing an empty `$text` variable to hold the description or title:
+My code starts with fetching my resources up front, and initializing an empty `$text` variable to hold either the site description *or* post title:
 
 ```jinja-html
 {{ $img := resources.Get "og_base.png" }}
@@ -165,11 +169,13 @@ If the page has a `thumbnail` parameter defined in the front matter,  Hugo will 
 The [`resources.Get` function](https://gohugo.io/functions/resources/get/) (little r) I used earlier works on *global* resources, like the image and font stored in the site's `assets/` directory. On the other hand, the [`Resources.Get` method](https://gohugo.io/methods/page/resources/) (big R) is used for loading *page* resources, like the file indicated by the page's `thumbnail` parameter.
 {{% /notice %}}
 
-And since I'm calling this method from inside a `with` branch I have to put a `$` in front of the method. Otherwise, the leading `.` would refer directly to the `thumbnail` parameter (which isn't a page and so doesn't have the method available[^scope]).
+Since I'm calling this method from inside a `with` block I use a `$` in front of the method name to get the [parent context](https://gohugo.io/functions/go-template/with/#understanding-context). Otherwise, the leading `.` would refer directly to the `thumbnail` parameter (which isn't a page and so doesn't have the method available[^scope]).
 
 [^scope]: Hugo scoping is kind of wild.
 
-Anyhoo, after the thumbnail is loaded, I use the [`Fit` image processing](https://gohugo.io/content-management/image-processing/#fit) to scale down the thumbnail and then call the [`images.Overlay` function](https://gohugo.io/functions/images/overlay/) to *overlay* it near the top right corner of the `og_base.png` image.
+Anyhoo, after the thumbnail is loaded, I use the [`Fit` image processing method](https://gohugo.io/content-management/image-processing/#fit) to scale down the thumbnail. It is then passed to the [`images.Overlay` function](https://gohugo.io/functions/images/overlay/) to *overlay* it near the top right corner of the `og_base.png` image[^placement].
+
+[^placement]: The overlay is placed using absolute X and Y coordinates. There's probably a way to tell it "offset the top-right corner of the overlay 20x20 from the top right of the base image" but I ran out of caffeine to figure that out at this time. Let me know if you know a trick!
 
 ```jinja-html
   {{ with $thumbnail }}

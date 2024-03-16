@@ -259,13 +259,13 @@ I'll call it `dnsConfig` and put it in my `CustomProvisioning` folder.
 
 And then I create the following variables:
 
-| Variable | Value | Type |
-| --- | --- | --- |
-| `sshHost` | `win02.lab.bowdre.net` | string |
-| `sshUser` | `vra` | string |
-| `sshPass` | `*****` | secureString |
-| `dnsServer` | `[win01.lab.bowdre.net]` | Array/string |
-| `supportedDomains` | `[lab.bowdre.net]` | Array/string |
+| Variable           | Value                    | Type         |
+|--------------------|--------------------------|--------------|
+| `sshHost`          | `win02.lab.bowdre.net`   | string       |
+| `sshUser`          | `vra`                    | string       |
+| `sshPass`          | `*****`                  | secureString |
+| `dnsServer`        | `[win01.lab.bowdre.net]` | Array/string |
+| `supportedDomains` | `[lab.bowdre.net]`       | Array/string |
 
 `sshHost` is my new `win02` server that I'm going to connect to via SSH, and `sshUser` and `sshPass` should explain themselves. The `dnsServer` array will tell the script which DNS servers to try to create the record on; this will just be a single server in my lab, but I'm going to construct the script to support multiple servers in case one isn't reachable. And `supported domains` will be used to restrict where I'll be creating records; again, that's just a single domain in my lab, but I'm building this solution to account for the possibility where a VM might need to be deployed on a domain where I can't create a static record in this way so I want it to fail elegantly.
 

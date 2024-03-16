@@ -8,7 +8,7 @@ showReadTime = false
 timeless = true
 title = "SimpleX Chat"
 +++
-*You can **[contact me on SimpleX Chat](https://l.runtimeterror.dev/simplex-chat-invite)** by clicking that link or scanning the QR code below.*
+> You can [contact me on SimpleX Chat](https://l.runtimeterror.dev/simplex-chat-invite) by clicking that link or scanning the QR code below.
 
 ![QR code](/images/simplex-invite.png)
 
@@ -28,9 +28,9 @@ Just add these in the SimpleX app at **Settings > Network & servers > SMP server
 
 `smp://kYx5LmVD9FMM8hJN4BQqL4WmeUNZn8ipXsX2UkBoiHE=@smp.vpota.to`
 
-| | |
-| --- | --- |
-| [![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp-vpota-to-5223%2Fuptime.json)](https://status.runtimeterror.dev/history/smp-vpota-to-5223) | [[netdata](https://l.runtimeterror.dev/smp_status)] |
+[![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp-vpota-to-5223%2Fuptime.json)](https://status.runtimeterror.dev/history/smp-vpota-to-5223)
+
+[netdata](https://l.runtimeterror.dev/smp_status)
 
 ---
 
@@ -38,9 +38,9 @@ Just add these in the SimpleX app at **Settings > Network & servers > SMP server
 
 `smp://TbUrGydawdVKID0Lvix14UkaN-WarFgqXx4kaEG8Trw=@smp1.vpota.to`
 
-| | |
-| --- | --- |
-| [![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp1-vpota-to-5223%2Fuptime.json)](https://status.runtimeterror.dev/history/smp1-vpota-to-5223) | [[netdata](https://l.runtimeterror.dev/smp1_status)] |
+[![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp1-vpota-to-5223%2Fuptime.json)](https://status.runtimeterror.dev/history/smp1-vpota-to-5223)
+
+[netdata](https://l.runtimeterror.dev/smp1_status)
 
 ---
 
@@ -48,6 +48,6 @@ Just add these in the SimpleX app at **Settings > Network & servers > SMP server
 
 `smp://tNfQisxTQ9MhKpFDTbx9RnjgWigtxF1a26jroy5-rR4=@smp2.vpota.to`
 
-| | |
-| --- | --- |
-| [![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp2-vpota-to-5223%2Fuptime.json)](https://status.runtimeterror.dev/history/smp2-vpota-to-5223) | [[netdata](https://l.runtimeterror.dev/smp2_status)] |
+[![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjbowdre%2Fupptime%2Fmaster%2Fapi%2Fsmp2-vpota-to-5223%2Fuptime.json)](https://status.runtimeterror.dev/history/smp2-vpota-to-5223)
+
+[netdata](https://l.runtimeterror.dev/smp2_status)
