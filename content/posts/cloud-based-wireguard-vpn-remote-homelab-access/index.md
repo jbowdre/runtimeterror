@@ -41,12 +41,12 @@ Okay, enough background; let's get this thing going.
 #### Instance Deployment
 I started by logging into my Google Cloud account at https://console.cloud.google.com, and proceeded to create a new project (named `wireguard`) to keep my WireGuard-related resources together. I then navigated to **Compute Engine** and [created a new instance](https://console.cloud.google.com/compute/instancesAdd) inside that project. The basic setup is:
 
-| Attribute | Value |
-| --- | --- |
-| Name | `wireguard` |
-| Region | `us-east1` (or whichever [free-tier-eligible region](https://cloud.google.com/free/docs/gcp-free-tier/#compute) is closest) |
-| Machine Type | `e2-micro` |
-| Boot Disk Size | 10 GB |
+| Attribute       | Value            |
+|-----------------|------------------|
+| Name            | `wireguard`      |
+| Region          | `us-east1`       |
+| Machine Type    | `e2-micro`       |
+| Boot Disk Size  | 10 GB            |
 | Boot Disk Image | Ubuntu 20.04 LTS |
 
 ![Instance creation](20211027_instance_creation.png)
@@ -325,25 +325,25 @@ _Note: the version of the WireGuard app currently available on the Play Store (v
 
 Once it's installed, I open the app and click the "Plus" button to create a new tunnel, and select the _Create from scratch_ option. I click the circle-arrows icon at the right edge of the _Private key_ field, and that automatically generates this peer's private and public key pair. Simply clicking on the _Public key_ field will automatically copy the generated key to my clipboard, which will be useful for sharing it with the server. Otherwise I fill out the **Interface** section similarly to what I've done already:
 
-| Parameter | Value |
-| --- | --- |
-| Name | `wireguard-gcp` |
+| Parameter   | Value              |
+|-------------|--------------------|
+| Name        | `wireguard-gcp`    |
 | Private key | `{CB_PRIVATE_KEY}` |
-| Public key | `{CB_PUBLIC_KEY}` |
-| Addresses | `10.200.200.3/24` |
-| Listen port |  |
-| DNS servers | `10.200.200.2` |
-| MTU |  |
+| Public key  | `{CB_PUBLIC_KEY}`  |
+| Addresses   | `10.200.200.3/24`  |
+| Listen port |                    |
+| DNS servers | `10.200.200.2`     |
+| MTU         |                    |
 
 I then click the **Add Peer** button to tell this client about the peer it will be connecting to - the GCP-hosted instance:
 
-| Parameter | Value |
-| --- | --- |
-| Public key | `{GCP_PUBLIC_KEY}` |
-| Pre-shared key | |
-| Persistent keepalive | |
-| Endpoint | `{GCP_PUBLIC_IP}:51820` |
-| Allowed IPs | `0.0.0.0/0` |
+| Parameter            | Value                   |
+|----------------------|-------------------------|
+| Public key           | `{GCP_PUBLIC_KEY}`      |
+| Pre-shared key       |                         |
+| Persistent keepalive |                         |
+| Endpoint             | `{GCP_PUBLIC_IP}:51820` |
+| Allowed IPs          | `0.0.0.0/0`             |
 
 I _shouldn't_ need the keepalive for the "Road Warrior" peers connecting to the GCP peer, but I can always set that later if I run into stability issues.
 

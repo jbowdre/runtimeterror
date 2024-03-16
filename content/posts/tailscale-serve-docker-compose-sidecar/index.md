@@ -213,15 +213,15 @@ TS_SERVE_PORT=8080
 TS_FUNNEL=1
 ```
 
-| Variable Name | Example | Description |
-| --- | --- | --- |
-| `TS_AUTHKEY` | `tskey-auth-somestring-somelongerstring` | used for unattended auth of the new node, get one [here](https://login.tailscale.com/admin/settings/keys) |
-| `TS_HOSTNAME` | `tsdemo` | optional Tailscale hostname for the new node[^hostname] |
-| `TS_STATE_DIR` | `/var/lib/tailscale/` | required directory for storing Tailscale state, this should be mounted to the container for persistence |
-| `TS_TAILSCALED_EXTRA_ARGS` | `--verbose=1`[^verbose] | optional additional [flags](https://tailscale.com/kb/1278/tailscaled#flags-to-tailscaled) for `tailscaled` |
-| `TS_EXTRA_ARGS` | `--ssh`[^ssh] | optional additional [flags](https://tailscale.com/kb/1241/tailscale-up) for `tailscale up` |
-| `TS_SERVE_PORT` | `8080` | optional application port to expose with [Tailscale Serve](https://tailscale.com/kb/1312/serve) |
-| `TS_FUNNEL` | `1` | if set (to anything), will proxy `TS_SERVE_PORT` **publicly** with [Tailscale Funnel](https://tailscale.com/kb/1223/funnel) |
+| Variable Name              | Example                                  | Description                                                                                             |
+|----------------------------|------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| `TS_AUTHKEY`               | `tskey-auth-somestring-somelongerstring` | used for unattended auth of the new node, get one [here](https://login.tailscale.com/admin/settings/keys)                                             |
+| `TS_HOSTNAME`              | `tsdemo`                                 | optional Tailscale hostname for the new node[^hostname]                                                            |
+| `TS_STATE_DIR`             | `/var/lib/tailscale/`                    | required directory for storing Tailscale state, this should be mounted to the container for persistence |
+| `TS_TAILSCALED_EXTRA_ARGS` | `--verbose=1`[^verbose]                            | optional additional [flags](https://tailscale.com/kb/1278/tailscaled#flags-to-tailscaled) for `tailscaled`                                                         |
+| `TS_EXTRA_ARGS`            | `--ssh`[^ssh]                                  | optional additional [flags](https://tailscale.com/kb/1241/tailscale-up) for `tailscale up`                                                       |
+| `TS_SERVE_PORT`            | `8080`                                   | optional application port to expose with [Tailscale Serve](https://tailscale.com/kb/1312/serve)                                           |
+| `TS_FUNNEL`                | `1`                                      | if set (to anything), will proxy `TS_SERVE_PORT` **publicly** with [Tailscale Funnel](https://tailscale.com/kb/1223/funnel)                |
 
 [^hostname]: This hostname will determine the fully-qualified domain name where the resource will be served: `https://[hostname].[tailnet-name].ts.net`. So you'll want to make sure it's a good one for what you're trying to do.
 [^verbose]: Passing the `--verbose` flag to `tailscaled` increases the logging verbosity, which can be helpful if you need to troubleshoot.

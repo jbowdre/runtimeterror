@@ -1,15 +1,16 @@
-name: Deploy to Neocities
+name: Deploy to Production
 
 # only run on changes to main
 on:
   schedule:
     - cron: 0 13 * * *
+  workflow_dispatch:
   push:
     branches:
       - main
 
 concurrency: # prevent concurrent deploys doing strange things
-  group: deploy-to-neocities
+  group: deploy-to-prod
   cancel-in-progress: true
 
 # Default to bash
@@ -40,9 +41,25 @@ jobs:
         run: |
           npm i @torchlight-api/torchlight-cli
           npx torchlight
-      - name: Deploy to Neocities
+      - name: Deploy HTML to Neocities
         uses: bcomnes/deploy-to-neocities@v1
         with:
           api_token: ${{ secrets.NEOCITIES_API_TOKEN }}
           cleanup: true
           dist_dir: public
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TS_API_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_API_CLIENT_SECRET }}
+          tags: ${{ secrets.TS_TAG }}
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          name: id_rsa
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+      - name: Deploy GMI to Agate
+        run: |
+          rsync -avz --delete --exclude='*.html' --exclude='*.css' --exclude='*.js' -e ssh public/ deploy@${{ secrets.GMI_HOST }}:${{ secrets.GMI_CONTENT_PATH }}
+

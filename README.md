@@ -1,1 +1,1 @@
-[![Neocities Deployment Status](https://github.com/jbowdre/runtimeterror/actions/workflows/deploy-to-neocities.yml/badge.svg)](https://github.com/jbowdre/runtimeterror/actions/workflows/deploy-to-neocities.yml)
+[![Deployment Status](https://github.com/jbowdre/runtimeterror/actions/workflows/deploy-to-prod.yml/badge.svg)](https://github.com/jbowdre/runtimeterror/actions/workflows/deploy-to-prod.yml)

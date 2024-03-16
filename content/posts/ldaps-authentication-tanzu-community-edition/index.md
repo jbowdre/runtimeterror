@@ -42,26 +42,26 @@ The [cluster deployment steps](/tanzu-community-edition-k8s-homelab/#management-
 ![Identity Management section](identity_management_1.png)
 
 **LDAPS Identity Management Source**
-| Field | Value | Notes |
-| ---   | ---   | ----  |
-| LDAPS Endpoint | `win01.lab.bowdre.net:636` | LDAPS interface of my AD DC |
-| BIND DN | `CN=LDAP Bind,OU=Users,OU=BOW,OU=LAB,DC=lab,DC=bowdre,DC=net` | DN of an account with LDAP read permissions |
-| BIND Password | `*******` | Password for that account |
+| Field          | Value                                                         | Notes                                       |
+|----------------|---------------------------------------------------------------|---------------------------------------------|
+| LDAPS Endpoint | `win01.lab.bowdre.net:636`                                    | LDAPS interface of my AD DC                 |
+| BIND DN        | `CN=LDAP Bind,OU=Users,OU=BOW,OU=LAB,DC=lab,DC=bowdre,DC=net` | DN of an account with LDAP read permissions |
+| BIND Password  | `*******`                                                     | Password for that account                   |
 
 **User Search Attributes**
-| Field | Value | Notes |
-| ---   | ---   | ---   |
-| Base DN | `OU=LAB,DC=lab,DC=bowdre,DC=net` | DN for the top-level OU containing my users |
-| Filter | `objectClass=(person)` | |
-| Username | `sAMAccountName` | I want to auth as `john` rather than `john@lab.bowdre.net` (`userPrincipalName`) |
+| Field    | Value                            | Notes                                                                            |
+|----------|----------------------------------|----------------------------------------------------------------------------------|
+| Base DN  | `OU=LAB,DC=lab,DC=bowdre,DC=net` | DN for the top-level OU containing my users                                      |
+| Filter   | `objectClass=(person)`           |                                                                                  |
+| Username | `sAMAccountName`                 | I want to auth as `john` rather than `john@lab.bowdre.net` (`userPrincipalName`) |
 
 **Group Search Attributes**
-| Field | Value | Notes |
-| ---   | ---   | ---   |
-| Base DN | `OU=LAB,DC=lab,DC=bowdre,DC=net` | DN for OU containing my users |
-| Filter | `(objectClass=group)` | |
-| Name Attribute | `cn` | Common Name |
-| User Attribute | `DN` | Distinguished Name (capitalization matters!) |
+| Field           | Value                             | Notes                                                         |
+|-----------------|-----------------------------------|---------------------------------------------------------------|
+| Base DN         | `OU=LAB,DC=lab,DC=bowdre,DC=net`  | DN for OU containing my users                                 |
+| Filter          | `(objectClass=group)`             |                                                               |
+| Name Attribute  | `cn`                              | Common Name                                                   |
+| User Attribute  | `DN`                              | Distinguished Name (capitalization matters!)                  |
 | Group Attribute | `member:1.2.840.113556.1.4.1941:` | Used to enumerate which groups a user is a member of[^member] |
 
 And I'll copy the contents of the base64-encoded CA certificate I downloaded earlier and paste them into the Root CA Certificate field.

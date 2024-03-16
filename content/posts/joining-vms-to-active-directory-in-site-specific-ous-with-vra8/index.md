@@ -16,10 +16,10 @@ Connecting a deployed Windows VM to an Active Directory domain is pretty easy; j
 
 Fortunately, vRA 8 supports adding an Active Directory integration to handle staging computer objects in a designated OU. And vRA 8.3 even [introduced the ability](https://blogs.vmware.com/management/2021/02/whats-new-with-vrealize-automation-8-3-technical-overview.html#:~:text=New%20Active%20Directory%20Cloud%20Template%20Properties) to let blueprints override the relative DN path. That will be helpful in my case since I'll want the servers to be placed in different OUs depending on which site they get deployed to:
 
-| **Site** | **OU** |
-| --- | --- |
-| `BOW` | `lab.bowdre.net/LAB/BOW/Computers/Servers` |
-| `DRE` | `lab.bowre.net/LAB/DRE/Computers/Servers` |
+| **Site** | **OU**                                     |
+|----------|--------------------------------------------|
+| `BOW`    | `lab.bowdre.net/LAB/BOW/Computers/Servers` |
+| `DRE`    | `lab.bowre.net/LAB/DRE/Computers/Servers`  |
 
 
 I didn't find a lot of documentation on how make this work, though, so here's how I've implemented it in my lab (now running vRA 8.4.2).

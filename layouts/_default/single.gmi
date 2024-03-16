@@ -1,0 +1,57 @@
+{{- $scratch := newScratch -}}{{- $scratch.Set "ref" 1 -}}
+=> / 💻 [runtimeterror $]
+{{ if .Params.Date }}
+  {{- $postDate := .Date.Format "2006-01-02" }}
+  {{- $updateDate := .Lastmod.Format "2006-01-02" }}
+  {{- $postDate }}{{ if ne $postDate $updateDate }} ~ {{ $updateDate }}{{ end }}
+{{- end }}
+# {{ .Title }}
+{{/* The bulk of this regex magic was inspired by https://brainbaking.com/post/2021/04/using-hugo-to-launch-a-gemini-capsule/ */}}
+{{ range $content := split .RawContent "\n\n" }}
+  {{- $blockRef := $scratch.Get "ref" -}}
+  {{- $content := $content | replaceRE `#{4,} ` "### " -}}{{/* reduce headings to a max of 3 levels */}}
+  {{- $content := $content | replaceRE `(?m:^- (.+?)$)` "\n* $1" -}}{{/* convert unordered lists */}}
+  {{- $content := $content | replaceRE `(?m:^(?:\d+). (.+?)$)` "* $1" -}}{{/* convert ordered lists */}}
+  {{- $content := $content | replaceRE `\n?\[\^(.+?)\]:\s*.*` "" -}}{{/* remove footnote definitions */}}
+  {{- $content := $content | replaceRE `\[\^(.+?)\]` "" -}}{{/* remove footnote anchors */}}
+  {{- $content := $content | replaceRE `((?m:^(?:\|.*\|)+\n?)+)` "```\n$1\n```\n" -}}{{/* render markdown tables as plaintext ascii */}}
+  {{- $content := $content | replaceRE "(?m:^`([^`]*)`$)" "```\n$1\n```\n" -}}{{/* convert single-line inline code to blocks */}}
+  {{- $content := $content | replaceRE `\{\{%\snotice.*%\}\}` "<-- note -->" -}}{{/* convert hugo notices */}}
+  {{- $content := $content | replaceRE `\{\{%\s/notice.*%\}\}` "<-- /note -->" -}}
+  {{- $content := $content | replaceRE `((\/\/)|#)\s*torchlight!.*\n` "" -}}{{/* remove torchlight markup */}}
+  {{- $content := $content | replaceRE `(?:(?:<!--)|(?:#)|(?:\/\/))*\s*\[tl!.*\].*` "" -}}
+  {{- $content := $content | replaceRE `(?m:^\[!\[(.*)\]\(.*\)\]\((.*)\)$)` "=> $2 $1" -}}{{/* remove images from uptime links */}}
+  {{- $content := $content | replaceRE `(?m:^\s*(?:(?:\*|\-)\s+)?\[(.*)\]\((.*)\)$)` "=> $2 $1" -}}{{/* convert links already on own line */}}
+  {{- $content := $content | replaceRE `(?m:^!\[(.*)\]\((.+?)\)$)` "=> $2 Image: $1" -}}{{/* convert embedded images */}}
+  {{- $links := findRE `\[.+?\]\(.+?\)` $content -}}
+  {{- $scratch.Set "content" $content -}}
+  {{- range $links -}}
+    {{- $ref := $scratch.Get "ref" -}}
+    {{- $contentInLoop := $scratch.Get "content" -}}
+    {{- $url := (printf "%s #%d" . $ref) -}}
+    {{- $contentInLoop := replace $contentInLoop . $url -}}
+    {{- $scratch.Set "content" $contentInLoop -}}
+    {{- $scratch.Set "ref" (add $ref 1) -}}
+  {{- end -}}
+  {{- $content := $scratch.Get "content" | replaceRE `\[(.+?)\]\((.+?)\) #(\d+)` "$1 [$3]" }}
+  {{- $content | safeHTML }}
+  {{- range $links -}}
+    {{- $ref := $scratch.Get "ref" -}}
+    {{- $url := (printf "%s #%d" . $blockRef) }}
+=> {{ $url | replaceRE `\[(.+?)\]\((.+?)\) #(\d+)` "$2 [$3] $1" }}
+    {{- $blockRef = add $blockRef 1 -}}
+  {{ end }}
+{{ end }}
+
+---
+{{ $subject := printf "Re: %s" .Title -}}
+=> mailto:blog@runtimeterror.dev?subject={{ urlquery $subject | replaceRE `\+` "%20" }} 📧 Reply via email
+{{ $related := first 3 (where (where .Site.RegularPages.ByDate.Reverse ".Params.tags" "intersect" .Params.tags) "Permalink" "!=" .Permalink) }}
+{{ if $related }}
+## Related articles
+{{ range $related }}
+=> {{ replace .RelPermalink "/gemini" "" 1}} {{ .Title }}{{ end }}{{ end }}
+---
+
+=> / Home
+=> https://runtimeterror.dev{{ replace (replace .RelPermalink "/gemini" "" 1) "index.gmi" "" }} This page on the big web

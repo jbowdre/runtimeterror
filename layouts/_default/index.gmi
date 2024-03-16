@@ -1,0 +1,12 @@
+# [runtimeterror $]
+=> /about Adventures in self-hosting and other technological frustrations.
+{{ $pages := .Pages -}}
+{{ $pages = where site.RegularPages "Type" "in" site.Params.mainSections -}}
+
+### Posts
+{{ range $pages }}
+=> {{ .RelPermalink }} {{ .Date.Format "2006-01-02" }} {{ .Title }}
+{{- end }}
+
+---
+=> https://runtimeterror.dev This site on the big web
