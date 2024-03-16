@@ -10,6 +10,7 @@ comments: true
 categories: Backstage
 tags:
   - api
+  - cicd
   - javascript
   - meta
   - serverless
