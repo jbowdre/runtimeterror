@@ -10,6 +10,7 @@ thumbnail: hugo-logo-wide.png
 categories: Backstage
 tags:
   - hugo
+  - cicd
   - meta
   - selfhosting
 ---

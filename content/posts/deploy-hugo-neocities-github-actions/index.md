@@ -8,6 +8,7 @@ toc: true
 comments: true
 categories: Backstage
 tags:
+  - cicd
   - hugo
   - meta
   - serverless
