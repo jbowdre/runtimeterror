@@ -64,6 +64,7 @@ taglines = [
   "division by zero",
   "error: could not stat or open file",
   "expression has no effect",
+  "failed successfully",
   "file descriptor in bad state",
   "floating in a sea of bugs",
   "from chatgpt with bugs",
