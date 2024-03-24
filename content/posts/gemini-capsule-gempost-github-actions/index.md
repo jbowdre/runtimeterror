@@ -1,8 +1,8 @@
 ---
 title: "Self-Hosted Gemini Capsule with gempost and GitHub Actions"
 date: "2024-03-23T21:33:19Z"
-# lastmod: "2024-03-23T21:33:19Z"
-description: "Deploying a Gemini Capsule, powered by Agate, gempost, kineto, Tailscale, and GitHub Actions"
+lastmod: "2024-03-24T18:45:03Z"
+description: "Deploying a Gemini capsule, powered by Agate, gempost, kineto, Tailscale, and GitHub Actions"
 featured: false
 toc: true
 comments: true
@@ -18,7 +18,7 @@ I've recently been exploring some indieweb/smolweb technologies, and one of the 
 
 > Gemini is a new internet technology supporting an electronic library of interconnected text documents. That's not a new idea, but it's not old fashioned either. It's timeless, and deserves tools which treat it as a first class concept, not a vestigial corner case. Gemini isn't about innovation or disruption, it's about providing some respite for those who feel the internet has been disrupted enough already. We're not out to change the world or destroy other technologies. We are out to build a lightweight online space where documents are just documents, in the interests of every reader's privacy, attention and bandwidth.
 
-I thought it was an interesting idea, so after a bit of experimentation with various hosted options I created a self-hosted [Gemini Capsule (Gemini for "web site") to host a lightweight text-focused Gemlog ("weblog")](https://capsule.jbowdre.lol/gemlog/2024-03-05-hello-gemini.gmi). After further tinkering, I arranged to serve the Capsule both on the Gemini network as well as the traditional HTTP-based web, and I set up a GitHub Actions workflow to handle posting updates. This post will describe how I did that.
+I thought it was an interesting idea, so after a bit of experimentation with various hosted options I created a self-hosted [Gemini capsule (Gemini for "web site") to host a lightweight text-focused Gemlog ("weblog")](https://capsule.jbowdre.lol/gemlog/2024-03-05-hello-gemini.gmi). After further tinkering, I arranged to serve the capsule both on the Gemini network as well as the traditional HTTP-based web, and I set up a GitHub Actions workflow to handle posting updates. This post will describe how I did that.
 
 ### Gemini Server: Agate
 There are a number of different [Gemini server applications](https://github.com/kr1sp1n/awesome-gemini?tab=readme-ov-file#servers) to choose from. I decided to use [Agate](https://github.com/mbrubeck/agate), not just because it was at the top of the Awesome Gemini list but also because seems to be widely recommended, regularly updated, and easy to use. Plus it will automatically generates certs for me, which is nice since Gemini *requires* valid certificates for all connections.
@@ -72,16 +72,16 @@ cat <<< EOF > content/hello-gemini.gmi # [tl! .cmd]
 EOF
 ```
 
-After configuring the `capsule.jbowdre.lol` DNS record and opening port `1965` on my server's firewall, I can use `docker compose up -d` to spawn the server and begin serving my mostly-empty Capsule at `gemini://capsule.jbowdre.lol/hello-gemini.gmi`. I can then check it out in a popular Gemini client called [Lagrange](https://github.com/skyjake/lagrange):
+After configuring the `capsule.jbowdre.lol` DNS record and opening port `1965` on my server's firewall, I can use `docker compose up -d` to spawn the server and begin serving my mostly-empty capsule at `gemini://capsule.jbowdre.lol/hello-gemini.gmi`. I can then check it out in a popular Gemini client called [Lagrange](https://github.com/skyjake/lagrange):
 
 ![A sparse sample page proclaiming "This is just a test"](hello-gemini.png)
 
 Hooray, I have an outpost in Geminispace! Let's dress it up a little bit now.
 
 ### Gemini Content: gempost
-A "hello world" post will only hold someone's interest for so long. I wanted to start using my Gemini Capsule for lightweight blogging tasks, but I didn't want to have to manually keep track of individual posts. After a bit of questing, I found [gempost](https://github.com/justlark/gempost), a static site generator for gemlogs (Gemini blogs). It makes it easy to template out index pages and insert headers/footers, and supports tracking post metadata in a yaml sidecar for each post (handy since gemtext doesn't support front matter or other inline meta properties).
+A "hello world" post will only hold someone's interest for so long. I wanted to start using my capsule for lightweight blogging tasks, but I didn't want to have to manually keep track of individual posts or manage consistent formatting. After a bit of questing, I found [gempost](https://github.com/justlark/gempost), a static site generator for gemlogs (Gemini blogs). It makes it easy to template out index pages and insert headers/footers, and supports tracking post metadata in a yaml sidecar for each post (handy since gemtext doesn't support front matter or other inline meta properties).
 
-gempost is installed as a Rust package, so I _could_ have installed Rust and then used `cargo install gempost` to install gempost. But I've been really getting into using project-specific development shells powered by [Nix flakes](https://nixos.wiki/wiki/Flakes) and [direnv](https://github.com/direnv/direnv/wiki/Nix) to automatically load/unload packages as I traverse the directory tree. So I put together [this flake](https://github.com/jbowdre/capsule/blob/main/flake.nix) to activate Agate, Rust, and gempost when I change into the directory where I want to build my Capsule content:
+gempost is installed as a Rust package, so I _could_ have installed Rust and then used `cargo install gempost` to install gempost. But I've been really getting into using project-specific development shells powered by [Nix flakes](https://nixos.wiki/wiki/Flakes) and [direnv](https://github.com/direnv/direnv/wiki/Nix) to automatically load/unload packages as I traverse the directory tree. So I put together [this flake](https://github.com/jbowdre/capsule/blob/main/flake.nix) to activate Agate, Rust, and gempost when I change into the directory where I want to build my capsule content:
 
 ```nix
 # torchlight! {"lineNumbers": true}
