@@ -53,12 +53,11 @@ jobs:
           oauth-client-id: ${{ secrets.TS_API_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_API_CLIENT_SECRET }}
           tags: ${{ secrets.TS_TAG }}
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          name: id_rsa
-          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+      - name: Configure SSH known hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
       - name: Deploy GMI to Agate
         run: |
           rsync -avz --delete --exclude='*.html' --exclude='*.css' --exclude='*.js' -e ssh public/ deploy@${{ secrets.GMI_HOST }}:${{ secrets.GMI_CONTENT_PATH }}
