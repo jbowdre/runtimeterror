@@ -1,7 +1,7 @@
 ---
 title: "Self-Hosted Gemini Capsule with gempost and GitHub Actions"
 date: "2024-03-23T21:33:19Z"
-lastmod: "2024-03-24T18:45:03Z"
+lastmod: "2024-04-05T21:07:38Z"
 description: "Deploying a Gemini capsule, powered by Agate, gempost, kineto, Tailscale, and GitHub Actions"
 featured: false
 toc: true
@@ -142,7 +142,7 @@ which gempost # [tl! .cmd]
 
 Neat!
 
-I'm not going to go into too much detail on how I configured/use gempost; the [readme](https://github.com/justlark/gempost/blob/main/README.md) does a great job of explaining what's needed to get started, and the [examples directory](https://github.com/justlark/gempost/tree/main/examples) shows some of the flexibility and configurable options. Perhaps the biggest change I made is using `gemlog/` as the gemlog directory (instead of `posts/`).
+I'm not going to go into too much detail on how I configured/use gempost; the [readme](https://github.com/justlark/gempost/blob/main/README.md) does a great job of explaining what's needed to get started, and the [examples directory](https://github.com/justlark/gempost/tree/main/examples) shows some of the flexibility and configurable options. Perhaps the biggest change I made is using `gemlog/` as the gemlog directory (instead of `posts/`). You can check out my [gempost config file](https://github.com/jbowdre/capsule/blob/main/gempost.yaml) and/or [gempost templates](https://github.com/jbowdre/capsule/tree/main/templates) for the full details.
 
 In any case, after gempost is configured and I've written some posts, I can build the capsule with `gempost build`. It spits out the "rendered" gemtext (basically generating index pages and the Atom feed from the posts and templates) in the `public/` directory.
 
