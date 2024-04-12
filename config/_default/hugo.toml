@@ -6,6 +6,7 @@ paginate = 10
 languageCode = "en"
 DefaultContentLanguage = "en"
 enableInlineShortcodes = true
+enableRobotsTXT = true
 
 # define gemini media type
 [mediaTypes]

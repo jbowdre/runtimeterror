@@ -8,6 +8,35 @@ numberOfRelatedPosts = 5
 
 indexTitle = ".-. ..- -. - .. -- . - . .-. .-. --- .-."
 
+robots = [
+  "AdsBot-Google",
+  "Amazonbot",
+  "anthropic-ai",
+  "Applebot",
+  "AwarioRssBot",
+  "AwarioSmartBot",
+  "Bytespider",
+  "CCBot",
+  "ChatGPT",
+  "ChatGPT-User",
+  "Claude-Web",
+  "ClaudeBot",
+  "cohere-ai",
+  "DataForSeoBot",
+  "Diffbot",
+  "FacebookBot",
+  "FacebookBot",
+  "Google-Extended",
+  "GPTBot",
+  "ImagesiftBot",
+  "magpie-crawler",
+  "omgili",
+  "Omgilibot",
+  "peer39_crawler",
+  "PerplexityBot",
+  "YouBot"
+]
+
 # Comments
 comments = true
 giscusCategory = "Announcements"
