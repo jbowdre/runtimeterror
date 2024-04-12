@@ -8,6 +8,7 @@ toc: true
 comments: true
 categories: Self-Hosting
 tags:
+  - cloudflare
   - cloud
   - containers
   - docker

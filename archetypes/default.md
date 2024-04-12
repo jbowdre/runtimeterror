@@ -12,6 +12,7 @@ tags:
   - android
   - caddy
   - chromeos
+  - cloudflare
   - crostini
   - docker
   - gcp
