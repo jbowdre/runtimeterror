@@ -110,7 +110,7 @@ Disallow: /
 
 Cool!
 
-I also dropped the following into `static/ai.txt` for good measure:
+I also dropped the following into `static/ai.txt` for [good measure](https://site.spawning.ai/spawning-ai-txt):
 
 ```text
 # Spawning AI
