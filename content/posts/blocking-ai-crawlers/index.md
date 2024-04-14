@@ -1,7 +1,7 @@
 ---
 title: "Blocking AI Crawlers"
 date: 2024-04-12
-# lastmod: 2024-04-12
+lastmod: "2024-04-14T02:21:57Z"
 description: "Using Hugo to politely ask AI bots to not steal my content - and then configuring Cloudflare's WAF to actively block them, just to be sure."
 featured: false
 toc: true
@@ -121,9 +121,13 @@ Disallow: /
 Disallow: *
 ```
 
-That's all well and good, but these files carry all the weight of a "No Soliciting" sign. Do I *really* trust these bots to honor it?
+That's all well and good, but these files carry all the weight and authority of a "No Soliciting" sign. Do I *really* trust these bots to honor it?
 
-I'm hosting this site [on Neocities](/deploy-hugo-neocities-github-actions/), but it's fronted by Cloudflare. So I added a [WAF Custom Rule](https://developers.cloudflare.com/waf/custom-rules/) to block those unwanted bots. Here's the expression I'm using:
+I'm hosting this site [on Neocities](/deploy-hugo-neocities-github-actions/), and Neocities unfortunately (though perhaps wisely) doesn't give me control of the web server there. But the site is fronted by Cloudflare, and that does give me a lot of options for blocking stuff I don't want.
+
+So I added a [WAF Custom Rule](https://developers.cloudflare.com/waf/custom-rules/) to block those unwanted bots. (I could have used their [User Agent Blocking](https://developers.cloudflare.com/waf/tools/user-agent-blocking) to accomplish the same, but you can only set 10 of those on the free tier. I can put all the user agents together in a single WAF Custom Rule.)
+
+Here's the expression I'm using:
 
 ```text
 (http.user_agent contains "AdsBot-Google") or (http.user_agent contains "Amazonbot") or (http.user_agent contains "anthropic-ai") or (http.user_agent contains "Applebot") or (http.user_agent contains "AwarioRssBot") or (http.user_agent contains "AwarioSmartBot") or (http.user_agent contains "Bytespider") or (http.user_agent contains "CCBot") or (http.user_agent contains "ChatGPT-User") or (http.user_agent contains "ClaudeBot") or (http.user_agent contains "Claude-Web") or (http.user_agent contains "cohere-ai") or (http.user_agent contains "DataForSeoBot") or (http.user_agent contains "FacebookBot") or (http.user_agent contains "Google-Extended") or (http.user_agent contains "GoogleOther") or (http.user_agent contains "GPTBot") or (http.user_agent contains "ImagesiftBot") or (http.user_agent contains "magpie-crawler") or (http.user_agent contains "Meltwater") or (http.user_agent contains "omgili") or (http.user_agent contains "omgilibot") or (http.user_agent contains "peer39_crawler") or (http.user_agent contains "peer39_crawler/1.0") or (http.user_agent contains "PerplexityBot") or (http.user_agent contains "Seekr") or (http.user_agent contains "YouBot")
@@ -131,4 +135,8 @@ I'm hosting this site [on Neocities](/deploy-hugo-neocities-github-actions/), bu
 
 ![Creating a custom WAF rule in Cloudflare's web UI](cloudflare-waf-rule.png)
 
-I'll probably streamline this in the future to be managed with a GitHub Actions workflow but this will do for now.
+And checking on that rule ~24 hours later, I can see that it's doing some good:
+
+![It's blocked 102 bot hits already](cloudflare-waf-status.png)
+
+See ya, AI bots!
