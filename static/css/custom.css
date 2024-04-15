@@ -316,15 +316,11 @@ a.tinylytics_webring {
 }
 
 /* shoutouts styling */
-.shoutout .shoutout__container .shoutout__title:before {
-  content: none;
-}
-
 .shoutout .shoutout__container .shoutout__title {
   font-size: 1rem;
   margin: 0;
   margin-bottom: 0.5rem;
-  font-weight: 400;
+  font-weight: bold;
 }
 
 .shoutout .shoutout__container .shoutout__content {
