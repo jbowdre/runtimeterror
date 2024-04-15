@@ -315,6 +315,24 @@ a.tinylytics_webring {
   font-size: 1.5rem;
 }
 
+/* shoutouts styling */
+.shoutout .shoutout__container .shoutout__title:before {
+  content: none;
+}
+
+.shoutout .shoutout__container .shoutout__title {
+  font-size: 1rem;
+  margin: 0;
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+}
+
+.shoutout .shoutout__container .shoutout__content {
+  font-style: italic;
+  font-size: 0.9rem;
+  line-height: 1.2rem;
+}
+
 /* post front matter styling*/
 .frontmatter hr {
   margin-bottom: 0rem;
