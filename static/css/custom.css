@@ -1,6 +1,34 @@
 /* color overrides */
 :root {
   --code: var(--base06);
+  --font-monospace: 'Berkeley Mono', 'monospace';
+}
+
+@font-face {
+  font-family: 'Berkeley Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Berkeley Mono'),
+    url('/fonts/BerkeleyMono-Regular.woff2') format('woff2'),
+    url('/fonts/BerkeleyMono-Regular.woff') format('woff')
+}
+
+@font-face {
+  font-family: 'Berkeley Mono';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Berkeley Mono Italic'),
+    url('/fonts/BerkeleyMono-Italic.woff2') format('woff2'),
+    url('/fonts/BerkeleyMono-Italic.woff') format('woff')
+}
+
+@font-face {
+  font-family: 'Berkeley Mono';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Berkeley Mono Bold'),
+    url('/fonts/BerkeleyMono-Bold.woff2') format('woff2'),
+    url('/fonts/BerkeleyMono-Bold.woff') format('woff')
 }
 
 /* override page max-width */
