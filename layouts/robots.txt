@@ -1,0 +1,8 @@
+Sitemap: {{ .Site.BaseURL }}/sitemap.xml
+
+User-agent: *
+Disallow:
+{{ range .Site.Params.robots }}
+User-agent: {{ . }}
+{{- end }}
+Disallow: /

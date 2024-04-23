@@ -1,6 +1,37 @@
 /* color overrides */
 :root {
   --code: var(--base06);
+  --font-monospace: 'Berkeley Mono', 'IBM Plex Mono', 'Cascadia Mono', 'Roboto Mono', 'Source Code Pro', 'Fira Mono', 'Courier New', 'monospace';
+}
+
+@font-face {
+  font-family: 'Berkeley Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: fallback;
+  src: local('Berkeley Mono'),
+    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Regular.woff2') format('woff2'),
+    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Regular.woff') format('woff')
+}
+
+@font-face {
+  font-family: 'Berkeley Mono';
+  font-style: italic;
+  font-weight: 400;
+  font-display: fallback;
+  src: local('Berkeley Mono Italic'),
+    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Italic.woff2') format('woff2'),
+    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Italic.woff') format('woff')
+}
+
+@font-face {
+  font-family: 'Berkeley Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: fallback;
+  src: local('Berkeley Mono Bold'),
+    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Bold.woff2') format('woff2'),
+    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Bold.woff') format('woff')
 }
 
 /* override page max-width */
@@ -313,6 +344,20 @@ img.tinylytics_webring_avatar {
 a.tinylytics_webring {
   text-decoration: none;
   font-size: 1.5rem;
+}
+
+/* shoutouts styling */
+.shoutout .shoutout__container .shoutout__title {
+  font-size: 1rem;
+  margin: 0;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.shoutout .shoutout__container .shoutout__content {
+  font-style: italic;
+  font-size: 0.9rem;
+  line-height: 1.2rem;
 }
 
 /* post front matter styling*/

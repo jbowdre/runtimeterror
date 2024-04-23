@@ -1,6 +1,16 @@
 {{ $img := resources.Get "og_base.png" }}
-{{ $font := resources.Get "/FiraMono-Regular.ttf" }}
 {{ $text := "" }}
+{{ $font := "" }}
+{{ $path := os.Getenv "HUGO_REMOTE_FONT_PATH" }}
+{{ with resources.GetRemote $path }}
+  {{ with .Err }}
+    {{ errorf "%s" . }}
+  {{ else }}
+    {{ $font = . }}
+  {{ end }}
+{{ else }}
+  {{ errorf "Unable to get resource %q" $path }}
+{{ end }}
 <meta property="og:title" content="{{ .Title }}" />
 <meta property="og:description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end }}" />
 <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}" />
