@@ -10,7 +10,7 @@ on:
       - main
 
 concurrency: # prevent concurrent deploys doing strange things
-  group: deploy-to-prod
+  group: deploy-prod
   cancel-in-progress: true
 
 # Default to bash
