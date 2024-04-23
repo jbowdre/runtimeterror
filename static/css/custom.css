@@ -9,8 +9,8 @@
   font-style: normal;
   font-weight: 400;
   src: local('Berkeley Mono'),
-    url('/fonts/BerkeleyMono-Regular.woff2') format('woff2'),
-    url('/fonts/BerkeleyMono-Regular.woff') format('woff')
+    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Regular.woff2') format('woff2'),
+    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Regular.woff') format('woff')
 }
 
 @font-face {
@@ -18,8 +18,8 @@
   font-style: italic;
   font-weight: 400;
   src: local('Berkeley Mono Italic'),
-    url('/fonts/BerkeleyMono-Italic.woff2') format('woff2'),
-    url('/fonts/BerkeleyMono-Italic.woff') format('woff')
+    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Italic.woff2') format('woff2'),
+    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Italic.woff') format('woff')
 }
 
 @font-face {
@@ -27,8 +27,8 @@
   font-style: normal;
   font-weight: 600;
   src: local('Berkeley Mono Bold'),
-    url('/fonts/BerkeleyMono-Bold.woff2') format('woff2'),
-    url('/fonts/BerkeleyMono-Bold.woff') format('woff')
+    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Bold.woff2') format('woff2'),
+    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Bold.woff') format('woff')
 }
 
 /* override page max-width */
