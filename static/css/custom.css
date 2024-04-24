@@ -14,26 +14,6 @@
     url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Regular.woff') format('woff')
 }
 
-@font-face {
-  font-family: 'Berkeley Mono';
-  font-style: italic;
-  font-weight: 400;
-  font-display: fallback;
-  src: local('Berkeley Mono Italic'),
-    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Italic.woff2') format('woff2'),
-    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Italic.woff') format('woff')
-}
-
-@font-face {
-  font-family: 'Berkeley Mono';
-  font-style: normal;
-  font-weight: 600;
-  font-display: fallback;
-  src: local('Berkeley Mono Bold'),
-    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Bold.woff2') format('woff2'),
-    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Bold.woff') format('woff')
-}
-
 /* override page max-width */
 .page {
   max-width: 72rem;
