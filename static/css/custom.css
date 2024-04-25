@@ -1,9 +1,10 @@
-/* color overrides */
+/* color and font overrides */
 :root {
   --code: var(--base06);
-  --font-monospace: 'Berkeley Mono', 'IBM Plex Mono', 'Cascadia Mono', 'Roboto Mono', 'Source Code Pro', 'Fira Mono', 'Courier New', 'monospace';
+  --font-monospace: 'Berkeley Mono', 'IBM Plex Mono', 'Cascadia Mono', 'Roboto Mono', 'Source Code Pro', 'Fira Mono', 'Courier New', monospace;
 }
 
+/* load preferred font */
 @font-face {
   font-family: 'Berkeley Mono';
   font-style: normal;
