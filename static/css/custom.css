@@ -11,8 +11,8 @@
   font-weight: 400;
   font-display: fallback;
   src: local('Berkeley Mono'),
-    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Regular.woff2') format('woff2'),
-    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Regular.woff') format('woff')
+    url('https://megacorp-cdn.b-cdn.net/fonts/BerkeleyMono-Regular.woff2') format('woff2'),
+    url('https://megacorp-cdn.b-cdn.net/fonts/BerkeleyMono-Regular.woff') format('woff')
 }
 
 /* override page max-width */
