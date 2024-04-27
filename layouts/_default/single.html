@@ -60,7 +60,7 @@
       {{- if and (eq .Site.Params.comments true) (ne $emailReplies false) }}
       <span class="post_email_reply"><a href="mailto:blogreply-{{ .Title | truncate 40 | urlize}}@runtimeterror.dev?Subject=Re: {{ .Title }}">📧 Reply via email</a></span>
       {{- end }}
-      <br><details><summary>Expand comments</summary>
+      <br><details><summary>Comments</summary>
       {{- partial "comments" . }}
       </details>
     {{- end }}
