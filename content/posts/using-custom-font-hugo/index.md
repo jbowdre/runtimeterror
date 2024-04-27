@@ -1,5 +1,5 @@
 ---
-title: "Configuring a Custom Font in Hugo, with Cloudflare R2 and Tailscale"
+title: "Configuring a Custom Font in Hugo"
 date: 2024-04-23
 # lastmod: 2024-04-23
 draft: true
@@ -9,6 +9,7 @@ toc: true
 comments: true
 categories: Tips # Backstage, ChromeOS, Code, Self-Hosting, VMware
 tags:
+  - bunny
   - cloudflare
   - hugo
   - meta
@@ -72,9 +73,13 @@ I can use a `@font-face` rule to tell the browser how to find the `.woff2`/`.wof
 
 And that would work just fine... but it *would* require storing those web font files in the GitHub repo which powers my site, and I'd rather not host any paid font files in such a way.
 
-So instead, I opted to store the web font files in [Cloudflare's R2 S3-compatible object storage](https://www.cloudflare.com/developer-platform/r2/); this would allow me to control access somewhat (okay, just a little bit), and give me an excuse to play with R2 a bit and make use of a cool `cdn.runtimeterror.dev` subdomain the process.
+So instead, I opted to store the web font files in a CDN, where I could exercise some degree of access control, learn more about a web technology I haven't played with a whole lot, and make use of a cool `cdn.runtimeterror.dev` subdomain in the process.
 
-#### Hosted on R2
+{{% notice note "Double the CDN, double the fun" %}}
+Of course, while writing this post I gave in to my impulsive nature and [migrated the site from Cloudflare to Bunny.net](https://scribbles.jbowdre.lol/post/i-just-hopped-to-bunny-net). So I'm going to briefly describe how I set this up first on [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) and later on [Bunny Storage](https://bunny.net/storage/).
+{{% /notice %}}
+
+#### Cloudflare R2
 Getting started with R2 was really easy; I just [created a new R2 bucket](https://developers.cloudflare.com/r2/buckets/create-buckets/) called `runtimeterror` and [connected it to the custom domain](https://developers.cloudflare.com/r2/buckets/public-buckets/#connect-a-bucket-to-a-custom-domain) `cdn.runtimeterror.dev`. I put the two web font files in a folder titled `fonts` and uploaded them to the bucket so that they can be accessed under `https://cdn.runtimeterror.dev/fonts/`.
 
 I could then employ a [Cross-Origin Resource Sharing (CORS)](https://developers.cloudflare.com/r2/buckets/cors/) policy to ensure the fonts hosted on my fledgling CDN can only be loaded on my site. I configured the policy to also allow access from my `localhost` Hugo build environment as well as a preview Neocities environment I use for testing such major changes:
@@ -116,6 +121,30 @@ I added in the `font-display: fallback;` descriptor to address the fact that the
 To test my work, I ran `hugo server` to build and serve the site locally on `http://localhost:1313`... and promptly encountered a cascade of CORS-related errors. I kept tweaking the policy and trying to learn more about what I'm doing (reminder: I'm bad at this), but just couldn't figure out what was preventing the font from being loaded.
 
 I *eventually* discovered that sometimes you need to clear Cloudflare's cache so that new policy changes will take immediate effect. Once I [purged everything](https://developers.cloudflare.com/cache/how-to/purge-cache/purge-everything/), the errors went away and the font loaded successfully.
+
+### Bunny Storage
+After migrating my domain to Bunny.net, the CDN font setup was pretty similar - but also different enough that it's worth mentioning. I started by creating a new Storage Zone named `runtimeterror-storage`, and selecting an appropriate-seeming set of replication regions. I then uploaded the same `fonts/` folder as before.
+
+To be able to access the files in Bunny Storage, I then connected a new Pull Zone (called `runtimeterror-pull`) and linked that Pull Zone with the `cdn.runtimeterror.dev` hostname. I also made sure to enable the option to automatically generate a certificate for this host.
+
+Rather than needing me to understand CORS and craft a viable policy file, Bunny provides a clean UI with easy-to-understand options for configuring the pull zone security. I enabled the options to block root path access, block `POST` requests, and block direct file access, and also added the same trusted referrers as before:
+
+![Bunny CDN security configuration](bunny-cdn-security.png)
+
+I made sure to use the same paths as I had on Cloudflare so I didn't need to update the Hugo config at all even after changing CDNs. That same CSS from before still works:
+
+```css
+/* load preferred font */
+@font-face {
+  font-family: 'Berkeley Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: fallback;
+  src: local('Berkeley Mono'),
+    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono.woff2') format('woff2'),
+    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono.woff') format('woff')
+}
+```
 
 So that's the web font for the web site sorted; now let's tackle the font in the dynamically-generated OpenGraph share images.
 
