@@ -392,3 +392,16 @@ a.tinylytics_webring {
 hr {
   margin-top: 1.5rem;
 }
+
+/* summary styling */
+details {
+  cursor: pointer;
+}
+
+details summary::before {
+  content: 'Load ';
+}
+
+details[open] summary::before {
+  content: 'Hide ';
+}

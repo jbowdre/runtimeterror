@@ -49,9 +49,20 @@
         {{- $showKudos = false }}
       {{- end }}
       {{- if and (eq .Site.Params.analytics true) (ne $showKudos false) }}
-      <span class="post_kudos">Celebrate this post:&nbsp;<button class="tinylytics_kudos"></button></span>
+      <span class="post_kudos"><button class="tinylytics_kudos"></button></span>
       {{- end }}
+      {{- $emailReplies := true }}
+      {{- if eq .Site.Params.emailReplies false }}
+        {{- $emailReplies = false }}
+      {{- else if eq .Params.emailReplies false }}
+        {{- $emailReplies = false }}
+      {{- end }}
+      {{- if and (eq .Site.Params.comments true) (ne $emailReplies false) }}
+      <span class="post_email_reply"><a href="mailto:blogreply-{{ .Title | truncate 40 | urlize}}@runtimeterror.dev?Subject=Re: {{ .Title }}">📧 Reply by email</a></span>
+      {{- end }}
+      <br><details><summary>Comments</summary>
       {{- partial "comments" . }}
+      </details>
     {{- end }}
     <footer class="content__footer"></footer>
 {{ end }}

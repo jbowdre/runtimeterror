@@ -54,6 +54,7 @@ giscusTheme = "noborder_gray"
 
 analytics = true
 kudos = true
+emailReplies = true
 
 [author]
 name = "John Bowdre"
