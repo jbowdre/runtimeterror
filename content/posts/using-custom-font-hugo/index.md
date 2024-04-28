@@ -146,9 +146,135 @@ I made sure to use the same paths as I had on Cloudflare so I didn't need to upd
 }
 ```
 
-So that's the web font for the web site sorted; now let's tackle the font in the dynamically-generated OpenGraph share images.
+So that's the web font for the web site sorted (twice); now let's tackle the font in the OpenGraph share images.
 
-### OpenGraph Image Filter Text
+### Image Filter Text
+My [setup for generating the share images](/dynamic-opengraph-images-with-hugo/) leverages the Hugo [images.Text](https://gohugo.io/functions/images/text/) function to overlay text onto a background image, and it needs a TrueType font in order to work. I was previously just storing the required font directly in my GitHub repo so that it would be available during the site build, but I definitely don't want to do that with a paid font file. So I needed to come up with some way to provide the TTF file to the builder without making it publicly available.
 
+I recently figured out how I could [use a GitHub Action to easily connect the builder to my Tailscale environment](/gemini-capsule-gempost-github-actions/#publish-github-actions:~:text=name%3A%20Connect%20to%20Tailscale), and I figured I could re-use that idea here - only instead of pushing something to my tailnet, I'll need to pull something out.
 
-/gemini-capsule-gempost-github-actions/#publish-github-actions:~:text=name%3A%20Connect%20to%20Tailscale
+#### Tailscale Setup
+So I SSH'd to the cloud server I'm already using for hosting my Gemini capsule, created a folder to hold the font file (`/opt/fonts/`), and copied the TTF file into there. And then I used [Tailscale Serve](/tailscale-ssh-serve-funnel/#tailscale-serve) to publish that folder internally to my tailnet:
+
+```shell
+sudo tailscale serve --bg --set-path /fonts /opt/fonts/ # [tl! .cmd]
+# [tl! .nocopy:4]
+Available within your tailnet:
+
+https://node.tailnet-name.ts.net/fonts/
+|-- path  /opt/fonts
+```
+
+Last time, I set up the Tailscale ACL so that the GitHub Runner (`tag:gh-bld`) could talk to my server (`tag:gh-srv`) over SSH:
+
+```json
+  "acls": [
+    {
+      // github runner can talk to the deployment target
+      "action": "accept",
+      "users":  ["tag:gh-bld"],
+      "ports": [
+        "tag:gh-srv:22"
+      ],
+    }
+  ],
+```
+
+I needed to update that ACL to allow communication over HTTPS as well:
+
+```json
+  "acls": [
+    {
+      // github runner can talk to the deployment target
+      "action": "accept",
+      "users":  ["tag:gh-bld"],
+      "ports": [
+        "tag:gh-srv:22",
+        "tag:gh-srv:443" // [tl! ++]
+      ],
+    }
+  ],
+```
+
+I then logged into the Tailscale admin panel to follow the same steps as last time to generate a unique [OAuth client](https://tailscale.com/kb/1215/oauth-clients) tied to the `tag:gh-bld` tag. I stored the ID, secret, and tags as repository secrets named `TS_API_CLIENT_ID`, `TS_API_CLIENT_SECRET`, and `TS_TAG`.
+
+I also created a `REMOTE_FONT_PATH` secret which will be used to tell Hugo where to find the required TTF file (`https://node.tailnet-name.ts.net/fonts/BerkeleyMono.ttf`).
+
+#### Hugo Setup
+Here's the image-related code that I was previously using in `layouts/partials/opengraph` to create the OpenGraph images:
+
+```jinja-html
+{{ $img := resources.Get "og_base.png" }}
+{{ $font := resources.Get "/FiraMono-Regular.ttf" }}
+{{ $text := "" }}
+
+{{- if .IsHome }}
+  {{ $text = .Site.Params.Description }}
+{{- end }}
+
+{{- if .IsPage }}
+  {{ $text = .Page.Title }}
+{{ end }}
+
+{{- with .Params.thumbnail }}
+  {{ $thumbnail := $.Resources.Get . }}
+  {{ with $thumbnail }}
+    {{ $img = $img.Filter (images.Overlay (.Process "fit 300x250") 875 38 )}}
+  {{ end }}
+{{ end }}
+
+{{ $img = $img.Filter (images.Text $text (dict
+  "color" "#d8d8d8"
+  "size" 64
+  "linespacing" 2
+  "x" 40
+  "y" 300
+  "font" $font
+))}}
+{{ $img = resources.Copy (path.Join $.Page.RelPermalink "og.png") $img }}
+```
+
+All I need to do is get it to pull the font resource from a web address rather than the local file system, and I'll do that by loading an environment variable instead of hardcoding the path here:
+
+```jinja-html
+{{ $img := resources.Get "og_base.png" }}
+{{ $font := resources.Get "/FiraMono-Regular.ttf" }} <!-- [tl! -- ] -->
+{{ $text := "" }}
+{{ $font := "" }} <!-- [tl! ++:10 **:10 ]>
+{{ $path := os.Getenv "HUGO_REMOTE_FONT_PATH" }}
+{{ with resources.GetRemote $path }}
+  {{ with .Err }}
+    {{ errorf "%s" . }}
+  {{ else }}
+    {{ $font = . }}
+  {{ end }}
+{{ else }}
+  {{ errorf "Unable to get resource %q" $path }}
+{{ end }}
+
+{{- if .IsHome }}
+  {{ $text = .Site.Params.Description }}
+{{- end }}
+
+{{- if .IsPage }} <!-- [tl! collapse:start ] -->
+  {{ $text = .Page.Title }}
+{{ end }}
+
+{{- with .Params.thumbnail }}
+  {{ $thumbnail := $.Resources.Get . }}
+  {{ with $thumbnail }}
+    {{ $img = $img.Filter (images.Overlay (.Process "fit 300x250") 875 38 )}}
+  {{ end }}
+{{ end }}
+
+{{ $img = $img.Filter (images.Text $text (dict
+  "color" "#d8d8d8"
+  "size" 64
+  "linespacing" 2
+  "x" 40
+  "y" 300
+  "font" $font
+))}}
+{{ $img = resources.Copy (path.Join $.Page.RelPermalink "og.png") $img }} <!-- [tl! collapse:end ] -->
+```
+
