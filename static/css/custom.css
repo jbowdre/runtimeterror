@@ -398,10 +398,10 @@ details {
   cursor: pointer;
 }
 
-details summary::before {
+details.comments_widget summary::before {
   content: 'Load ';
 }
 
-details[open] summary::before {
+details[open].comments_widget summary::before {
   content: 'Hide ';
 }
