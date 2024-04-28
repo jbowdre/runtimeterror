@@ -256,7 +256,8 @@ All I need to do is get it to pull the font resource from a web address rather t
   {{ $text = .Site.Params.Description }}
 {{- end }}
 
-{{- if .IsPage }} <!-- [tl! collapse:start ] -->
+<!-- [tl! collapse:start ] -->
+{{- if .IsPage }}
   {{ $text = .Page.Title }}
 {{ end }}
 
@@ -278,3 +279,5 @@ All I need to do is get it to pull the font resource from a web address rather t
 {{ $img = resources.Copy (path.Join $.Page.RelPermalink "og.png") $img }} <!-- [tl! collapse:end ] -->
 ```
 
+#### GitHub Action
+All that's left is to update the GitHub Action to handle the build for me.
