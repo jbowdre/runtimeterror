@@ -1,8 +1,7 @@
 ---
 title: "Using a Custom Font with Hugo"
-date: 2024-04-23
+date: 2024-04-28
 # lastmod: 2024-04-23
-draft: true
 description: "Installing a custom font on a Hugo site, and taking steps to protect the paid font files from unauthorized distribution. Plus a brief exploration of a pair of storage CDNs, and using Tailscale in a GitHub Actions workflow."
 featured: false
 toc: true
