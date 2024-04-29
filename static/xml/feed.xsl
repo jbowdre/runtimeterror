@@ -8,12 +8,12 @@
 <meta name="viewport" content="width=device-width"/>
 <title><xsl:value-of select="rss/channel/title"/> (RSS)</title>
 <style><![CDATA[html{margin:0;padding:0;}body{color:font-size:1.1rem;line-height:1.4;margin:5%;max-width:35rem;padding:0;}input{min-width:20rem;margin-left:.2rem;padding-left:.2rem;padding-right:.2rem;}ol{list-style-type:disc;padding-left:1rem;}h2{font-size:22px;font-weight:inherit;}h2:before{content:"" !important;}]]></style>
-<link rel=apple-touch-icon sizes=180x180 href=/icons/apple-touch-icon.png>
-<link rel=icon type=image/png sizes=32x32 href=/icons/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/icons/favicon-16x16.png>
-<link rel=manifest href=/icons/site.webmanifest>
-<link rel=mask-icon href=/icons/safari-pinned-tab.svg color=#5bbad5>
-<link rel="shortcut icon" href=/icons/favicon.ico>
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
+<link rel="manifest" href="/icons/site.webmanifest" />
+<link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#5bbad5" />
+<link rel="shortcut icon" href="/icons/favicon.ico" />
 <link rel="stylesheet" href="/css/palettes/runtimeterror.css" />
 <link rel="stylesheet" href="/css/risotto.css" />
 <link rel="stylesheet" href="/css/custom.css" />
