@@ -27,4 +27,5 @@ This post will quickly cover how I used XSLT to style my blog's RSS feed and mad
 ![Much more attractive RSS feed with styling to fit the site's theme](pretty-feed.png)
 
 ### Starting Point
-I won't go into too much detail
+The [RSS Templates](https://gohugo.io/templates/rss/) page from the Hugo documentation site provides some basic information about how to generate (and customize) an RSS feed for a Hugo-powered site. The basic steps are to [enable the RSS output in `hugo.toml`](https://github.com/jbowdre/runtimeterror/blob/871be9794234177c1bfa0b1c470873bde8f046be/config/_default/hugo.toml#L19-L30), include a link to the generated feed inside the `<head>` element of the site template (I added it to [`layouts/partials/head.html`](https://github.com/jbowdre/runtimeterror/blob/871be9794234177c1bfa0b1c470873bde8f046be/layouts/partials/head.html#L8-L11)), and (optionally) include a customized RSS template to influence how the output gets rendered.
+
