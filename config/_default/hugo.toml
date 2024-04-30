@@ -65,7 +65,7 @@ enableRobotsTXT = true
     disableInlineCSS = true
 
   [services.rss]
-    limit = 20
+    limit = 10
 
   [services.twitter]
     disableInlineCSS = true
