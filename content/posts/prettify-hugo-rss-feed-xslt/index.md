@@ -1,9 +1,9 @@
 ---
 title: "Prettify Hugo RSS Feeds with XSLT"
-date: 2024-04-29
-draft: true
-description: ""
+date: 2024-04-30
+description: "Making my Hugo-generated RSS XML look as good to human visitors as it does to feed readers."
 featured: false
+thumbnail: pretty-feed.png
 toc: true
 comments: true
 categories: Backstage
