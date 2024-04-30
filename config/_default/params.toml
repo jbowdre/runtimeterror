@@ -182,8 +182,8 @@ url = "https://scribbles.jbowdre.lol"
 
 [[socialLinks]]
 icon = "fa-solid fa-satellite"
-title = "Gemlog"
-url = "https://capsule.jbowdre.lol/gemlog/"
+title = "Gemini Capsule"
+url = "gemini://capsule.jbowdre.lol"
 
 [[socialLinks]]
 icon = "fa-solid fa-circle-user"
