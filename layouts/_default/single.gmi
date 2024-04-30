@@ -18,7 +18,7 @@
   {{- $content := $content | replaceRE "(?m:^`([^`]*)`$)" "```\n$1\n```\n" -}}{{/* convert single-line inline code to blocks */}}
   {{- $content := $content | replaceRE `\{\{%\snotice.*%\}\}` "<-- note -->" -}}{{/* convert hugo notices */}}
   {{- $content := $content | replaceRE `\{\{%\s/notice.*%\}\}` "<-- /note -->" -}}
-  {{- $content := $content | replaceRE `((\/\/)|#)\s*torchlight!.*\n` "" -}}{{/* remove torchlight markup */}}
+  {{- $content := $content | replaceRE `(?:(?:<!--)|(?:#)|(?:\/\/))\s*torchlight!.*\n` "" -}}{{/* remove torchlight markup */}}
   {{- $content := $content | replaceRE `(?:(?:<!--)|(?:#)|(?:\/\/))*\s*\[tl!.*\].*` "" -}}
   {{- $content := $content | replaceRE `(?m:^\[!\[(.*)\]\(.*\)\]\((.*)\)$)` "=> $2 $1" -}}{{/* remove images from uptime links */}}
   {{- $content := $content | replaceRE `(?m:^\s*(?:(?:\*|\-)\s+)?\[(.*)\]\((.*)\)$)` "=> $2 $1" -}}{{/* convert links already on own line */}}
