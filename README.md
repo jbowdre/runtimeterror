@@ -1,1 +1,1 @@
-[![Deployment Status](https://github.com/jbowdre/runtimeterror/actions/workflows/deploy-to-prod.yml/badge.svg)](https://github.com/jbowdre/runtimeterror/actions/workflows/deploy-to-prod.yml)
+[![Deployment Status](https://github.com/jbowdre/runtimeterror/actions/workflows/deploy-prod.yml/badge.svg)](https://github.com/jbowdre/runtimeterror/actions/workflows/deploy-prod.yml)
