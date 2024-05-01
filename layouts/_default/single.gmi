@@ -46,7 +46,8 @@
 ---
 {{ $subject := printf "Re: %s" .Title -}}
 {{ $subject := urlquery $subject | replaceRE `\+` "%20" }}
-{{ $path := path.BaseName . | strings.TrimSuffix ")" -}}
+{{ $path := .Page.RelPermalink | path.Dir -}}
+{{ $path := strings.Trim $path "/" -}}
 {{ $address := printf "blogreply.%s@%s" $path "runtimeterror.dev" -}}
 
 => mailto:{{ $address }}?subject={{ $subject }} 📧 Reply by email

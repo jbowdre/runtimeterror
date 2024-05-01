@@ -58,7 +58,8 @@
         {{- $emailReplies = false }}
       {{- end }}
       {{- if and (eq .Site.Params.comments true) (eq $emailReplies true) }}
-      {{- $path := path.BaseName . | strings.TrimSuffix ")" }}
+      {{- $path := .Page.RelPermalink | path.Dir }}
+      {{- $path := strings.Trim $path "/" }}
       {{- $address := printf "blogreply.%s@%s" $path "runtimeterror.dev" }}
       <span class="post_email_reply"><a href="mailto:{{ $address }}?Subject=Re: {{ .Title }}">📧 Reply by email</a></span>
       {{- end }}
