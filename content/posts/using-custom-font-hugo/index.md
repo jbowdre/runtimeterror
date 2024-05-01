@@ -1,7 +1,7 @@
 ---
 title: "Using a Custom Font with Hugo"
 date: 2024-04-28
-# lastmod: 2024-04-23
+lastmod: "2024-05-01T13:29:30Z"
 description: "Installing a custom font on a Hugo site, and taking steps to protect the paid font files from unauthorized distribution. Plus a brief exploration of a pair of storage CDNs, and using Tailscale in a GitHub Actions workflow."
 featured: false
 toc: true
@@ -56,7 +56,7 @@ And that would be the end of things if I could expect that everyone who visited 
 That provides a few more options to fall back to if the preferred font isn't available. But let's see about making that font available.
 
 #### Hosted Locally
-I can use a `@font-face` rule to tell the browser how to find the `.woff2`/`.woff` files for my preferred web font, and I could just set the `src: url` parameter to point to a local path in my Hugo environment:
+I can use a `@font-face` rule to tell the browser how to find the `.woff2` file for my preferred web font, and I could just set the `src: url` parameter to point to a local path in my Hugo environment:
 
 ```css
 /* load preferred font */
@@ -68,9 +68,14 @@ I can use a `@font-face` rule to tell the browser how to find the `.woff2`/`.wof
   src: local('Berkeley Mono'),
   /* otherwise look at these paths */
     url('/fonts/BerkeleyMono.woff2') format('woff2'),
-    url('/fonts/BerkeleyMono.woff') format('woff')
 }
 ```
+
+{{% notice note "WOFF2 vs WOFF(1)" %}}
+A previous version of this post also included the `.woff` file in addition to `.woff2`. A kind reader let me know that [basically everything](https://caniuse.com/?search=woff2) supports `.woff2`, and since `.woff2` offers much better compression than first-generation `.woff` there *really* isn't any reason to offer a font in `.woff` format in this modern age. I can just offer `.woff2` on its own.
+
+I've updated this post, my CSS, and the contents of my CDN storage accordingly.
+{{% /notice %}}
 
 And that would work just fine... but it *would* require storing those web font files in the (public) [GitHub repo](https://github.com/jbowdre/runtimeterror) which powers my site, and I'd rather not store any paid font files there.
 
@@ -112,8 +117,6 @@ Then I just needed to update the `@font-face` rule accordingly:
   src: local('Berkeley Mono'),
     url('/fonts/BerkeleyMono.woff2') format('woff2'), /* [tl! --] */
     url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono.woff2') format('woff2'), /* [tl! ++] */
-    url('/fonts/BerkeleyMono.woff') format('woff') /* [tl! --] */
-    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono.woff') format('woff') /* [tl! ++] */
 }
 ```
 
@@ -143,7 +146,6 @@ I made sure to use the same paths as I had on Cloudflare so I didn't need to upd
   font-display: fallback;
   src: local('Berkeley Mono'),
     url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono.woff2') format('woff2'),
-    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono.woff') format('woff')
 }
 ```
 
