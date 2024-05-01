@@ -12,7 +12,6 @@
   font-display: fallback;
   src: local('Berkeley Mono'),
     url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Regular.woff2') format('woff2'),
-    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Regular.woff') format('woff')
 }
 
 /* override page max-width */
