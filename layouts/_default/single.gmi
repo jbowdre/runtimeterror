@@ -45,7 +45,11 @@
 
 ---
 {{ $subject := printf "Re: %s" .Title -}}
-=> mailto:blog@runtimeterror.dev?subject={{ urlquery $subject | replaceRE `\+` "%20" }} 📧 Reply via email
+{{ $subject := urlquery $subject | replaceRE `\+` "%20" }}
+{{ $path := path.BaseName . | strings.TrimSuffix ")" -}}
+{{ $address := printf "blogreply.%s@%s" $path "runtimeterror.dev" -}}
+
+=> mailto:{{ $address }}?subject={{ $subject }} 📧 Reply by email
 {{ $related := first 3 (where (where .Site.RegularPages.ByDate.Reverse ".Params.tags" "intersect" .Params.tags) "Permalink" "!=" .Permalink) }}
 {{ if $related }}
 ## Related articles
