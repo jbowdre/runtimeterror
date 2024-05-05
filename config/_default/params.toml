@@ -38,20 +38,6 @@ robots = [
 
 # Comments
 comments = true
-giscusCategory = "Announcements"
-giscusCategoryId = "DIC_kwDOKKEGD84CcG89"
-giscusCrossOrigin = "anonymous"
-giscusEmitMetadata = "0"
-giscusInputPosition = "bottom"
-giscusLang = "en"
-giscusLoading = "lazy"
-giscusMapping = "og:title"
-giscusReactions = "0"
-giscusRepo = "jbowdre/site-comments"
-giscusRepoId = "R_kgDOKKEGDw"
-giscusStrict = "0"
-giscusTheme = "noborder_gray"
-
 analytics = true
 kudos = true
 emailReplies = true

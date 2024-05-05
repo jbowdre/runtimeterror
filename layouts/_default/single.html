@@ -63,9 +63,6 @@
       {{- $address := printf "blogreply.%s@%s" $path "runtimeterror.dev" }}
       <span class="post_email_reply"><a href="mailto:{{ $address }}?Subject=Re: {{ .Title }}">📧 Reply by email</a></span>
       {{- end }}
-      <br><details class="comments_widget"><summary>Comments</summary>
-      {{- partial "comments" . }}
-      </details>
     {{- end }}
     <footer class="content__footer"></footer>
 {{ end }}
