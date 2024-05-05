@@ -23,7 +23,13 @@
   weight = 1
 
 [[main]]
-  identifier = "virtuallypotato"
-  name = "whereis virtuallypotato"
-  url = "/virtuallypotato-runtimeterror/"
+  identifier = "backstage"
+  name = "backstage"
+  url = "/categories/backstage/"
+  weight = 1
+
+[[main]]
+  identifier = "notes"
+  name = "notes"
+  url = "https://notes.runtimeterror.dev"
   weight = 100
