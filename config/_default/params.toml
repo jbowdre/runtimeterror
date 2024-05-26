@@ -185,6 +185,10 @@ title = "Email"
 url = "mailto:jbowdre@omg.lol"
 
 [[powerLinks]]
+title = "bunny"
+url = "https://bunny.net"
+
+[[powerLinks]]
 title = "hugo"
 url = "https://gohugo.io"
 
