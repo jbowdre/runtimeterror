@@ -391,3 +391,14 @@ a.tinylytics_webring {
 hr {
   margin-top: 1.5rem;
 }
+
+/* no extra space for paragraphs with lists */
+p:not(:has(+ ol)),
+p:not(:has(+ ul)) {
+  margin-bottom: 1.5em;
+}
+
+p:has(+ ol),
+p:has(+ ul) {
+  margin-bottom: 0;
+}
