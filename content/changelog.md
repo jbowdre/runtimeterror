@@ -10,3 +10,4 @@ timeless: true
 
 #### 2024-05-26
 - Begin changelog
+- Simplify logic for displaying kudos and post reply buttons

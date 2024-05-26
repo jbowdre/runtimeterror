@@ -5,7 +5,6 @@ lastmod: 2023-12-22
 description: "Deploying and configuring a self-hosted pub-sub notification handler, getting another server to send a notifcation when it boots, and integrating the notification handler into Home Assistant."
 featured: false
 toc: true
-comments: true
 categories: Self-Hosting
 tags:
   - android

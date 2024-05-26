@@ -2,7 +2,7 @@
 title = "Hi, I'm John."
 description = "A brief introduction to me, this blog, and what you're likely to see here."
 timeless = true
-comments = false
+reply = false
 aliases = ["tldr", "bio"]
 +++
 ![Me, +/- a few decades](/images/john.jpg)

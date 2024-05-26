@@ -5,7 +5,6 @@ lastmod: "2024-04-05T21:07:38Z"
 description: "Deploying a Gemini capsule, powered by Agate, gempost, kineto, Tailscale, and GitHub Actions"
 featured: false
 toc: true
-comments: true
 categories: Self-Hosting
 tags:
   - caddy

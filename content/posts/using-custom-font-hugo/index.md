@@ -5,7 +5,6 @@ lastmod: "2024-05-01T13:29:30Z"
 description: "Installing a custom font on a Hugo site, and taking steps to protect the paid font files from unauthorized distribution. Plus a brief exploration of a pair of storage CDNs, and using Tailscale in a GitHub Actions workflow."
 featured: false
 toc: true
-comments: true
 categories: Backstage
 tags:
   - bunny

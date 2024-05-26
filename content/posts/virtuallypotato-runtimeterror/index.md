@@ -6,7 +6,6 @@ timeless: true
 draft: false
 description: "This blog has migrated from virtuallypotato.com to runtimeterror.dev."
 toc: false
-comments: true
 categories: Backstage
 tags:
   - meta

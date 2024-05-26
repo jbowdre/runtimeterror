@@ -5,7 +5,6 @@ description: "Making my Hugo-generated RSS XML look as good to human visitors as
 featured: false
 thumbnail: pretty-feed.png
 toc: true
-comments: true
 categories: Backstage
 tags:
   - hugo

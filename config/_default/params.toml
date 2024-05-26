@@ -37,10 +37,8 @@ robots = [
 ]
 
 # Comments
-comments = true
 analytics = true
-kudos = true
-emailReplies = true
+reply = true
 
 [author]
 name = "John Bowdre"
