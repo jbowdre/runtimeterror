@@ -62,15 +62,15 @@ Also here's some more about it.
 I like to know what's flying overhead, and I'm also feeding flight data to [flightaware.com](https://flightaware.com) and [adsb.fi](https://adsb.fi).
 
 ### Cloud
-#### Oracle Cloud Infrastructure
+#### [Oracle Cloud Infrastructure](https://www.oracle.com/cloud/free/)
 - `git`: Ubuntu 22.04 [Forgejo](https://forgejo.org/) server for [git.bowdre.net](https://git.bowdre.net/explore/repos)
 - `smp2`: Ubuntu 22.04 [SimpleX](/simplex/) server
 
-### Google Cloud Platform
+#### [Google Cloud Platform](https://cloud.google.com/free/docs/free-cloud-features)
 - `smp`: Ubuntu 22.04 [SimpleX](/simplex/) server
 - `smp1`: Ubuntu 22.04 [SimpleX](/simplex/) server
 
-### Vultr
+#### [Vultr](https://www.vultr.com)
 - `volly`: Ubuntu 22.04 Docker host for various workloads, served either through [Caddy](https://caddyserver.com/) or [Cloudflare Tunnel](/publish-services-cloudflare-tunnel/):
   - [Agate](https://github.com/mbrubeck/agate) Gemini server ([post](/gemini-capsule-gempost-github-actions/))
   - [Crowdsec](https://www.crowdsec.net) security engine
