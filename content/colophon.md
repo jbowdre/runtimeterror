@@ -17,3 +17,5 @@ timeless: true
 - is published to and hosted by [Neocities](https://neocities.org) with a GitHub Actions workflow ([details](/deploy-hugo-neocities-github-actions/)).
 - has a [Gemini](https://geminiprotocol.net) mirror at `gemini://gmi.runtimeterror.dev`, which is deployed to a [Vultr](https://www.vultr.com/) VPS through a GitHub Actions workflow and served with [Agate](https://github.com/mbrubeck/agate).
 - uses [bunny.net](https://bunny.net) for DNS and CDN services.
+
+Look behind the scenes at [github.com/jbowdre/runtimeterror](https://github.com/jbowdre/runtimeterror).
