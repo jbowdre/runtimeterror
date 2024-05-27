@@ -7,6 +7,9 @@ featured: false
 toc: false
 timeless: true
 ---
+**2024-05-27:**
+- Replace "powered by" links with slashpages
+
 **2024-05-26:**
 - Begin changelog
 - Simplify logic for displaying kudos and post reply buttons

@@ -184,29 +184,17 @@ icon = "fa-solid fa-envelope"
 title = "Email"
 url = "mailto:jbowdre@omg.lol"
 
-[[powerLinks]]
-title = "bunny"
-url = "https://bunny.net"
+[[slashPages]]
+title = "/changelog"
+url = "/changelog"
 
-[[powerLinks]]
-title = "hugo"
-url = "https://gohugo.io"
+[[slashPages]]
+title = "/colophon"
+url = "/colophon"
 
-[[powerLinks]]
-title = "neocities"
-url = "https://neocities.org/about"
-
-[[powerLinks]]
-title = "risotto"
-url = "https://github.com/joeroe/risotto"
-
-[[powerLinks]]
-title = "torchlight"
-url = "https://torchlight.dev"
-
-[[powerLinks]]
-title = "tinylytics"
-url = "https://tinylytics.app/home"
+[[slashPages]]
+title = "/homelab"
+url = "/homelab"
 
 [[verifyLinks]]
 title = "omg.lol"
