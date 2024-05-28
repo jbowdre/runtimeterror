@@ -199,6 +199,11 @@ title = "/homelab"
 url = "/homelab"
 label = "my homelab setup"
 
+[[slashPages]]
+title = "/save"
+url = "/save"
+label = "referral links"
+
 [[verifyLinks]]
 title = "omg.lol"
 url = "https://proven.lol/cd10d3"

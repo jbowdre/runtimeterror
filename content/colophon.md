@@ -1,5 +1,5 @@
 ---
-title: "Colophon"
+title: "/colophon"
 date: "2024-05-26T22:30:58Z"
 # lastmod: 2024-05-24
 description: "There's a lot that goes into this site. Let me tell you how it works."
