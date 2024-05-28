@@ -187,14 +187,17 @@ url = "mailto:jbowdre@omg.lol"
 [[slashPages]]
 title = "/changelog"
 url = "/changelog"
+label = "recent changes to the site"
 
 [[slashPages]]
 title = "/colophon"
 url = "/colophon"
+label = "how this site works"
 
 [[slashPages]]
 title = "/homelab"
 url = "/homelab"
+label = "my homelab setup"
 
 [[verifyLinks]]
 title = "omg.lol"
