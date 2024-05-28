@@ -1,12 +1,14 @@
 ---
 title: "/save"
 date: "2024-05-28T00:25:51Z"
-# lastmod: 2024-05-24
+lastmod: "2024-05-28"
 description: "Referral links for services I use and heartily recommend."
 featured: false
 toc: true
 timeless: true
 ---
+
+I pay for a lot of quality services that I recommend non-stop. This `/saves` page lists few referral links which might save you and/or me some money if you check them out.
 
 ### I use and recommend:
 - **[Bunny.net](https://bunny.net?ref=0eh23p45xs)** DNS and CDN service that really hops

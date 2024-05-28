@@ -1,14 +1,16 @@
 ---
 title: "/homelab"
 date: "2024-05-26T21:30:51Z"
-# lastmod: 2024-05-24
+lastmod: "2024-05-28"
 aliases:
   - playground
-description: "I enjoy tinkering with small technology projects, and I learn a ton from these experiments. I also self-host a number of apps/services from my home as well as various cloud environments. This page describes some of my playground."
+description: "The systems I use for fun."
 featured: false
 toc: true
 timeless: true
 ---
+I enjoy tinkering with small technology projects, and I learn a ton from these experiments. I also self-host a number of apps/services from my home as well as various cloud environments. This page describes some of my playground.
+
 ### Connectivity
 *Everything* is connected to my Tailscale tailnet, with a GitOps-managed ACL to allow access as needed. This lets me access and manage systems without really caring if they're local or remote. [Tailscale is magic](/secure-networking-made-simple-with-tailscale/).
 
