@@ -6,8 +6,10 @@ description: "There's a lot that goes into this site. Let me tell you how it wor
 featured: false
 toc: true
 timeless: true
+categories:
+  - slashes
 ---
-I don't consider myself to be a web developer, but I've learned a *ton* through the process of building/tweaking/maintaining this site. The [colophon](https://indieweb.org/colophon) provides a quick overview of what powers `runtimeterror.dev`.
+*I don't consider myself to be a web developer, but I've learned a *ton* through the process of building/tweaking/maintaining this site. The [colophon](https://indieweb.org/colophon) provides a quick overview of what powers `runtimeterror.dev`.*
 
 ### This site...
 - is built with [Hugo](https://gohugo.io/) using the [risotto](https://github.com/joeroe/risotto) theme with many, many tweaks and customizations.
@@ -15,8 +17,9 @@ I don't consider myself to be a web developer, but I've learned a *ton* through 
 - performs syntax highlighting with [Torchlight](https://torchlight.dev) ([details](/spotlight-on-torchlight/)).
 - provides site search with [lunr](https://lunrjs.com/) based on an implementation detailed by [Victoria Drake](https://victoria.dev/blog/add-search-to-hugo-static-sites-with-lunr/).
 - leverages [tinylytics](https://tinylytics.app/) for privacy-friendly analytics and cute kudos buttons.
-- is published to / hosted by [Neocities](https://neocities.org) with a GitHub Actions workflow ([details](/deploy-hugo-neocities-github-actions/)).
-- has a [Gemini](https://geminiprotocol.net) mirror at `gemini://gmi.runtimeterror.dev`, which is deployed to a [Vultr](https://www.vultr.com/) VPS through a GitHub Actions workflow and served with [Agate](https://github.com/mbrubeck/agate).
 - uses [bunny.net](https://bunny.net) for DNS and CDN services.
+- is published to / hosted by [Neocities](https://neocities.org) with a GitHub Actions workflow ([details](/deploy-hugo-neocities-github-actions/)).
+- has a [Gemini](https://geminiprotocol.net) mirror at `gemini://gmi.runtimeterror.dev`. This is generated from a [Hugo gemtext post layout](https://github.com/jbowdre/runtimeterror/blob/main/layouts/_default/single.gmi), deployed to a [Vultr](https://www.vultr.com/) VPS through a GitHub Actions workflow, and served with [Agate](https://github.com/mbrubeck/agate).
+
 
 Look behind the scenes at [github.com/jbowdre/runtimeterror](https://github.com/jbowdre/runtimeterror).

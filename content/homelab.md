@@ -8,14 +8,16 @@ description: "The systems I use for fun."
 featured: false
 toc: true
 timeless: true
+categories:
+  - slashes
 ---
-I enjoy tinkering with small technology projects, and I learn a ton from these experiments. I also self-host a number of apps/services from my home as well as various cloud environments. This page describes some of my playground.
+*I enjoy tinkering with small technology projects, and I learn a ton from these experiments. I also self-host a number of apps/services from my home as well as various cloud environments. This page describes some of my technical playground.*
 
-### Connectivity
-*Everything* is connected to my [Tailscale](https://tailscale.com) tailnet, with a GitOps-managed ACL to allow access as needed. This lets me access and manage systems without really caring if they're local or remote. [Tailscale is magic](/secure-networking-made-simple-with-tailscale/).
+Everything is connected to my [Tailscale](https://tailscale.com) tailnet, with a GitOps-managed ACL to allow access as needed. This lets me access and manage systems without really caring if they're local or remote. [Tailscale is magic](/secure-networking-made-simple-with-tailscale/).
 
 ### On Premise
-#### Proxmox VE 8 Cluster
+
+**Proxmox VE 8 Cluster**
 - 1x [Intel NUC 9 Extreme (NUC9i9QNX)](https://www.amazon.com/Intel-Extreme-NUC9i9QNX-Single-Model/dp/B0851JV4R8)
   - 9th Gen Intel® Core™ i9-9980HK (8 cores @ 2.40GHz)
   - 64GB RAM
@@ -43,7 +45,7 @@ The Proxmox cluster hosts a number of VMs and LXC containers:
 - `salt`: Ubuntu 20.04 [Salt](https://saltproject.io/) Master server for configuration management
 - `unifi`: UniFi Network Application. Manages the Unifi switch.
 
-#### Hashicorp Nomad Cluster (WIP)
+**Hashicorp Nomad Cluster (WIP)**
 - 3x [Zima Blade 7700](https://shop.zimaboard.com/products/zimablade-single-board-server-for-cyber-native)
   - Intel® Celeron® N3450 (4 cores @ 1.10GHz)
   - 16GB RAM
@@ -53,9 +55,7 @@ The Proxmox cluster hosts a number of VMs and LXC containers:
 
 This triad of cute little single-board computers will *eventually* be a combination Nomad + Consul + Vault cluster, fully managed with Salt.
 
-Also here's some more about it.
-
-#### [PiAware](https://www.flightaware.com/adsb/piaware/build) ADS-B/MLAT Receiver
+**[PiAware](https://www.flightaware.com/adsb/piaware/build) ADS-B/MLAT Receiver**
 - Raspberry Pi 2 Model B
 - 2x [RTL-SDR Blog V3 R860 RTL2832U 1PPM TCXO SMA Dongle](https://www.amazon.com/gp/product/B0129EBDS2)
 - [SIGNALPLUS 1090MHz 12dBi 1.1m ADS-B Antenna](https://www.amazon.com/gp/product/B08XYRMG3V/)
@@ -63,15 +63,16 @@ Also here's some more about it.
 I like to know what's flying overhead, and I'm also feeding flight data to [flightaware.com](https://flightaware.com) and [adsb.fi](https://adsb.fi).
 
 ### Cloud
-#### [Oracle Cloud Infrastructure](https://www.oracle.com/cloud/free/)
+
+**[Oracle Cloud Infrastructure](https://www.oracle.com/cloud/free/)**
 - `git`: Ubuntu 22.04 [Forgejo](https://forgejo.org/) server for [git.bowdre.net](https://git.bowdre.net/explore/repos)
 - `smp2`: Ubuntu 22.04 [SimpleX](/simplex/) server
 
-#### [Google Cloud Platform](https://cloud.google.com/free/docs/free-cloud-features)
+**[Google Cloud Platform](https://cloud.google.com/free/docs/free-cloud-features)**
 - `smp`: Ubuntu 22.04 [SimpleX](/simplex/) server
 - `smp1`: Ubuntu 22.04 [SimpleX](/simplex/) server
 
-#### [Vultr](https://www.vultr.com)
+**[Vultr](https://www.vultr.com)**
 - `volly`: Ubuntu 22.04 Docker host for various workloads, served either through [Caddy](https://caddyserver.com/) or [Cloudflare Tunnel](/publish-services-cloudflare-tunnel/):
   - [Agate](https://github.com/mbrubeck/agate) Gemini server ([post](/gemini-capsule-gempost-github-actions/))
   - [Crowdsec](https://www.crowdsec.net) security engine
