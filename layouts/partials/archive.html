@@ -7,7 +7,7 @@
   <h1>{{ site.Params.indexTitle | markdownify }}</h1>
 {{ else }}
   <h1>{{ .Title | markdownify }}{{ if eq .Kind "term" }}&nbsp;<a target="_blank" href="{{ .Permalink }}feed.xml" aria-label="Category RSS"><i class="fa-solid fa-square-rss"></i></a>&nbsp;</h1>
-  {{ if eq .Title "/Slashes" }}<i>My collection of <a target="_blank" title="what's a slashpage?" href="https://slashpages.net">slashpages</a>.</i><hr>{{ else }}{{ with .Description }}<i>{{ . }}</i><hr>{{ else }}<br>{{ end }}{{ end }}
+  {{ if eq .Title "/slashes" }}<i>My collection of <a target="_blank" title="what's a slashpage?" href="https://slashpages.net">slashpages</a>.</i><hr>{{ else }}{{ with .Description }}<i>{{ . }}</i><hr>{{ else }}<br>{{ end }}{{ end }}
 {{ end }}{{ end }}
   {{ .Content }}
 </header>
@@ -43,7 +43,7 @@
     {{ end }}
   {{- end }}
 {{- else }}
-  {{- if eq .Title "/Slashes" }}
+  {{- if eq .Title "/slashes" }}
     {{- $sortedSlashes := sort $pages "Title" }}
     {{- range $sortedSlashes }}
       {{- $postDate := .Date.Format "2006-01-02" }}
