@@ -5,8 +5,6 @@ date: "2024-05-29"
 description: "The hardware, software, and services which keep me going."
 toc: true
 timeless: true
-categories:
-  - slashes
 ---
 *Here's some of the stuff I use and how I use it.*
 
