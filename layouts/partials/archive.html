@@ -54,7 +54,7 @@
           </p>
       </header>
       <section class="post__summary">
-          {{ .Summary }}
+          {{if .Description }}{{ .Description }}{{ else }}{{ .Summary }}{{ end }}
       </section>
       <hr>
     </article>
