@@ -204,6 +204,11 @@ title = "/save"
 url = "/save"
 label = "referral links"
 
+[[slashPages]]
+title = "/uses"
+url = "/uses"
+label = "stuff i use"
+
 [[verifyLinks]]
 title = "omg.lol"
 url = "https://proven.lol/cd10d3"
