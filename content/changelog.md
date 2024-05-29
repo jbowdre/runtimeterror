@@ -8,7 +8,7 @@ toc: false
 timeless: true
 categories: /slashes
 ---
-*High-level list of config/layout changes to the site:*
+*High-level list of config/layout changes to the site.*
 
 **2024-05-29:**
 - Display post descriptions (if set) on archive pages; otherwise fall back to summaries
