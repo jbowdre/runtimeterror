@@ -1,10 +1,14 @@
-+++
-title = "Hi, I'm John."
-description = "A brief introduction to me, this blog, and what you're likely to see here."
-timeless = true
-reply = false
-aliases = ["tldr", "bio"]
-+++
+---
+title: "/about"
+date: "2024-05-26T21:19:08Z"
+lastmod: "2024-05-29"
+description: "A brief introduction to me, this blog, and what you're likely to see here."
+timeless: true
+toc: false
+categories: "/slashes"
+---
+**Hi, I'm John.**
+
 ![Me, +/- a few decades](/images/john.jpg)
 
 You've (somehow) managed to stumble upon my dark corner of the internet[^1].

@@ -13,6 +13,7 @@ categories: /slashes
 **2024-05-29:**
 - Display post descriptions (if set) on archive pages; otherwise fall back to summaries
 - Add /slashes archive page
+- Add /slashes to top menu, add /about
 
 **2024-05-27:**
 - Replace "powered by" links with slashpages

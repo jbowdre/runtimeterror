@@ -29,6 +29,12 @@
   weight = 1
 
 [[main]]
+  identifier = "slashes"
+  name = "slashes"
+  url = "/categories/slashes/"
+  weight = 10
+
+[[main]]
   identifier = "notes"
   name = "notes"
   url = "https://notes.runtimeterror.dev"

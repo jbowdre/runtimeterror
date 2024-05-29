@@ -185,6 +185,11 @@ title = "Email"
 url = "mailto:jbowdre@omg.lol"
 
 [[slashPages]]
+title = "/about"
+url = "/about"
+label = "about this site"
+
+[[slashPages]]
 title = "/changelog"
 url = "/changelog"
 label = "recent changes to the site"
