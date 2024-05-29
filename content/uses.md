@@ -2,9 +2,10 @@
 title: "/uses"
 date: "2024-05-29"
 # lastmod: {{ .Date | time.Format "2006-01-02" }}
-description: "The hardware, software, and services which keep me going."
+description: "The hardware, software, services, and gear which I use (almost) daily."
 toc: true
 timeless: true
+categories: /slashes
 ---
 *Here's some of the stuff I use and how I use it.*
 

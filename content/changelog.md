@@ -6,11 +6,13 @@ description: "Maybe I should keep a log of all my site-related tinkering?"
 featured: false
 toc: false
 timeless: true
+categories: /slashes
 ---
 *High-level list of config/layout changes to the site:*
 
 **2024-05-29:**
 - Display post descriptions (if set) on archive pages; otherwise fall back to summaries
+- Add /slashes archive page
 
 **2024-05-27:**
 - Replace "powered by" links with slashpages

@@ -7,7 +7,7 @@
   <h1>{{ site.Params.indexTitle | markdownify }}</h1>
 {{ else }}
   <h1>{{ .Title | markdownify }}{{ if eq .Kind "term" }}&nbsp;<a target="_blank" href="{{ .Permalink }}feed.xml" aria-label="Category RSS"><i class="fa-solid fa-square-rss"></i></a>&nbsp;</h1>
-  {{ with .Description }}<i>{{ . }}</i><hr>{{ else }}<br>{{ end }}
+  {{ if eq .Title "/Slashes" }}<i>My collection of <a target="_blank" title="what's a slashpage?" href="https://slashpages.net">slashpages</a>.</i><hr>{{ else }}{{ with .Description }}<i>{{ . }}</i><hr>{{ else }}<br>{{ end }}{{ end }}
 {{ end }}{{ end }}
   {{ .Content }}
 </header>
@@ -43,7 +43,26 @@
     {{ end }}
   {{- end }}
 {{- else }}
-  {{- range (.Paginate $pages).Pages }}
+  {{- if eq .Title "/Slashes" }}
+    {{- $sortedSlashes := sort $pages "Title" }}
+    {{- range $sortedSlashes }}
+      {{- $postDate := .Date.Format "2006-01-02" }}
+      {{- $updateDate := .Lastmod.Format "2006-01-02" }}
+      <article class="post">
+        <header class="post__header">
+            <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
+            <p class="post__meta">
+                <span class="date">["{{- $postDate }}"{{- if ne $postDate $updateDate }}, "{{ $updateDate }}"{{ end }}]</span>
+            </p>
+        </header>
+        <section class="post__summary">
+            {{ .Description }}
+        </section>
+        <hr>
+      </article>
+    {{- end }}
+  {{- else }}
+    {{- range (.Paginate $pages).Pages }}
     {{- $postDate := .Date.Format "2006-01-02" }}
     {{- $updateDate := .Lastmod.Format "2006-01-02" }}
     <article class="post">
@@ -58,6 +77,7 @@
       </section>
       <hr>
     </article>
+    {{- end }}
+    {{- template "_internal/pagination.html" . }}
   {{- end }}
-  {{- template "_internal/pagination.html" . }}
 {{- end }}

@@ -4,10 +4,11 @@ date: "2024-05-26T21:30:51Z"
 lastmod: "2024-05-28"
 aliases:
   - playground
-description: "The systems I use for fun."
+description: "The systems I use for fun and enrichment."
 featured: false
 toc: true
 timeless: true
+categories: /slashes
 ---
 *I enjoy tinkering with small technology projects, and I learn a ton from these experiments. I also self-host a number of apps/services from my home as well as various cloud environments. This page describes some of my technical playground.*
 

@@ -6,6 +6,7 @@ description: "Referral links for products and services I use and heartily recomm
 featured: false
 toc: true
 timeless: true
+categories: /slashes
 ---
 *This `/saves` page lists my referral/affiliate links for high-quality products and services that I use on a daily basis. These are things I frequently recommend to others anyway, but signing up with these links might save one or both of us some money.*
 

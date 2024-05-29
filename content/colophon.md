@@ -6,8 +6,9 @@ description: "There's a lot that goes into this site. Let me tell you how it wor
 featured: false
 toc: true
 timeless: true
+categories: /slashes
 ---
-*I don't consider myself to be a web developer, but I've learned a *ton* through the process of building/tweaking/maintaining this site. The [colophon](https://indieweb.org/colophon) provides a quick overview of what powers `runtimeterror.dev`.*
+*I don't consider myself to be a web developer, but I've learned a **ton** through the process of building/tweaking/maintaining this site. The [colophon](https://indieweb.org/colophon) provides a quick overview of what powers `runtimeterror.dev`.*
 
 ### This site...
 - is built with [Hugo](https://gohugo.io/) using the [risotto](https://github.com/joeroe/risotto) theme with many, many tweaks and customizations.
