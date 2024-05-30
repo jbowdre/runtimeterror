@@ -5,7 +5,7 @@ lastmod: "2024-05-29"
 description: "A brief introduction to me, this blog, and what you're likely to see here."
 timeless: true
 toc: false
-categories: "/slashes"
+categories: slashes
 ---
 **Hi, I'm John.**
 

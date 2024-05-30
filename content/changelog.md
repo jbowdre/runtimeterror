@@ -6,7 +6,7 @@ description: "Maybe I should keep a log of all my site-related tinkering?"
 featured: false
 toc: false
 timeless: true
-categories: /slashes
+categories: slashes
 ---
 *High-level list of config/layout changes to the site.*
 

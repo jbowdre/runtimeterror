@@ -5,7 +5,7 @@ date: "2024-05-29"
 description: "The hardware, software, services, and gear which I use (almost) daily."
 toc: true
 timeless: true
-categories: /slashes
+categories: slashes
 ---
 *Here's some of the stuff I use and how I use it.*
 

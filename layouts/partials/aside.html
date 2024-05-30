@@ -10,7 +10,7 @@
 {{ if isset .Params "categories" }}
 {{$related := where .Site.RegularPages ".Params.categories" "eq" .Params.categories }}
 {{- $relatedLimit := default 8 .Site.Params.numberOfRelatedPosts }}
-{{ if eq .Params.categories "/slashes" }}
+{{ if eq .Params.categories "slashes" }}
 <h3>More {{ .Params.categories }}</h3>
 {{ $sortedPosts := sort $related "Title" }}
 <ul>
@@ -21,7 +21,7 @@
   {{ end }}
 </ul>
 {{ else }}
-<h3>More {{ .Params.categories }}</h3>
+<h3>More /slashes</h3>
 <ul>
   {{- range first $relatedLimit $related }}
   <li>
