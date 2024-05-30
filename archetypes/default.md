@@ -6,7 +6,7 @@ draft: true
 description: "This is a new post about..."
 featured: false
 toc: true
-comments: true
+reply: true
 categories: Tips # Backstage, ChromeOS, Code, Self-Hosting, VMware
 tags:
   - android

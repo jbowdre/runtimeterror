@@ -5,7 +5,6 @@ date: 2024-01-15
 description: "Exploring Cloudflare Tunnel as an alternative to Tailscale Funnel for secure public access to internal resources."
 featured: false
 toc: true
-comments: true
 categories: Self-Hosting
 tags:
   - cloudflare

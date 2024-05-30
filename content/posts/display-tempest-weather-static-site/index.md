@@ -6,7 +6,6 @@ description: "Using a GitHub Actions workflow to retrieve data from an authentic
 featured: false
 thumbnail: "finished-product.png"
 toc: true
-comments: true
 categories: Backstage
 tags:
   - api

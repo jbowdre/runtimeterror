@@ -10,7 +10,18 @@
 {{ if isset .Params "categories" }}
 {{$related := where .Site.RegularPages ".Params.categories" "eq" .Params.categories }}
 {{- $relatedLimit := default 8 .Site.Params.numberOfRelatedPosts }}
+{{ if eq .Params.categories "slashes" }}
 <h3>More {{ .Params.categories }}</h3>
+{{ $sortedPosts := sort $related "Title" }}
+<ul>
+  {{- range $sortedPosts }}
+  <li>
+    <a href="{{ .Permalink }}" title="{{ .Title }}">{{ .Title | markdownify }}</a>
+  </li>
+  {{ end }}
+</ul>
+{{ else }}
+<h3>More /slashes</h3>
 <ul>
   {{- range first $relatedLimit $related }}
   <li>
@@ -18,11 +29,12 @@
   </li>
   {{ end }}
   {{ if gt (len $related) $relatedLimit }}
-    <li>
-      <a href="/categories/{{ lower .Params.categories }}/"><i>See all {{ .Params.categories }}</i></a>
-    </li>
-  {{ end }}
+  <li>
+    <a href="/categories/{{ lower .Params.categories }}/"><i>See all {{ .Params.categories }}</i></a>
+  </li>
+{{ end }}
 </ul>
+{{ end }}
 <hr>
 {{ end }}
 

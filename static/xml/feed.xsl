@@ -8,7 +8,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width"/>
 <title><xsl:value-of select="rss/channel/title"/> (RSS)</title>
-<style><![CDATA[html{margin:0;padding:0;}body{color:font-size:1.1rem;line-height:1.4;margin:5%;max-width:35rem;padding:0;}input{min-width:20rem;margin-left:.2rem;padding-left:.2rem;padding-right:.2rem;}h2{font-size:22px;font-weight:inherit;}h3:before{content:"" !important;}]]></style>
+<style><![CDATA[html{margin:0;padding:0;}body{color:font-size:1.1rem;line-height:1.4;margin:5%;max-width:35rem;padding:0;}input{min-width:35rem;margin-left:.2rem;padding-left:.2rem;padding-right:.2rem;}h2{font-size:22px;font-weight:inherit;}h3:before{content:"" !important;}]]></style>
 <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
 <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
 <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />

@@ -37,24 +37,8 @@ robots = [
 ]
 
 # Comments
-comments = true
-giscusCategory = "Announcements"
-giscusCategoryId = "DIC_kwDOKKEGD84CcG89"
-giscusCrossOrigin = "anonymous"
-giscusEmitMetadata = "0"
-giscusInputPosition = "bottom"
-giscusLang = "en"
-giscusLoading = "lazy"
-giscusMapping = "og:title"
-giscusReactions = "0"
-giscusRepo = "jbowdre/site-comments"
-giscusRepoId = "R_kgDOKKEGDw"
-giscusStrict = "0"
-giscusTheme = "noborder_gray"
-
 analytics = true
-kudos = true
-emailReplies = true
+reply = true
 
 [author]
 name = "John Bowdre"
@@ -182,8 +166,8 @@ url = "https://scribbles.jbowdre.lol"
 
 [[socialLinks]]
 icon = "fa-solid fa-satellite"
-title = "Gemlog"
-url = "https://capsule.jbowdre.lol/gemlog/"
+title = "Gemini Capsule"
+url = "gemini://capsule.jbowdre.lol"
 
 [[socialLinks]]
 icon = "fa-solid fa-circle-user"
@@ -200,25 +184,35 @@ icon = "fa-solid fa-envelope"
 title = "Email"
 url = "mailto:jbowdre@omg.lol"
 
-[[powerLinks]]
-title = "hugo"
-url = "https://gohugo.io"
+[[slashPages]]
+title = "/about"
+url = "/about"
+label = "about this site"
 
-[[powerLinks]]
-title = "neocities"
-url = "https://neocities.org/about"
+[[slashPages]]
+title = "/changelog"
+url = "/changelog"
+label = "recent changes to the site"
 
-[[powerLinks]]
-title = "risotto"
-url = "https://github.com/joeroe/risotto"
+[[slashPages]]
+title = "/colophon"
+url = "/colophon"
+label = "how this site works"
 
-[[powerLinks]]
-title = "torchlight"
-url = "https://torchlight.dev"
+[[slashPages]]
+title = "/homelab"
+url = "/homelab"
+label = "my homelab setup"
 
-[[powerLinks]]
-title = "tinylytics"
-url = "https://tinylytics.app/home"
+[[slashPages]]
+title = "/save"
+url = "/save"
+label = "referral links"
+
+[[slashPages]]
+title = "/uses"
+url = "/uses"
+label = "stuff i use"
 
 [[verifyLinks]]
 title = "omg.lol"

@@ -1,11 +1,11 @@
 ---
 title: "Prettify Hugo RSS Feeds with XSLT"
 date: 2024-04-30
+lastmod: "2024-05-30"
 description: "Making my Hugo-generated RSS XML look as good to human visitors as it does to feed readers."
 featured: false
 thumbnail: pretty-feed.png
 toc: true
-comments: true
 categories: Backstage
 tags:
   - hugo
@@ -96,7 +96,7 @@ All I really need to do to get this XML ready to be styled is just link in a sty
 {{- $pages = $pages | first $limit -}}
 {{- end -}}
 {{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
-{{ printf "<?xml-stylesheet type=\"text/xsl\" href=\"xml/feed.xsl\" media=\"all\"?>" | safeHTML }} <!-- [tl! ++ ] -->
+{{ printf "<?xml-stylesheet type=\"text/xsl\" href=\"/xml/feed.xsl\" media=\"all\"?>" | safeHTML }} <!-- [tl! ++ ] -->
 <rss version="2.0"
   xmlns:atom="http://www.w3.org/2005/Atom"
   xmlns:content="http://purl.org/rss/1.0/modules/content/"

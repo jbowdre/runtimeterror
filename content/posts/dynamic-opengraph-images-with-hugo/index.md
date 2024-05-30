@@ -5,7 +5,6 @@ date: "2024-02-19T04:12:27Z"
 description: "Using Hugo built-in functions to dynamically generate OpenGraph share images for every post."
 featured: false
 toc: true
-comments: true
 thumbnail: hugo-logo-wide.png
 categories: Backstage
 tags:
