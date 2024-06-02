@@ -135,7 +135,7 @@ So instead of rendering the `description` I defined in the front matter the arch
 
 > *My collection of [slash pages](https://slashpages.net).*
 
-While I'm at it, I'd like for the posts themselves to be listed in alphabetical order rather than sorted by date. So here's how the rest of my existing `archive.html` partial template handles displaying posts:
+While I'm at it, I'd like for the slash pages themselves to be listed in alphabetical order rather than sorted by date (like everything else on the site). The rest of my `layouts/partials/archive.html` already handles a few different ways of displaying lists of content:
 
 ```jinja-html
 # torchlight! {"lineNumbers":true}
@@ -161,18 +161,18 @@ While I'm at it, I'd like for the posts themselves to be listed in alphabetical 
         <header class="post__header">
           <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
           <p class="post__meta">
-            <span class="date">["{{ with $updateDate }}{{ . }}{{ else }}{{ .$postDate }}{{ end }}"]</span>
+            <span class="date">["{{ with $updateDate }}{{ . }}{{ else }}{{ .$postDate }}{{ end }}"]</span> <!-- [tl! ** ] -->
           </p>
         </header>
         <section class="post__summary">
-          {{ .Description }}
+          {{ .Description }} <!-- [tl! ** ] -->
         </section>
         <hr>
       </article>
     {{ end }}
   {{- end }}
 {{- else }}
-  {{/* regular posts archive */}}
+  {{/* regular posts archive */}} <!-- [tl! ** ] -->
     {{- range (.Paginate $pages).Pages }}
     {{- $postDate := .Date.Format "2006-01-02" }}
     {{- $updateDate := .Lastmod.Format "2006-01-02" }}
@@ -180,11 +180,11 @@ While I'm at it, I'd like for the posts themselves to be listed in alphabetical 
       <header class="post__header">
           <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
           <p class="post__meta">
-              <span class="date">["{{- $postDate }}"{{- if ne $postDate $updateDate }}, "{{ $updateDate }}"{{ end }}]</span>
+              <span class="date">["{{- $postDate }}"{{- if ne $postDate $updateDate }}, "{{ $updateDate }}"{{ end }}]</span> <!-- [tl! ** ] -->
           </p>
       </header>
       <section class="post__summary">
-          {{if .Description }}{{ .Description }}{{ else }}{{ .Summary }}{{ end }}
+          {{if .Description }}{{ .Description }}{{ else }}{{ .Summary }}{{ end }} <!-- [tl! ** ] -->
       </section>
       <hr>
     </article>
@@ -193,4 +193,5 @@ While I'm at it, I'd like for the posts themselves to be listed in alphabetical 
 {{- end }}
 ```
 
-Basically: if it's the [tags](/tags/) archive page, it will list out all the tags in a compact way. If it's some other taxonomy page,
+1. The [tags](/tags/) archive (list of all tags) uses a very condensed format for displaying all the tags in one place.
+2. Other archives of taxonomy pages (like the list of all [categories](/categories/)) have the
