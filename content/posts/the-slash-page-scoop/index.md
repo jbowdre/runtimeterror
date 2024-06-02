@@ -140,18 +140,20 @@ While I'm at it, I'd like for the posts themselves to be listed in alphabetical 
 ```jinja-html
 # torchlight! {"lineNumbers":true}
 {{- if eq .Kind "taxonomy" }} <!-- [tl! reindex(15) ] -->
-  {{- if eq .Title "Tags" }}
+  {{- if eq .Title "Tags" }} <!-- [tl! **:1 ] -->
+  {{/* list of all tags */}}
     <div class="tagsArchive">
     {{- range $key, $value := .Site.Taxonomies }}
       {{- $slicedTags := ($value.ByCount) }}
       {{- range $slicedTags }}
         {{- if eq $key "tags"}}
-          <div><a href='/{{ $key }}/{{ (replace .Name "#" "%23") | urlize }}/' title="{{ .Name }}">{{ .Name }}</a><sup>{{ .Count }}</sup></div>
+          <div><a href='/{{ $key }}/{{ (replace .Name "#" "%23") | urlize }}/' title="{{ .Name }}">{{ .Name }}</a><sup>{{ .Count }} </sup></div> <!-- [tl! ** ] -->
         {{- end }}
       {{- end }}
     {{- end }}
   </div>
   {{- else }}
+  {{/* list of all categories */}} <!-- [tl! ** ] -->
     {{- range .Pages.ByDate.Reverse }}
       {{- $postDate := .Date.Format "2006-01-02" }}
       {{- $updateDate := .Lastmod.Format "2006-01-02" }}
@@ -159,7 +161,7 @@ While I'm at it, I'd like for the posts themselves to be listed in alphabetical 
         <header class="post__header">
           <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
           <p class="post__meta">
-            <span class="date">["{{- $postDate }}"{{- if ne $postDate $updateDate }}, "{{ $updateDate }}"{{ end }}]</span>
+            <span class="date">["{{ with $updateDate }}{{ . }}{{ else }}{{ .$postDate }}{{ end }}"]</span>
           </p>
         </header>
         <section class="post__summary">
@@ -170,7 +172,8 @@ While I'm at it, I'd like for the posts themselves to be listed in alphabetical 
     {{ end }}
   {{- end }}
 {{- else }}
-  {{- range (.Paginate $pages).Pages }}
+  {{/* regular posts archive */}}
+    {{- range (.Paginate $pages).Pages }}
     {{- $postDate := .Date.Format "2006-01-02" }}
     {{- $updateDate := .Lastmod.Format "2006-01-02" }}
     <article class="post">
@@ -181,12 +184,12 @@ While I'm at it, I'd like for the posts themselves to be listed in alphabetical 
           </p>
       </header>
       <section class="post__summary">
-          {{ .Summary }}
+          {{if .Description }}{{ .Description }}{{ else }}{{ .Summary }}{{ end }}
       </section>
       <hr>
     </article>
-  {{- end }}
-  {{- template "_internal/pagination.html" . }}
+    {{- end }}
+    {{- template "_internal/pagination.html" . }}
 {{- end }}
 ```
 
