@@ -11,82 +11,60 @@
     <i>My collection of <a target="_blank" title="what's a slashpage?" href="https://slashpages.net">slash pages</a>.</i><hr>
   {{ else }}
     <h1>{{ .Title | markdownify }}{{ if eq .Kind "term" }}&nbsp;<a target="_blank" href="{{ .Permalink }}feed.xml" aria-label="{{ .Title }} RSS" title="{{ .Title }} RSS"><i class="fa-solid fa-square-rss"></i></a>&nbsp;</h1>
-    {{ with .Description }}<i>{{ . }}</i><hr>{{ else }}<br>{{ end }}
+    {{ with .Description }}<i>{{ . }}</i>{{ end }}
   {{ end }}
+  <hr>
 {{ end }}{{ end }}
   {{ .Content }}
 </header>
-
-{{- if eq .Kind "taxonomy" }}
-  {{- if eq .Title "Tags" }}
-  {{/* list of all tags */}}
-    <div class="tagsArchive">
-    {{- range $key, $value := .Site.Taxonomies }}
-      {{- $slicedTags := ($value.ByCount) }}
-      {{- range $slicedTags }}
-        {{- if eq $key "tags"}}
-          <div><a href='/{{ $key }}/{{ (replace .Name "#" "%23") | urlize }}/' title="{{ .Name }}">{{ .Name }}</a><sup>{{ .Count }}</sup></div>
-        {{- end }}
+{{- if and (eq .Kind "taxonomy") (eq .Title "Tags") }}
+  {{/* /tags/ */}}
+  <div class="tagsArchive">
+  {{- range $key, $value := .Site.Taxonomies }}
+    {{- $slicedTags := ($value.ByCount) }}
+    {{- range $slicedTags }}
+      {{- if eq $key "tags"}}
+        <div><a href='/{{ $key }}/{{ (replace .Name "#" "%23") | urlize }}/' title="{{ .Name }}">{{ .Name }}</a><sup>{{ .Count }}</sup></div>
       {{- end }}
     {{- end }}
-  </div>
-  {{- else }}
-  {{/* list of all categories */}}
-    {{- range .Pages.ByDate.Reverse }}
-      {{- $postDate := .Date.Format "2006-01-02" }}
-      {{- $updateDate := .Lastmod.Format "2006-01-02" }}
-      <article class="post">
-        <header class="post__header">
-          <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
-          <p class="post__meta">
-            <span class="date">["{{ with $updateDate }}{{ . }}{{ else }}{{ $postDate }}{{ end }}"]</span>
-          </p>
-        </header>
-        <section class="post__summary">
-          {{ .Description }}
-        </section>
-        <hr>
-      </article>
-    {{ end }}
   {{- end }}
-{{- else }}
-  {{- if eq .Title "/slashes" }}
-  {{/* slash page archive */}}
-    {{- $sortedSlashes := sort $pages "Title" }}
-    {{- range $sortedSlashes }}
-      {{- $postDate := .Date.Format "2006-01-02" }}
-      {{- $updateDate := .Lastmod.Format "2006-01-02" }}
-      <article class="post">
-        <header class="post__header">
-            <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
-            <p class="post__meta">
-                <span class="date">["{{ with $updateDate }}{{ . }}{{ else }}{{ $postDate }}{{ end }}"]</span>
-            </p>
-        </header>
-        <section class="post__summary">
-            {{ .Description }}
-        </section>
-        <hr>
-      </article>
-    {{- end }}
-  {{- else }}
-  {{/* regular posts archive */}}
-    {{- range (.Paginate $pages).Pages }}
+  </div>
+{{- else if or (eq .Kind "taxonomy") (eq .Title "/slashes") }}
+  {{/* /categories/ or /slashes/ */}}
+  {{- $sorted := sort $pages "Title" }}
+  {{- range $sorted }}
     {{- $postDate := .Date.Format "2006-01-02" }}
     {{- $updateDate := .Lastmod.Format "2006-01-02" }}
     <article class="post">
       <header class="post__header">
-          <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
-          <p class="post__meta">
-              <span class="date">["{{- $postDate }}"{{- if ne $postDate $updateDate }}, "{{ $updateDate }}"{{ end }}]</span>
-          </p>
+        <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
+        <p class="post__meta">
+          <span class="date">["{{ with $updateDate }}{{ . }}{{ else }}{{ $postDate }}{{ end }}"]</span>
+        </p>
       </header>
       <section class="post__summary">
-          {{if .Description }}{{ .Description }}{{ else }}{{ .Summary }}{{ end }}
+        {{ .Description }}
       </section>
       <hr>
     </article>
-    {{- end }}
-    {{- template "_internal/pagination.html" . }}
+  {{ end }}
+{{- else }}
+  {{/* regular posts archive */}}
+  {{- range (.Paginate $pages).Pages }}
+    {{- $postDate := .Date.Format "2006-01-02" }}
+    {{- $updateDate := .Lastmod.Format "2006-01-02" }}
+    <article class="post">
+      <header class="post__header">
+        <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
+        <p class="post__meta">
+          <span class="date">["{{- $postDate }}"{{- if ne $postDate $updateDate }}, "{{ $updateDate }}"{{ end }}]</span>
+        </p>
+      </header>
+      <section class="post__summary">
+        {{if .Description }}{{ .Description }}{{ else }}{{ .Summary }}{{ end }}
+      </section>
+      <hr>
+    </article>
   {{- end }}
+  {{- template "_internal/pagination.html" . }}
 {{- end }}
