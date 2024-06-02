@@ -37,7 +37,7 @@
         <header class="post__header">
           <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
           <p class="post__meta">
-            <span class="date">["{{- $postDate }}"{{- if ne $postDate $updateDate }}, "{{ $updateDate }}"{{ end }}]</span>
+            <span class="date">["{{ with $updateDate }}{{ . }}{{ else }}{{ .Date }}{{ end }}"]</span>
           </p>
         </header>
         <section class="post__summary">
@@ -57,7 +57,7 @@
         <header class="post__header">
             <h1><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
             <p class="post__meta">
-                <span class="date">["{{- $postDate }}"{{- if ne $postDate $updateDate }}, "{{ $updateDate }}"{{ end }}]</span>
+                <span class="date">["{{ with $updateDate }}{{ . }}{{ else }}{{ $postDate }}{{ end }}"]</span>
             </p>
         </header>
         <section class="post__summary">
