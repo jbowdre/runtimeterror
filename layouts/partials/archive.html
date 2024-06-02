@@ -10,7 +10,7 @@
     <h1>{{ .Title | markdownify }}</h1>
     <i>My collection of <a target="_blank" title="what's a slashpage?" href="https://slashpages.net">slash pages</a>.</i><hr>
   {{ else }}
-    <h1>{{ .Title | markdownify }}{{ if eq .Kind "term" }}&nbsp;<a target="_blank" href="{{ .Permalink }}feed.xml" aria-label="Category RSS"><i class="fa-solid fa-square-rss"></i></a>&nbsp;</h1>
+    <h1>{{ .Title | markdownify }}{{ if eq .Kind "term" }}&nbsp;<a target="_blank" href="{{ .Permalink }}feed.xml" aria-label="{{ .Title }} RSS" title="{{ .Title }} RSS"><i class="fa-solid fa-square-rss"></i></a>&nbsp;</h1>
     {{ with .Description }}<i>{{ . }}</i><hr>{{ else }}<br>{{ end }}
   {{ end }}
 {{ end }}{{ end }}
