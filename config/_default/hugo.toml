@@ -7,7 +7,6 @@ languageCode = "en"
 DefaultContentLanguage = "en"
 enableInlineShortcodes = true
 enableRobotsTXT = true
-capitalizeListTitles = false
 
 # define gemini media type
 [mediaTypes]
