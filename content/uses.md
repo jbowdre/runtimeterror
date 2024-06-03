@@ -1,7 +1,7 @@
 ---
 title: "/uses"
 date: "2024-05-29"
-# lastmod: {{ .Date | time.Format "2006-01-02" }}
+lastmod: "2024-06-02"
 description: "The hardware, software, services, and gear which I use (almost) daily."
 toc: true
 timeless: true
@@ -18,7 +18,7 @@ categories: slashes
 - **[Weatherflow Tempest Weather Station](https://shop.tempest.earth/products/tempest)** to help me get my Wx nerd on.
 
 ### Everyday Carry
-*What has it got in its pockets/backpack?*
+*What has it got in its pocketses?*
 - **[Flipper Zero](https://flipperzero.one/)** running [Momentum Firmware](https://momentum-fw.dev/) in my pocket or bag for on-the-go hacking and exploration.
 - **[Leatherman FREE K4](https://www.leatherman.com/free-k4-590.html)** knife/multitool in my pocket for cutting and tinkering.
 - **[Milky lactase tablets](https://shopmilky.com/)** in my wallet so I can enjoy dairy without consequences.
@@ -28,7 +28,8 @@ categories: slashes
 - **[Pixel Watch 2](https://store.google.com/product/pixel_watch_2)** on my wrist, for notifications and fitness tracking.
 - **[ProxGrind RF Field Detector Card](https://www.redteamtools.com/RFID_LF_HF_Field_Detector_Card)** on my keychain to quickly learn about RFID/NFC readers.
 - **[Ridge Wallet](https://ridge.com/products/aluminum-gunmetal)** in my pocket for keeping my cards handy.
-- **[Ti EDC Backpack](https://bigidesign.com/pages/ti-edc-backpack-landing-page)** for carrying my stuff.
+- **[RovyVon Aurora A7 EDC Flashlight](https://www.rovyvon.com/collections/aurora-keychain-flashlights/products/aurora-a7-usb-c-gitd-sky-blue-keychain-flashlight-4th-generation)** in my pocket for keeping the darkness at bay.
+- **[Ti EDC Backpack](https://bigidesign.com/pages/ti-edc-backpack-landing-page)** for carrying my stuff, and keeping it organized while in transit.
 - **[Yubico Yubikey 5C NFC](https://www.yubico.com/product/yubikey-5c-nfc/)** on my keychain for hardware token things.
 
 ### Software
