@@ -2,7 +2,6 @@
 title: "The Slash Page Scoop"
 date: 2024-06-02
 # lastmod: 2024-05-30
-draft: true
 description: "I've added new slash pages to the site to share some background info on who I am, what I use, and how this site works."
 featured: false
 toc: true
