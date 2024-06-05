@@ -1,7 +1,7 @@
 ---
 title: "Prettify Hugo RSS Feeds with XSLT"
 date: 2024-04-30
-lastmod: "2024-05-30"
+lastmod: "2024-06-05"
 description: "Making my Hugo-generated RSS XML look as good to human visitors as it does to feed readers."
 featured: false
 thumbnail: pretty-feed.png
@@ -180,7 +180,7 @@ That's getting there:
 
 ![A darker styled RSS page](getting-there-feed.png)
 
-Including those CSS styles means that the rendered page now uses my color palette and the [font I worked so hard to integrate](/using-custom-font-hugo/). I'm just going to make a few more tweaks to change some of the formatting, put the `New to feeds?` bit on its own line, and point to my [self-hosted instance of the SearXNG metasearch engine](https://scribbles.jbowdre.lol/post/self-hosting-a-search-engine-iyjdlk6y) instead of DDG.
+Including those CSS styles means that the rendered page now uses my color palette and the [font I worked so hard to integrate](/using-custom-font-hugo/). I'm just going to make a few more tweaks to change some of the formatting, put the `New to feeds?` bit on its own line, and point to [Mojeek](https://mojeek.com) instead of DDG ([why?](https://scribbles.jbowdre.lol/post/a-comprehensive-evaluation-of-various-search-engines-i-ve-used)).
 
 Here's my final (for now) `static/xml/feed.xsl` file:
 
@@ -210,7 +210,7 @@ Here's my final (for now) `static/xml/feed.xsl` file:
 <body>
 <h1><xsl:value-of select="rss/channel/title"/> (RSS)</h1>
 <p>This is an <abbr title="Really Simple Syndication">RSS</abbr> feed. To subscribe to it, copy its address and paste it when your feed reader asks for it. It will be updated periodically in your reader.</p>
-<p>New to feeds? <a href="https://grep.vpota.to/search?q=how+to+get+started+with+rss+feeds" title="Search on the web to learn more">Learn more</a>.</p>
+<p>New to feeds? <a href="https://www.mojeek.com/search?q=how+to+get+started+with+rss+feeds" title="Search on the web to learn more">Learn more</a>.</p>
 <p>
 <label for="address">RSS address:</label>
 <input><xsl:attribute name="type">url</xsl:attribute><xsl:attribute name="id">address</xsl:attribute><xsl:attribute name="spellcheck">false</xsl:attribute><xsl:attribute name="value"><xsl:value-of select="rss/channel/atom:link[@rel='self']/@href"/></xsl:attribute></input>
