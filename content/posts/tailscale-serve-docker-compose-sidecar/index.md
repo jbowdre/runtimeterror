@@ -5,7 +5,6 @@ lastmod: 2024-02-07
 description: "Using Docker Compose to deploy containerized applications and make them available via Tailscale Serve and Tailscale Funnel"
 featured: false
 toc: true
-comments: true
 categories: Self-Hosting
 tags:
   - containers

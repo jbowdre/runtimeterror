@@ -5,7 +5,6 @@ date: 2023-12-20
 description: "Exploring some of my favorite Tailscale addon features: SSH, Serve, and Funnel."
 featured: false
 toc: true
-comments: true
 categories: Tips # Projects, Code
 tags:
   - homelab

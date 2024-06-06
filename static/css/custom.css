@@ -12,7 +12,6 @@
   font-display: fallback;
   src: local('Berkeley Mono'),
     url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Regular.woff2') format('woff2'),
-    url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Regular.woff') format('woff')
 }
 
 /* override page max-width */
@@ -36,18 +35,18 @@
   line-height: 1.3rem;
 }
 
-.powered_by {
+.footer_links {
   font-size: 12px;
   line-height: 1.1rem;
   color: var(--muted);
 }
 
-.powered_by a:link, .powered_by a:visited {
+.footer_links a:link, .footer_links a:visited {
   color: var(--off-fg);
   text-decoration: none;
 }
 
-.powered_by a:hover {
+.footer_links a:hover {
   color: var(--hover);
   text-decoration: underline;
 }
@@ -391,4 +390,15 @@ a.tinylytics_webring {
 /* hr override */
 hr {
   margin-top: 1.5rem;
+}
+
+/* no extra space for paragraphs with lists */
+p:not(:has(+ ol)),
+p:not(:has(+ ul)) {
+  margin-bottom: 1.5em;
+}
+
+p:has(+ ol),
+p:has(+ ul) {
+  margin-bottom: 0;
 }

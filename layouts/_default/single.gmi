@@ -18,7 +18,7 @@
   {{- $content := $content | replaceRE "(?m:^`([^`]*)`$)" "```\n$1\n```\n" -}}{{/* convert single-line inline code to blocks */}}
   {{- $content := $content | replaceRE `\{\{%\snotice.*%\}\}` "<-- note -->" -}}{{/* convert hugo notices */}}
   {{- $content := $content | replaceRE `\{\{%\s/notice.*%\}\}` "<-- /note -->" -}}
-  {{- $content := $content | replaceRE `((\/\/)|#)\s*torchlight!.*\n` "" -}}{{/* remove torchlight markup */}}
+  {{- $content := $content | replaceRE `(?:(?:<!--)|(?:#)|(?:\/\/))\s*torchlight!.*\n` "" -}}{{/* remove torchlight markup */}}
   {{- $content := $content | replaceRE `(?:(?:<!--)|(?:#)|(?:\/\/))*\s*\[tl!.*\].*` "" -}}
   {{- $content := $content | replaceRE `(?m:^\[!\[(.*)\]\(.*\)\]\((.*)\)$)` "=> $2 $1" -}}{{/* remove images from uptime links */}}
   {{- $content := $content | replaceRE `(?m:^\s*(?:(?:\*|\-)\s+)?\[(.*)\]\((.*)\)$)` "=> $2 $1" -}}{{/* convert links already on own line */}}
@@ -45,7 +45,12 @@
 
 ---
 {{ $subject := printf "Re: %s" .Title -}}
-=> mailto:blog@runtimeterror.dev?subject={{ urlquery $subject | replaceRE `\+` "%20" }} 📧 Reply via email
+{{ $subject := urlquery $subject | replaceRE `\+` "%20" }}
+{{ $path := .Page.RelPermalink | path.Dir -}}
+{{ $path := strings.Trim $path "/" -}}
+{{ $address := printf "blogreply.%s@%s" $path "runtimeterror.dev" -}}
+
+=> mailto:{{ $address }}?subject={{ $subject }} 📧 Reply by email
 {{ $related := first 3 (where (where .Site.RegularPages.ByDate.Reverse ".Params.tags" "intersect" .Params.tags) "Permalink" "!=" .Permalink) }}
 {{ if $related }}
 ## Related articles

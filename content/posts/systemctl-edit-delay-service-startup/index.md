@@ -5,7 +5,6 @@ date: 2023-10-15
 description: "Quick notes on using `systemctl edit` to override a systemd service to delay its startup."
 featured: false
 toc: false
-comments: true
 categories: Tips # Projects, Code
 tags:
   - crostini

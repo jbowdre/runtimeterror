@@ -1,5 +1,5 @@
 +++
-comments = false
+reply = false
 toc = false
 usePageBundles = false
 showDate = false

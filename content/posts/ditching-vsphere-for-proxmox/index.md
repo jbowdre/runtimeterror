@@ -4,7 +4,6 @@ date: 2023-11-24
 description: "I moved my homelab from VMware vSphere to Proxmox VE, and my only regret is that I didn't make this change sooner."
 featured: false
 toc: true
-comments: true
 categories: Tips # Projects, Code
 tags:
   - homelab

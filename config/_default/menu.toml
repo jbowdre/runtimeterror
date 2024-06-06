@@ -9,21 +9,45 @@
   name = "self-hosting"
   url = "/categories/self-hosting/"
   weight = 1
+  [[main.params]]
+    target = "_self"
 
 [[main]]
   identifier = "tips"
   name = "tips"
   url = "/categories/tips/"
   weight = 1
+  [[main.params]]
+    target = "_self"
 
 [[main]]
   identifier = "code"
   name = "code"
   url = "/categories/code/"
   weight = 1
+  [[main.params]]
+    target = "_self"
 
 [[main]]
-  identifier = "virtuallypotato"
-  name = "whereis virtuallypotato"
-  url = "/virtuallypotato-runtimeterror/"
+  identifier = "backstage"
+  name = "backstage"
+  url = "/categories/backstage/"
+  weight = 1
+  [[main.params]]
+    target = "_self"
+
+[[main]]
+  identifier = "slashes"
+  name = "slashes"
+  url = "/slashes/"
+  weight = 10
+  [[main.params]]
+    target = "_self"
+
+[[main]]
+  identifier = "notes"
+  name = "notes"
+  url = "https://notes.runtimeterror.dev"
   weight = 100
+  [[main.params]]
+    target = "_blank"

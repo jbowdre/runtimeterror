@@ -6,7 +6,6 @@ description: "Using the power of Home Assistant automations and Ntfy push notifi
 featured: true
 alias: automating-security-camera-notifications-with-home-assistant-and-ntfy
 toc: true
-comments: true
 thumbnail: thumbnail.png
 categories: Self-Hosting
 tags:

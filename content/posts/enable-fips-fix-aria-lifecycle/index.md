@@ -4,7 +4,6 @@ date: 2024-01-19
 # lastmod: 2024-01-19
 description: "Never in my life have I seen enabling FIPS *fix* a problem - until now."
 featured: false
-comments: true
 categories: VMware
 tags:
   - vmware

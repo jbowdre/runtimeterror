@@ -17,6 +17,9 @@
         hugo
         nodePackages.npm
       ];
+      shellHook = ''
+        source .env
+      '';
     };
   };
 }

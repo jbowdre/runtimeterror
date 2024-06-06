@@ -5,7 +5,6 @@ lastmod: "2024-04-14T02:21:57Z"
 description: "Using Hugo to politely ask AI bots to not steal my content - and then configuring Cloudflare's WAF to actively block them, just to be sure."
 featured: false
 toc: true
-comments: true
 categories: Backstage
 tags:
   - cloud

@@ -33,25 +33,23 @@
     <div class="content__body">
         {{ .Content }}
     </div>
-
-    {{- $showComments := true }}
-    {{- if eq .Site.Params.comments false }}
-      {{- $showComments = false }}
-    {{- else if eq .Params.comments false }}
-      {{- $showComments = false }}
+    {{- $reply := true }}
+    {{- if eq .Site.Params.reply false }}
+      {{- $reply = false }}
+    {{- else if eq .Params.reply false }}
+      {{- $reply = false }}
     {{- end }}
-    {{- if ne $showComments false }}
+    {{- if or (eq $reply true) (eq .Site.Params.analytics "true") }}
       <hr>
-      {{- $showKudos := true }}
-      {{- if eq .Site.Params.kudos false }}
-        {{- $showKudos = false }}
-      {{- else if eq .Params.kudos false }}
-        {{- $showKudos = false }}
+      {{- if eq .Site.Params.analytics true }}
+      <span class="post_kudos"><button class="tinylytics_kudos"></button></span>
       {{- end }}
-      {{- if and (eq .Site.Params.analytics true) (ne $showKudos false) }}
-      <span class="post_kudos">Celebrate this post:&nbsp;<button class="tinylytics_kudos"></button></span>
+      {{- if (eq $reply true) }}
+      {{- $path := .Page.RelPermalink | path.Dir }}
+      {{- $path := strings.Trim $path "/" }}
+      {{- $address := printf "blogreply.%s@%s" $path "runtimeterror.dev" }}
+      <span class="post_email_reply"><a href="mailto:{{ $address }}?Subject=Re: {{ .Title }}">📧 Reply by email</a></span>
       {{- end }}
-      {{- partial "comments" . }}
     {{- end }}
-    <footer class="content__footer"></footer>
+  <footer class="content__footer"></footer>
 {{ end }}

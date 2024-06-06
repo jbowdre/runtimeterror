@@ -5,7 +5,6 @@ date: 2024-01-21
 description: "Using GitHub Actions to automatically deploy a Hugo website to Neocities."
 featured: false
 toc: true
-comments: true
 categories: Backstage
 tags:
   - cicd
