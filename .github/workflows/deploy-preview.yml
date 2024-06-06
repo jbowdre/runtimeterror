@@ -1,4 +1,4 @@
-name: Deploy Preview to Neocities
+name: Deploy Preview to Bunny
 
 # only run on changes to preview
 on:
@@ -42,16 +42,19 @@ jobs:
           chmod 644 ~/.ssh/known_hosts
       - name: Build with Hugo
         run: HUGO_REMOTE_FONT_PATH=${{ secrets.REMOTE_FONT_PATH }} hugo --minify --environment preview
-      - name: Insert 404 page
-        run: |
-          cp public/404/index.html public/not_found.html
       - name: Highlight with Torchlight
         run: |
           npm i @torchlight-api/torchlight-cli
           npx torchlight
-      - name: Deploy to Neocities
-        uses: bcomnes/deploy-to-neocities@v1
+      - name: Deploy to Bunny
+        uses: ayeressian/bunnycdn-storage-deploy@v2.2.2
         with:
-          api_token: ${{ secrets.NEOCITIES_PREVIEW_API_TOKEN }}
-          cleanup: true
-          dist_dir: public
+          source: public
+          destination: /
+          storageZoneName: "${{ secrets.BUNNY_STORAGE_NAME }}"
+          storagePassword: "${{ secrets.BUNNY_STORAGE_PASSWORD }}"
+          accessKey: "${{ secrets.BUNNY_STORAGE_KEY }}"
+          pullZoneId: "${{ secrets.BUNNY_ZONE_ID }}"
+          upload: "true"
+          remove: "true"
+          purgePullZone: "true"
