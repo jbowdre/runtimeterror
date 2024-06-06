@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - preview
+  workflow_dispatch:
 
 concurrency: # prevent concurrent deploys doing strange things
   group: deploy-preview
@@ -53,6 +54,7 @@ jobs:
           destination: /
           storageZoneName: "${{ secrets.BUNNY_STORAGE_NAME }}"
           storagePassword: "${{ secrets.BUNNY_STORAGE_PASSWORD }}"
+          storageEndpoint: "${{ secrets.BUNNY_STORAGE_ENDPOINT }}"
           accessKey: "${{ secrets.BUNNY_STORAGE_KEY }}"
           pullZoneId: "${{ secrets.BUNNY_ZONE_ID }}"
           upload: "true"
