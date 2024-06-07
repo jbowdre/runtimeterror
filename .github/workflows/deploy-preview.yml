@@ -1,4 +1,4 @@
-name: Deploy Preview to Bunny
+name: Build and Deploy Preview
 
 # only run on changes to preview
 on:
@@ -52,11 +52,11 @@ jobs:
         with:
           source: public
           destination: /
-          storageZoneName: "${{ secrets.BUNNY_STORAGE_NAME }}"
-          storagePassword: "${{ secrets.BUNNY_STORAGE_PASSWORD }}"
+          storageZoneName: "${{ secrets.BUNNY_STORAGE_NAME_PREVIEW }}"
+          storagePassword: "${{ secrets.BUNNY_STORAGE_PASSWORD_PREVIEW }}"
           storageEndpoint: "${{ secrets.BUNNY_STORAGE_ENDPOINT }}"
           accessKey: "${{ secrets.BUNNY_API_KEY }}"
-          pullZoneId: "${{ secrets.BUNNY_ZONE_ID }}"
+          pullZoneId: "${{ secrets.BUNNY_ZONE_ID_PREVIEW }}"
           upload: "true"
           remove: "true"
           purgePullZone: "true"
