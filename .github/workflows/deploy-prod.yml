@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: Build and Deploy Prod
 
 # only run on changes to main
 on:
@@ -52,12 +52,19 @@ jobs:
         run: |
           npm i @torchlight-api/torchlight-cli
           npx torchlight
-      - name: Deploy HTML to Neocities
-        uses: bcomnes/deploy-to-neocities@v1
+      - name: Deploy to Bunny
+        uses: ayeressian/bunnycdn-storage-deploy@v2.2.2
         with:
-          api_token: ${{ secrets.NEOCITIES_API_TOKEN }}
-          cleanup: true
-          dist_dir: public
+          source: public
+          destination: /
+          storageZoneName: "${{ secrets.BUNNY_STORAGE_NAME }}"
+          storagePassword: "${{ secrets.BUNNY_STORAGE_PASSWORD }}"
+          storageEndpoint: "${{ secrets.BUNNY_STORAGE_ENDPOINT }}"
+          accessKey: "${{ secrets.BUNNY_API_KEY }}"
+          pullZoneId: "${{ secrets.BUNNY_ZONE_ID }}"
+          upload: "true"
+          remove: "true"
+          purgePullZone: "true"
       - name: Deploy GMI to Agate
         run: |
           rsync -avz --delete --exclude='*.html' --exclude='*.css' --exclude='*.js' -e ssh public/ deploy@${{ secrets.GMI_HOST }}:${{ secrets.GMI_CONTENT_PATH }}
