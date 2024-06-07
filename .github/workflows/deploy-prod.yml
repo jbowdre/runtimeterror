@@ -51,7 +51,7 @@ jobs:
       - name: Highlight with Torchlight
         run: |
           npm i @torchlight-api/torchlight-cli
-          npx torchlight
+          TORCHLIGHT_TOKEN=${{ secrets.TORCHLIGHT_TOKEN }} npx torchlight
       - name: Deploy to Bunny
         uses: ayeressian/bunnycdn-storage-deploy@v2.2.2
         with:
