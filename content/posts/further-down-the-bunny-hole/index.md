@@ -1,7 +1,7 @@
 ---
 title: "Further Down the Bunny Hole"
 date: 2024-06-06
-# lastmod: 2024-06-06
+lastmod: "2024-06-07"
 description: "After a few weeks of weird configuration glitches, I decided to migrate my static site from Neocities to Bunny CDN. Here's how I did it."
 featured: false
 toc: true
@@ -35,7 +35,7 @@ Once again, I gave the zone a name (`my-pull-zone`). I left the origin settings 
 After admiring the magnificence of my new pull zone, I clicked the menu button at the top right and select **Copy Pull Zone ID** and made a note of that as well.
 
 ### GitHub Action
-I found the [bunnycdn-storage-deploy](https://github.com/ayeressian/bunnycdn-storage-deploy) Action which makes it easy to upload content to a Bunny storage zone and also purge the cache of the pull zone at the same time. For that to work, I had to add a few new[action secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) to my GitHub repo:
+I found the [bunnycdn-storage-deploy](https://github.com/ayeressian/bunnycdn-storage-deploy) Action which makes it easy to upload content to a Bunny storage zone and also purge the cache of the pull zone at the same time. For that to work, I had to add a few new [action secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) to my GitHub repo:
 
 | Name                     | Sample Value                  | Description                                                                                                  |
 |--------------------------|-------------------------------|--------------------------------------------------------------------------------------------------------------|
