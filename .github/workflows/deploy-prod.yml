@@ -62,6 +62,12 @@ jobs:
           upload: "true"
           remove: "true"
           purgePullZone: "true"
+      - name: Deploy HTML to Neocities
+        uses: bcomnes/deploy-to-neocities@v1
+        with:
+          api_token: ${{ secrets.NEOCITIES_API_TOKEN }}
+          cleanup: true
+          dist_dir: public
       - name: Deploy GMI to Agate
         run: |
           rsync -avz --delete --exclude='*.html' --exclude='*.css' --exclude='*.js' -e ssh public/ deploy@${{ secrets.GMI_HOST }}:${{ secrets.GMI_CONTENT_PATH }}
