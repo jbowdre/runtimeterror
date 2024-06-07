@@ -62,6 +62,9 @@ jobs:
           upload: "true"
           remove: "true"
           purgePullZone: "true"
+      - name: Insert 404 page for Neocities
+        run: |
+          cp public/404/index.html public/not_found.html
       - name: Deploy HTML to Neocities
         uses: bcomnes/deploy-to-neocities@v1
         with:
