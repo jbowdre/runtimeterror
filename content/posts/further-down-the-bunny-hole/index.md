@@ -2,7 +2,6 @@
 title: "Further Down the Bunny Hole"
 date: 2024-06-06
 # lastmod: 2024-06-06
-draft: true
 description: "After a few weeks of weird configuration glitches, I decided to migrate my static site from Neocities to Bunny CDN. Here's how I did it."
 featured: false
 toc: true
