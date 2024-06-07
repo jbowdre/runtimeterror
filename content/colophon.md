@@ -17,7 +17,7 @@ categories: slashes
 - provides site search with [lunr](https://lunrjs.com/) based on an implementation detailed by [Victoria Drake](https://victoria.dev/blog/add-search-to-hugo-static-sites-with-lunr/).
 - leverages [tinylytics](https://tinylytics.app/) for privacy-friendly analytics and cute kudos buttons.
 - resolves via [Bunny DNS](https://bunny.net/dns/).
-- is published to / hosted by [Bunny CND](https://bunny.net/cdn/) with a GitHub Actions workflow.
+- is published to / hosted by [Bunny CDN](https://bunny.net/cdn/) with a GitHub Actions workflow.
 - has a [Gemini](https://geminiprotocol.net) mirror at `gemini://gmi.runtimeterror.dev`. This is generated from a [Hugo gemtext post layout](https://github.com/jbowdre/runtimeterror/blob/main/layouts/_default/single.gmi), deployed to a [Vultr](https://www.vultr.com/) VPS through a GitHub Actions workflow, and served with [Agate](https://github.com/mbrubeck/agate).
 
 
