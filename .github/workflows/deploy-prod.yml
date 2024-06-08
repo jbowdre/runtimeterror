@@ -45,6 +45,10 @@ jobs:
           chmod 644 ~/.ssh/known_hosts
       - name: Build with Hugo
         run: HUGO_REMOTE_FONT_PATH=${{ secrets.REMOTE_FONT_PATH }} hugo --minify
+      - name: Insert 404 page
+        run: |
+          mkdir -p public/bunnycdn_errors
+          cp public/404/index.html public/bunnycdn_errors/404.html
       - name: Highlight with Torchlight
         run: |
           npm i @torchlight-api/torchlight-cli
