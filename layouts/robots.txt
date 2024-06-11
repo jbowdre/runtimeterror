@@ -1,11 +1,12 @@
-# hello robots [:]
-# let's be friends <3
-
 Sitemap: {{ .Site.BaseURL }}/sitemap.xml
 
-# except for these bots which are not friends:
+# hello robots [^_^]
+# let's be friends <3
+
 User-agent: *
 Disallow:
+
+# except for these bots which are not friends:
 {{ range .Site.Params.bad_robots }}
 User-agent: {{ . }}
 {{- end }}
