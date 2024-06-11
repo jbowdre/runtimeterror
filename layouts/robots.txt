@@ -1,5 +1,5 @@
-# # hello, robots <|°_°|>
-# let’s be friends <3
+# hello robots <|°_°|>
+# let's be friends <3
 
 Sitemap: {{ .Site.BaseURL }}/sitemap.xml
 
