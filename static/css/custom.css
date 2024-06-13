@@ -402,3 +402,22 @@ p:has(+ ol),
 p:has(+ ul) {
   margin-bottom: 0;
 }
+
+/* tagline cursor animation */
+#tagline::after {
+  content: "";
+  width: 0.5rem;
+  height: 1.2rem;
+  background: var(--muted);
+  display: inline-block;
+  margin-left: 0.2rem;
+  vertical-align: text-bottom;
+  animation: cursor-blink 1.5s steps(2) infinite;
+}
+
+@keyframes cursor-blink {
+  0% {
+    opacity: 0;
+  }
+}
+
