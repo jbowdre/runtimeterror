@@ -1,7 +1,7 @@
 ---
 title: "Further Down the Bunny Hole"
 date: 2024-06-06
-# lastmod: 2024-06-06
+lastmod: "2024-06-08T02:57:35Z"
 description: "After a few weeks of weird configuration glitches, I decided to migrate my static site from Neocities to Bunny CDN. Here's how I did it."
 featured: false
 toc: true
@@ -35,7 +35,7 @@ Once again, I gave the zone a name (`my-pull-zone`). I left the origin settings 
 After admiring the magnificence of my new pull zone, I clicked the menu button at the top right and select **Copy Pull Zone ID** and made a note of that as well.
 
 ### GitHub Action
-I found the [bunnycdn-storage-deploy](https://github.com/ayeressian/bunnycdn-storage-deploy) Action which makes it easy to upload content to a Bunny storage zone and also purge the cache of the pull zone at the same time. For that to work, I had to add a few new[action secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) to my GitHub repo:
+I found the [bunnycdn-storage-deploy](https://github.com/ayeressian/bunnycdn-storage-deploy) Action which makes it easy to upload content to a Bunny storage zone and also purge the cache of the pull zone at the same time. For that to work, I had to add a few new [action secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) to my GitHub repo:
 
 | Name                     | Sample Value                  | Description                                                                                                  |
 |--------------------------|-------------------------------|--------------------------------------------------------------------------------------------------------------|
@@ -45,7 +45,7 @@ I found the [bunnycdn-storage-deploy](https://github.com/ayeressian/bunnycdn-sto
 | `BUNNY_STORAGE_PASSWORD` | `7cb197e5-[...]-ad35820c0de8` | Get it from the storage zone's FTP & API Access page                                                         |
 | `BUNNY_ZONE_ID`          | `12345`                       | The pull zone ID you copied earlier                                                                          |
 
-Then I just updated [my deployment workflow](https://github.com/jbowdre/runtimeterror/blob/main/.github/workflows/deploy-prod.yml) to swap the Bunny action in place of the Neocities one:
+Then I just updated [my deployment workflow](https://github.com/jbowdre/runtimeterror/blob/main/.github/workflows/deploy-prod.yml) to swap the Bunny action in place of the Neocities one (and [adjust the 404 page for bunny](https://support.bunny.net/hc/en-us/articles/360000332631-How-do-I-configure-a-custom-404-page-for-my-storage-zone)):
 
 ```yaml
 # torchlight! {"lineNumbers":true}
@@ -96,6 +96,14 @@ jobs:
           chmod 644 ~/.ssh/known_hosts #
       - name: Build with Hugo
         run: HUGO_REMOTE_FONT_PATH=${{ secrets.REMOTE_FONT_PATH }} hugo --minify
+      - name: Insert 404 page # [tl! **:4]
+        run: | # [tl! ++:1,1 --:2,1]
+          mkdir -p public/bunnycdn_errors
+          cp public/404/index.html public/not_found.html
+          cp public/404/index.html public/bunnycdn_errors/404.html
+      - name: Insert 404 page # [tl! ++:-1,1 reindex(-1)]
+        run: |
+          cp public/404/index.html public/not_found.html
       - name: Highlight with Torchlight
         run: |
           npm i @torchlight-api/torchlight-cli

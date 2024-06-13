@@ -8,11 +8,11 @@ numberOfRelatedPosts = 5
 
 indexTitle = ".-. ..- -. - .. -- . - . .-. .-. --- .-."
 
-robots = [
+bad_robots = [
   "AdsBot-Google",
   "Amazonbot",
   "anthropic-ai",
-  "Applebot",
+  "Applebot-Extended",
   "AwarioRssBot",
   "AwarioSmartBot",
   "Bytespider",

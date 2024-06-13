@@ -4,7 +4,7 @@
 <h1 class="about__title">{{ .title }}&nbsp;<a target="_blank" href="/feed.xml" aria-label="RSS"><i class="fa-solid fa-square-rss"></i></a>&nbsp;</h1>
 {{ partial "tagline.html" . }}
 <br>
-<a href="about"><i class="fa-regular fa-user"></i></a>&nbsp;<a href="/about">{{ site.Params.Author.username }}</a>
+<a href="/about/"><i class="fa-regular fa-user"></i></a>&nbsp;<a href="/about/">{{ site.Params.Author.name }}</a>
 </div>
 {{ end }}
 <ul class="aside__social-links">

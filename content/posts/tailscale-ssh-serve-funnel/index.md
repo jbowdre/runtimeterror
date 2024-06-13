@@ -9,8 +9,8 @@ categories: Tips # Projects, Code
 tags:
   - homelab
   - networking
+  - proxmox
   - tailscale
-  - vpn
 ---
 
 I've spent the past two years in love with [Tailscale](https://tailscale.com/), which builds on the [secure and high-performance Wireguard VPN protocol](/cloud-based-wireguard-vpn-remote-homelab-access/) and makes it [really easy to configure and manage](/secure-networking-made-simple-with-tailscale/). Being able to easily (and securely) access remote devices as if they were on the same LAN is pretty awesome to begin with, but Tailscale is packed with an ever-expanding set of features that can really help to streamline your operations too. Here are three of my favorites.
