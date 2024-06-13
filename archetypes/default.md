@@ -10,32 +10,39 @@ reply: true
 categories: Tips # Backstage, ChromeOS, Code, Self-Hosting, VMware
 tags:
   - android
+  - api
+  - automation
   - caddy
+  - certs
   - chromeos
+  - cloud
   - cloudflare
+  - containers
   - crostini
   - docker
   - gcp
   - homeassistant
   - hugo
+  - iac
   - javascript
   - kubernetes
   - linux
   - meta
+  - networking
   - packer
   - powercli
   - powershell
+  - proxmox
   - python
   - regex
   - salt
+  - security
   - selfhosting
   - shell
   - tailscale
-  - tasker
   - terraform
   - vmware
   - windows
-  - wireguard
   - wsl
 ---
 
