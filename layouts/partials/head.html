@@ -49,3 +49,7 @@
   {{ $copyCss := resources.Get "css/code-copy-button.css" | minify }}
   <link href="{{ $copyCss.RelPermalink }}" rel="stylesheet">
 {{ end }}
+
+<!-- typo text animation -->
+{{ $jsTypo := resources.Get "js/typo.js" | minify }}
+<script src="{{ $jsTypo.RelPermalink }}"></script>

@@ -4,9 +4,11 @@
 <script language="Javascript" type="text/javascript">
   var taglines = JSON.parse(document.getElementsByTagName("meta")["taglines"].content);
   function getTagline() {
-    var randIndex = Math.floor(Math.random() * taglines.length);
-    document.getElementById("tagline").innerHTML = taglines[randIndex];
+    const randIndex = Math.floor(Math.random() * taglines.length);
+    const element = document.getElementById("tagline");
+    element.innerHTML = taglines[randIndex];
+    typo(element, element.innerHTML);
   }
   window.addEventListener("pageshow", getTagline);
 </script>
-<div><i id="tagline"></i></div>
+<div style="height: 3.5rem;"><i id="tagline" data-typo-chance="2" data-typing-delay="40" data-typing-jitter="20"></i></div>
