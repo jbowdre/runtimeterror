@@ -42,7 +42,7 @@
     {{- if or (eq $reply true) (eq .Site.Params.analytics "true") }}
       <hr>
       {{- if eq .Site.Params.analytics true }}
-      <span class="post_kudos"><button class="tinylytics_kudos"></button></span>
+      <span class="post_kudos"><button class="tinylytics_kudos">🎉 0</button></span>
       {{- end }}
       {{- if (eq $reply true) }}
       {{- $path := .Page.RelPermalink | path.Dir }}
