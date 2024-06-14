@@ -17,6 +17,7 @@
 /* override page max-width */
 .page {
   max-width: 72rem;
+  grid-template-columns: minmax(0, 1fr) 16rem;
 }
 
 
