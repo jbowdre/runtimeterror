@@ -79,6 +79,6 @@ I like to know what's flying overhead, and I'm also feeding flight data to [flig
   - [Kineto](https://github.com/beelux/kineto) Gemini-to-HTTP proxy ([post](/gemini-capsule-gempost-github-actions/))
   - [Linkding](https://github.com/sissbruecker/linkding) bookmark manager serving [links.bowdre.net](https://links.bowdre.net/bookmarks/shared)
   - [ntfy](https://ntfy.sh/) notification service ([post](/easy-push-notifications-with-ntfy/))
-  - [SearXNG](https://docs.searxng.org/) self-hosted metasearch engine serving [grep.vpota.to](https://grep.vpota.to) ([post](https://scribbles.jbowdre.lol/post/self-hosting-a-search-engine-iyjdlk6y))
+  - [SearXNG](https://docs.searxng.org/) self-hosted metasearch engine serving [grep.vpota.to](https://grep.vpota.to) ([post](https://blog.jbowdre.lol/post/self-hosting-a-search-engine-iyjdlk6y))
   - [Uptime Kuma](https://github.com/louislam/uptime-kuma) for monitoring internal services (via Tailscale)
   - [vault-unseal](https://github.com/lrstanley/vault-unseal) to auto-unseal my on-prem Vault instance
