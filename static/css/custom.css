@@ -14,9 +14,17 @@
     url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Regular.woff2') format('woff2'),
 }
 
-/* override page max-width */
+/* minor layout tweaks */
 .page {
   max-width: 72rem;
+}
+
+.page__body {
+  margin: 1rem;
+}
+
+.page__aside {
+  margin: 0 1rem 0 0;
 }
 
 
@@ -245,9 +253,13 @@ input {
   background-color: var(--off-bg);
   color: var(--off-fg);
   height: 1.5rem;
-  border-radius: 0.25rem;
+  border-radius: 0.25rem 0 0 0.25rem;
   padding-left: 0.5rem;
   font-family: var(--font-monospace);
+}
+
+form {
+  width:auto;
 }
 
 input:focus {
