@@ -284,7 +284,6 @@ form button {
   grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
   grid-gap: 0.5rem;
   margin: 0.5rem 0;
-
 }
 
 .tagsArchive sup {
