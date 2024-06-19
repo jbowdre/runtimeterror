@@ -13,7 +13,7 @@ categories: slashes
 *Not counting my [homelab](/homelab).*
 - **[Framework Laptop Chromebook Edition](https://frame.work/products/laptop-chromebook-12-gen-intel)** (i5-1240P | 32GB RAM | 1TB NVMe). Yep, it's an overpowered Chromebook, and my primary computing device. I make full use of the [ChromeOS Linux Development Environment](https://www.chromium.org/chromium-os/developer-library/guides/containers/containers-and-vms/), with [Nix](https://nixos.org/) for package management.
 - **[Pixelbook](https://blog.google/products/pixelbook/introducing-pixelbook/)** running [NixOS](https://nixos.org/) for when I need a "real" Linux computer.
-- **[BOOX Note Air3 C](https://shop.boox.com/products/noteair3) e-ink tablet** for reading and (hand)writing notes (more on this [here](https://scribbles.jbowdre.lol/post/boox-note-air-3-c-e-ink-writing-tablet)).
+- **[BOOX Note Air3 C](https://shop.boox.com/products/noteair3) e-ink tablet** for reading and (hand)writing notes (more on this [here](https://blog.jbowdre.lol/post/boox-note-air-3-c-e-ink-writing-tablet)).
 - **[Creality Ender 3 Pro 3D Printer](https://www.creality.com/products/ender-3-pro-3d-printer)**, or at least that's how it started. It's got a direct-drive conversion, a "silent" board running Klipper firmware, and more printed part upgrades than I can remember.
 - **[Weatherflow Tempest Weather Station](https://shop.tempest.earth/products/tempest)** to help me get my Wx nerd on.
 
@@ -23,7 +23,7 @@ categories: slashes
 - **[Leatherman FREE K4](https://www.leatherman.com/free-k4-590.html)** knife/multitool in my pocket for cutting and tinkering.
 - **[Milky lactase tablets](https://shopmilky.com/)** in my wallet so I can enjoy dairy without consequences.
 - **[Oura Ring](https://ouraring.com/product/rings/heritage)** (3rd generation, Heritage Black) on my middle finger for sleep and readiness/recovery tracking.
-- **[Pixel 8 Pro](https://store.google.com/product/pixel_8_pro)** in my pocket, running [GrapheneOS](https://grapheneos.org/) as my daily-driver (more on how I use that [here](https://scribbles.jbowdre.lol/post/daily-driving-grapheneos)).
+- **[Pixel 8 Pro](https://store.google.com/product/pixel_8_pro)** in my pocket, running [GrapheneOS](https://grapheneos.org/) as my daily-driver (more on how I use that [here](https://blog.jbowdre.lol/post/daily-driving-grapheneos)).
 - **[Pixel Buds Pro](https://store.google.com/product/pixel_buds_pro)** in my ears, with noise cancelling so I don't have to acknowledge the world around me.
 - **[Pixel Watch 2](https://store.google.com/product/pixel_watch_2)** on my wrist, for notifications and fitness tracking.
 - **[ProxGrind RF Field Detector Card](https://www.redteamtools.com/RFID_LF_HF_Field_Detector_Card)** on my keychain to quickly learn about RFID/NFC readers.

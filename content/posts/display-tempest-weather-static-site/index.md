@@ -14,7 +14,7 @@ tags:
   - meta
   - serverless
 ---
-As I covered briefly [in a recent Scribble](https://scribbles.jbowdre.lol/post/near-realtime-weather-on-profile-lol-ku4yq-zr), I was inspired by the way [Kris's omg.lol page](https://kris.omg.lol/) displays realtime data from his [Weatherflow Tempest weather station](https://shop.weatherflow.com/products/tempest). I thought that was really neat and wanted to do the same on [my omg.lol page](https://jbowdre.lol) with data from my own Tempest, but I wanted to find a way to do it without needing to include an authenticated API call in the client-side JavaScript.
+As I covered briefly [in a recent Scribble](https://blog.jbowdre.lol/post/near-realtime-weather-on-profile-lol-ku4yq-zr), I was inspired by the way [Kris's omg.lol page](https://kris.omg.lol/) displays realtime data from his [Weatherflow Tempest weather station](https://shop.weatherflow.com/products/tempest). I thought that was really neat and wanted to do the same on [my omg.lol page](https://jbowdre.lol) with data from my own Tempest, but I wanted to find a way to do it without needing to include an authenticated API call in the client-side JavaScript.
 
 I realized I could use a GitHub Actions workflow to retrieve the data from the authenticated Tempest API, post it somewhere publicly accessible, and then have the client-side code fetch the data from there without needing any authentication. After a few days of tinkering, I came up with a presentation I'm happy with.
 

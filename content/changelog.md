@@ -1,7 +1,7 @@
 ---
 title: "/changelog"
 date: "2024-05-26T21:19:08Z"
-lastmod: "2024-06-13T16:20:54Z"
+lastmod: "2024-06-18T16:12:15Z"
 description: "Maybe I should keep a log of all my site-related tinkering?"
 featured: false
 toc: false
@@ -9,6 +9,9 @@ timeless: true
 categories: slashes
 ---
 *High-level list of config/layout changes to the site.*
+
+**2024-06-18:**
+- Swap back to [Cabin](https://withcabin.com) analytics
 
 **2024-06-13:**
 - Add [Typo](https://neatnik.net/typo/) and a blinking cursor to the random taglines in the sidebar

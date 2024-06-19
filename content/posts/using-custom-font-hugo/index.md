@@ -13,7 +13,7 @@ tags:
   - meta
   - tailscale
 ---
-Last week, I came across and immediately fell in love with a delightfully-retro monospace font called [Berkeley Mono](https://berkeleygraphics.com/typefaces/berkeley-mono/). I promptly purchased a "personal developer" license and set to work [applying the font in my IDE and terminal](https://scribbles.jbowdre.lol/post/trying-tabby-terminal). I didn't want to stop there, though; the license also permits me to use the font on my personal site, and Berkeley Mono will fit in beautifully with the whole runtimeterror aesthetic.
+Last week, I came across and immediately fell in love with a delightfully-retro monospace font called [Berkeley Mono](https://berkeleygraphics.com/typefaces/berkeley-mono/). I promptly purchased a "personal developer" license and set to work [applying the font in my IDE and terminal](https://blog.jbowdre.lol/post/trying-tabby-terminal). I didn't want to stop there, though; the license also permits me to use the font on my personal site, and Berkeley Mono will fit in beautifully with the whole runtimeterror aesthetic.
 
 Well, you're looking at the slick new font here, and I'm about to tell you how I added the font both to the site itself and to the [dynamically-generated OpenGraph share images](/dynamic-opengraph-images-with-hugo/) setup. It wasn't terribly hard to implement, but the Hugo documentation is a bit light on how to do it (and I'm kind of inept at this whole web development thing).
 
@@ -81,7 +81,7 @@ And that would work just fine... but it *would* require storing those web font f
 So instead, I opted to try using a [Content Delivery Network (CDN)](https://en.wikipedia.org/wiki/Content_delivery_network) to host the font files. This would allow for some degree of access control, help me learn more about a web technology I hadn't played with much, and make use of a cool `cdn.*` subdomain in the process.
 
 {{% notice note "Double the CDN, double the fun" %}}
-Of course, while writing this post I gave in to my impulsive nature and [migrated the site from Cloudflare to Bunny.net](https://scribbles.jbowdre.lol/post/i-just-hopped-to-bunny-net). Rather than scrap the content I'd already written, I'll go ahead and describe how I set this up first on [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) and later on [Bunny Storage](https://bunny.net/storage/).
+Of course, while writing this post I gave in to my impulsive nature and [migrated the site from Cloudflare to Bunny.net](https://blog.jbowdre.lol/post/i-just-hopped-to-bunny-net). Rather than scrap the content I'd already written, I'll go ahead and describe how I set this up first on [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) and later on [Bunny Storage](https://bunny.net/storage/).
 {{% /notice %}}
 
 #### Cloudflare R2
