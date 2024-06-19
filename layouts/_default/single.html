@@ -39,13 +39,10 @@
     {{- else if eq .Params.reply false }}
       {{- $reply = false }}
     {{- end }}
-    {{- if or (eq $reply true) (eq .Site.Params.analytics "true") }}
+    {{- if eq $reply true }}
       <hr>
       {{- if (eq $reply true) }}
-      {{- $path := .Page.RelPermalink | path.Dir }}
-      {{- $path := strings.Trim $path "/" }}
-      {{- $address := printf "blogreply.%s@%s" $path "runtimeterror.dev" }}
-      <span class="post_email_reply"><a href="mailto:{{ $address }}?Subject=Re: {{ .Title }}">📧 Reply by email</a></span>
+      <span class="post_email_reply"><a href="mailto:wheel.east.brief@clkdmail.com?Subject=Re: {{ .Title }}">📧 Reply by email</a></span>
       {{- end }}
     {{- end }}
   <footer class="content__footer"></footer>
