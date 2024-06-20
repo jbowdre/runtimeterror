@@ -14,10 +14,17 @@
     url('https://cdn.runtimeterror.dev/fonts/BerkeleyMono-Regular.woff2') format('woff2'),
 }
 
-/* override page max-width */
+/* minor layout tweaks */
 .page {
   max-width: 72rem;
-  grid-template-columns: minmax(0, 1fr) 16rem;
+}
+
+.page__body {
+  margin: 1rem;
+}
+
+.page__aside {
+  margin: 0 1rem 0 0;
 }
 
 
@@ -246,9 +253,13 @@ input {
   background-color: var(--off-bg);
   color: var(--off-fg);
   height: 1.5rem;
-  border-radius: 0.25rem;
+  border-radius: 0.25rem 0 0 0.25rem;
   padding-left: 0.5rem;
   font-family: var(--font-monospace);
+}
+
+form {
+  width:auto;
 }
 
 input:focus {
@@ -273,7 +284,6 @@ form button {
   grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
   grid-gap: 0.5rem;
   margin: 0.5rem 0;
-
 }
 
 .tagsArchive sup {
@@ -357,11 +367,20 @@ p:has(+ ul) {
   margin-bottom: 0;
 }
 
-/* tagline cursor animation */
+/* tagline tweaks */
+#tagline_container {
+  height: 3rem;
+}
+
+#tagline {
+  font-size: 0.8rem;
+  line-height: 0.8rem;
+}
+
 #tagline::after {
   content: "";
   width: 0.5rem;
-  height: 1.2rem;
+  height: 1rem;
   background: var(--muted);
   display: inline-block;
   margin-left: 0.2rem;
