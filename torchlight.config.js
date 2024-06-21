@@ -30,7 +30,7 @@ module.exports = {
 
     // If there are any diff indicators for a line, put them
     // in place of the line number to save horizontal space.
-    diffIndicatorsInPlaceOfLineNumbers: true,
+    diffIndicatorsInPlaceOfLineNumbers: false,
 
     // When lines are collapsed, this is the text that will
     // be shown to indicate that they can be expanded.
