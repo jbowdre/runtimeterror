@@ -18,15 +18,11 @@ document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButt
 async function copyCodeToClipboard(button, highlightDiv) {
   // capture all code lines in the selected block which aren't classed `nocopy` or `line-remove`
   let codeToCopy = highlightDiv.querySelectorAll(":last-child > .torchlight > code > .line:not(.nocopy, .line-remove)");
-  // now remove the first-child of each line with class `line-number`
+  // remove child elements with class `line-number` and `diff-indicator diff-indicator-add`
   codeToCopy = Array.from(codeToCopy).reduce((accumulator, line) => {
-    if (line.firstChild.className != "line-number") {
-      return accumulator + line.innerText + "\n"; }
-    else {
       return accumulator + Array.from(line.children).filter(
-        (child) => child.className != "line-number").reduce(
-          (accumulator, child) => accumulator + child.innerText, "") + "\n";
-    }
+        (child) => child.className != "line-number" && child.className != "diff-indicator diff-indicator-add"
+      ).reduce((accumulator, child) => accumulator + child.innerText, "") + "\n";
   }, "");
   try {
     var result = await navigator.permissions.query({ name: "clipboard-write" });
