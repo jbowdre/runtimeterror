@@ -1,20 +1,25 @@
 ---
 title: "/changelog"
 date: "2024-05-26T21:19:08Z"
-lastmod: "2024-06-18T16:12:15Z"
+lastmod: "2024-06-21T03:20:04Z"
 description: "Maybe I should keep a log of all my site-related tinkering?"
 featured: false
 toc: false
 timeless: true
 categories: slashes
 ---
-*High-level list of config/layout changes to the site.*
+*High-level list of config/layout changes to the site. The full changelog is of course [on GitHub](https://github.com/jbowdre/runtimeterror/commits/main/).*
+
+**2024-06-20:**
+- Torchlight syntax highlighting tweaks:
+  - Fix for line highlights not including all content when overflowing
+  - Display diff indicators alongside line numbers
 
 **2024-06-18:**
 - Swap back to [Cabin](https://withcabin.com) analytics
 
 **2024-06-13:**
-- Add [Typo](https://neatnik.net/typo/) and a blinking cursor to the random taglines in the sidebar
+- Add [Typo](https://neatnik.net/typo/) and a blinking cursor to the random error messages in the sidebar
 
 **2024-06-06:**
 - Migrate hosting from [Neocities to Bunny CDN](/further-down-the-bunny-hole/)
@@ -33,8 +38,30 @@ categories: slashes
 - Replace "powered by" links with slashpages
 
 **2024-05-26:**
-- Begin changelog
+- Begin changelog *(earlier change dates extrapolated from posts)*
 - Simplify logic for displaying kudos and post reply buttons
 - Reduce gap for paragraphs followed by lists
 
-The full changelog is of course [on GitHub](https://github.com/jbowdre/runtimeterror/commits/main/).
+**2024-04-30:**
+- Implement [styling for RSS XML](/prettify-hugo-rss-feed-xslt/)
+
+**2024-04-28:**
+- Switch to [Berkeley Mono font face](/using-custom-font-hugo/)
+
+**2024-02-19:**
+- Dynamically generate [OG images](/dynamic-opengraph-images-with-hugo/)
+
+**2024-01-21:**
+- Migrate hosting from Netlify [to Neocities](/deploy-hugo-neocities-github-actions/)
+
+**2023-11-09:**
+- [Implement Torchlight](/spotlight-on-torchlight/) for syntax highlighting
+
+**2023-09-13:**
+- Rebrand from [virtuallypotato to runtimeterror](/virtuallypotato-runtimeterror/)
+
+**2021-12-19:**
+- Switch SSG from [Jekyll to Hugo](/hello-hugo/) and hosting from GitHub Pages to Netlify
+
+**2021-07-20:**
+- Migrate from [Hashnode to Jekyll on GitHub Page](/virtually-potato-migrated-to-github-pages/)
