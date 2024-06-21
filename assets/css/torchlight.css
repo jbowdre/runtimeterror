@@ -33,6 +33,7 @@ padding from the code block above.
 pre.torchlight .line {
   padding-left: 1rem;
   padding-right: 1rem;
+  width: fit-content;
 }
 
 /*
