@@ -41,8 +41,9 @@ Push the code away from the line numbers and
 summary caret indicators.
 */
 pre.torchlight .line-number,
-pre.torchlight .summary-caret {
-  margin-right: 1rem;
+pre.torchlight .summary-caret,
+pre.torchlight .diff-indicator {
+  margin-right: 0.5rem;
 }
 
 /*********************************************
