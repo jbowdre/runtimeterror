@@ -38,23 +38,32 @@
 }
 
 /* Footer tweaks */
-.copyright {
+.footer_slashes {
   font-size: 14px;
-  line-height: 1.3rem;
+  line-height: 1.1rem;
+  color: var(--muted);
 }
 
-.footer_links {
+.footer_slashes a:link, .footer_slashes a:visited {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.footer_links, .copyright {
   font-size: 12px;
   line-height: 1.1rem;
   color: var(--muted);
 }
 
-.footer_links a:link, .footer_links a:visited {
+.footer_links a:link, .footer_links a:visited,
+.copyright a:link, .copyright a:visited{
   color: var(--off-fg);
   text-decoration: none;
 }
 
-.footer_links a:hover {
+.footer_links a:hover,
+.footer_slashes a:hover,
+.copyright a:hover {
   color: var(--hover);
   text-decoration: underline;
 }
