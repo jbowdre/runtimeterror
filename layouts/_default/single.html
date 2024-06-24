@@ -40,10 +40,9 @@
       {{- $reply = false }}
     {{- end }}
     {{- if eq $reply true }}
-      <hr>
-      {{- if (eq $reply true) }}
-      <span class="post_email_reply"><a href="mailto:wheel.east.brief@clkdmail.com?Subject=Re: {{ .Title }}">📧 Reply by email</a></span>
-      {{- end }}
+    <hr>
+    <span class="post_kudos"><button class="kudos" data-cabin-event="kudos">👍</button>Enjoyed this?</span>
+    <span class="post_email_reply"><a href="mailto:wheel.east.brief@clkdmail.com?Subject=Re: {{ .Title }}">📧 Reply by email</a></span>
     {{- end }}
   <footer class="content__footer"></footer>
 {{ end }}

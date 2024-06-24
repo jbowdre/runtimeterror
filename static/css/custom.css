@@ -403,3 +403,27 @@ p:has(+ ul) {
   }
 }
 
+/* Cabin kudos styling */
+.post_kudos {
+  display: flex;
+}
+
+button.kudos {
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  color: var(--off-fg);
+  font-size: 1.2rem;
+  padding: 0;
+  transition: all .2s ease-in-out;
+}
+
+button.kudos:hover {
+  transform: scale(1.1);
+  text-shadow: var(-off-bg) 0 0 1px;
+}
+
+button.kudos:active {
+  transform: scale(0.9);
+}
