@@ -2,7 +2,6 @@
 title: "Kudos With Cabin"
 date: 2024-06-24
 # lastmod: 2024-06-24
-draft: true
 description: "Using Cabin's event tracking to add a simple post upvote widget to my Hugo site."
 featured: false
 toc: true
@@ -120,31 +119,66 @@ I got carried away a little bit and decided to add a fun animation when the butt
 
 ### JavaScript
 
-I want the button to do a little bit more than *just* send the event to Cabin so I decided to break that out into a separate script, `assets/js/kudos.js`:
+I want the button to do a little bit more than *just* send the event to Cabin so I decided to break that out into a separate script, `assets/js/kudos.js`. This script will latch on to the kudos-related elements, and when the button gets clicked it will (1) fire off the `cabin.event('kudos')` function to record the event, (2) disable the button to discourage repeated clicks, (3) change the displayed text to `Thanks!`, and (4) celebrate the event by spinning the emoji and replacing it with a party popper.
 
 ```javascript
 // torchlight! {"lineNumbers":true}
-document.addEventListener('DOMContentLoaded', () => {
-  // select the elements to manipulate
+// manipulates the post upvote "kudos" button behavior
+
+window.onload = function() {
+  // get the button and text elements
   var kudosButton = document.querySelector('.kudos-button');
   var kudosText = document.querySelector('.kudos-text');
   var emojiSpan = kudosButton.querySelector('.emoji');
 
-  kudosButton.addEventListener('click', () => {
+  kudosButton.addEventListener('click', function(event) {
+    // send the event to Cabin
     cabin.event('kudos')
+    // disable the button
     kudosButton.disabled = true;
     kudosButton.classList.add('clicked');
-
+    // change the displayed text
     kudosText.textContent = 'Thanks!';
     kudosText.classList.add('thanks');
-
-    // Rotate the emoji
+    // spin the emoji
     emojiSpan.style.transform = 'rotate(360deg)';
-
-    // Change the emoji after rotation
-    setTimeout(() => {
+    // change the emoji to celebrate
+    setTimeout(function() {
       emojiSpan.textContent = '🎉';
-    }, 150);  // Half of the transition time for a smooth mid-rotation change
+    }, 150);  // half of the css transition time for a smooth mid-rotation change
   });
-});
+}
 ```
+
+The last step is to go back to my `single.html` layout and pull in this new JavaScript file. I placed it in the site's `assets/` folder so that Hugo can apply its minifying magic so I'll need to load it in as a page resource:
+
+```html
+# torchlight! {"lineNumbers":true}
+    <div class="content__body"> <!-- [tl! reindex(33)] -->
+        {{ .Content }}
+    </div>
+    {{- $reply := true }} <!-- [tl! collapse:6] -->
+    {{- if eq .Site.Params.reply false }}
+      {{- $reply = false }}
+    {{- else if eq .Params.reply false }}
+      {{- $reply = false }}
+    {{- end }}
+    {{- if eq $reply true }}
+    <hr>
+    <div class="kudos-container">
+      <button class="kudos-button">
+        <span class="emoji">👍</span>
+      </button>
+      <span class="kudos-text">Enjoyed this?</span>
+    </div>
+    {{ $kudos := resources.Get "js/kudos.js" | minify }} <!-- [tl! ++:1 **:1] -->
+    <script src="{{ $kudos.RelPermalink }}"></script>
+    <span class="post_email_reply"><a href="mailto:replies@example.com?Subject=Re: {{ .Title }}">📧 Reply by email</a></span>
+    {{- end }}
+```
+
+And that's it! After clicking the 👍 button on a few pages I can see the `kudos` events recorded in my [Cabin portal](https://l.runtimeterror.dev/rterror-stats):
+![A few hits against the 'kudos' event](kudos-in-cabin.png)
+
+
+Go on, try it out:
