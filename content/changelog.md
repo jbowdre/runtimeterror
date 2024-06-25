@@ -1,7 +1,7 @@
 ---
 title: "/changelog"
 date: "2024-05-26T21:19:08Z"
-lastmod: "2024-06-21T03:20:04Z"
+lastmod: "2024-06-25T04:11:34Z"
 description: "Maybe I should keep a log of all my site-related tinkering?"
 featured: false
 toc: false
@@ -9,6 +9,10 @@ timeless: true
 categories: slashes
 ---
 *High-level list of config/layout changes to the site. The full changelog is of course [on GitHub](https://github.com/jbowdre/runtimeterror/commits/main/).*
+
+**2024-06-24:**
+- Select the [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1) license
+- Add a simple [upvote widget powered by Cabin](/kudos-with-cabin/) to posts
 
 **2024-06-20:**
 - Torchlight syntax highlighting tweaks:
