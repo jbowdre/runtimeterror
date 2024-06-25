@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const emojiSpan = kudosButton.querySelector('.emoji');
 
   kudosButton.addEventListener('click', () => {
+    cabin.event('kudos')
     kudosButton.disabled = true;
     kudosButton.classList.add('clicked');
 
