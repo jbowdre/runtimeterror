@@ -41,7 +41,14 @@
     {{- end }}
     {{- if eq $reply true }}
     <hr>
-    <span class="post_kudos"><button class="kudos" data-cabin-event="kudos">👍</button>Enjoyed this?</span>
+    <div class="kudos-container">
+      <button class="kudos-button" data-cabin-event="kudos">
+        <span class="emoji">👍</span>
+      </button>
+      <span class="kudos-text">Enjoyed this?</span>
+    </div>
+    {{ $kudos := resources.Get "js/kudos.js" | minify }}
+    <script src="{{ $kudos.RelPermalink }}"></script>
     <span class="post_email_reply"><a href="mailto:wheel.east.brief@clkdmail.com?Subject=Re: {{ .Title }}">📧 Reply by email</a></span>
     {{- end }}
   <footer class="content__footer"></footer>
