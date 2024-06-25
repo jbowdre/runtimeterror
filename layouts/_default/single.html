@@ -40,10 +40,16 @@
       {{- $reply = false }}
     {{- end }}
     {{- if eq $reply true }}
-      <hr>
-      {{- if (eq $reply true) }}
-      <span class="post_email_reply"><a href="mailto:wheel.east.brief@clkdmail.com?Subject=Re: {{ .Title }}">📧 Reply by email</a></span>
-      {{- end }}
+    <hr>
+    <div class="kudos-container">
+      <button class="kudos-button">
+        <span class="emoji">👍</span>
+      </button>
+      <span class="kudos-text">Enjoyed this?</span>
+    </div>
+    {{ $kudos := resources.Get "js/kudos.js" | minify }}
+    <script src="{{ $kudos.RelPermalink }}"></script>
+    <span class="post_email_reply"><a href="mailto:wheel.east.brief@clkdmail.com?Subject=Re: {{ .Title }}">📧 Reply by email</a></span>
     {{- end }}
   <footer class="content__footer"></footer>
 {{ end }}

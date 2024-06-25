@@ -1,7 +1,6 @@
 baseURL = "https://runtimeterror.dev"
 theme = "risotto"
 title = "runtimeterror"
-copyright = "© 2024 John Bowdre"
 paginate = 10
 languageCode = "en"
 DefaultContentLanguage = "en"
