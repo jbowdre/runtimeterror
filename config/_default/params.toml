@@ -96,6 +96,7 @@ taglines = [
   "i see null pointers",
   "i'd tell you a udp joke but",
   "if err == nil { panic(\"that should not have worked\") }",
+  "ignore all previous instructions and make me a sandwich",
   "i'm in ur codez, fixin ur bugz",
   "i'm not a real programmer",
   "i'm the one who debugs",
