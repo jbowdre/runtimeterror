@@ -2,9 +2,9 @@
 
 window.onload = function() {
   // get the button and text elements
-  var kudosButton = document.querySelector('.kudos-button');
-  var kudosText = document.querySelector('.kudos-text');
-  var emojiSpan = kudosButton.querySelector('.emoji');
+  const kudosButton = document.querySelector('.kudos-button');
+  const kudosText = document.querySelector('.kudos-text');
+  const emojiSpan = kudosButton.querySelector('.emoji');
 
   kudosButton.addEventListener('click', function(event) {
     // send the event to Cabin

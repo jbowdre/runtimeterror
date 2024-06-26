@@ -1,7 +1,7 @@
 ---
 title: "Kudos With Cabin"
 date: 2024-06-24
-# lastmod: 2024-06-24
+lastmod: "2024-06-26T02:13:13Z"
 description: "Using Cabin's event tracking to add a simple post upvote widget to my Hugo site."
 featured: false
 toc: true
@@ -127,9 +127,9 @@ I want the button to do a little bit more than *just* send the event to Cabin so
 
 window.onload = function() {
   // get the button and text elements
-  var kudosButton = document.querySelector('.kudos-button');
-  var kudosText = document.querySelector('.kudos-text');
-  var emojiSpan = kudosButton.querySelector('.emoji');
+  const kudosButton = document.querySelector('.kudos-button');
+  const kudosText = document.querySelector('.kudos-text');
+  const emojiSpan = kudosButton.querySelector('.emoji');
 
   kudosButton.addEventListener('click', function(event) {
     // send the event to Cabin
