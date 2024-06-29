@@ -208,12 +208,12 @@ url = "/homelab"
 label = "my homelab setup"
 
 [[slashPages]]
-title = "/save"
+title = "/save↗"
 url = "/save"
 label = "referral links"
 
 [[slashPages]]
-title = "/uses"
+title = "/uses↗"
 url = "/uses"
 label = "stuff i use"
 
