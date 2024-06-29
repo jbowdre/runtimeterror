@@ -24,9 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Hugo setup
-        uses: peaceiris/actions-hugo@v2.6.0
+        uses: peaceiris/actions-hugo@v3.0.0
         with:
-          hugo-version: '0.121.1'
+          hugo-version: '0.127.0'
           extended: true
       - name: Checkout
         uses: actions/checkout@v4
