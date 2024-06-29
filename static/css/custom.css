@@ -238,6 +238,18 @@ small[style^="opacity: .5"] {
   opacity: 1 !important;
 }
 
+/* recentfm styling */
+.recent-played {
+  background: var(--off-bg) !important;
+  flex-direction:column;
+  border-radius: 0.5em;
+  padding: 0.5em;
+}
+
+.recent-played-track {
+  margin: 0.5em 0;
+}
+
 /* code overrides */
 pre,
 code,
