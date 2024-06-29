@@ -46,7 +46,7 @@
 
 [[main]]
   identifier = "notes"
-  name = "notes"
+  name = "notes↗"
   url = "https://notes.runtimeterror.dev"
   weight = 100
   [[main.params]]
