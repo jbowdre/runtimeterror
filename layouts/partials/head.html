@@ -1,5 +1,6 @@
 <title>{{ with .Title }}{{ . }} &ndash; {{end}}{{ .Site.Title }}</title>
 {{ with .Site.Params.about }}<meta name="description" content="{{ .description }}">{{ end }}
+{{ with .Site.Params.Author.fedi }}<meta property="fediverse:creator" content="{{ . }}" />{{ end }}
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="UTF-8"/>

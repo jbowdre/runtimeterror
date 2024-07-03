@@ -44,6 +44,7 @@ reply = true
 name = "John Bowdre"
 email = "jbowdre@omg.lol"
 username = "jbowdre"
+fedi = "@jbowdre@social.lol"
 
 [theme]
 palette = "runtimeterror"
