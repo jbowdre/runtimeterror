@@ -81,6 +81,7 @@ taglines = [
   "errors are for beginners, we only do undefined behavior",
   "expression has no effect",
   "failed successfully",
+  "fatal: detected dubious ownership in repository",
   "file descriptor in bad state",
   "floating in a sea of bugs",
   "from chatgpt with bugs",
