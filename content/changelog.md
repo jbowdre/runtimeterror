@@ -1,7 +1,7 @@
 ---
 title: "/changelog"
 date: "2024-05-26T21:19:08Z"
-lastmod: "2024-06-29T03:55:04Z"
+lastmod: "2024-07-04T02:32:27Z"
 description: "Maybe I should keep a log of all my site-related tinkering?"
 featured: false
 toc: false
@@ -9,6 +9,9 @@ timeless: true
 categories: slashes
 ---
 *High-level list of config/layout changes to the site. The full changelog is of course [on GitHub](https://github.com/jbowdre/runtimeterror/commits/main/).*
+
+**2024-07-03:**
+- Remove `target="_blank"` from external links for improved security and accessibility
 
 **2024-06-28:**
 - Add [recentfm.js](https://recentfm.rknight.me/) recently-played widget to sidebar
