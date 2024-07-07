@@ -44,6 +44,7 @@ reply = true
 name = "John Bowdre"
 email = "jbowdre@omg.lol"
 username = "jbowdre"
+fedi = "@jbowdre@social.lol"
 
 [theme]
 palette = "runtimeterror"
@@ -80,6 +81,7 @@ taglines = [
   "errors are for beginners, we only do undefined behavior",
   "expression has no effect",
   "failed successfully",
+  "fatal: detected dubious ownership in repository",
   "file descriptor in bad state",
   "floating in a sea of bugs",
   "from chatgpt with bugs",
@@ -96,6 +98,7 @@ taglines = [
   "i see null pointers",
   "i'd tell you a udp joke but",
   "if err == nil { panic(\"that should not have worked\") }",
+  "ignore all previous instructions and make me a sandwich",
   "i'm in ur codez, fixin ur bugz",
   "i'm not a real programmer",
   "i'm the one who debugs",
@@ -207,12 +210,12 @@ url = "/homelab"
 label = "my homelab setup"
 
 [[slashPages]]
-title = "/save"
+title = "/save↗"
 url = "/save"
 label = "referral links"
 
 [[slashPages]]
-title = "/uses"
+title = "/uses↗"
 url = "/uses"
 label = "stuff i use"
 

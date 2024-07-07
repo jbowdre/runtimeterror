@@ -21,7 +21,7 @@
   {{ end }}
 </ul>
 {{ else }}
-<h3>More {{ .Params.categories }}</h3>
+<h3>more {{ lower .Params.categories }}</h3>
 <ul>
   {{- range first $relatedLimit $related }}
   <li>
@@ -42,7 +42,7 @@
 {{- $featured := default 8 .Site.Params.numberOfFeaturedPosts }}
 {{- $featuredPosts := first $featured (where $posts "Params.featured" true)}}
 {{- with $featuredPosts }}
-<h3>Featured Posts</h3>
+<h3>features</h3>
 <ul>
   {{- range . }}
   <li>
@@ -54,4 +54,7 @@
 <hr>
 <h3>status.lol</h3>
 <script src="https://status.lol/jbowdre.js?time&link&fluent&pretty"></script>
+<hr>
+<h3>recent track</h3>
+<script src="https://recentfm.rknight.me/now.js?u=pushpianotire&e=🎶"></script>
 

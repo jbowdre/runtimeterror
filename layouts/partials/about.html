@@ -1,7 +1,7 @@
 {{ with .Site.Params.about }}
 <div class="aside__about">
     {{ with .logo }}<img class="about__logo" src="{{ . | absURL }}" alt="Logo">{{ end }}
-<h1 class="about__title">{{ .title }}&nbsp;<a target="_blank" href="/feed.xml" aria-label="RSS"><i class="fa-solid fa-square-rss"></i></a>&nbsp;</h1>
+<h1 class="about__title">{{ .title }}&nbsp;<a href="/feed.xml" aria-label="RSS"><i class="fa-solid fa-square-rss"></i></a>&nbsp;</h1>
 {{ partial "tagline.html" . }}
 <br>
 <a href="/about/"><i class="fa-regular fa-user"></i></a>&nbsp;<a href="/about/">{{ site.Params.Author.name }}</a>
@@ -10,7 +10,7 @@
 <ul class="aside__social-links">
     {{ range $item := .Site.Params.socialLinks }}
     <li>
-        <a target="_blank" href="{{ $item.url | safeURL }}" rel="me" aria-label="{{ $item.title }}" title="{{ $item.title }}"><i class="{{ $item.icon }}" aria-hidden="true"></i></a>&nbsp;
+        <a href="{{ $item.url | safeURL }}" rel="me" aria-label="{{ $item.title }}" title="{{ $item.title }}"><i class="{{ $item.icon }}" aria-hidden="true"></i></a>&nbsp;
     </li>
     {{ end }}
 </ul>

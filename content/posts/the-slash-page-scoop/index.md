@@ -1,7 +1,7 @@
 ---
 title: "The Slash Page Scoop"
 date: 2024-06-02
-# lastmod: 2024-05-30
+lastmod: "2024-07-04T02:23:41Z"
 description: "I've added new slash pages to the site to share some background info on who I am, what I use, and how this site works."
 featured: false
 toc: true
@@ -101,7 +101,7 @@ Of course, I'd like to include a link to [slashpages.net](https://slashpages.net
 {{ if .IsHome }}
   <h1>{{ site.Params.indexTitle | markdownify }}</h1>
 {{ else }}
-  <h1>{{ .Title | markdownify }}{{ if eq .Kind "term" }}&nbsp;<a target="_blank" href="{{ .Permalink }}feed.xml" aria-label="Category RSS"><i class="fa-solid fa-square-rss"></i></a>&nbsp;</h1> <!-- [tl! ~~] -->
+  <h1>{{ .Title | markdownify }}{{ if eq .Kind "term" }}&nbsp;<a href="{{ .Permalink }}feed.xml" aria-label="Category RSS"><i class="fa-solid fa-square-rss"></i></a>&nbsp;</h1> <!-- [tl! ~~] -->
   {{ with .Description }}<i>{{ . }}</i><hr>{{ else }}<br>{{ end }}
 {{ end }}{{ end }}
   {{ .Content }}
@@ -122,9 +122,9 @@ Line 9 is where I had already modified the template to conditionally add an RSS 
 {{ else }}
   {{ if eq .Title "/slashes" }} <!-- [tl! **:3 ++:3 ] -->
     <h1>{{ .Title | markdownify }}</h1>
-    <i>My collection of <a target="_blank" title="what's a slashpage?" href="https://slashpages.net">slash pages</a>.</i><hr>
+    <i>My collection of <a title="what's a slashpage?" href="https://slashpages.net">slash pages↗</a>.</i><hr>
   {{ else }}
-    <h1>{{ .Title | markdownify }}{{ if eq .Kind "term" }}&nbsp;<a target="_blank" href="{{ .Permalink }}feed.xml" aria-label="Category RSS"><i class="fa-solid fa-square-rss"></i></a>&nbsp;</h1>
+    <h1>{{ .Title | markdownify }}{{ if eq .Kind "term" }}&nbsp;<a href="{{ .Permalink }}feed.xml" aria-label="Category RSS"><i class="fa-solid fa-square-rss"></i></a>&nbsp;</h1>
     {{ with .Description }}<i>{{ . }}</i><hr>{{ else }}<br>{{ end }}
   {{ end }} <!-- [tl! ** ++ ] -->
 {{ end }}{{ end }}

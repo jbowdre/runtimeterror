@@ -1,7 +1,7 @@
 ---
 title: "Kudos With Cabin"
 date: 2024-06-24
-# lastmod: 2024-06-24
+lastmod: "2024-06-26T02:13:13Z"
 description: "Using Cabin's event tracking to add a simple post upvote widget to my Hugo site."
 featured: false
 toc: true
@@ -127,9 +127,9 @@ I want the button to do a little bit more than *just* send the event to Cabin so
 
 window.onload = function() {
   // get the button and text elements
-  var kudosButton = document.querySelector('.kudos-button');
-  var kudosText = document.querySelector('.kudos-text');
-  var emojiSpan = kudosButton.querySelector('.emoji');
+  const kudosButton = document.querySelector('.kudos-button');
+  const kudosText = document.querySelector('.kudos-text');
+  const emojiSpan = kudosButton.querySelector('.emoji');
 
   kudosButton.addEventListener('click', function(event) {
     // send the event to Cabin
@@ -177,8 +177,9 @@ The last step is to go back to my `single.html` layout and pull in this new Java
     {{- end }}
 ```
 
-And that's it! After clicking the 👍 button on a few pages I can see the `kudos` events recorded in my [Cabin portal](https://l.runtimeterror.dev/rterror-stats):
-![A few hits against the 'kudos' event](kudos-in-cabin.png)
+You might have noticed that I'm not doing anything to display the upvote count on the page itself. I don't feel like the reader really needs to know how (un)popular a post may be before deciding to vote it up; the total count isn't really relevant. (Also, the Cabin stats don't update in realtime and I just didn't want to deal with that... but mostly that first bit.)
 
+In any case, after clicking the 👍 button on a few pages I can see the `kudos` events recorded in my [Cabin portal](https://l.runtimeterror.dev/rterror-stats):
+![A few hits against the 'kudos' event](kudos-in-cabin.png)
 
 Go on, try it out:
