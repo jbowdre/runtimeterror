@@ -23,7 +23,7 @@ tags:
 
 I've been [using Proxmox](/ditching-vsphere-for-proxmox/) in my [homelab](/homelab/) for a little while now, and I recently expanded the environment a bit with the addition of two HP Elite Mini 800 G9 computers. I figured it was time to start automating the process of building and maintaining my VM templates. I already had functional [Packer templates for VMware](https://github.com/jbowdre/packer-vsphere-templates) so I used that content as a starting point for the [Proxmox builds](https://github.com/jbowdre/packer-proxmox-templates). Once I had the builds working locally, I just had to explore how to automate them.
 
-This post will describe how I did it. It will cover a lot of the implementation details but may gloss over some general setup steps; you'll likely need at least passing familiarity with [Packer](https://www.packer.io/) and [Vault](https://www.vaultproject.io/) to take this on.
+This post will describe how I did it. It will cover a lot of the implementation details but may gloss over some general setup steps; you'll need at least passing familiarity with [Packer](https://www.packer.io/) and [Vault](https://www.vaultproject.io/) to take this on.
 
 ### Component Overview
 There are a lot of parts to this setup, so let's start by quickly running through those:
@@ -41,15 +41,15 @@ I don't like the idea of randos running arbitrary code on my home infrastructure
 {{% /notice %}}
 
 ### Proxmox Setup
-The only configuration I did on the Proxmox side of things was to [create a user account](https://pve.proxmox.com/pve-docs/chapter-pveum.html#pveum_users) that Packer could use. I call it `packer` but don't set a password for it. Instead, I'll set up an [API token](https://pve.proxmox.com/pve-docs/chapter-pveum.html#pveum_tokens) for that account, making sure to uncheck the "Privilege Separation" box so that the token will inherit the same permissions as the user itself.
+The only configuration I did on the Proxmox side of things was to [create a user account](https://pve.proxmox.com/pve-docs/chapter-pveum.html#pveum_users) that Packer could use. I called it `packer` but didn't set a password for it. Instead, I set up an [API token](https://pve.proxmox.com/pve-docs/chapter-pveum.html#pveum_tokens) for that account, making sure to uncheck the "Privilege Separation" box so that the token inherits the same permissions as the user itself.
 
 ![Creating an API token](proxmox-token.png)
 
-To use the token, I'll need the ID (in the form `USERNAME@REALM!TOKENNAME`) and the UUID-looking secret, which is only displayed once so I be sure to record it in a safe place.
+To use the token, I needed the ID (in the form `USERNAME@REALM!TOKENNAME`) and the UUID-looking secret, which is only displayed once so I made sure to record it in a safe place.
 
-Speaking of privileges, the [Proxmox ISO integration documentation](https://developer.hashicorp.com/packer/integrations/hashicorp/proxmox/latest/components/builder/iso) didn't offer any details on the minimum required permissions, and none of my attempts worked until I eventually assigned the Administrator role to the `packer` user.
+Speaking of privileges, the [Proxmox ISO integration documentation](https://developer.hashicorp.com/packer/integrations/hashicorp/proxmox/latest/components/builder/iso) doesn't offer any details on the minimum required permissions, and none of my attempts worked until I eventually assigned the Administrator role to the `packer` user. (I plan on doing more testing to narrow the scope a bit before running this in production, but this will do for my homelab purposes.)
 
-Otherwise I'll just need to figure out the details like which network bridge, ISO storage, and VM storage the Packer-built VMs should use.
+Otherwise I just needed to figure out the details like which network bridge, ISO storage, and VM storage the Packer-built VMs should use.
 
 ### Vault Configuration
 I use [Vault](https://github.com/hashicorp/vault) to hold the configuration details for the template builds - not just traditional secrets like usernames and passwords, but basically *every environment-specific setting* as well. This approach lets others use my Packer code without having to change much (if any) of it; every value that I expect to change between environments is retrieved from Vault at run time.
