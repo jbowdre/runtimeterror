@@ -16,8 +16,8 @@ function displayResults (results, store) {
     searchResults.innerHTML = 'No results found.';
   }
 }
-const params = new URLSearchParams(window.location.search);
-const query = params.get('query');
+const searchParams = new URLSearchParams(window.location.search);
+const query = searchParams.get('query');
 if (query) {
   document.getElementById('search-query').setAttribute('value', query);
   const idx = lunr(function () {
