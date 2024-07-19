@@ -1,17 +1,14 @@
 ---
-title: "Building Proxmox Templates with Packer and GitHub Actions"
+title: "Building Proxmox Templates with Packer"
 date: 2024-06-12
 # lastmod: 2024-06-12
 draft: true
-description: "Using Packer, Vault, a GitHub Actions workflow, and self-hosted runners to automatically build VM templates for my Proxmox homelab."
+description: "Using Packer and Vault to build VM templates for my Proxmox homelab."
 featured: false
 toc: true
 reply: true
 categories: Tips
 tags:
-  - automation
-  - cicd
-  - docker
   - homelab
   - iac
   - linux
@@ -21,24 +18,17 @@ tags:
   - vault
 ---
 
-I've been [using Proxmox](/ditching-vsphere-for-proxmox/) in my [homelab](/homelab/) for a little while now, and I recently expanded the environment a bit with the addition of two HP Elite Mini 800 G9 computers. I figured it was time to start automating the process of building and maintaining my VM templates. I already had functional [Packer templates for VMware](https://github.com/jbowdre/packer-vsphere-templates) so I used that content as a starting point for the [Proxmox builds](https://github.com/jbowdre/packer-proxmox-templates). Once I had the builds working locally, I just had to explore how to automate them.
+I've been [using Proxmox](/ditching-vsphere-for-proxmox/) in my [homelab](/homelab/) for a little while now, and I recently expanded the environment a bit with the addition of two HP Elite Mini 800 G9 computers. I figured it was time to start automating the process of building and maintaining my VM templates. I already had functional [Packer templates for VMware](https://github.com/jbowdre/packer-vsphere-templates) so I used that content as a starting point for the [Proxmox builds](https://github.com/jbowdre/packer-proxmox-templates).
 
-This post will describe how I did it. It will cover *a lot* of the implementation details but may gloss over some general setup steps; you'll need at least passing familiarity with [Packer](https://www.packer.io/) and [Vault](https://www.vaultproject.io/) to take this on.
+Once I had the builds working locally, I then explored how to automate them. I wound up setting up a GitHub Actions workflow and a rootless runner to perform the builds for me. I'll write up notes on *that* part of the process soon, but first let's run through how I set up Packer at all. That will be plenty to chew on for now.
+
+This post will cover *a lot* of the Packer implementation details but may gloss over some general setup steps; you'll need at least passing familiarity with [Packer](https://www.packer.io/) and [Vault](https://www.vaultproject.io/) to take this on.
 
 ### Component Overview
 There are several important parts to this setup, so let's start by quickly running through those:
 - a **Proxmox host** to serve the virtual infrastructure and provide compute for the new templates,
 - a **Vault instance** running in a container in the lab to hold the secrets needed for the builds,
-- some **Packer content** for building the templates in the first place,
-- an **on-premise self-hosted GitHub runner** to simplify connectivity between GitHub and my homelab,
-- and a **private GitHub repo** to hold the code and tell the runner when it's time to get to work.
-
-{{% notice note "Private Repo!" %}}
-GitHub [strongly recommends](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners#self-hosted-runner-security) that self-hosted runners *only* be used with private repositories.
-> This is because forks of your public repository can potentially run dangerous code on your self-hosted runner machine by creating a pull request that executes the code in a workflow.
-
-I don't like the idea of randos running arbitrary code on my home infrastructure. So while I'm sharing my work publicly [in this repo](https://github.com/jbowdre/packer-proxmox-templates), the workflows there are disabled and there are no connected runners. I'm running my builds out of a private repo and recommend that you do the same.
-{{% /notice %}}
+- and some **Packer content** for actually building the templates.
 
 ### Proxmox Setup
 The only configuration I did on the Proxmox side of things was to [create a user account](https://pve.proxmox.com/pve-docs/chapter-pveum.html#pveum_users) that Packer could use. I called it `packer` but didn't set a password for it. Instead, I set up an [API token](https://pve.proxmox.com/pve-docs/chapter-pveum.html#pveum_tokens) for that account, making sure to **uncheck** the "Privilege Separation" box so that the token would inherit the same permissions as the user itself.
@@ -878,7 +868,19 @@ build {
 ```
 
 #### `cloud-init` Config
-Now let's drill into that `cloud-init` template file, `builds/linux/ubuntu/22-04-lts/data/user-data.pkrtpl.hcl`. It follows the basic YAML-based syntax of a standard [cloud config file](https://cloudinit.readthedocs.io/en/latest/reference/examples.html), but with some [HCL templating](https://developer.hashicorp.com/packer/docs/templates/hcl_templates/functions/file/templatefile) to pull in certain values from elsewhere.
+Now let's back up a bit and drill into that `cloud-init` template file, `builds/linux/ubuntu/22-04-lts/data/user-data.pkrtpl.hcl`, which tells the OS installer how to configure things on the initial boot.
+
+The file follows the basic YAML-based syntax of a standard [cloud config file](https://cloudinit.readthedocs.io/en/latest/reference/examples.html), but with some [HCL templating](https://developer.hashicorp.com/packer/docs/templates/hcl_templates/functions/file/templatefile) to pull in certain values from elsewhere.
+
+Some of the key tasks handled by this configuration include:
+- stopping the SSH server (l. 10),
+- setting the hostname (l. 12), inserting username and password (ll. 13-14),
+- enabling (temporary) passwordless-sudo (ll. 17-18),
+- installing a templated list of packages (ll. 30-35),
+- inserting a templated list of SSH public keys (ll. 39-44),
+- and other needful things like setting up drive partitioning.
+
+`cloud-init` will reboot the VM once it completes, and when it comes back online it will have a DHCP-issued IP address and the accounts/credentials needed for Packer to log in via SSH and continue the setup.
 
 ```yaml
 # torchlight! {"lineNumbers":true}
@@ -1093,16 +1095,7 @@ autoinstall:
   version: 1
 ```
 
-Some of the key tasks handled by this configuration include:
-- stopping the SSH server (l. 10),
-- setting the hostname (l 12), inserting username and password (ll. 13-14),
-- enabling (temporary) passwordless-sudo (ll. 17-18),
-- installing a templated list of packages (ll. 30-35),
-- inserting a templated list of SSH public keys (ll. 39-44),
-- and other needful things like setting up drive partitioning.
-
-`cloud-init` will reboot the VM once it completes, and when it comes back online it will have a DHCP-issued IP address and the accounts/credentials needed for Packer to log in via SSH and continue the setup.
-
 #### Setup Scripts
+
 
 #### Build Script
