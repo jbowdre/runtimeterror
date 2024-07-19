@@ -23,10 +23,10 @@ tags:
 
 I've been [using Proxmox](/ditching-vsphere-for-proxmox/) in my [homelab](/homelab/) for a little while now, and I recently expanded the environment a bit with the addition of two HP Elite Mini 800 G9 computers. I figured it was time to start automating the process of building and maintaining my VM templates. I already had functional [Packer templates for VMware](https://github.com/jbowdre/packer-vsphere-templates) so I used that content as a starting point for the [Proxmox builds](https://github.com/jbowdre/packer-proxmox-templates). Once I had the builds working locally, I just had to explore how to automate them.
 
-This post will describe how I did it. It will cover a lot of the implementation details but may gloss over some general setup steps; you'll need at least passing familiarity with [Packer](https://www.packer.io/) and [Vault](https://www.vaultproject.io/) to take this on.
+This post will describe how I did it. It will cover *a lot* of the implementation details but may gloss over some general setup steps; you'll need at least passing familiarity with [Packer](https://www.packer.io/) and [Vault](https://www.vaultproject.io/) to take this on.
 
 ### Component Overview
-There are a lot of parts to this setup, so let's start by quickly running through those:
+There are several important parts to this setup, so let's start by quickly running through those:
 - a **Proxmox host** to serve the virtual infrastructure and provide compute for the new templates,
 - a **Vault instance** running in a container in the lab to hold the secrets needed for the builds,
 - some **Packer content** for building the templates in the first place,
@@ -41,7 +41,7 @@ I don't like the idea of randos running arbitrary code on my home infrastructure
 {{% /notice %}}
 
 ### Proxmox Setup
-The only configuration I did on the Proxmox side of things was to [create a user account](https://pve.proxmox.com/pve-docs/chapter-pveum.html#pveum_users) that Packer could use. I called it `packer` but didn't set a password for it. Instead, I set up an [API token](https://pve.proxmox.com/pve-docs/chapter-pveum.html#pveum_tokens) for that account, making sure to uncheck the "Privilege Separation" box so that the token inherits the same permissions as the user itself.
+The only configuration I did on the Proxmox side of things was to [create a user account](https://pve.proxmox.com/pve-docs/chapter-pveum.html#pveum_users) that Packer could use. I called it `packer` but didn't set a password for it. Instead, I set up an [API token](https://pve.proxmox.com/pve-docs/chapter-pveum.html#pveum_tokens) for that account, making sure to **uncheck** the "Privilege Separation" box so that the token would inherit the same permissions as the user itself.
 
 ![Creating an API token](proxmox-token.png)
 
@@ -88,7 +88,7 @@ services:
     network_mode: "service:tailscale"
 ```
 
-Vault's `./config/vault.hcl`:
+I use the following `./config/vault.hcl` to set the Vault server configuration:
 
 ```hcl
 ui = true
@@ -103,7 +103,7 @@ storage "file" {
 }
 ```
 
-And Tailscale's `./serve-config.json`:
+And this `./serve-config.json` to tell Tailscale that it should proxy the Vault container's port `8200` and make it available on my tailnet at `https://vault.tailnet-name.ts.net/`:
 
 ```json
 # torchlight! {"lineNumbers":true}
@@ -125,7 +125,7 @@ And Tailscale's `./serve-config.json`:
 }
 ```
 
-After performing the initial Vault setup, I then create a [kv-v2](https://developer.hashicorp.com/vault/docs/secrets/kv/kv-v2) secrets engine
+After performing the initial Vault setup, I then created a [kv-v2](https://developer.hashicorp.com/vault/docs/secrets/kv/kv-v2) secrets engine
 for Packer to use:
 
 ```shell
@@ -133,7 +133,7 @@ vault secrets enable -path=packer kv-v2 # [tl! .cmd]
 Success! Enabled the kv-v2 secrets engine at: packer/ # [tl! .nocopy]
 ```
 
-And I define a [policy](https://developer.hashicorp.com/vault/docs/concepts/policies) which will grant the bearer read-only access to the data stored in the `packer` secrets as well as the ability to create and update its own token:
+I defined a [policy](https://developer.hashicorp.com/vault/docs/concepts/policies) which will grant the bearer read-only access to the data stored in the `packer` secrets as well as the ability to create and update its own token:
 
 ```shell
 cat << EOF | vault policy write packer -
@@ -156,7 +156,7 @@ Success! Uploaded policy: packer2 # [tl! .nocopy]
 Now I just need to create a token attached to the policy:
 
 ```shell
-vault token create -policy=packer -no-default-policy
+vault token create -policy=packer -no-default-policy \
   -orphan -ttl=4h -period=336h -display-name=packer # [tl! .cmd:-1,1 ]
 
 Key                  Value # [tl! .nocopy:8]
@@ -170,11 +170,12 @@ identity_policies    []
 policies             ["packer"]
 ```
 
-Within the `packer` secrets engine, I have two secrets which each have a number of subkeys:
+Within the `packer` secrets engine, I have two secrets which each have a number of subkeys.
+
 `proxmox` contains values related to the Proxmox environment:
 | Key                   | Example value                                 | Description                                                                                                              |
 |-----------------------|-----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
-| `api_url`             | `https://proxmox1.example.com:8006/api2/json` | URL to the Proxmox API                                                                                                   |
+| `api_url`             | `https://prox.tailnet-name.ts.net/api2/json/` | URL to the Proxmox API                                                                                                   |
 | `insecure_connection` | `true`                                        | set to `false` if your Proxmox host has a valid certificate                                                              |
 | `iso_path`            | `local:iso`                                   | path for (existing) ISO storage                                                                                          |
 | `iso_storage_pool`    | `local`                                       | pool for storing created/uploaded ISOs                                                                                   |
@@ -197,7 +198,7 @@ The layout of my [Packer Proxmox repo](https://github.com/jbowdre/packer-proxmox
 
 ```text
 .
-├── .github # [tl! collapse:8 ]
+├── .github [tl! collapse:8 ]
 │  ├── actions
 │  │  └── packerbuild
 │  │     ├── action.yml
@@ -217,7 +218,7 @@ The layout of my [Packer Proxmox repo](https://github.com/jbowdre/packer-proxmox
 │        │  ├── linux-server.auto.pkrvars.hcl
 │        │  ├── linux-server.pkr.hcl
 │        │  └── variables.pkr.hcl
-│        └── 24-04-lts # [tl! collapse:7 ]
+│        └── 24-04-lts [tl! collapse:7 ]
 │           ├── data
 │           │  ├── meta-data
 │           │  └── user-data.pkrtpl.hcl
@@ -227,7 +228,7 @@ The layout of my [Packer Proxmox repo](https://github.com/jbowdre/packer-proxmox
 │           └── variables.pkr.hcl
 ├── certs
 ├── scripts
-│  └── linux # [tl! collapse:16 ]
+│  └── linux [tl! collapse:16 ]
 │     ├── cleanup-cloud-init.sh
 │     ├── cleanup-packages.sh
 │     ├── cleanup-subiquity.sh
@@ -515,11 +516,11 @@ variable "pre_final_scripts" {
 (Collapsed because I think you get the idea, but feel free to expand to view the whole thing.)
 
 #### Input Variable Assignments
-Now that I've told Packer about what variables I intend to use, I can then go about setting values for those variables. That's done in the `linux-server.auto.pkrvars.hcl` file.
+Now that I've told Packer about what variables I intend to use, I can then go about setting values for those variables. That's done in the `linux-server.auto.pkrvars.hcl` file. I've highlighted the most interesting bits:
 
 ```hcl
 # torchlight! {"lineNumbers":true}
-/*
+/* #
   Ubuntu Server 22.04 LTS  variables used by the Packer Builder for Proxmox.
 */
 
@@ -532,7 +533,7 @@ vm_guest_os_timezone    = "America/Chicago"
 vm_guest_os_type        = "l26"
 
 //Virtual Machine Guest Partition Sizes (in MB)
-vm_guest_part_audit     = 4096  # [tl! **:9 ~~:9]
+vm_guest_part_audit     = 4096  # [tl! ~~:9]
 vm_guest_part_boot      = 512
 vm_guest_part_efi       = 512
 vm_guest_part_home      = 8192
@@ -544,7 +545,7 @@ vm_guest_part_var       = 8192
 vm_guest_part_vartmp    = 1024
 
 // Virtual Machine Hardware Settings
-vm_cpu_cores            = 1 # [tl! **:8 ~~:8]
+vm_cpu_cores            = 1 # [tl! ~~:8]
 vm_cpu_count            = 2
 vm_cpu_type             = "host"
 vm_disk_size            = "60G" #
@@ -555,7 +556,7 @@ vm_network_card         = "virtio"
 vm_scsi_controller      = "virtio-scsi-single"
 
 // Removable Media Settings
-iso_checksum_type       = "sha256" # [tl! **:3 ~~:3]
+iso_checksum_type       = "sha256" # [tl! ~~:3]
 iso_checksum_value      = "45f873de9f8cb637345d6e66a583762730bbea30277ef7b32c9c3bd6700a32b2" #
 iso_file                = "ubuntu-22.04.4-live-server-amd64.iso"
 iso_url                 = "https://releases.ubuntu.com/jammy/ubuntu-22.04.4-live-server-amd64.iso"
@@ -564,7 +565,7 @@ remove_cdrom            = true
 // Boot Settings
 boot_key_interval       = "250ms"
 vm_boot_wait            = "4s"
-vm_boot_command = [ # [tl! **:8 ~~:8]
+vm_boot_command = [ # [tl! ~~:8]
     "<esc><wait>c",
     "linux /casper/vmlinuz --- autoinstall ds=\"nocloud\"",
     "<enter><wait5s>",
@@ -579,7 +580,7 @@ communicator_port       = 22
 communicator_timeout    = "25m"
 
 // Provisioner Settings
-cloud_init_apt_packages = [ # [tl! **:7 ~~:7]
+cloud_init_apt_packages = [ # [tl! ~~:7]
   "cloud-guest-utils",
   "net-tools",
   "perl",
@@ -588,7 +589,7 @@ cloud_init_apt_packages = [ # [tl! **:7 ~~:7]
   "wget"
 ]
 
-post_install_scripts = [ # [tl! **:9 ~~:9]
+post_install_scripts = [ # [tl! ~~:9]
   "scripts/linux/wait-for-cloud-init.sh",
   "scripts/linux/cleanup-subiquity.sh",
   "scripts/linux/install-ca-certs.sh",
@@ -599,7 +600,7 @@ post_install_scripts = [ # [tl! **:9 ~~:9]
   "scripts/linux/update-packages.sh"
 ]
 
-pre_final_scripts = [ # [tl! **:6 ~~:6]
+pre_final_scripts = [ # [tl! ~~:6]
   "scripts/linux/cleanup-cloud-init.sh",
   "scripts/linux/cleanup-packages.sh",
   "builds/linux/ubuntu/22-04-lts/hardening.sh",
@@ -628,7 +629,7 @@ It starts by setting the required minimum version of Packer and identifying what
 
 ```hcl
 # torchlight! {"lineNumbers":true}
-/*
+/* #
   Ubuntu Server 22.04 LTS template using the Packer Builder for Proxmox.
 */
 
@@ -636,13 +637,13 @@ It starts by setting the required minimum version of Packer and identifying what
 //  The Packer configuration.
 
 packer {
-  required_version              = ">= 1.9.4" # [tl! ** ~~]
+  required_version              = ">= 1.9.4" # [tl! ~~]
   required_plugins {
-    proxmox = { # [tl! **:2 ~~:2]
+    proxmox = { # [tl! ~~:2]
       version                   = ">= 1.1.8"
       source                    = "github.com/hashicorp/proxmox"
     }
-    ssh-key = { # [tl! **:2 ~~:2]
+    ssh-key = { # [tl! ~~:2]
       version                   = "= 1.0.3"
       source                    = "github.com/ivoronin/sshkey"
     }
@@ -658,7 +659,7 @@ This bit creates the `sshkey` data resource which uses the SSH plugin to generat
 //  Defines the local variables.
 
 // Dynamically-generated SSH key
-data "sshkey" "install" { # [tl! **:2 ~~:2]
+data "sshkey" "install" { # [tl! ~~:2]
   type                          = "ed25519"
   name                          = "packer_key"
 }
@@ -678,7 +679,7 @@ This first set of `locals {}` blocks take advantage of the dynamic nature of loc
 //    vault("SECRET_ENGINE/data/SECRET_NAME", "KEY")
 //
 // Standard configuration values:
-locals { # [tl! **:10]
+locals { # [tl! ~~:10]
   build_public_key              = vault("packer/data/linux",      "public_key")           // SSH public key for the default admin account
   build_username                = vault("packer/data/linux",      "username")             // Username for the default admin account
   proxmox_url                   = vault("packer/data/proxmox",    "api_url")              // Proxmox API URL
@@ -691,7 +692,7 @@ locals { # [tl! **:10]
   proxmox_network_bridge        = vault("packer/data/proxmox",    "network_bridge")       // Proxmox network bridge to use for the build
 }
 // Sensitive values:
-local "bootloader_password"{ # [tl! **:10]
+local "bootloader_password"{ # [tl! ~~10]
   expression                    = vault("packer/data/linux",            "bootloader_password")  // Password to set for the bootloader
   sensitive                     = true
 }
@@ -712,22 +713,22 @@ And the next `locals {}` block leverages other expressions to:
 - combine individual string variables, like `local.iso_checksum` and `local.iso_path` (ll. 73-74),
 - define a shutdown command to clean up sudoers includes and shutdown the VM at the end of the build (ll. 75),
 - capture the keypair generated by the SSH key plugin (ll. 76-77),
-- and use the []`templatefile()` function](https://developer.hashicorp.com/packer/docs/templates/hcl_templates/functions/file/templatefile) to process the `cloud-init` config file and insert appropriate variables (ll. 78-101)
+- and use the [`templatefile()` function](https://developer.hashicorp.com/packer/docs/templates/hcl_templates/functions/file/templatefile) to process the `cloud-init` config file and insert appropriate variables (ll. 78-101)
 
 ```hcl
 # torchlight! {"lineNumbers":true, "lineNumbersStart":69}
 locals {
-  build_date                    = formatdate("YYYY-MM-DD hh:mm ZZZ", timestamp()) # [tl! ** ~~]
+  build_date                    = formatdate("YYYY-MM-DD hh:mm ZZZ", timestamp()) # [tl! ~~]
   build_description             = "Ubuntu Server 22.04 LTS template\nBuild date: ${local.build_date}\nBuild tool: ${local.build_tool}"
   build_tool                    = "HashiCorp Packer ${packer.version}"
-  iso_checksum                  = "${var.iso_checksum_type}:${var.iso_checksum_value}" # [tl! **:2 ~~:2]
+  iso_checksum                  = "${var.iso_checksum_type}:${var.iso_checksum_value}" # [tl! ~~:2]
   iso_path                      = "${local.proxmox_iso_path}/${var.iso_file}"
   shutdown_command              = "sudo sh -c 'rm -f /etc/sudoers.d/*; /usr/sbin/shutdown -P now'"
-  ssh_private_key_file          = data.sshkey.install.private_key_path # [tl! **:1 ~~:1]
+  ssh_private_key_file          = data.sshkey.install.private_key_path # [tl! ~~:1]
   ssh_public_key                = data.sshkey.install.public_key
-  data_source_content = { # [tl! **:23]
+  data_source_content = { # [tl! ~~:23]
     "/meta-data"                = file("${abspath(path.root)}/data/meta-data")
-    "/user-data"                = templatefile("${abspath(path.root)}/data/user-data.pkrtpl.hcl", { # [tl! **:20 ~~:20]
+    "/user-data"                = templatefile("${abspath(path.root)}/data/user-data.pkrtpl.hcl", {
       apt_mirror                = var.cloud_init_apt_mirror
       apt_packages              = var.cloud_init_apt_packages
       build_password_hash       = local.build_password_hash
@@ -752,7 +753,7 @@ locals {
 }
 ```
 
-The `source {}` block is where we get to the meat of the operation. This matches the input and local variables to the Packer options that tell it:
+The `source {}` block is where we get to the meat of the operation; it handles the actual creation of the virtual machine. This matches the input and local variables to the Packer options that tell it
 - how to connect and authenticate to the Proxmox host (ll. 110-113, 116),
 - what virtual hardware settings the VM should have (ll. 119-141),
 - that `local.data_source_content` (which contains the rendered `cloud-init` configuration) should be mounted as a virtual CD-ROM device (ll. 144-149),
@@ -768,16 +769,16 @@ The `source {}` block is where we get to the meat of the operation. This matches
 source "proxmox-iso" "linux-server" {
 
   // Proxmox Endpoint Settings and Credentials
-  insecure_skip_tls_verify      = local.proxmox_insecure_connection # [tl! **:3 ~~:3]
+  insecure_skip_tls_verify      = local.proxmox_insecure_connection
   proxmox_url                   = local.proxmox_url
   token                         = local.proxmox_token_secret
   username                      = local.proxmox_token_id
 
   // Node Settings
-  node                          = local.proxmox_node # [tl! ** ~~]
+  node                          = local.proxmox_node
 
   // Virtual Machine Settings
-  bios                          = "ovmf" # [tl! **:22 ~~:22]
+  bios                          = "ovmf"
   cores                         = var.vm_cpu_cores
   cpu_type                      = var.vm_cpu_type
   memory                        = var.vm_mem_size
@@ -827,9 +828,18 @@ source "proxmox-iso" "linux-server" {
   ssh_private_key_file          = local.ssh_private_key_file
   ssh_timeout                   = var.communicator_timeout
   ssh_username                  = local.build_username
-
 }
 ```
+
+By this point, we've got a functional virtual machine running on the Proxmox host but there are still some additional tasks to perform before it can be converted to a template. That's where the `build {}` block comes in: it connects to the VM and runs a few `provisioner` steps:
+
+- The `file` provisioner is used to copy any certificate files into the VM at `/tmp` (ll. 181-182) and to copy the `join-domain.sh` script into the initial user's home directory (ll. 186-187).
+- The first `shell` provisioner loops through and executes all the scripts listed in `var.post_install_scripts` (ll. 191-193). The last script in that list (`update-packages.sh`) finishes with a reboot for good measure.
+- The second `shell` provisioner (ll. 197-203) waits for 30 seconds for the reboot to complete before it picks up with the remainder of the scripts, and it passes in the bootloader password for use by the hardening script.
+
+
+```hcl
+# torchlight! {"lineNumbers":true, "lineNumbersStart":172}
 
 //  BLOCK: build
 //  Defines the builders to run, provisioners, and post-processors.
@@ -840,23 +850,23 @@ build {
   ]
 
   provisioner "file" {
-    source                      = "certs"
+    source                      = "certs" # [tl! ~~:1]
     destination                 = "/tmp"
   }
 
   provisioner "file" {
-    source                      = "scripts/linux/join-domain.sh"
+    source                      = "scripts/linux/join-domain.sh" # [tl! ~~:1]
     destination                 = "/home/${local.build_username}/join-domain.sh"
   }
 
   provisioner "shell" {
-    execute_command             = "bash {{ .Path }}"
+    execute_command             = "bash {{ .Path }}" # [tl! ~~:2]
     expect_disconnect           = true
     scripts                     = formatlist("${path.cwd}/%s", var.post_install_scripts)
   }
 
   provisioner "shell" {
-    env                         = {
+    env                         = { # [tl! ~~:6]
       "BOOTLOADER_PASSWORD"     = local.bootloader_password
     }
     execute_command             = "{{ .Vars }} bash {{ .Path }}"
