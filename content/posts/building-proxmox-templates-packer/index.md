@@ -746,7 +746,7 @@ locals {
 The `source {}` block is where we get to the meat of the operation; it handles the actual creation of the virtual machine. This matches the input and local variables to the Packer options that tell it
 - how to connect and authenticate to the Proxmox host (ll. 110-113, 116),
 - what virtual hardware settings the VM should have (ll. 119-141),
-- that `local.data_source_content` (which contains the rendered `cloud-init` configuration) should be mounted as a virtual CD-ROM device (ll. 144-149),
+- that `local.data_source_content` (which contains the rendered `cloud-init` configuration - we'll look at that in a moment) should be mounted as a virtual CD-ROM device (ll. 144-149),
 - to download and verify the installer ISO from `var.iso_url`, save it to `local.proxmox_iso_storage_pool`, and mount it as the primary CD-ROM device (ll. 150-155),
 - what command to run at boot to start the install process (l. 159),
 - and how to communicate with the VM once the install is under way (ll. 163-168).
@@ -823,14 +823,13 @@ source "proxmox-iso" "linux-server" {
 
 By this point, we've got a functional virtual machine running on the Proxmox host but there are still some additional tasks to perform before it can be converted to a template. That's where the `build {}` block comes in: it connects to the VM and runs a few `provisioner` steps:
 
-- The `file` provisioner is used to copy any certificate files into the VM at `/tmp` (ll. 181-182) and to copy the `join-domain.sh` script into the initial user's home directory (ll. 186-187).
+- The `file` provisioner is used to copy any certificate files into the VM at `/tmp` (ll. 181-182) and to copy the []`join-domain.sh` script](https://github.com/jbowdre/packer-proxmox-templates/blob/main/scripts/linux/join-domain.sh) into the initial user's home directory (ll. 186-187).
 - The first `shell` provisioner loops through and executes all the scripts listed in `var.post_install_scripts` (ll. 191-193). The last script in that list (`update-packages.sh`) finishes with a reboot for good measure.
 - The second `shell` provisioner (ll. 197-203) waits for 30 seconds for the reboot to complete before it picks up with the remainder of the scripts, and it passes in the bootloader password for use by the hardening script.
 
 
 ```hcl
-# torchlight! {"lineNumbers":true, "lineNumbersStart":172}
-
+# torchlight! {"lineNumbers":true, "lineNumbersStart":171}
 //  BLOCK: build
 //  Defines the builders to run, provisioners, and post-processors.
 
@@ -868,7 +867,7 @@ build {
 ```
 
 #### `cloud-init` Config
-Now let's back up a bit and drill into that `cloud-init` template file, `builds/linux/ubuntu/22-04-lts/data/user-data.pkrtpl.hcl`, which tells the OS installer how to configure things on the initial boot.
+Now let's back up a bit and drill into that `cloud-init` template file, `builds/linux/ubuntu/22-04-lts/data/user-data.pkrtpl.hcl`, which is loaded during the `source {}` block to tell the OS installer how to configure things on the initial boot.
 
 The file follows the basic YAML-based syntax of a standard [cloud config file](https://cloudinit.readthedocs.io/en/latest/reference/examples.html), but with some [HCL templating](https://developer.hashicorp.com/packer/docs/templates/hcl_templates/functions/file/templatefile) to pull in certain values from elsewhere.
 
@@ -878,9 +877,10 @@ Some of the key tasks handled by this configuration include:
 - enabling (temporary) passwordless-sudo (ll. 17-18),
 - installing a templated list of packages (ll. 30-35),
 - inserting a templated list of SSH public keys (ll. 39-44),
+- installing all package updates, disabling root logins, and setting the timezone (ll. )
 - and other needful things like setting up drive partitioning.
 
-`cloud-init` will reboot the VM once it completes, and when it comes back online it will have a DHCP-issued IP address and the accounts/credentials needed for Packer to log in via SSH and continue the setup.
+`cloud-init` will reboot the VM once it completes, and when it comes back online it will have a DHCP-issued IP address and the accounts/credentials needed for Packer to log in via SSH and continue the setup in the `build {}` block.
 
 ```yaml
 # torchlight! {"lineNumbers":true}
@@ -1088,14 +1088,155 @@ autoinstall:
         device: format-vartmp
         type: mount
         id: mount-vartmp # [tl! collapse:end]
-  user-data:
-    package_upgrade: true
+  user-data: # [tl! **:3]
+    package_upgrade: true # [tl! ~~:2]
     disable_root: true
     timezone: ${ vm_guest_os_timezone }
   version: 1
 ```
 
 #### Setup Scripts
+After the `cloud-init` setup is completed, Packer control gets passed to the `build {}` block and the provisioners there run through a series of scripts to perform additional configuration of the guest OS. I split the scripts into two sets, which I called `post_install_scripts` and `pre_final_scripts`, with a reboot that happens in between them.
+
+##### Post Install
+The post install scripts run after the `cloud-init` installation has completed, and (depending on the exact Linux flavor) may include:
+
+1. `wait-for-cloud-init.sh`, which just checks to confirm that `cloud-init` has truly finished before proceeding:
+    ```shell
+    # torchlight! {"lineNumbers":true}
+    #!/usr/bin/env bash
+    # waits for cloud-init to finish before proceeding
+    set -eu
+
+    echo '>> Waiting for cloud-init...'
+    while [ ! -f /var/lib/cloud/instance/boot-finished ]; do
+      sleep 1
+    done
+    ```
+2. `cleanup-subiquity.sh` to remove the default network configuration generated by the Ubuntu installer:
+    ```shell
+    # torchlight! {"lineNumbers":true}
+    #!/usr/bin/env bash
+    # cleans up cloud-init config from subiquity
+    set -eu
+
+    if [ -f /etc/cloud/cloud.cfg.d/99-installer.cfg ]; then
+      sudo rm /etc/cloud/cloud.cfg.d/99-installer.cfg
+      echo 'Deleting subiquity cloud-init config'
+    fi
+
+    if [ -f /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg ]; then
+      sudo rm /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg
+      echo 'Deleting subiquity cloud-init network config'
+    fi
+    ```
+3. `install-ca-certs.sh` to install any trusted CA certs which were in the `certs/` folder of the Packer environment and copied to `/tmp/certs/` in the guest:
+    ```shell
+    # torchlight! {"lineNumbers":true}
+    #!/usr/bin/env bash
+    # installs trusted CA certs from /tmp/certs/
+    set -eu
+
+    if awk -F= '/^ID/{print $2}' /etc/os-release | grep -q debian; then
+      echo '>> Installing certificates...'
+      if ls /tmp/certs/*.cer >/dev/null 2>&1; then
+        sudo cp /tmp/certs/* /usr/local/share/ca-certificates/
+        cd /usr/local/share/ca-certificates/
+        for file in *.cer; do
+          sudo mv -- "$file" "${file%.cer}.crt"
+        done
+        sudo /usr/sbin/update-ca-certificates
+      else
+        echo 'No certs to install.'
+      fi
+    elif awk -F= '/^ID/{print $2}' /etc/os-release | grep -q rhel; then
+      echo '>> Installing certificates...'
+      if ls /tmp/certs/*.cer >/dev/null 2>&1; then
+        sudo cp /tmp/certs/* /etc/pki/ca-trust/source/anchors/
+        cd /etc/pki/ca-trust/source/anchors/
+        for file in *.cer; do
+          sudo mv -- "$file" "${file%.cer}.crt"
+        done
+        sudo /bin/update-ca-trust
+      else
+        echo 'No certs to install.'
+      fi
+    fi
+    ```
+4. `disable-multipathd.sh` to, uh, *disable multipathd* to keep things lightweight and simple:
+    ```shell
+    # torchlight! {"lineNumbers":true}
+    #!/usr/bin/env bash
+    # disables multipathd
+    set -eu
+
+    sudo systemctl disable multipathd
+    echo 'Disabling multipathd'
+    ```
+5. `prune-motd.sh` to remove those noisy, promotional default messages that tell you to enable cockpit or check out Ubuntu Pro or whatever:
+    ```shell
+    # torchlight! {"lineNumbers":true}
+    #!/usr/bin/env bash
+    # prunes default noisy MOTD
+    set -eu
+
+    echo '>> Pruning default MOTD...'
+
+    if awk -F= '/^ID/{print $2}' /etc/os-release | grep -q rhel; then
+      if [ -L "/etc/motd.d/insights-client" ]; then
+        sudo unlink /etc/motd.d/insights-client
+      fi
+    elif awk -F= '/^ID/{print $2}' /etc/os-release | grep -q debian; then
+      sudo chmod -x /etc/update-motd.d/91-release-upgrade
+    fi
+    ```
+6. `persist-cloud-init-net.sh` to ensure the `cloud-init` cache isn't wiped on reboot so the network settings will stick:
+    ```shell
+    # torchlight! {"lineNumbers":true}
+    #!/usr/bin/env bash
+    # ensures network settings are preserved on boot
+    set -eu
+
+    echo '>> Preserving network settings...'
+    if grep -q 'manual_cache_clean' /etc/cloud/cloud.cfg; then
+      sudo sed -i 's/^manual_cache_clean.*$/manual_cache_clean: True/' /etc/cloud/cloud.cfg
+    else
+      echo 'manual_cache_clean: True' | sudo tee -a /etc/cloud/cloud.cfg
+    fi
+    ```
+7. `configure-pam_mkhomedir.sh` to configure the `pam_mkhomedir` module to create user homedirs with the appropriate (`750`) permission set:
+    ```shell
+    # torchlight! {"lineNumbers":true}
+    #!/usr/bin/env bash
+    # configures pam_mkhomedir to create home directories with 750 permissions
+    set -eu
+
+    sudo sed -i 's/optional.*pam_mkhomedir.so/required\t\tpam_mkhomedir.so umask=0027/' /usr/share/pam-configs/mkhomedir
+    ```
+8. `update-packages.sh` to install any available package updates and reboot:
+    ```shell
+    # torchlight! {"lineNumbers":true}
+    #!/usr/bin/env bash
+    # updates packages and reboots
+    set -eu
+
+    if awk -F= '/^ID/{print $2}' /etc/os-release | grep -q rhel; then
+      if which dnf &>/dev/null; then
+        echo '>> Checking for and installing updates...'
+        sudo dnf -y update
+      else
+        echo '>> Checking for and installing updates...'
+        sudo yum -y update
+      fi
+      echo '>> Rebooting!'
+      sudo reboot
+    elif awk -F= '/^ID/{print $2}' /etc/os-release | grep -q debian; then
+      echo '>> Checking for and installing updates...'
+      sudo apt-get update && sudo apt-get -y upgrade
+      echo '>> Rebooting!'
+      sudo reboot
+    fi
+    ```
 
 
 #### Build Script
