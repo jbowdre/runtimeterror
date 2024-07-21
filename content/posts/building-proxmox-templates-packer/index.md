@@ -1277,6 +1277,7 @@ After the reboot, the process picks back up with the pre-final scripts.
         sudo yum -y clean all --enablerepo=\*;
       fi
     fi
+    ```
 3. `build/linux/22-04-lts/hardening.sh` is a build-specific script to perform basic hardening tasks toward the CIS Level 2 server benchmark. It doesn't have a lot of fancy logic because it is *only intended to be run during this package process* when it's making modifications from a known state. It's long so I won't repost it here, and I may end up writing a separate post specifically about this hardening process, but you're welcome to view the full script for [Ubuntu 22.04 here](https://github.com/jbowdre/packer-proxmox-templates/blob/main/builds/linux/ubuntu/22-04-lts/hardening.sh).
 4. `zero-disk.sh` fills a file with zeroes until the disk runs out of space, and then removes it, resulting in a reduced template image size:
     ```shell
