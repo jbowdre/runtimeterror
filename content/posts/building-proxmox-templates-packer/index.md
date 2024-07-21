@@ -189,15 +189,6 @@ The layout of my [Packer Proxmox repo](https://github.com/jbowdre/packer-proxmox
 
 ```text
 .
-├── .github [tl! collapse:8 ]
-│  ├── actions
-│  │  └── packerbuild
-│  │     ├── action.yml
-│  │     ├── build.sh
-│  │     └── Dockerfile
-│  └── workflows
-│     ├── build-single.yml
-│     └── build.yml
 ├── builds
 │  └── linux
 │     └── ubuntu
@@ -236,7 +227,7 @@ The layout of my [Packer Proxmox repo](https://github.com/jbowdre/packer-proxmox
 │     ├── update-packages.sh
 │     ├── wait-for-cloud-init.sh
 │     └── zero-disk.sh
-├── build.sh -> .github/actions/packerbuild/build.sh
+├── build.sh
 └── vault-env.sh
 ```
 
@@ -251,7 +242,7 @@ The layout of my [Packer Proxmox repo](https://github.com/jbowdre/packer-proxmox
     - `linux-server.pkr.hcl` details the steps for actually performing the build.
 - `certs/` is empty in my case but could contain CA certificates that need to be installed in the template.
 - `scripts/linux/` contains a variety of scripts that will be executed by Packer as part of the build.
-- `build.sh` is a (symlink to a) wrapper script which helps with running the builds locally.
+- `build.sh` is a wrapper script which helps with running the builds locally.
 - `vault-env.sh` exports variables for connecting to my Vault instance for use by `build.sh`.
 
 #### Input Variable Definitions
