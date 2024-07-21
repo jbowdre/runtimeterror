@@ -654,7 +654,6 @@ This first set of `locals {}` blocks take advantage of the dynamic nature of loc
 ////////////////// Vault Locals //////////////////
 // To retrieve secrets from Vault, the following environment variables MUST be defined:
 //  - VAULT_ADDR        : base URL of the Vault server ('https://vault.example.com/')
-//  - VAULT_NAMESPACE   : namespace path to where the secrets live ('organization/sub-org', only for Vault Enterprise)
 //  - VAULT_TOKEN       : token ID with rights to read/list
 //
 // Syntax for the vault() call:
