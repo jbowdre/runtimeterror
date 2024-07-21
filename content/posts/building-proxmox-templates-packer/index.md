@@ -1,6 +1,6 @@
 ---
 title: "Building Proxmox Templates with Packer"
-date: "2024-07-20"
+date: "2024-07-21T00:36:16Z"
 # lastmod: 2024-06-12
 draft: true
 description: "Using Packer and Vault to build VM templates for my Proxmox homelab."
@@ -18,11 +18,11 @@ tags:
   - vault
 ---
 
-I've been [using Proxmox](/ditching-vsphere-for-proxmox/) in my [homelab](/homelab/) for a little while now, and I recently expanded the environment a bit with the addition of two HP Elite Mini 800 G9 computers. I figured it was time to start automating the process of building and maintaining my VM templates. I already had functional [Packer templates for VMware](https://github.com/jbowdre/packer-vsphere-templates) so I used that content as a starting point for the [Proxmox builds](https://github.com/jbowdre/packer-proxmox-templates). (So far, I've only ported over the Ubuntu builds; I'm telling myself I'll get the rest moved over after *finally* publishing this post.)
+I've been [using Proxmox](/ditching-vsphere-for-proxmox/) in my [homelab](/homelab/) for a while now, and I recently expanded the environment with two HP Elite Mini 800 G9 computers. It was time to start automating the process of building and maintaining my VM templates. I already had functional [Packer templates for VMware](https://github.com/jbowdre/packer-vsphere-templates) so I used that as a starting point for the [Proxmox builds](https://github.com/jbowdre/packer-proxmox-templates). So far, I've only ported over the Ubuntu builds; I'm telling myself I'll get the rest moved over after *finally* publishing this post.
 
-Once I got the builds working locally, I then explored how to automate them. I wound up setting up a GitHub Actions workflow and a rootless runner to perform the builds for me. I'll write up notes on *that* part of the process soon, but first let's run through how I set up Packer at all. That will be plenty to chew on for now.
+Once I got the builds working locally, I explored how to automate them. I set up a GitHub Actions workflow and a rootless runner to perform the builds for me. I'll write up notes on that part of the process soon, but first, let's run through how I set up Packer. That will be plenty to chew on for now.
 
-This post will cover *a lot* of the Packer implementation details but may gloss over some general setup steps; you'll need at least passing familiarity with [Packer](https://www.packer.io/) and [Vault](https://www.vaultproject.io/) to take this on.
+This post will cover a lot of the Packer implementation details but may gloss over some general setup steps; you'll need at least a passing familiarity with [Packer](https://www.packer.io/) and [Vault](https://www.vaultproject.io/) to take this on.
 
 ### Component Overview
 There are several important parts to this setup, so let's start by quickly running through those:
@@ -31,18 +31,18 @@ There are several important parts to this setup, so let's start by quickly runni
 - and some **Packer content** for actually building the templates.
 
 ### Proxmox Setup
-The only configuration I did on the Proxmox side of things was to [create a user account](https://pve.proxmox.com/pve-docs/chapter-pveum.html#pveum_users) that Packer could use. I called it `packer` but didn't set a password for it. Instead, I set up an [API token](https://pve.proxmox.com/pve-docs/chapter-pveum.html#pveum_tokens) for that account, making sure to **uncheck** the "Privilege Separation" box so that the token would inherit the same permissions as the user itself.
+The only configuration I did on the Proxmox side was to [create a user account](https://pve.proxmox.com/pve-docs/chapter-pveum.html#pveum_users) that Packer could use. I called it `packer` but didn't set a password for it. Instead, I set up an [API token](https://pve.proxmox.com/pve-docs/chapter-pveum.html#pveum_tokens) for that account, making sure to **uncheck** the "Privilege Separation" box so that the token would inherit the same permissions as the user itself.
 
 ![Creating an API token](proxmox-token.png)
 
-To use the token, I needed the ID (in the form `USERNAME@REALM!TOKENNAME`) and the UUID-looking secret, which is only displayed once so I made sure to record it in a safe place.
+To use the token, I needed the ID (in the form `USERNAME@REALM!TOKENNAME`) and the UUID-looking secret, which is only displayed once, so I made sure to record it in a safe place.
 
-Speaking of privileges, the [Proxmox ISO integration documentation](https://developer.hashicorp.com/packer/integrations/hashicorp/proxmox/latest/components/builder/iso) doesn't offer any details on the minimum required permissions, and none of my attempts worked until I eventually assigned the Administrator role to the `packer` user. (I plan on doing more testing to narrow the scope a bit before running this in production, but this will do for my homelab purposes.)
+Speaking of privileges, the [Proxmox ISO integration documentation](https://developer.hashicorp.com/packer/integrations/hashicorp/proxmox/latest/components/builder/iso) doesn't offer any details on the minimum required permissions, and none of my attempts worked until I eventually assigned the Administrator role to the `packer` user. I plan on doing more testing to narrow the scope before running this in production, but this will do for my homelab purposes.
 
-Otherwise I just needed to figure out the details like which network bridge, ISO storage, and VM storage the Packer-built VMs should use.
+Otherwise, I just needed to figure out the details like which network bridge, ISO storage, and VM storage the Packer-built VMs should use.
 
 ### Vault Configuration
-I use [Vault](https://github.com/hashicorp/vault) to hold the configuration details for the template builds - not just traditional secrets like usernames and passwords, but basically *every environment-specific setting* as well. This approach lets others use my Packer code without having to change much (if any) of it; every value that I expect to change between environments is retrieved from Vault at run time.
+I use [Vault](https://github.com/hashicorp/vault) to hold the configuration details for the template builds - not just traditional secrets like usernames and passwords, but basically every environment-specific setting as well. This approach lets others use my Packer code without having to change much (if any) of it; every value that I expect to change between environments is retrieved from Vault at runtime.
 
 Because this is just a homelab, I'm using [Vault in Docker](https://hub.docker.com/r/hashicorp/vault), and I'm making it available within my tailnet with [Tailscale Serve](/tailscale-serve-docker-compose-sidecar/) using the following `docker-compose.yaml`
 
@@ -115,8 +115,7 @@ And this `./serve-config.json` to tell Tailscale that it should proxy the Vault 
 }
 ```
 
-After performing the initial Vault setup, I then created a [kv-v2](https://developer.hashicorp.com/vault/docs/secrets/kv/kv-v2) secrets engine
-for Packer to use:
+After performing the initial Vault setup, I then created a [kv-v2](https://developer.hashicorp.com/vault/docs/secrets/kv/kv-v2) secrets engine for Packer to use:
 
 ```shell
 vault secrets enable -path=packer kv-v2 # [tl! .cmd]
@@ -249,9 +248,9 @@ The layout of my [Packer Proxmox repo](https://github.com/jbowdre/packer-proxmox
     - `hardening.sh` is a script to perform basic security hardening,
     - `variables.pkr.hcl` describes all the variables for the build,
     - `linux-server.auto.pkrvars.hcl` assigns values to each of those variables, and
-    - `linux-server.pkr.hcl` details the steps for actually perfoming the build.
-- `certs/` is empty in my case but *could* contain CA certificates that need to be installed in the template.
-- `scripts/linux/` contains a variety of scripts that will be executed by Packer as a part of the build.
+    - `linux-server.pkr.hcl` details the steps for actually performing the build.
+- `certs/` is empty in my case but could contain CA certificates that need to be installed in the template.
+- `scripts/linux/` contains a variety of scripts that will be executed by Packer as part of the build.
 - `build.sh` is a (symlink to a) wrapper script which helps with running the builds locally.
 - `vault-env.sh` exports variables for connecting to my Vault instance for use by `build.sh`.
 
@@ -261,7 +260,7 @@ Let's take a quick look at the variable definitions in `variables.pkr.hcl` first
 {{% notice note "Input Variables and Local Variables" %}}
 There are two types of variables used with Packer:
 - **[Input Variables](https://developer.hashicorp.com/packer/docs/templates/hcl_templates/variables)** may have defined defaults, can be overridden, but cannot be changed after that initial override. They serve as build parameters, allowing aspects of the build to be altered without having to change the source code.
-- **[Local Variables](https://developer.hashicorp.com/packer/docs/templates/hcl_templates/locals)** are useful for assigning a name to an expression. These expressions are evaluated at run time and can work with input variables, other local variables, data sources, and built-in functions.
+- **[Local Variables](https://developer.hashicorp.com/packer/docs/templates/hcl_templates/locals)** are useful for assigning a name to an expression. These expressions are evaluated at runtime and can work with input variables, other local variables, data sources, and built-in functions.
 
 Input variables are great for those predefined values, while local variables can be really handy for stuff that needs to be more dynamic.
 {{% /notice %}}
@@ -508,7 +507,7 @@ variable "pre_final_scripts" {
 (Collapsed because I think you get the idea, but feel free to expand to view the whole thing.)
 
 #### Input Variable Assignments
-Now that I've told Packer about what variables I intend to use, I can then go about setting values for those variables. That's done in the `linux-server.auto.pkrvars.hcl` file. I've highlighted the most interesting bits:
+Now that I've told Packer about the variables I intend to use, I can then go about setting values for those variables. That's done in the `linux-server.auto.pkrvars.hcl` file. I've highlighted the most interesting bits:
 
 ```hcl
 # torchlight! {"lineNumbers":true}
@@ -601,7 +600,7 @@ pre_final_scripts = [ # [tl! ~~:6]
 ]
 ```
 
-As you can see, this sets up a lot of the properties which aren't strictly environment specific, like:
+As you can see, this sets up a lot of the properties which aren't strictly environment-specific, like:
 - partition sizes (ll. 14-23),
 - virtual hardware settings (ll. 26-34),
 - the hash and URL for the installer ISO (ll. 37-40),
@@ -615,9 +614,9 @@ We'll look at the specifics of those scripts shortly, but first...
 #### Packer Build File
 Let's explore the Packer build file, `linux-server.pkr.hcl`, which is the set of instructions used by Packer for performing the deployment. It's what ties everything else together.
 
-This one is kind of complex so we'll take it a block or two at a time.
+This one is kind of complex, so we'll take it a block or two at a time.
 
-It starts by setting the required minimum version of Packer and identifying what plugins (and versions) will be used to perform the build. I'm using the [Packer plugin for Proxmox](https://github.com/hashicorp/packer-plugin-proxmox) for executing the build on Proxmox (*duh*), and the [Packer SSH key plugin](https://github.com/ivoronin/packer-plugin-sshkey) to simplify handling of SSH keys (we'll see how in the next block).
+It starts by setting the required minimum version of Packer and identifying what plugins (and versions) will be used to perform the build. I'm using the [Packer plugin for Proxmox](https://github.com/hashicorp/packer-plugin-proxmox) for executing the build on Proxmox, and the [Packer SSH key plugin](https://github.com/ivoronin/packer-plugin-sshkey) to simplify handling of SSH keys (we'll see how in the next block).
 
 ```hcl
 # torchlight! {"lineNumbers":true}
@@ -743,13 +742,13 @@ locals {
 }
 ```
 
-The `source {}` block is where we get to the meat of the operation; it handles the actual creation of the virtual machine. This matches the input and local variables to the Packer options that tell it
+The `source {}` block is where we get to the meat of the operation; it handles the actual creation of the virtual machine. This matches the input and local variables to the Packer options that tell it:
 - how to connect and authenticate to the Proxmox host (ll. 110-113, 116),
 - what virtual hardware settings the VM should have (ll. 119-141),
 - that `local.data_source_content` (which contains the rendered `cloud-init` configuration - we'll look at that in a moment) should be mounted as a virtual CD-ROM device (ll. 144-149),
 - to download and verify the installer ISO from `var.iso_url`, save it to `local.proxmox_iso_storage_pool`, and mount it as the primary CD-ROM device (ll. 150-155),
 - what command to run at boot to start the install process (l. 159),
-- and how to communicate with the VM once the install is under way (ll. 163-168).
+- and how to communicate with the VM once the install is underway (ll. 163-168).
 
 ```hcl
 # torchlight! {"lineNumbers":true, "lineNumbersStart":104}
@@ -823,10 +822,9 @@ source "proxmox-iso" "linux-server" {
 
 By this point, we've got a functional virtual machine running on the Proxmox host but there are still some additional tasks to perform before it can be converted to a template. That's where the `build {}` block comes in: it connects to the VM and runs a few `provisioner` steps:
 
-- The `file` provisioner is used to copy any certificate files into the VM at `/tmp` (ll. 181-182) and to copy the []`join-domain.sh` script](https://github.com/jbowdre/packer-proxmox-templates/blob/main/scripts/linux/join-domain.sh) into the initial user's home directory (ll. 186-187).
+- The `file` provisioner is used to copy any certificate files into the VM at `/tmp` (ll. 181-182) and to copy the [`join-domain.sh` script](https://github.com/jbowdre/packer-proxmox-templates/blob/main/scripts/linux/join-domain.sh) into the initial user's home directory (ll. 186-187).
 - The first `shell` provisioner loops through and executes all the scripts listed in `var.post_install_scripts` (ll. 191-193). The last script in that list (`update-packages.sh`) finishes with a reboot for good measure.
 - The second `shell` provisioner (ll. 197-203) waits for 30 seconds for the reboot to complete before it picks up with the remainder of the scripts, and it passes in the bootloader password for use by the hardening script.
-
 
 ```hcl
 # torchlight! {"lineNumbers":true, "lineNumbersStart":171}
@@ -877,7 +875,7 @@ Some of the key tasks handled by this configuration include:
 - enabling (temporary) passwordless-sudo (ll. 17-18),
 - installing a templated list of packages (ll. 30-35),
 - inserting a templated list of SSH public keys (ll. 39-44),
-- installing all package updates, disabling root logins, and setting the timezone (ll. )
+- installing all package updates, disabling root logins, and setting the timezone (ll. 206-208)
 - and other needful things like setting up drive partitioning.
 
 `cloud-init` will reboot the VM once it completes, and when it comes back online it will have a DHCP-issued IP address and the accounts/credentials needed for Packer to log in via SSH and continue the setup in the `build {}` block.
@@ -1099,7 +1097,7 @@ autoinstall:
 After the `cloud-init` setup is completed, Packer control gets passed to the `build {}` block and the provisioners there run through a series of scripts to perform additional configuration of the guest OS. I split the scripts into two sets, which I called `post_install_scripts` and `pre_final_scripts`, with a reboot that happens in between them.
 
 ##### Post Install
-The post install scripts run after the `cloud-init` installation has completed, and (depending on the exact Linux flavor) may include:
+The post-install scripts run after the `cloud-init` installation has completed, and (depending on the exact Linux flavor) may include:
 
 1. `wait-for-cloud-init.sh`, which just checks to confirm that `cloud-init` has truly finished before proceeding:
     ```shell
@@ -1278,7 +1276,7 @@ After the reboot, the process picks back up with the pre-final scripts.
       fi
     fi
     ```
-3. `build/linux/22-04-lts/hardening.sh` is a build-specific script to perform basic hardening tasks toward the CIS Level 2 server benchmark. It doesn't have a lot of fancy logic because it is *only intended to be run during this package process* when it's making modifications from a known state. It's long so I won't repost it here, and I may end up writing a separate post specifically about this hardening process, but you're welcome to view the full script for [Ubuntu 22.04 here](https://github.com/jbowdre/packer-proxmox-templates/blob/main/builds/linux/ubuntu/22-04-lts/hardening.sh).
+3. `build/linux/22-04-lts/hardening.sh` is a build-specific script to perform basic hardening tasks toward the CIS Level 2 server benchmark. It doesn't have a lot of fancy logic because it is *only intended to be run during this package process* when it's making modifications from a known state. It's long, so I won't repost it here, and I may end up writing a separate post specifically about this hardening process, but you're welcome to view the full script for [Ubuntu 22.04 here](https://github.com/jbowdre/packer-proxmox-templates/blob/main/builds/linux/ubuntu/22-04-lts/hardening.sh).
 4. `zero-disk.sh` fills a file with zeroes until the disk runs out of space, and then removes it, resulting in a reduced template image size:
     ```shell
     # torchlight! {"lineNumbers":true}
@@ -1359,7 +1357,7 @@ After the reboot, the process picks back up with the pre-final scripts.
     ```
 
 ### Packer Build
-At this point, I should (in theory) be able to kick off the build from my laptop with a Packer command - but first I'll need to set up some environment variables so that Packer will be able to communicate with my Vault server:
+At this point, I should (in theory) be able to kick off the build from my laptop with a Packer command - but first, I'll need to set up some environment variables so that Packer will be able to communicate with my Vault server:
 
 ```shell
 export VAULT_ADDR="https://vault.tailnet-name.ts.net/" # [tl! .cmd:1]
@@ -1399,7 +1397,8 @@ proxmox-iso.linux-server: output will be in this color. # [tl! .nocopy:start]
 ==> proxmox-iso.linux-server: Waiting for SSH to become available... # [tl! .nocopy:end]
 ```
 
-It'll take a few minutes while Packer waits on SSH, and while *I* wait on that I can look at the Proxmox console for the VM to follow along with the installer's progress:
+It'll take a few minutes while Packer waits on SSH, and while I wait on that, I can look at the Proxmox console for the VM to follow along with the installer's progress:
+
 ![Proxmox VM console showing the installer progress](proxmox-console-progress.png)
 
 That successful SSH connection signifies the transition from the `source {}` block to the `build {}` block, so it starts with uploading any certs and the `join-domain.sh` script before getting into running those post-install tasks:
@@ -1488,7 +1487,7 @@ Build 'proxmox-iso.linux-server' finished after 10 minutes 52 seconds. # [tl! **
 --> proxmox-iso.linux-server: A template was created: 105 # [tl! .nocopy:end]
 ```
 
-That was a *lot* of prep work but now that everything is in place it only takes about eleven minutes to create a fresh Ubuntu 22.04 template, and that template is fully up-to-date and hardened to about 95% of the CIS Level 2 benchmark. This will save me a lot of time as I build new VMs in my homelab.
+That was a lot of prep work, but now that everything is in place it only takes about eleven minutes to create a fresh Ubuntu 22.04 template, and that template is fully up-to-date and hardened to about 95% of the CIS Level 2 benchmark. This will save me a lot of time as I build new VMs in my homelab.
 
 ### Wrapper Script
 But having to export the Vault variables and run the Packer commands manually is a bit of a chore. So I put together a couple of helper scripts to help streamline things. This will really come in handy as I add new OS variants and schedule automated builds with GitHub Actions.
@@ -1507,7 +1506,7 @@ export VAULT_ADDR="https://vault.tailnet-name.ts.net/"
 export VAULT_TOKEN="hvs.CAES[...]GSFQ"
 ```
 
-This `build.sh` scripts expects a single argument: the name of the build to create. It then checks to see if the `VAULT_TOKEN` environment variable is already set; if not, it tries to sources it from `vault-env.sh`. And then it kicks off the appropriate build.
+This `build.sh` script expects a single argument: the name of the build to create. It then checks to see if the `VAULT_TOKEN` environment variable is already set; if not, it tries to source it from `vault-env.sh`. And then it kicks off the appropriate build.
 
 ```shell
 # torchlight! {"lineNumbers":true}
@@ -1569,6 +1568,6 @@ proxmox-iso.linux-server: output will be in this color. # [tl! .nocopy:6]
 ### Up Next...
 Being able to generate a template on-demand is pretty cool, but the next stage of this project is to integrate it with a GitHub Actions workflow so that the templates can be built automatically on a schedule or as the configuration gets changed. But this post is long enough (and I've been poking at it for long enough) so that explanation will have to wait for another time.
 
-(If you'd like a sneak peak of what's in store, take a self-guided tour of [the GitHub repo](https://github.com/jbowdre/packer-proxmox-templates).)
+(If you'd like a sneak peek of what's in store, take a self-guided tour of [the GitHub repo](https://github.com/jbowdre/packer-proxmox-templates).)
 
 Stay tuned!
