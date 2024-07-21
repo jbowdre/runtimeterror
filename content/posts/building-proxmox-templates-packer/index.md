@@ -748,16 +748,16 @@ The `source {}` block is where we get to the meat of the operation; it handles t
 source "proxmox-iso" "linux-server" {
 
   // Proxmox Endpoint Settings and Credentials
-  insecure_skip_tls_verify      = local.proxmox_insecure_connection
+  insecure_skip_tls_verify      = local.proxmox_insecure_connection # [tl! ~~:3]
   proxmox_url                   = local.proxmox_url
   token                         = local.proxmox_token_secret
   username                      = local.proxmox_token_id
 
   // Node Settings
-  node                          = local.proxmox_node
+  node                          = local.proxmox_node # [tl! ~~]
 
   // Virtual Machine Settings
-  bios                          = "ovmf"
+  bios                          = "ovmf" # [tl! ~~:start]
   cores                         = var.vm_cpu_cores
   cpu_type                      = var.vm_cpu_type
   memory                        = var.vm_mem_size
@@ -779,16 +779,16 @@ source "proxmox-iso" "linux-server" {
   network_adapters {
     bridge                      = local.proxmox_network_bridge
     model                       = var.vm_network_model
-  }
+  } # [tl! ~~:end]
 
   // Removable Media Settings
-  additional_iso_files {
+  additional_iso_files { # [tl! ~~:5]
     cd_content                  = local.data_source_content
     cd_label                    = var.cd_label
     iso_storage_pool            = local.proxmox_iso_storage_pool
     unmount                     = var.remove_cdrom
   }
-  iso_checksum                  = local.iso_checksum
+  iso_checksum                  = local.iso_checksum # [tl! ~~:5]
   // iso_file                      = local.iso_path
   iso_url                       = var.iso_url
   iso_download_pve              = true
@@ -797,11 +797,11 @@ source "proxmox-iso" "linux-server" {
 
 
   // Boot and Provisioning Settings
-  boot_command                  = var.vm_boot_command
+  boot_command                  = var.vm_boot_command # [tl! ~~]
   boot_wait                     = var.vm_boot_wait
 
   // Communicator Settings and Credentials
-  communicator                  = "ssh"
+  communicator                  = "ssh" # [tl! ~~:5]
   ssh_clear_authorized_keys     = var.build_remove_keys
   ssh_port                      = var.communicator_port
   ssh_private_key_file          = local.ssh_private_key_file
@@ -1393,12 +1393,12 @@ It'll take a few minutes while Packer waits on SSH, and while I wait on that, I 
 
 That successful SSH connection signifies the transition from the `source {}` block to the `build {}` block, so it starts with uploading any certs and the `join-domain.sh` script before getting into running those post-install tasks:
 
-```shell
-==> proxmox-iso.linux-server: Connected to SSH! # [tl! .nocopy:start **:2]
+```text
+==> proxmox-iso.linux-server: Connected to SSH! [tl! .nocopy:start **:2]
 ==> proxmox-iso.linux-server: Uploading certs => /tmp
 ==> proxmox-iso.linux-server: Uploading scripts/linux/join-domain.sh => /home/john/join-domain.sh
     proxmox-iso.linux-server: join-domain.sh 5.59 KiB / 5.59 KiB [========================================================================================================] 100.00% 0s
-==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/wait-for-cloud-init.sh # [tl! **:start]
+==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/wait-for-cloud-init.sh [tl! **:start]
     proxmox-iso.linux-server: >> Waiting for cloud-init...
 ==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/cleanup-subiquity.sh
     proxmox-iso.linux-server: >> Deleting subiquity cloud-init config...
@@ -1407,16 +1407,16 @@ That successful SSH connection signifies the transition from the `source {}` blo
     proxmox-iso.linux-server: >> Installing certificates...
     proxmox-iso.linux-server: No certs to install.
 ==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/disable-multipathd.sh
-    proxmox-iso.linux-server: >> Disabling multipathd... # [tl! **:end]
+    proxmox-iso.linux-server: >> Disabling multipathd... [tl! **:end]
 ==> proxmox-iso.linux-server: Removed /etc/systemd/system/multipath-tools.service.
 ==> proxmox-iso.linux-server: Removed /etc/systemd/system/sockets.target.wants/multipathd.socket.
 ==> proxmox-iso.linux-server: Removed /etc/systemd/system/sysinit.target.wants/multipathd.service.
-==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/prune-motd.sh # [tl! **:3]
+==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/prune-motd.sh [tl! **:3]
     proxmox-iso.linux-server: >> Pruning default MOTD...
 ==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/persist-cloud-init-net.sh
     proxmox-iso.linux-server: >> Preserving network settings...
     proxmox-iso.linux-server: manual_cache_clean: True
-==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/configure-pam_mkhomedir.sh # [tl! **:3]
+==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/configure-pam_mkhomedir.sh [tl! **:3]
     proxmox-iso.linux-server: >> Configuring pam_mkhomedir...
 ==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/update-packages.sh
     proxmox-iso.linux-server: >> Checking for and installing updates...
@@ -1432,14 +1432,14 @@ That successful SSH connection signifies the transition from the `source {}` blo
     proxmox-iso.linux-server: The following packages have been kept back:
     proxmox-iso.linux-server:   python3-update-manager update-manager-core
     proxmox-iso.linux-server: 0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
-    proxmox-iso.linux-server: >> Rebooting! # [tl! ** .nocopy:end]
+    proxmox-iso.linux-server: >> Rebooting! [tl! ** .nocopy:end]
 ```
 
 There's a brief pause during the reboot, and then things pick back up with the hardening script and then the cleanup tasks:
 
-```shell
-==> proxmox-iso.linux-server: Pausing 30s before the next provisioner... # [tl! .nocopy:start]
-==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/cleanup-cloud-init.sh # [tl! **:3]
+```text
+==> proxmox-iso.linux-server: Pausing 30s before the next provisioner... [tl! .nocopy:start]
+==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/cleanup-cloud-init.sh [tl! **:3]
     proxmox-iso.linux-server: >> Cleaning up cloud-init state...
 ==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/cleanup-packages.sh
     proxmox-iso.linux-server: >> Cleaning up unneeded packages...
@@ -1447,17 +1447,17 @@ There's a brief pause during the reboot, and then things pick back up with the h
     proxmox-iso.linux-server: Building dependency tree...
     proxmox-iso.linux-server: Reading state information...
     proxmox-iso.linux-server: 0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
-==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/builds/linux/ubuntu/22-04-lts/hardening.sh # [tl! **:1]
+==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/builds/linux/ubuntu/22-04-lts/hardening.sh [tl! **:1]
     proxmox-iso.linux-server: >>> Beginning hardening tasks...
     proxmox-iso.linux-server: [...]
     proxmox-iso.linux-server: >>> Hardening script complete!
-==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/zero-disk.sh # [tl! **:1]
+==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/zero-disk.sh [tl! **:1]
     proxmox-iso.linux-server: >> Zeroing free space to reduce disk size...
 ==> proxmox-iso.linux-server: dd: error writing '/EMPTY': No space left on device
 ==> proxmox-iso.linux-server: 25905+0 records in
 ==> proxmox-iso.linux-server: 25904+0 records out
 ==> proxmox-iso.linux-server: 27162312704 bytes (27 GB, 25 GiB) copied, 10.7024 s, 2.5 GB/s
-==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/generalize.sh # [tl! **:10]
+==> proxmox-iso.linux-server: Provisioning with shell script: /home/john/projects/packer-proxmox-templates/scripts/linux/generalize.sh [tl! **:10]
     proxmox-iso.linux-server: >> Clearing audit logs...
     proxmox-iso.linux-server: >> Clearing persistent udev rules...
     proxmox-iso.linux-server: >> Clearing temp dirs...
@@ -1469,12 +1469,12 @@ There's a brief pause during the reboot, and then things pick back up with the h
 ==> proxmox-iso.linux-server: Stopping VM
 ==> proxmox-iso.linux-server: Converting VM to template
     proxmox-iso.linux-server: Deleted generated ISO from local:iso/packer152219352.iso
-Build 'proxmox-iso.linux-server' finished after 10 minutes 52 seconds. # [tl! **:5]
+Build 'proxmox-iso.linux-server' finished after 10 minutes 52 seconds. [tl! **:5]
 
 ==> Wait completed after 10 minutes 52 seconds
 
 ==> Builds finished. The artifacts of successful builds are:
---> proxmox-iso.linux-server: A template was created: 105 # [tl! .nocopy:end]
+--> proxmox-iso.linux-server: A template was created: 105 [tl! .nocopy:end]
 ```
 
 That was a lot of prep work, but now that everything is in place it only takes about eleven minutes to create a fresh Ubuntu 22.04 template, and that template is fully up-to-date and hardened to about 95% of the CIS Level 2 benchmark. This will save me a lot of time as I build new VMs in my homelab.
