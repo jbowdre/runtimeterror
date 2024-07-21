@@ -2,12 +2,11 @@
 title: "Building Proxmox Templates with Packer"
 date: "2024-07-21T00:36:16Z"
 # lastmod: 2024-06-12
-draft: true
 description: "Using Packer and Vault to build VM templates for my Proxmox homelab."
 featured: false
 toc: true
 reply: true
-categories: Tips
+categories: Code
 tags:
   - homelab
   - iac
