@@ -31,6 +31,13 @@ When a GitHub Actions workflow fires, it schedules the job(s) to run on GitHub's
 
 I wanted my runner to execute the build inside of a Docker container so that I could control that environment a bit more, and I also wanted to ensure that it would run [without elevated permissions](https://docs.docker.com/engine/security/rootless/). It took a bit of fiddling to get there, but I'm pretty pleased with the result!
 
+{{% notice note "Self-Hosted Runner Security" %}}
+GitHub [strongly recommends](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners#self-hosted-runner-security) that you only use self-hosted runners with **private** repositories. You don't want a misconfigured workflow to allow a pull request submitted from a fork to run potentially-malicious code on your system(s).
+
+So while I have a [public repo](https://github.com/jbowdre/packer-proxmox-templates/) to share my Packer work, my runner environment is attached to an otherwise-identical private repo. I'd recommend following a similar setup.
+{{% /notice %}}
+
+#### Setup Rootless Docker Host
 I started by cloning a fresh Ubuntu 22.04 VM off of my new template. After doing the basic initial setup (setting the hostname and IP, connecting it Tailscale), I then created a user account for the runner to use. That account will need sudo privileges during the initial setup, but then I can revoke that access. I also set a password for the account.
 
 ```shell
@@ -125,4 +132,84 @@ Share images, automate workflows, and more with a free Docker ID:
 For more examples and ideas, visit:
  https://docs.docker.com/get-started/
 ```
+
+So the Docker piece is sorted; now for setting up the runner.
+
+#### Install/Configure Runner
+I know I've been talking about a singular runner, but I actually set up multiple instances of the runner on the same host to allow running jobs in parallel. I could probably support four simultaneous builds in my homelab but I'll settle two runners for now (after all, I only have two build flavors so far anyway).
+
+Each runner instance needs its own folder structure so I started by setting that up under `/opt/github/`:
+
+```shell
+sudo mkdir -p /opt/github/runner{1..2} # [tl! .cmd:2]
+sudo chown -R github:github /opt/github
+cd /opt/github
+```
+
+And then I downloaded the latest runner package:
+
+```shell
+curl -O -L https://github.com/actions/runner/releases/download/v2.317.0/actions-runner-linux-x64-2.317.0.tar.gz # [tl! .cmd]
+```
+
+For each runner, I:
+- Extracted the runner software into the designated directory and `cd`'d to there:
+    ```shell
+    tar xzf ./actions-runner-linux-x64-2.317.0.tar.gz --directory=runner1 # [tl! .cmd:1]
+    cd runner1
+    ```
+- Went to my private GitHub repo and navigated to **Settings > Actions > Runners** and clicked the big friendly **New self-hosted runner** button at the top-right of the page. All I really need from that is the token which appears in the **Configure** section. Once I had that token, I...
+- Ran the configuration script, accepting the defaults for every prompt *except* for the runner name, which must be unique within the repository (so `runner1`, `runner2`, so on):
+    ```shell
+    ./config.sh \ # [tl! **:2 .cmd]
+      --url https://github.com/[GITHUB_USERNAME]/[GITHUB_REPO] \
+      --token [TOKEN] # [tl! .nocopy:1,35]
+
+    --------------------------------------------------------------------------------
+    |        ____ _ _   _   _       _          _        _   _                      |
+    |       / ___(_) |_| | | |_   _| |__      / \   ___| |_(_) ___  _ __  ___      |
+    |      | |  _| | __| |_| | | | | '_ \    / _ \ / __| __| |/ _ \| '_ \/ __|     |
+    |      | |_| | | |_|  _  | |_| | |_) |  / ___ \ (__| |_| | (_) | | | \__ \     |
+    |       \____|_|\__|_| |_|\__,_|_.__/  /_/   \_\___|\__|_|\___/|_| |_|___/     |
+    |                                                                              |
+    |                       Self-hosted runner registration                        |
+    |                                                                              |
+    --------------------------------------------------------------------------------
+
+    # Authentication
+
+
+    √ Connected to GitHub
+
+    # Runner Registration
+
+    Enter the name of the runner group to add this runner to: [press Enter for Default]
+
+    Enter the name of runner: [press Enter for runner] runner1 # [tl! ** ~~]
+
+    This runner will have the following labels: 'self-hosted', 'Linux', 'X64'
+    Enter any additional labels (ex. label-1,label-2): [press Enter to skip]
+
+    √ Runner successfully added
+    √ Runner connection is good
+
+    # Runner settings
+
+    Enter name of work folder: [press Enter for _work]
+
+    √ Settings Saved.
+
+    ```
+- Configure it to run as a user service:
+    ```shell
+    sudo ./svc.sh install $(whoami) # [tl! .cmd:1]
+    sudo ./svc.sh start $(whoami)
+    ```
+
+Once all of the runner instances are configured I removed the `github` user from the `sudo` group:
+
+```shell
+sudo deluser github sudo # [tl! .cmd]
+```
+
 
