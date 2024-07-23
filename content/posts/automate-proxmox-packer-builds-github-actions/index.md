@@ -22,7 +22,7 @@ tags:
   - tailscale
 ---
 
-I recently shared how I [set up Packer to build Proxmox templates](building-proxmox-templates-packer) in my homelab. That post covered storing (and retrieving) environment-specific values in Vault, the `cloud-init` configuration for definiting the installation parameters, the various post-install scripts for further customizing and hardening the template, and the Packer template files that tie it all together. By the end of the post, I was able to simply run `./build.sh ubuntu2204` to kick the build of a new Ubuntu 22.04 template without having to do any other interaction with the process.
+I recently shared how I [set up Packer to build Proxmox templates](/building-proxmox-templates-packer/) in my homelab. That post covered storing (and retrieving) environment-specific values in Vault, the `cloud-init` configuration for definiting the installation parameters, the various post-install scripts for further customizing and hardening the template, and the Packer template files that tie it all together. By the end of the post, I was able to simply run `./build.sh ubuntu2204` to kick the build of a new Ubuntu 22.04 template without having to do any other interaction with the process.
 
 That's pretty slick, but *The Dream* is to not have to do anything at all. So that's what this post is about: describing setting up a rootless self-hosted GitHub Actions Runner to perform the build, and the GitHub Actions workflows to trigger it.
 
@@ -212,4 +212,225 @@ Once all of the runner instances are configured I removed the `github` user from
 sudo deluser github sudo # [tl! .cmd]
 ```
 
+And I can see that my new runners are successfully connected to my *private* GitHub repo:
+![GitHub settings showing two self-hosted runners with status "Idle"](new-runners.png)
+
+I now have a place to execute the Packer builds, I just need to tell the runner how to do that. And that's means it's time to talk about the...
+
+### GitHub Actions Workflow
+My solution for this consists of a Github Actions workflow which calls a custom action to spawn a Docker container and do the work. We'll cover this from the inside out to make sure we have a handle on all the pieces.
+
+#### Docker Image
+I opted to use a customized Docker image consisting of Packer and associated tools with the addition of the [wrapper script](/building-proxmox-templates-packer/#wrapper-script) that I used for local builds. That image will be integrated with a custom action called `packerbuild`.
+
+So I commenced this part of the journey by creating a folder to hold my new action (and Dockerfile):
+
+```shell
+mkdir -p .github/actions/packerbuild # [tl! .cmd]
+```
+
+I don't want to maintain two copies of the `build.sh` script, so I moved it into this new folder and created a symlink to it back at the top of the repo:
+
+```shell
+mv build.sh .github/actions/packerbuild/ # [tl! .cmd:1]
+ln -s .github/actions/packerbuild/build.sh build.sh
+```
+
+As a reminder, `build.sh` accepts a single argument to specify what build to produce and then fires off the appropriate Packer commands:
+
+```shell
+# torchlight! {"lineNumbers":true}
+#!/usr/bin/env bash
+# Run a single packer build
+#
+# Specify the build as an argument to the script. Ex:
+# ./build.sh ubuntu2204
+set -eu
+
+if [ $# -ne 1 ]; then
+  echo """
+Syntax: $0 [BUILD]
+
+Where [BUILD] is one of the supported OS builds:
+
+ubuntu2204 ubuntu2404
+"""
+  exit 1
+fi
+
+if [ ! "${VAULT_TOKEN+x}" ]; then
+  #shellcheck disable=SC1091
+  source vault-env.sh || ( echo "No Vault config found"; exit 1 )
+fi
+
+build_name="${1,,}"
+build_path=
+
+case $build_name in
+  ubuntu2204)
+    build_path="builds/linux/ubuntu/22-04-lts/"
+    ;;
+  ubuntu2404)
+    build_path="builds/linux/ubuntu/24-04-lts/"
+    ;;
+  *)
+    echo "Unknown build; exiting..."
+    exit 1
+    ;;
+esac
+
+packer init "${build_path}"
+packer build -on-error=cleanup -force "${build_path}"
+```
+
+So I used the following `Dockerfile` to create the environment in which the build will be executed:
+
+```Dockerfile
+# torchlight! {"lineNumbers":true}
+FROM docker.mirror.hashicorp.services/alpine:latest
+
+ENV PACKER_VERSION=1.10.3
+
+RUN apk --no-cache upgrade \
+  && apk add --no-cache \
+  bash \
+  curl \
+  git \
+  openssl \
+  wget \
+  xorriso
+
+ADD https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip ./
+ADD https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS ./
+
+RUN sed -i '/.*linux_amd64.zip/!d' packer_${PACKER_VERSION}_SHA256SUMS \
+  && sha256sum -c packer_${PACKER_VERSION}_SHA256SUMS \
+  && unzip packer_${PACKER_VERSION}_linux_amd64.zip -d /bin \
+  && rm -f packer_${PACKER_VERSION}_linux_amd64.zip packer_${PACKER_VERSION}_SHA256SUMS
+
+COPY build.sh /bin/build.sh
+RUN chmod +x /bin/build.sh
+
+ENTRYPOINT ["/bin/build.sh"]
+```
+
+It borrows from Hashicorp's minimal `alpine` image and installs a few common packages and `xorriso` to support the creation of ISO images. It then downloads the indicated version of the Packer installer and extracts it to `/bin/`. Finally it copies the `build.sh` script into the image and sets it as the `ENTRYPOINT`.
+
+#### Custom Action
+Turning this Docker image into an action only needs a very minimal amount of YAML to describe how to interact with the image.
+
+So here is `.github/actions/packerbuild/action.yml`:
+```yaml
+# torchlight! {"lineNumbers":true}
+name: 'Execute Packer Build'
+description: 'Performs a Packer build'
+inputs:
+  build-flavor:
+    description: 'The build to execute'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.build-flavor }}
+```
+
+As you can see, the action expects (nay, requires!) a `build-flavor` input to line up with `build.sh`'s expected parameter. The action will run in Docker using the image defined in the local `Dockerfile`, and will pass `${{ inputs.build-flavor }}` as the sole argument to that image.
+
+And that brings us to the workflow which will tie all of this together.
+
+#### The Workflow
+The workflow is defined as another bit of YAML in `.github/workflows/build.yml`. It starts simply enough with a name and a declaration of when the workflow should be executed.
+
+```yaml
+# torchlight! {"lineNumbers":true}
+name: Build VM Templates
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * 1'
+```
+
+`workflow_dispatch` just indicates that I should be able to manually execute the workflow from the GitHub Actions UI, and the `cron` schedule means that the workflow will run every Monday at 8:00 AM (UTC).
+
+Rather than rely on an environment file (which, again, should *not* be committed to version control!), I'm using [repository secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) to securely store the `VAULT_ADDR` and `VAULT_TOKEN` values. So I introduce those into the workflow like so:
+
+```yaml
+# torchlight! {"lineNumbers":true, "lineNumbersStart":8}
+env:
+  VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+  VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+```
+
+When I did the [Vault setup](/building-proxmox-templates-packer/#vault-configuration), I created the token with a `period` of `336` hours; that means that the token will only remain valid as long as it gets renewed at least once every two weeks. So I start the `jobs:` block with a simple call to Vault's REST API to renew the token before each run:
+
+```yaml
+# torchlight! {"lineNumbers":true, "lineNumbersStart":12}
+jobs:
+  prepare:
+    name: Prepare
+    runs-on: self-hosted
+    steps:
+      - name: Renew Vault Token
+        run: |
+          curl -s --header "X-Vault-Token:${VAULT_TOKEN}" \
+            --request POST "${VAULT_ADDR}v1/auth/token/renew-self" | grep -q auth
+```
+
+Assuming that token is renewed successfully, the Build job uses a [matrix strategy](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstrategymatrixinclude) to enumerate the `build-flavor`s that will need to be built. All of the following steps will be repeated for each flavor.
+
+And the first step is to simply check out the GitHub repo so that the runner has all the latest code.
+
+```yaml
+# torchlight! {"lineNumbers":true, "lineNumbersStart":22}
+  builds:
+    name: Build
+    needs: prepare
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        build-flavor:
+          - ubuntu2204
+          - ubuntu2404
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+```
+
+To get the runner to interact with the rootless Docker setup we'll need to export the `DOCKER_HOST` variable and point it to the Docker socket registered by the user... which first means obtaining the UID of that user and echoing it to the special `$GITHUB_OUTPUT` variable so it can be passed to the next step:
+
+```yaml
+# torchlight! {"lineNumbers":true, "lineNumbersStart":34}
+      - name: Get UID of Github user
+        id: runner_uid
+        run: |
+          echo "gh_uid=$(id -u)" >> "$GITHUB_OUTPUT"
+```
+
+And now, finally, for the actual build. The `Build template` step calls the `.github/actions/packerbuild` custom action, sets the `DOCKER_HOST` value to the location of `docker.sock` (using the UID obtained earlier) so the runner will know how to interact with rootless Docker, and passes along the `build-flavor` from the matrix to influence which template will be created.
+
+If it fails for some reason, the `Retry on failure` step will try again, just in case it was a transient glitch like a network error or a hung process.
+
+```yaml
+# torchlight! {"lineNumbers":true, "lineNumbersStart":38}
+      - name: Build template
+        id: build
+        uses: ./.github/actions/packerbuild
+        timeout-minutes: 90
+        env:
+          DOCKER_HOST: unix:///run/user/${{ steps.runner_uid.outputs.gh_uid }}/docker.sock
+        with:
+          build-flavor: ${{ matrix.build-flavor }}
+        continue-on-error: true
+      - name: Retry on failure
+        id: retry
+        if: steps.build.outcome == 'failure'
+        uses: ./.github/actions/packerbuild
+        timeout-minutes: 90
+        env:
+          DOCKER_HOST: unix:///run/user/${{ steps.runner_uid.outputs.gh_uid }}/docker.sock
+        with:
+          build-flavor: ${{ matrix.build-flavor }}
+```
 
