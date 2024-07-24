@@ -434,3 +434,63 @@ If it fails for some reason, the `Retry on failure` step will try again, just in
           build-flavor: ${{ matrix.build-flavor }}
 ```
 
+Here's the complete `.github/workflows/build.yml`, all in one code block:
+
+```yaml
+name: Build VM Templates
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * 1'
+
+env:
+  VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+  VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+
+jobs:
+  prepare:
+    name: Prepare
+    runs-on: self-hosted
+    steps:
+      - name: Renew Vault Token
+        run: |
+          curl -s --header "X-Vault-Token:${VAULT_TOKEN}" \
+            --request POST "${VAULT_ADDR}v1/auth/token/renew-self" | grep -q auth
+
+  builds:
+    name: Build
+    needs: prepare
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        build-flavor:
+          - ubuntu2204
+          - ubuntu2404
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get UID of Github user
+        id: runner_uid
+        run: |
+          echo "gh_uid=$(id -u)" >> "$GITHUB_OUTPUT"
+      - name: Build template
+        id: build
+        uses: ./.github/actions/packerbuild
+        timeout-minutes: 90
+        env:
+          DOCKER_HOST: unix:///run/user/${{ steps.runner_uid.outputs.gh_uid }}/docker.sock
+        with:
+          build-flavor: ${{ matrix.build-flavor }}
+        continue-on-error: true
+      - name: Retry on failure
+        id: retry
+        if: steps.build.outcome == 'failure'
+        uses: ./.github/actions/packerbuild
+        timeout-minutes: 90
+        env:
+          DOCKER_HOST: unix:///run/user/${{ steps.runner_uid.outputs.gh_uid }}/docker.sock
+        with:
+          build-flavor: ${{ matrix.build-flavor }}
+```
+
