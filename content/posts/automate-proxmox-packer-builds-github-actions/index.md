@@ -24,7 +24,7 @@ tags:
 
 I recently shared how I [set up Packer to build Proxmox templates](/building-proxmox-templates-packer/) in my homelab. That post covered storing (and retrieving) environment-specific values in Vault, the `cloud-init` configuration for definiting the installation parameters, the various post-install scripts for further customizing and hardening the template, and the Packer template files that tie it all together. By the end of the post, I was able to simply run `./build.sh ubuntu2204` to kick the build of a new Ubuntu 22.04 template without having to do any other interaction with the process.
 
-That's pretty slick, but *The Dream* is to not have to do anything at all. So that's what this post is about: describing setting up a rootless self-hosted GitHub Actions Runner to perform the build, and the GitHub Actions workflows to trigger it.
+That's pretty cool, but *The Dream* is to not have to do anything at all. So that's what this post is about: describing setting up a rootless self-hosted GitHub Actions Runner to perform the build, and the GitHub Actions workflows to trigger it.
 
 ### Self-Hosted Runner
 When a GitHub Actions workflow fires, it schedules the job(s) to run on GitHub's own infrastructure. That's easy and convenient, but can make things tricky when you need a workflow to interact with on-prem infrastructure. I've worked around that in the past by [configuring the runner to connect to my tailnet](/gemini-capsule-gempost-github-actions/#publish-github-actions), but given the amount of data that will need to be transferred during the Packer build I decided that a [self-hosted runner](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners) would be a better solution.
@@ -494,3 +494,15 @@ jobs:
           build-flavor: ${{ matrix.build-flavor }}
 ```
 
+### Your Templates Are Served
+All that's left at this point is to `git commit` and `git push` this to my *private* repo. I can then visit the repo on the web, head to the **Actions** tab, select the new **Build VM Templates** workflow on the left, and click the **Run workflow** button. That fires off the build, and I can check back a few minutes later to confirm that it completed successfully:
+
+![GitHub interface showing that the manually-triggered workflow successfully completed](successful-action-run.png)
+
+And I can also check my Proxmox host to confirm that the new VM templates were indeed created:
+
+![Proxmox interface showing a VM template named Ubuntu2204 with a note indicating it was recently built by Packer](new-proxmox-templates.png)
+
+For future builds, I don't have to actually do anything at all. GitHub will automatically trigger this workflow every Monday morning so my templates will never be more than a week out-of-date. Pretty slick, right?
+
+You can check out my *public* repo at [github.com/jbowdre/packer-proxmox-templates/](https://github.com/jbowdre/packer-proxmox-templates/) to explore the full setup - and to follow along as I add support for additional OS flavors.
