@@ -1,7 +1,7 @@
 {{ if .Params.description }}<p>{{ .Params.description }}</p><hr>{{ end }}
 {{ if and (gt .WordCount 400 ) (gt (len .TableOfContents) 180) }}
 <p>
-  <h3>On this page</h3>
+  <h3>on this page</h3>
   {{ .TableOfContents }}
   <hr>
 </p>
@@ -11,7 +11,7 @@
 {{$related := where .Site.RegularPages ".Params.categories" "eq" .Params.categories }}
 {{- $relatedLimit := default 8 .Site.Params.numberOfRelatedPosts }}
 {{ if eq .Params.categories "slashes" }}
-<h3>More /slashes</h3>
+<h3>more /slashes</h3>
 {{ $sortedPosts := sort $related "Title" }}
 <ul>
   {{- range $sortedPosts }}
