@@ -2,7 +2,6 @@
 title: "Automate Packer Builds with GithHub Actions"
 date: "2024-07-25T02:28:10Z"
 # lastmod: 2024-07-21
-draft: true
 description: "Using a GitHub Actions workflow, self-hosted runners, rootless Docker, Packer, and Vault to automatically build VM templates on Proxmox."
 featured: false
 toc: true
