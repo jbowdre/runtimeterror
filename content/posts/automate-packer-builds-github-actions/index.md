@@ -1,9 +1,9 @@
 ---
-title: "Automate Proxmox Packer Builds Github Actions"
-date: 2024-07-21
+title: "Automate Packer Builds with GithHub Actions"
+date: "2024-07-25T02:28:10Z"
 # lastmod: 2024-07-21
 draft: true
-description: "This is a new post about..."
+description: "Using a GitHub Actions workflow, self-hosted runners, rootless Docker, Packer, and Vault to automatically build VM templates on Proxmox."
 featured: false
 toc: true
 reply: true
@@ -22,14 +22,14 @@ tags:
   - tailscale
 ---
 
-I recently shared how I [set up Packer to build Proxmox templates](/building-proxmox-templates-packer/) in my homelab. That post covered storing (and retrieving) environment-specific values in Vault, the `cloud-init` configuration for definiting the installation parameters, the various post-install scripts for further customizing and hardening the template, and the Packer template files that tie it all together. By the end of the post, I was able to simply run `./build.sh ubuntu2204` to kick the build of a new Ubuntu 22.04 template without having to do any other interaction with the process.
+I recently shared how I [set up Packer to build Proxmox templates](/building-proxmox-templates-packer/) in my homelab. That post covered storing (and retrieving) environment-specific values in Vault, the `cloud-init` configuration for defining the installation parameters, the various post-install scripts for further customizing and hardening the template, and the Packer template files that tie it all together. By the end of the post, I was able to simply run `./build.sh ubuntu2204` to kick the build of a new Ubuntu 22.04 template without having to do any other interaction with the process.
 
-That's pretty cool, but *The Dream* is to not have to do anything at all. So that's what this post is about: describing setting up a rootless self-hosted GitHub Actions Runner to perform the build, and the GitHub Actions workflows to trigger it.
+That's pretty cool, but *The Dream* is to not have to do anything at all. So that's what this post is about: setting up a self-hosted GitHub Actions Runner to perform the build and a GitHub Actions workflow to trigger it.
 
 ### Self-Hosted Runner
 When a GitHub Actions workflow fires, it schedules the job(s) to run on GitHub's own infrastructure. That's easy and convenient, but can make things tricky when you need a workflow to interact with on-prem infrastructure. I've worked around that in the past by [configuring the runner to connect to my tailnet](/gemini-capsule-gempost-github-actions/#publish-github-actions), but given the amount of data that will need to be transferred during the Packer build I decided that a [self-hosted runner](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners) would be a better solution.
 
-I wanted my runner to execute the build inside of a Docker container so that I could control that environment a bit more, and I also wanted to ensure that it would run [without elevated permissions](https://docs.docker.com/engine/security/rootless/). It took a bit of fiddling to get there, but I'm pretty pleased with the result!
+I wanted my runner to execute the build inside of a Docker container for better control of the environment, and I wanted that container to run [without elevated permissions (rootless)](https://docs.docker.com/engine/security/rootless/).
 
 {{% notice note "Self-Hosted Runner Security" %}}
 GitHub [strongly recommends](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners#self-hosted-runner-security) that you only use self-hosted runners with **private** repositories. You don't want a misconfigured workflow to allow a pull request submitted from a fork to run potentially-malicious code on your system(s).
@@ -38,14 +38,14 @@ So while I have a [public repo](https://github.com/jbowdre/packer-proxmox-templa
 {{% /notice %}}
 
 #### Setup Rootless Docker Host
-I started by cloning a fresh Ubuntu 22.04 VM off of my new template. After doing the basic initial setup (setting the hostname and IP, connecting it Tailscale), I then created a user account for the runner to use. That account will need sudo privileges during the initial setup, but then I can revoke that access. I also set a password for the account.
+I start by cloning a fresh Ubuntu 22.04 VM off of my new template. After doing the basic initial setup (setting the hostname and IP, connecting it Tailscale, and so on), I create a user account for the runner to use. That account will need sudo privileges during the initial setup, but those will be revoked later on. I also set a password for the account.
 
 ```shell
 sudo useradd -m -G sudo -s $(which bash) github # [tl! .cmd:1]
 sudo passwd github
 ```
 
-I then installed the `systemd-container` package so that I could use [`machinectl`](https://www.man7.org/linux/man-pages/man1/machinectl.1.html) to log in as the new user (since [`sudo su` won't work for the rootless setup](https://docs.docker.com/engine/security/rootless/#unable-to-install-with-systemd-when-systemd-is-present-on-the-system)).
+I then install the `systemd-container` package so that I can use [`machinectl`](https://www.man7.org/linux/man-pages/man1/machinectl.1.html) to log in as the new user (since [`sudo su` won't work for the rootless setup](https://docs.docker.com/engine/security/rootless/#unable-to-install-with-systemd-when-systemd-is-present-on-the-system)).
 
 ```shell
 sudo apt update # [tl! .cmd:2]
@@ -53,13 +53,13 @@ sudo apt install systemd-container
 sudo machinectl shell github@
 ```
 
-And I installed the `uidmap` package since rootless Docker requires `newuidmap` and `newgidmap`:
+And I install the `uidmap` package since rootless Docker requires `newuidmap` and `newgidmap`:
 
 ```shell
 sudo apt install uidmap # [tl! .cmd]
 ```
 
-At this point, I just followed the usual [Docker installation instructions](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository):
+At this point, I can follow the usual [Docker installation instructions](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository):
 
 ```shell
 # Add Docker's official GPG key:
@@ -69,13 +69,14 @@ sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-# Add the repository to Apt sources:
+# Add the repository to apt sources:
 echo \ # [tl! .cmd]
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update # [tl! .cmd]
 
+# Install the Docker packages:
 sudo apt-get install \ # [tl! .cmd]
   docker-ce \
   docker-ce-cli \
@@ -84,7 +85,7 @@ sudo apt-get install \ # [tl! .cmd]
   docker-compose-plugin
 ```
 
-Then the actual rootless setup can begin. That starts by disabling the existing Docker service and socket and then running the `dockerd-rootless-setuptool.sh` script:
+Now it's time for the rootless setup, which starts by disabling the existing Docker service and socket and then running the `dockerd-rootless-setuptool.sh` script:
 
 ```shell
 sudo systemctl disable --now docker.service docker.socket # [tl! .cmd:1]
@@ -93,15 +94,14 @@ sudo rm /var/run/docker.sock
 dockerd-rootless-setuptool.sh install # [tl! .cmd]
 ```
 
-After that, I started and enabled the service in the user context and enabled "linger" for the `github` user so that its systemd instance can continue to function even while the user is not logged in:
+Next, I enable and start the service in the user context, and I enable "linger" for the `github` user so that its systemd instance can continue to function even while the user is not logged in:
 
 ```shell
-systemctl --user start docker # [tl! .cmd:2]
-systemctl --user enable docker
+systemctl --user enable --now docker # [tl! .cmd:1]
 sudo loginctl enable-linger $(whoami)
 ```
 
-That should take care of setting up Docker, and I can quickly confirm by spawning the `hello-world` container:
+That should take care of setting up Docker, and I can quickly confirm by spawning the usual `hello-world` container:
 
 ```shell
 docker run hello-world # [tl! .cmd]
@@ -136,9 +136,9 @@ For more examples and ideas, visit:
 So the Docker piece is sorted; now for setting up the runner.
 
 #### Install/Configure Runner
-I know I've been talking about a singular runner, but I actually set up multiple instances of the runner on the same host to allow running jobs in parallel. I could probably support four simultaneous builds in my homelab but I'll settle two runners for now (after all, I only have two build flavors so far anyway).
+I know I've been talking about a singular runner, but I'm actually seting up multiple instances of the runner on the same host to allow running jobs in parallel. I could probably support four simultaneous builds in my homelab but I'll settle two runners for now (after all, I only have two build flavors so far anyway).
 
-Each runner instance needs its own folder structure so I started by setting that up under `/opt/github/`:
+Each runner instance needs its own directory so I create those under `/opt/github/`:
 
 ```shell
 sudo mkdir -p /opt/github/runner{1..2} # [tl! .cmd:2]
@@ -146,20 +146,20 @@ sudo chown -R github:github /opt/github
 cd /opt/github
 ```
 
-And then I downloaded the latest runner package:
+And then I download the [latest runner package](https://github.com/actions/runner/releases):
 
 ```shell
 curl -O -L https://github.com/actions/runner/releases/download/v2.317.0/actions-runner-linux-x64-2.317.0.tar.gz # [tl! .cmd]
 ```
 
 For each runner, I:
-- Extracted the runner software into the designated directory and `cd`'d to there:
+- Extract the runner software into the designated directory and `cd` into it:
     ```shell
     tar xzf ./actions-runner-linux-x64-2.317.0.tar.gz --directory=runner1 # [tl! .cmd:1]
     cd runner1
     ```
-- Went to my private GitHub repo and navigated to **Settings > Actions > Runners** and clicked the big friendly **New self-hosted runner** button at the top-right of the page. All I really need from that is the token which appears in the **Configure** section. Once I had that token, I...
-- Ran the configuration script, accepting the defaults for every prompt *except* for the runner name, which must be unique within the repository (so `runner1`, `runner2`, so on):
+- Go to my private GitHub repo, navigate to **Settings > Actions > Runners**, and click the big friendly **New self-hosted runner** button at the top-right of the page. All I really need from that is the token which appears in the **Configure** section. Once I have that token, I...
+- Run the configuration script, accepting the defaults for every prompt *except* for the runner name, which must be unique within the repository (so `runner1`, `runner2`, so on):
     ```shell
     ./config.sh \ # [tl! **:2 .cmd]
       --url https://github.com/[GITHUB_USERNAME]/[GITHUB_REPO] \
@@ -200,13 +200,13 @@ For each runner, I:
     √ Settings Saved.
 
     ```
-- Configure it to run as a user service:
+- Use the `svc.sh` script to install it as a user service, and start it running as the `github` user:
     ```shell
     sudo ./svc.sh install $(whoami) # [tl! .cmd:1]
     sudo ./svc.sh start $(whoami)
     ```
 
-Once all of the runner instances are configured I removed the `github` user from the `sudo` group:
+Once all of the runner instances are configured I can remove the `github` user from the `sudo` group:
 
 ```shell
 sudo deluser github sudo # [tl! .cmd]
@@ -218,25 +218,27 @@ And I can see that my new runners are successfully connected to my *private* Git
 I now have a place to execute the Packer builds, I just need to tell the runner how to do that. And that's means it's time to talk about the...
 
 ### GitHub Actions Workflow
-My solution for this consists of a Github Actions workflow which calls a custom action to spawn a Docker container and do the work. We'll cover this from the inside out to make sure we have a handle on all the pieces.
+My solution for this consists of a Github Actions workflow which calls a custom action to spawn a Docker container and do the work. Let's start with the innermost component (the Docker image) and work out from there.
 
 #### Docker Image
-I opted to use a customized Docker image consisting of Packer and associated tools with the addition of the [wrapper script](/building-proxmox-templates-packer/#wrapper-script) that I used for local builds. That image will be integrated with a custom action called `packerbuild`.
+I'm using a customized Docker image consisting of Packer and associated tools with the addition of the [wrapper script](/building-proxmox-templates-packer/#wrapper-script) that I used for local builds. That image will be integrated with a custom action called `packerbuild`.
 
-So I commenced this part of the journey by creating a folder to hold my new action (and Dockerfile):
+So I'll create a folder to hold my new action (and Dockerfile):
 
 ```shell
 mkdir -p .github/actions/packerbuild # [tl! .cmd]
 ```
 
-I don't want to maintain two copies of the `build.sh` script, so I moved it into this new folder and created a symlink to it back at the top of the repo:
+I don't want to maintain two copies of the `build.sh` script, so I move it into this new folder and create a symlink to it back at the top of the repo:
 
 ```shell
 mv build.sh .github/actions/packerbuild/ # [tl! .cmd:1]
 ln -s .github/actions/packerbuild/build.sh build.sh
 ```
 
-As a reminder, `build.sh` accepts a single argument to specify what build to produce and then fires off the appropriate Packer commands:
+That way I can easily load the script into the Docker image while also having it available for running on-demand local builds as needed.
+
+And as a quick reminder, that `build.sh` script accepts a single argument to specify what build to produce and then fires off the appropriate Packer commands:
 
 ```shell
 # torchlight! {"lineNumbers":true}
@@ -283,11 +285,11 @@ packer init "${build_path}"
 packer build -on-error=cleanup -force "${build_path}"
 ```
 
-So I used the following `Dockerfile` to create the environment in which the build will be executed:
+I use the following `Dockerfile` to create the environment in which the build will be executed:
 
 ```Dockerfile
 # torchlight! {"lineNumbers":true}
-FROM docker.mirror.hashicorp.services/alpine:latest
+FROM alpine:3.20
 
 ENV PACKER_VERSION=1.10.3
 
@@ -314,12 +316,12 @@ RUN chmod +x /bin/build.sh
 ENTRYPOINT ["/bin/build.sh"]
 ```
 
-It borrows from Hashicorp's minimal `alpine` image and installs a few common packages and `xorriso` to support the creation of ISO images. It then downloads the indicated version of the Packer installer and extracts it to `/bin/`. Finally it copies the `build.sh` script into the image and sets it as the `ENTRYPOINT`.
+It starts with a minimal `alpine` base image and installs a few common packages (and `xorriso` to support the creation of ISO images). It then downloads the indicated version of the Packer installer and extracts it to `/bin/`. Finally it copies the `build.sh` script into the image and sets it as the `ENTRYPOINT`.
 
 #### Custom Action
-Turning this Docker image into an action only needs a very minimal amount of YAML to describe how to interact with the image.
+Turning this Docker image into an action requires just a smidge of YAML to describe how to interact with the image.
 
-So here is `.github/actions/packerbuild/action.yml`:
+Behold, `.github/actions/packerbuild/action.yml`:
 ```yaml
 # torchlight! {"lineNumbers":true}
 name: 'Execute Packer Build'
@@ -337,10 +339,10 @@ runs:
 
 As you can see, the action expects (nay, requires!) a `build-flavor` input to line up with `build.sh`'s expected parameter. The action will run in Docker using the image defined in the local `Dockerfile`, and will pass `${{ inputs.build-flavor }}` as the sole argument to that image.
 
-And that brings us to the workflow which will tie all of this together.
+Alright, let's tie it all together with the automation workflow now.
 
 #### The Workflow
-The workflow is defined as another bit of YAML in `.github/workflows/build.yml`. It starts simply enough with a name and a declaration of when the workflow should be executed.
+The workflow is defined in `.github/workflows/build.yml`. It starts simply enough with a name and an explanation of when the workflow should be executed.
 
 ```yaml
 # torchlight! {"lineNumbers":true}
@@ -352,9 +354,9 @@ on:
     - cron: '0 8 * * 1'
 ```
 
-`workflow_dispatch` just indicates that I should be able to manually execute the workflow from the GitHub Actions UI, and the `cron` schedule means that the workflow will run every Monday at 8:00 AM (UTC).
+`workflow_dispatch` sets it so I can manually execute the workflow from the GitHub Actions UI (for testing / as a treat), and the `cron` schedule configures the workflow to run automatically every Monday at 8:00 AM (UTC).
 
-Rather than rely on an environment file (which, again, should *not* be committed to version control!), I'm using [repository secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) to securely store the `VAULT_ADDR` and `VAULT_TOKEN` values. So I introduce those into the workflow like so:
+Rather than rely on an environment file (ew), I'm securely storing the `VAULT_ADDR` and `VAULT_TOKEN` values in GitHub [repository secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions). So I introduce those values into the workflow like so:
 
 ```yaml
 # torchlight! {"lineNumbers":true, "lineNumbersStart":8}
@@ -363,7 +365,7 @@ env:
   VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
 ```
 
-When I did the [Vault setup](/building-proxmox-templates-packer/#vault-configuration), I created the token with a `period` of `336` hours; that means that the token will only remain valid as long as it gets renewed at least once every two weeks. So I start the `jobs:` block with a simple call to Vault's REST API to renew the token before each run:
+When I did the [Vault setup](/building-proxmox-templates-packer/#vault-configuration), I created the token with a `period` of `336` hours; that means that the token will only remain valid as long as it gets renewed at least once every two weeks. So I start the `jobs:` block with a simple call to [Vault's REST API](https://developer.hashicorp.com/vault/api-docs/auth/token#renew-a-token-self) to renew the token before each run:
 
 ```yaml
 # torchlight! {"lineNumbers":true, "lineNumbersStart":12}
@@ -495,11 +497,11 @@ jobs:
 ```
 
 ### Your Templates Are Served
-All that's left at this point is to `git commit` and `git push` this to my *private* repo. I can then visit the repo on the web, head to the **Actions** tab, select the new **Build VM Templates** workflow on the left, and click the **Run workflow** button. That fires off the build, and I can check back a few minutes later to confirm that it completed successfully:
+All that's left at this point is to `git commit` and `git push` this to my *private* repo. I can then visit the repo on the web, go to the **Actions** tab, select the new **Build VM Templates** workflow on the left, and click the **Run workflow** button. That fires off the build, and I can check back a few minutes later to confirm that it completed successfully:
 
 ![GitHub interface showing that the manually-triggered workflow successfully completed](successful-action-run.png)
 
-And I can also check my Proxmox host to confirm that the new VM templates were indeed created:
+And I can also consult with my Proxmox host and confirm that the new VM templates were indeed created:
 
 ![Proxmox interface showing a VM template named Ubuntu2204 with a note indicating it was recently built by Packer](new-proxmox-templates.png)
 
