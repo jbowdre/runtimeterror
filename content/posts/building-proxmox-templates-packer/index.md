@@ -1,7 +1,7 @@
 ---
 title: "Building Proxmox Templates with Packer"
 date: "2024-07-21T00:36:16Z"
-# lastmod: 2024-06-12
+lastmod: "2024-07-25T13:14:42Z"
 description: "Using Packer and Vault to build VM templates for my Proxmox homelab."
 featured: false
 toc: true
@@ -19,7 +19,7 @@ tags:
 
 I've been [using Proxmox](/ditching-vsphere-for-proxmox/) in my [homelab](/homelab/) for a while now, and I recently expanded the environment with two HP Elite Mini 800 G9 computers. It was time to start automating the process of building and maintaining my VM templates. I already had functional [Packer templates for VMware](https://github.com/jbowdre/packer-vsphere-templates) so I used that as a starting point for the [Proxmox builds](https://github.com/jbowdre/packer-proxmox-templates). So far, I've only ported over the Ubuntu builds; I'm telling myself I'll get the rest moved over after *finally* publishing this post.
 
-Once I got the builds working locally, I explored how to automate them. I set up a GitHub Actions workflow and a rootless runner to perform the builds for me. I'll write up notes on that part of the process soon, but first, let's run through how I set up Packer. That will be plenty to chew on for now.
+Once I got the builds working locally, I explored how to automate them. I set up a GitHub Actions workflow and a rootless runner to perform the builds for me. I wrote up some notes on that part of the process [here](/automate-packer-builds-github-actions/), but first, let's run through how I set up Packer. That will be plenty to chew on for now.
 
 This post will cover a lot of the Packer implementation details but may gloss over some general setup steps; you'll need at least a passing familiarity with [Packer](https://www.packer.io/) and [Vault](https://www.vaultproject.io/) to take this on.
 
@@ -1555,8 +1555,8 @@ proxmox-iso.linux-server: output will be in this color. # [tl! .nocopy:6]
 ```
 
 ### Up Next...
-Being able to generate a template on-demand is pretty cool, but the next stage of this project is to integrate it with a GitHub Actions workflow so that the templates can be built automatically on a schedule or as the configuration gets changed. But this post is long enough (and I've been poking at it for long enough) so that explanation will have to wait for another time.
+Being able to generate a template on-demand is pretty cool, but the next stage of this project is to [integrate it with a GitHub Actions workflow](/automate-packer-builds-github-actions/) so that the templates can be built automatically on a schedule or as the configuration gets changed. But this post is long enough (and I've been poking at it for long enough) so that explanation will have to wait for another time.
 
 (If you'd like a sneak peek of what's in store, take a self-guided tour of [the GitHub repo](https://github.com/jbowdre/packer-proxmox-templates).)
 
-Stay tuned!
+~~Stay tuned!~~ **It's here!** [Automate Packer Builds with GitHub Actions](/automate-packer-builds-github-actions/)

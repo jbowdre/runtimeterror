@@ -1,6 +1,6 @@
 ---
 title: "Taking Taildrive for a Testdrive"
-date: "2024-07-29T21:32:12Z"
+date: "2024-07-29T23:48:29Z"
 # lastmod: 2024-07-28
 description: "A quick exploration of Taildrive, Tailscale's new(ish) feature to easily share directories with other machines on your tailnet without having to juggle authentication or network connectivity."
 featured: false
