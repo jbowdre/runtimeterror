@@ -45,7 +45,10 @@ jobs:
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
       - name: Build with Hugo
-        run: HUGO_REMOTE_FONT_PATH=${{ secrets.REMOTE_FONT_PATH }} hugo --minify
+        run: |
+          HUGO_REMOTE_FONT_PATH=${{ secrets.REMOTE_FONT_PATH }} \
+          HUGO_DARKVISITORS=${{ secrets.DARKVISITORS_TOKEN }} \
+          hugo --minify
       - name: Insert 404 page
         run: |
           mkdir -p public/bunnycdn_errors
