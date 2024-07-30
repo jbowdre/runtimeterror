@@ -1,7 +1,7 @@
 ---
 title: "/changelog"
 date: "2024-05-26T21:19:08Z"
-lastmod: "2024-07-04T02:32:27Z"
+lastmod: "2024-07-30T01:49:28Z"
 description: "Maybe I should keep a log of all my site-related tinkering?"
 featured: false
 toc: false
@@ -9,6 +9,9 @@ timeless: true
 categories: slashes
 ---
 *High-level list of config/layout changes to the site. The full changelog is of course [on GitHub](https://github.com/jbowdre/runtimeterror/commits/main/).*
+
+**2024-07-29:**
+- Build `robots.txt` dynamically with [Dark Visitors API](https://darkvisitors.com/) and code from [Luke Harris](https://www.lkhrs.com/blog/2024/darkvisitors-hugo/)
 
 **2024-07-03:**
 - Remove `target="_blank"` from external links for improved security and accessibility
