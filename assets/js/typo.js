@@ -28,168 +28,140 @@ SOFTWARE.
 */
 
 function num_between(min, max) {
-	return Math.floor(Math.random() * (max- min + 1) + min);
+  return Math.floor(Math.random() * (max- min + 1) + min);
 }
 
 function chance(val) {
-	if(num_between(0, 100) < val) return true;
-	else return false;
+  if(num_between(0, 100) < val) return true;
+  else return false;
 }
 
 function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 var typos = {
-	q:['w','a'],
-	w:['q','r','s'],
-	e:['w','d','r'],
-	r:['e','f','t'],
-	t:['r','g','y'],
-	y:['t','h','u'],
-	u:['y','j','i'],
-	i:['u','k','o'],
-	o:['i','l','p'],
-	p:['o',';','['],
-	a:['q','s','z'],
-	s:['w','a','x','d'],
-	d:['e','s','c','f'],
-	f:['r','d','v','g'],
-	g:['t','f','b','h'],
-	h:['y','g','n','j'],
-	j:['u','h','m','k'],
-	k:['i','j',',','l'],
-	l:['o','k','.',';'],
-	z:['a','x'],
-	x:['z','s','c'],
-	c:['x','d','v'],
-	v:['c','f','b'],
-	b:['v','g','n'],
-	n:['b','h','m'],
-	m:['n','j',','],
+  q:['w','a'],
+  w:['q','r','s'],
+  e:['w','d','r'],
+  r:['e','f','t'],
+  t:['r','g','y'],
+  y:['t','h','u'],
+  u:['y','j','i'],
+  i:['u','k','o'],
+  o:['i','l','p'],
+  p:['o',';','['],
+  a:['q','s','z'],
+  s:['w','a','x','d'],
+  d:['e','s','c','f'],
+  f:['r','d','v','g'],
+  g:['t','f','b','h'],
+  h:['y','g','n','j'],
+  j:['u','h','m','k'],
+  k:['i','j',',','l'],
+  l:['o','k','.',';'],
+  z:['a','x'],
+  x:['z','s','c'],
+  c:['x','d','v'],
+  v:['c','f','b'],
+  b:['v','g','n'],
+  n:['b','h','m'],
+  m:['n','j',','],
 }
 
 async function typo(element, text) {
-	var buffer = '';
-	var typo_active = false;
-	var tag_active = false;
-	var typing_typos = (element.dataset.typoChance) ? element.dataset.typoChance : 10;
-	var typing_speed = (element.dataset.typingDelay) ? element.dataset.typingDelay : 50;
-	var typing_jitter = (element.dataset.typingJitter) ? element.dataset.typingJitter : 15;
+  var buffer = '';
+  var typo_active = false;
+  var typing_typos = (element.dataset.typoChance) ? element.dataset.typoChance : 10;
+  var typing_speed = (element.dataset.typingDelay) ? element.dataset.typingDelay : 50;
+  var typing_jitter = (element.dataset.typingJitter) ? element.dataset.typingJitter : 15;
 
-	for (var i = 0; i < text.length; i++) {
+  for (var i = 0; i < text.length; i++) {
+    // Get the letter that we're supposed to type
+    letter = text.charAt(i);
 
-		// Get the letter that we’re supposed to type
-		letter = text.charAt(i);
+    // Trigger a typo
+    if(chance(typing_typos) && typo_active === false && i > 1 && i < text.length - 3) {
+      if(typeof typos[letter] !== 'undefined') {
+        // Swap the letter with a random typo
+        typo = typos[letter][Math.floor(Math.random() * typos[letter].length)];
 
-		// TODO: actual support for html or markup or whatever
+        // Append the letter to the buffer
+        buffer = buffer + typo;
 
-		/*
-		// Handle elements/markup
-		if(letter == '<' && (
-			text.charAt(i+1) == 's' ||
-			text.charAt(i+1) == 'p' ||
-			text.charAt(i+1) == 'a' ||
-			text.charAt(i+1) == '/' ||
-			text.charAt(i+1) == 'i')
-		) {
-			tag_active = true;
-		}
+        // Write the buffer
+        element.innerHTML = buffer;
 
-		if(tag_active) {
+        typo_active = true;
+        var seed = num_between(2,5);  // Reduced max seed to ensure correction
+        realization_delay = seed;
+        realization_delay_counter = seed;
+      }
+    }
 
-			buffer = buffer + letter;
-			element.innerHTML = buffer;
+    // Append the letter to the buffer
+    buffer = buffer + letter;
 
-			if(letter == '>' && (
-				text.charAt(i-1) == 'n' ||
-				text.charAt(i-1) == 'a' ||
-				text.charAt(i-1) == 'p' ||
-				text.charAt(i+1) == '"' ||
-				text.charAt(i+1) == '/')
-			) {
-				tag_active = false;
-				await sleep(typing_speed);
-			}
-			continue;
-		}
-		*/
+    // Write the buffer
+    element.innerHTML = buffer;
 
-		// Trigger a typo
-		if(chance(typing_typos) && typo_active === false && i > 1) {
+    // Typical typing speed
+    var speed_lower = parseFloat(typing_speed) - parseInt(typing_jitter);
+    var speed_upper = parseFloat(typing_speed) + parseInt(typing_jitter);
 
-			if(typeof typos[letter] !== 'undefined') {
+    delay = num_between(speed_lower,speed_upper);
 
-				// Swap the letter with a random typo
-				typo = typos[letter][Math.floor(Math.random() * typos[letter].length)];
+    // Chance of longer delay though
+    if(chance(5)) delay = num_between(100, 200);
+    await sleep(delay);
 
-				// Append the letter to the buffer
-				buffer = buffer + typo;
+    if(typo_active) {
+      realization_delay_counter--;
 
-				// Write the buffer
-				element.innerHTML = buffer;
+      if(realization_delay_counter == 0) {
+        for (var k = 0; k < seed+1; k++) {
+          // Pause at realization of typo
+          await sleep(typing_jitter);
 
-				typo_active = true;
-				var seed = num_between(2,5);
-				realization_delay = seed;
-				realization_delay_counter = seed;
-			}
-		}
+          // Rewind the buffer!
+          buffer = buffer.substring(0, buffer.length - 1);
 
-		// Append the letter to the buffer
-		buffer = buffer + letter;
+          // Write rewound buffer
+          element.innerHTML = buffer;
 
-		// Write the buffer
-		element.innerHTML = buffer;
+          // Brief pause before continuing
+          await sleep(30);
+        }
 
-		// Typical typing speed
-		var speed_lower = parseFloat(typing_speed) - parseInt(typing_jitter);
-		var speed_upper = parseFloat(typing_speed) + parseInt(typing_jitter);
+        typo_active = false;
 
-		delay = num_between(speed_lower,speed_upper);
+        // Add the letters back
+        i = i - seed;
+        await sleep(100);
+      }
+    }
+  }
 
-		// Chance of longer delay though
-		if(chance(5)) delay = num_between(100, 200);
-		await sleep(delay);
+  // Ensure any remaining typo is corrected
+  if(typo_active) {
+    await sleep(typing_jitter * 2);
+    for (var k = 0; k < seed+1; k++) {
+      buffer = buffer.substring(0, buffer.length - 1);
+      element.innerHTML = buffer;
+      await sleep(30);
+    }
+    for (var k = 0; k < seed; k++) {
+      buffer += text.charAt(text.length - seed + k);
+      element.innerHTML = buffer;
+      await sleep(typing_speed);
+    }
+  }
 
-		if(typo_active) {
-
-			realization_delay_counter--;
-
-			if(realization_delay_counter == 0) {
-
-				for (var k = 0; k < seed+1; k++) {
-
-					// Pause at realization of typo
-					await sleep(typing_jitter);
-
-					// Rewind the buffer!
-					buffer = buffer.substring(0, buffer.length - 1);
-
-					// Write rewound buffer
-					element.innerHTML = buffer;
-
-					// Brief pause before continuing
-					await sleep(30);
-				}
-
-				typo_active = false;
-
-				// Add the letters back
-				i = i - seed;
-				await sleep(100);
-			}
-		}
-	}
-
-	// Whatever you do here will happen when the typing is finished
-	//do_something();
-
-	return new Promise(resolve => setTimeout(resolve, 1));
+  return new Promise(resolve => setTimeout(resolve, 1));
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-	var element = document.getElementById('tagline');
-	var text = element.innerHTML;
-	typo(element, text);
+  var element = document.getElementById('tagline');
+  var text = element.innerHTML;
+  typo(element, text);
 });
