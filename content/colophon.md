@@ -1,7 +1,7 @@
 ---
 title: "/colophon"
 date: "2024-05-26T22:30:58Z"
-lastmod: "2024-07-31T22:01:11Z"
+lastmod: "2024-08-02T21:16:41Z"
 description: "There's a lot that goes into this site. Let me tell you how it works."
 featured: false
 toc: true
@@ -17,6 +17,8 @@ categories: slashes
 - provides site search with [lunr](https://lunrjs.com/) based on an implementation detailed by [Victoria Drake](https://victoria.dev/blog/add-search-to-hugo-static-sites-with-lunr/).
 - uses [Dark Visitors](https://darkvisitors.com/docs/robots-txt)'s API to dynamically generate a [robots.txt](/robots.txt) discouraging AI scrapers with some Hugo code from [Luke Harris](https://github.com/lkhrs/hugo-dark-visitors).
 - leverages [Cabin](https://withcabin.com) for [privacy-friendly](https://withcabin.com/privacy/runtimeterror.dev) analytics.
+- fetches recently-played music from [MusicThread](https://musicthread.app/).
+- displays my latest status from [omg.lol](https://home.omg.lol/referred-by/jbowdre).
 - resolves via [Bunny DNS](https://bunny.net/dns/).
 - is published to / hosted on [Bunny Storage](https://bunny.net/storage/) and [Bunny CDN](https://bunny.net/cdn/) with a [GitHub Actions workflow](//further-down-the-bunny-hole/).
 - has a [Gemini](https://geminiprotocol.net) mirror at `gemini://gmi.runtimeterror.dev`. This is generated from a [Hugo gemtext post layout](https://github.com/jbowdre/runtimeterror/blob/main/layouts/_default/single.gmi), deployed to a [Vultr](https://www.vultr.com/) VPS through that same GitHub Actions workflow, and served with [Agate](https://github.com/mbrubeck/agate).
