@@ -23,7 +23,7 @@ categories: slashes
 **2024-06-28:**
 - Add [recentfm.js](https://recentfm.rknight.me/) recently-played widget to sidebar
 - Use [Hugo render-hook](https://gohugo.io/render-hooks/links/#examples) to add ↗ marker to external links
-- Redirect /uses and /saves to pages on the [personal blog](https://blog.jbowdre.lol)
+- Redirect /uses and /saves to pages on the [personal blog](https://srsbsns.lol)
 
 **2024-06-24:**
 - Select the [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1) license

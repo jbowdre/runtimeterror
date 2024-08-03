@@ -18,7 +18,7 @@ I'm not one to really worry about page view metrics, but I do like to see which 
 
 In my quest for such knowledge, last week I switched my various web properties back to using [Cabin](https://withcabin.com/) for "privacy-first, carbon conscious web analytics". I really like how lightweight and deliberately minimal Cabin is, and the portal does a great job of presenting the information that I care about. With this change, though, I gave up the cute little upvote widgets provided by the previous analytics platform.
 
-I recently shared [on my Bear weblog](https://blog.jbowdre.lol/tracking-bear-upvotes-from-my-cabin/) about how I was hijacking Bear's built-in upvote button to send a "kudos" [event](https://docs.withcabin.com/events.html) to Cabin and tally those actions there.
+I recently shared [on my Bear weblog](https://srsbsns.lol/tracking-bear-upvotes-from-my-cabin/) about how I was hijacking Bear's built-in upvote button to send a "kudos" [event](https://docs.withcabin.com/events.html) to Cabin and tally those actions there.
 
 Well today I implemented a similar thing on *this* blog. Without an existing widget to hijack, I needed to create this one from scratch using a combination of HTML in my page template, CSS to style it, and JavaScript to fire the event.
 

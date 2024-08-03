@@ -180,7 +180,7 @@ That's getting there:
 
 ![A darker styled RSS page](getting-there-feed.png)
 
-Including those CSS styles means that the rendered page now uses my color palette and the [font I worked so hard to integrate](/using-custom-font-hugo/). I'm just going to make a few more tweaks to change some of the formatting, put the `New to feeds?` bit on its own line, and point to [Mojeek](https://mojeek.com) instead of DDG ([why?](https://blog.jbowdre.lol/post/a-comprehensive-evaluation-of-various-search-engines-i-ve-used)).
+Including those CSS styles means that the rendered page now uses my color palette and the [font I worked so hard to integrate](/using-custom-font-hugo/). I'm just going to make a few more tweaks to change some of the formatting, put the `New to feeds?` bit on its own line, and point to [Mojeek](https://mojeek.com) instead of DDG ([why?](https://srsbsns.lol/post/a-comprehensive-evaluation-of-various-search-engines-i-ve-used)).
 
 Here's my final (for now) `static/xml/feed.xsl` file:
 

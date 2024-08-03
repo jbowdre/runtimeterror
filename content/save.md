@@ -1,4 +1,4 @@
 ---
 type: redirect
-target: https://blog.jbowdre.lol/save
+target: https://srsbsns.lol/save
 ---
