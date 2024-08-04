@@ -15,7 +15,7 @@ categories: slashes
 - uses the font face [Berkeley Mono](https://berkeleygraphics.com/typefaces/berkeley-mono/) ([details](/using-custom-font-hugo/)), and icons from [Font Awesome](https://fontawesome.com/) and [Fork Awesome](https://forkaweso.me/).
 - performs syntax highlighting with [Torchlight](https://torchlight.dev) ([details](/spotlight-on-torchlight/)).
 - provides site search with [lunr](https://lunrjs.com/) based on an implementation detailed by [Victoria Drake](https://victoria.dev/blog/add-search-to-hugo-static-sites-with-lunr/).
-- uses [Dark Visitors](https://darkvisitors.com/docs/robots-txt)'s API to dynamically generate a [robots.txt](/robots.txt) discouraging AI scrapers with some Hugo code from [Luke Harris](https://github.com/lkhrs/hugo-dark-visitors).
+- fetches [ai.robots.txt](https://github.com/ai-robots-txt/ai.robots.txt) to dynamically generate a [robots.txt](/robots.txt) discouraging AI scrapers with Hugo's [`resources.GetRemote` capability](https://gohugo.io/functions/resources/getremote/).
 - leverages [Cabin](https://withcabin.com) for [privacy-friendly](https://withcabin.com/privacy/runtimeterror.dev) analytics.
 - fetches recently-played music from [MusicThread](https://musicthread.app/).
 - displays my latest status from [omg.lol](https://home.omg.lol/referred-by/jbowdre).

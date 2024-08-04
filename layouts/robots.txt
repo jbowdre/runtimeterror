@@ -8,4 +8,4 @@ Disallow:
 
 # except for these bots which are not friends:
 
-{{ partial "dark-visitors.html" . }}
+{{ partial "bad-robots.html" . }}

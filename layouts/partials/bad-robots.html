@@ -1,0 +1,15 @@
+{{- $url := "https://raw.githubusercontent.com/ai-robots-txt/ai.robots.txt/main/robots.json" -}}
+{{- with resources.GetRemote $url -}}
+	{{- with .Err -}}
+		{{- errorf "%s" . -}}
+	{{- else -}}
+    {{- $robots := unmarshal .Content -}}
+    {{- range $botname, $props := $robots }}
+      {{- printf "User-agent: %s\n" $botname }}
+    {{- end }}
+    {{- printf "Disallow: /\n" }}
+    {{- printf "\n# (bad bots bundled by https://github.com/ai-robots-txt/ai.robots.txt)" }}
+	{{- end -}}
+{{- else -}}
+	{{- errorf "Unable to get remote resource %q" $url -}}
+{{- end -}}
