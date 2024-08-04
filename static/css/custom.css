@@ -444,6 +444,7 @@ p:has(+ ul) {
 
 .kudos-button:disabled {
   cursor: default;
+  color: var(--fg);
 }
 
 .kudos-button .emoji {
