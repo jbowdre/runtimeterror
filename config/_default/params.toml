@@ -8,12 +8,6 @@ numberOfRelatedPosts = 5
 
 indexTitle = ".-. ..- -. - .. -- . - . .-. .-. --- .-."
 
-darkVisitors = [
-  "AI Assistant",
-  "AI Data Scraper",
-  "AI Search Crawler"
-]
-
 omgUser = "jbowdre"
 musicThreadId = "2aVjZUocjk96LELFbV5JvJjm14v"
 

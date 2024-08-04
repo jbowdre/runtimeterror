@@ -47,7 +47,6 @@ jobs:
       - name: Build with Hugo
         run: |
           HUGO_REMOTE_FONT_PATH=${{ secrets.REMOTE_FONT_PATH }} \
-          HUGO_DARKVISITORS=${{ secrets.DARKVISITORS_TOKEN }} \
           hugo --minify
       - name: Insert 404 page
         run: |
