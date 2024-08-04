@@ -59,7 +59,6 @@
 {{ with .Site.Params.musicThreadId }}
 <hr>
 <h3>current theme song</h3>
-{{ $jsThemeSong := resources.Get "js/theme-song.js" | minify }}
-<script src="{{ $jsThemeSong.RelPermalink }}?id={{ . }}"></script>
+<script src="https://res.runtimeterror.dev/js/theme-song.js?id={{ . }}" defer></script>
 {{ end }}
 
