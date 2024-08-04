@@ -10,6 +10,9 @@ categories: slashes
 ---
 *Running list of config/layout changes to the site. The full changelog is of course [on GitHub](https://github.com/jbowdre/runtimeterror/commits/main/).*
 
+**2024-08-04:**
+- Dynamically build `robots.txt` based on [ai.robots.txt](https://github.com/ai-robots-txt/ai.robots.txt)
+
 **2024-08-02:**
 - Display "pinned" recent track in sidebar using [MusicThread](https://musicthread.app) instead of latest scrobble
 - Tweak Typo behavior to avoid uncorrected mistakes near the end of the string
