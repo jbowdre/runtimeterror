@@ -13,5 +13,5 @@
 <!-- Code Copy button via https://digitaldrummerj.me/hugo-add-copy-code-snippet-button/ -->
 {{ if (findRE "<pre" .Content 1) }}
   {{ $jsCopy := resources.Get "js/code-copy-button.js" | minify }}
-  <script src="{{ $jsCopy.RelPermalink }}"></script>
+  <script src="{{ $jsCopy.RelPermalink }}" async></script>
 {{ end }}
