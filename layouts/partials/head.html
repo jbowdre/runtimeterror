@@ -37,7 +37,7 @@
 
 {{ if eq .Site.Params.analytics true }}
 <!-- cabin analytics -->
-<script async defer src="https://cabin.runtimeterror.dev/hello.js"></script>
+<script async src="https://cabin.runtimeterror.dev/hello.js"></script>
 {{ end }}
 
 <!-- syntax highlighting -->
@@ -49,5 +49,4 @@
 {{ end }}
 
 <!-- typo text animation -->
-{{ $jsTypo := resources.Get "js/typo.js" | minify }}
-<script src="{{ $jsTypo.RelPermalink }}"></script>
+<script src="https://res.runtimeterror.dev/js/typo.js" defer></script>

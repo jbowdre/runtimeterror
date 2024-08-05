@@ -1,14 +1,24 @@
 ---
 title: "/changelog"
 date: "2024-05-26T21:19:08Z"
-lastmod: "2024-07-04T02:32:27Z"
+lastmod: "2024-08-04T22:30:43Z"
 description: "Maybe I should keep a log of all my site-related tinkering?"
 featured: false
 toc: false
 timeless: true
 categories: slashes
 ---
-*High-level list of config/layout changes to the site. The full changelog is of course [on GitHub](https://github.com/jbowdre/runtimeterror/commits/main/).*
+*Running list of config/layout changes to the site. The full changelog is of course [on GitHub](https://github.com/jbowdre/runtimeterror/commits/main/).*
+
+**2024-08-04:**
+- Dynamically build `robots.txt` based on [ai.robots.txt](https://github.com/ai-robots-txt/ai.robots.txt)
+
+**2024-08-02:**
+- Display "pinned" recent track in sidebar using [MusicThread](https://musicthread.app) instead of latest scrobble
+- Tweak Typo behavior to avoid uncorrected mistakes near the end of the string
+
+**2024-07-29:**
+- Build `robots.txt` dynamically with [Dark Visitors API](https://darkvisitors.com/) and code from [Luke Harris](https://www.lkhrs.com/blog/2024/darkvisitors-hugo/)
 
 **2024-07-03:**
 - Remove `target="_blank"` from external links for improved security and accessibility
@@ -16,7 +26,7 @@ categories: slashes
 **2024-06-28:**
 - Add [recentfm.js](https://recentfm.rknight.me/) recently-played widget to sidebar
 - Use [Hugo render-hook](https://gohugo.io/render-hooks/links/#examples) to add ↗ marker to external links
-- Redirect /uses and /saves to pages on the [personal blog](https://blog.jbowdre.lol)
+- Redirect /uses and /saves to pages on the [personal blog](https://srsbsns.lol)
 
 **2024-06-24:**
 - Select the [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1) license

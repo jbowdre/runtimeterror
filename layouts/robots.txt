@@ -7,7 +7,5 @@ User-agent: *
 Disallow:
 
 # except for these bots which are not friends:
-{{ range .Site.Params.bad_robots }}
-User-agent: {{ . }}
-{{- end }}
-Disallow: /
+
+{{ partial "bad-robots.html" . }}

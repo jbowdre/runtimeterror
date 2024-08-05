@@ -51,10 +51,14 @@
   {{- end }}
 </ul>
 {{- end }}
+{{ with .Site.Params.omgUser }}
 <hr>
 <h3>status.lol</h3>
-<script src="https://status.lol/jbowdre.js?time&link&fluent&pretty"></script>
+<script src="https://status.lol/{{ . }}.js?time&link&fluent&pretty" defer></script>
+{{ end }}
+{{ with .Site.Params.musicThreadId }}
 <hr>
-<h3>latest track</h3>
-<script src="https://recentfm.rknight.me/now.js?u=pushpianotire&e=🎶"></script>
+<h3>current theme song</h3>
+<script src="https://res.runtimeterror.dev/js/theme-song.js?id={{ . }}" defer></script>
+{{ end }}
 

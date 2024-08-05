@@ -238,16 +238,28 @@ small[style^="opacity: .5"] {
   opacity: 1 !important;
 }
 
-/* recentfm styling */
-.recent-played {
+/* theme song styling */
+.theme-song {
   background: var(--off-bg) !important;
-  flex-direction:column;
-  border-radius: 0.5em;
-  padding: 0.5em;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.5rem;
+  padding: 0.7rem;
+  font-size: 0.9rem;
+  line-height: 0.9rem;
 }
 
-.recent-played-track {
-  margin: 0.5em 0;
+.theme-song img {
+  width: 14rem;
+  height: auto;
+  object-fit: cover;
+}
+
+@media (min-width: 45rem) {
+  .theme-song img {
+    max-width: 100%;
+    margin: 0 auto;
+  }
 }
 
 /* code overrides */
@@ -432,6 +444,7 @@ p:has(+ ul) {
 
 .kudos-button:disabled {
   cursor: default;
+  color: var(--fg);
 }
 
 .kudos-button .emoji {

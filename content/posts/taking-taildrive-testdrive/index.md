@@ -1,7 +1,7 @@
 ---
 title: "Taking Taildrive for a Testdrive"
 date: "2024-07-29T23:48:29Z"
-# lastmod: 2024-07-28
+lastmod: "2024-07-30T13:59:50Z"
 description: "A quick exploration of Taildrive, Tailscale's new(ish) feature to easily share directories with other machines on your tailnet without having to juggle authentication or network connectivity."
 featured: false
 toc: true
@@ -140,15 +140,19 @@ sudo apt update # [tl! .cmd:1]
 sudo apt install davfs2
 ```
 
-During the install of `davfs2`, I got prompted for whether or not I want to allow unprivileged users to mount WebDAV resources. I was in a hurry and just selected the default `<No>` response... before I realized that was probably a mistake (at least for this particular use case).
+I need to be able mount the share as my standard user account (*without* elevation) to ensure that the ownership and permissions are correctly inherited. The `davfs2` installer offered to enable the SUID bit to support this, but that change on its own doesn't seem to have been sufficient in my testing. In addition (or perhaps instead?), I had to add my account to the `davfs2` group:
 
-So I ran `sudo dpkg-reconfigure davfs2` to try again and this time made sure to select `<Yes>`:
+```shell
+sudo usermod -aG davfs2 $USER # [tl! .cmd]
+```
 
-![Should unprivileged users be allowed to mount WebDAV resources?](davfs-suid.png)
+And then use the `newgrp` command to load the new membership without having to log out and back in again:
 
-That should ensure that the share gets mounted with appropriate privileges (otherwise, all the files would be owned by `root` and that could pose some additional challenges).
+```shell
+newgrp davfs2 # [tl! .cmd]
+```
 
-I also created a folder inside my home directory to use as a mountpoint:
+Next I created a folder inside my home directory to use as a mountpoint:
 
 ```shell
 mkdir ~/taildrive # [tl! .cmd]

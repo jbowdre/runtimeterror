@@ -8,33 +8,8 @@ numberOfRelatedPosts = 5
 
 indexTitle = ".-. ..- -. - .. -- . - . .-. .-. --- .-."
 
-bad_robots = [
-  "AdsBot-Google",
-  "Amazonbot",
-  "anthropic-ai",
-  "Applebot-Extended",
-  "AwarioRssBot",
-  "AwarioSmartBot",
-  "Bytespider",
-  "CCBot",
-  "ChatGPT",
-  "ChatGPT-User",
-  "Claude-Web",
-  "ClaudeBot",
-  "cohere-ai",
-  "DataForSeoBot",
-  "Diffbot",
-  "FacebookBot",
-  "Google-Extended",
-  "GPTBot",
-  "ImagesiftBot",
-  "magpie-crawler",
-  "omgili",
-  "Omgilibot",
-  "peer39_crawler",
-  "PerplexityBot",
-  "YouBot"
-]
+omgUser = "jbowdre"
+musicThreadId = "2aVjZUocjk96LELFbV5JvJjm14v"
 
 # Comments
 analytics = true
@@ -167,7 +142,7 @@ url = "https://jbowdre.lol"
 [[socialLinks]]
 icon = "fa-solid fa-pen-to-square"
 title = "Weblog"
-url = "https://blog.jbowdre.lol"
+url = "https://srsbsns.lol"
 
 [[socialLinks]]
 icon = "fa-solid fa-satellite"
