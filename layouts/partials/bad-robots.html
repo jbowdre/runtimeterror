@@ -4,7 +4,7 @@
 		{{- errorf "%s" . -}}
 	{{- else -}}
     {{- $robots := unmarshal .Content -}}
-    {{- range $botname, $props := $robots }}
+    {{- range $botname, $_ := $robots }}
       {{- printf "User-agent: %s\n" $botname }}
     {{- end }}
     {{- printf "Disallow: /\n" }}
