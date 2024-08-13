@@ -1,7 +1,7 @@
 ---
 title: "/homelab"
 date: "2024-05-26T21:30:51Z"
-lastmod: "2024-06-14T01:44:01Z"
+lastmod: "2024-08-13T02:12:54Z"
 aliases:
   - playground
 description: "The systems I use for fun and enrichment."
@@ -37,6 +37,7 @@ The Proxmox cluster hosts a number of VMs and LXC containers:
   - [Hashicorp Vault](https://www.vaultproject.io/) for secrets management
   - [Miniflux](https://miniflux.app/) feed reader
   - [RIPE Atlas Probe](https://www.ripe.net/analyse/internet-measurements/ripe-atlas/) for measuring internet connectivity
+  - [SilverBullet](https://silverbullet.md), a web-based personal knowledge management system
   - [Tailscale Golink](https://github.com/tailscale/golink), a private shortlink service ([post](/tailscale-golink-private-shortlinks-tailnet/))
 - `files`: Ubuntu 20.04 file server. Serves (selected) files semi-publicly through [Tailscale Funnel](/tailscale-ssh-serve-funnel/#tailscale-funnel)
 - `hassos`: [Home Assistant OS](https://www.home-assistant.io/installation/), manages all my "smart home" stuff ([post](/automating-camera-notifications-home-assistant-ntfy/))
