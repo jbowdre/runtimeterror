@@ -3,6 +3,7 @@ categories: Tips
 date: "2021-02-18T08:34:30Z"
 thumbnail: PPZu_UOGO.png
 usePageBundles: true
+featured: true
 tags:
 - logs
 - vmware

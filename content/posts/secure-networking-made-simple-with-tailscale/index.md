@@ -3,7 +3,7 @@ title: "Secure Networking Made Simple with Tailscale" # Title of the blog post.
 date: 2022-01-01 # Date of post creation.
 lastmod: 2022-07-10
 description: "Tailscale makes it easy to set up and manage a secure network by building a flexible control plane on top of a high-performance WireGuard VPN." # Description used for search engine.
-featured: true # Sets if post is a featured post, making appear on the home page side bar.
+featured: false
 # draft: true # Sets whether to render this page. Draft of true will not be rendered.
 toc: true # Controls if a table of contents should be generated for first-level links automatically.
 usePageBundles: true

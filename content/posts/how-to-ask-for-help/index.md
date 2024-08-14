@@ -4,7 +4,7 @@ date: 2023-08-26
 lastmod: 2023-08-31
 timeless: true
 description: There are no dumb questions - but there are smarter (and dumber) ways to ask them.
-featured: true
+featured: false
 aliases: ["how2ask"]
 categories: Tips
 ---
