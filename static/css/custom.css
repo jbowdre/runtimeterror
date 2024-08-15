@@ -30,7 +30,7 @@
 
 /* logo tweaks */
 .page__logo {
-  color: var(--off-fg);
+  color: var(--logo-text);
 }
 
 .page__logo-inner {
