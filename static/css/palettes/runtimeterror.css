@@ -2,20 +2,35 @@
  */
 
 :root {
-	--base00: #090909;  /* bg */
-	--base01: #1c1c1c;  /* off-bg */
-	--base02: #292929;  /* inner-bg */
-	--base03: #6d6c6c;  /* muted */
-	--base04: #abaaaa;  /* off-fg */
-	--base05: #d8d8d8;  /* fg */
-	--base06: #75f558;  /* code */
-	--base07: #5f8700;  /* user prompt */
-	--base08: #ab4642;  /* root prompt */
-	--base09: #dc9656;
-	--base0A: #f7ca88;  /* highlight */
-	--base0B: #682523;  /* logo */
-	--base0C: #ab2321;  /* hover */
-	--base0D: #d36060;  /* link */
-	--base0E: #ba8baf;
-	--base0F: #a16946;
+  /* dark theme colors */
+  --dark-base00: #090909;  /* bg */
+  --dark-base01: #1c1c1c;  /* off-bg */
+  --dark-base02: #292929;  /* inner-bg */
+  --dark-base03: #6d6c6c;  /* muted */
+  --dark-base04: #abaaaa;  /* off-fg */
+  --dark-base05: #d8d8d8;  /* fg */
+  --dark-base06: #75f558;  /* code */
+  --dark-base07: #5f8700;  /* user prompt */
+  --dark-base08: #ab4642;  /* root prompt */
+  --dark-base09: #abaaaa;  /* logo text */
+  --dark-base0A: #f7ca88;  /* highlight */
+  --dark-base0B: #682523;  /* logo */
+  --dark-base0C: #ab2321;  /* hover */
+  --dark-base0D: #d36060;  /* link */
+
+  /* light theme colors */
+  --light-base00: #ffffff;  /* bg */
+  --light-base01: #f0f0f0;  /* off-bg */
+  --light-base02: #dbdbdb;  /* inner-bg */
+  --light-base03: #909090;  /* muted */
+  --light-base04: #707070;  /* off-fg */
+  --light-base05: #303030;  /* fg */
+  --light-base06: #2a8f1f;  /* code */
+  --light-base07: #3f5900;  /* user prompt */
+  --light-base08: #c23d3d;  /* root prompt */
+  --light-base09: #f0f0f0;  /* logo-text */
+  --light-base0A: #d4a960;  /* highlight */
+  --light-base0B: #af3a37;  /* logo */
+  --light-base0C: #c62a28;  /* hover */
+  --light-base0D: #a04545;  /* link */
 }
