@@ -15,3 +15,7 @@
   {{ $jsCopy := resources.Get "js/code-copy-button.js" | minify }}
   <script src="{{ $jsCopy.RelPermalink }}" async></script>
 {{ end }}
+
+<!-- theme switch -->
+{{ $themeToggle := resources.Get "js/set-theme.js" | minify }}
+<script src="{{ $themeToggle.RelPermalink }}"></script>
