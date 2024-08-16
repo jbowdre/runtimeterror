@@ -174,59 +174,24 @@ body {
 
 /* Notice CSS Built on hugo-notice by Nicolas Martignoni: https://github.com/martignoni/hugo-notice */
 .notice {
-  --root-color: #444;
-  --root-background: #eff;
-  --title-color: #fff;
-  --title-background: #7bd;
-  --warning-title: #c33;
-  --warning-content: #fee;
-  --info-title: #fb7;
-  --info-content: #fec;
-  --note-title: #6be;
-  --note-content: #e7f2fa;
-  --tip-title: #5a5;
-  --tip-content: #efe;
-}
+  --notice-title-color: #fff;
+  --notice-warn-color: #c33;
+  --notice-info-color: #fb7;
+  --notice-note-color: #6be;
+  --notice-tip-color: #5a5;
 
-@media (prefers-color-scheme: dark) {
-  .notice {
-    --root-color: #ddd;
-    --root-background: #eff;
-    --title-color: #fff;
-    --title-background: #7bd;
-    --warning-title: #800;
-    --warning-content: #400;
-    --info-title: #a50;
-    --info-content: #420;
-    --note-title: #069;
-    --note-content: #023;
-    --tip-title: #363;
-    --tip-content: #121;
-  }
-}
+  --notice-padding: 18px;
+  --notice-line-height: 24px;
+  --notice-margin-bottom: 24px;
+  --notice-border-radius: 4px;
+  --notice-title-margin: 12px;
+  --notice-bg-opacity: 10%;
 
-body.dark .notice {
-  --root-color: #ddd;
-  --root-background: #eff;
-  --title-color: #fff;
-  --title-background: #7bd;
-  --warning-title: #800;
-  --warning-content: #400;
-  --info-title: #a50;
-  --info-content: #420;
-  --note-title: #069;
-  --note-content: #023;
-  --tip-title: #363;
-  --tip-content: #121;
-}
-
-.notice {
-  padding: 18px;
-  line-height: 24px;
-  margin-bottom: 24px;
-  border-radius: 4px;
-  color: var(--root-color);
-  background: var(--root-background);
+  padding: var(--notice-padding);
+  line-height: var(--notice-line-height);
+  margin-bottom: var(--notice-margin-bottom);
+  border-radius: var(--notice-border-radius);
+  color: var(--fg);
 }
 
 .notice p:last-child {
@@ -234,45 +199,23 @@ body.dark .notice {
 }
 
 .notice-title {
-  margin: -18px -18px 12px;
-  padding: 4px 18px;
-  border-radius: 4px 4px 0 0;
+  margin: calc(-1 * var(--notice-padding));
+  margin-bottom: var(--notice-title-margin);
+  padding: 4px var(--notice-padding);
+  border-radius: var(--notice-border-radius) var(--notice-border-radius) 0 0;
   font-weight: 700;
-  color: var(--title-color);
-  background: var(--title-background);
+  color: var(--notice-title-color);
 }
 
-.notice.warning .notice-title {
-  background: var(--warning-title);
-}
+.notice.warning .notice-title { background: var(--notice-warning-color); }
+.notice.info .notice-title { background: var(--notice-info-color); }
+.notice.note .notice-title { background: var(--notice-note-color); }
+.notice.tip .notice-title { background: var(--notice-tip-color); }
 
-.notice.warning {
-  background: var(--warning-content);
-}
-
-.notice.info .notice-title {
-  background: var(--info-title);
-}
-
-.notice.info {
-  background: var(--info-content);
-}
-
-.notice.note .notice-title {
-  background: var(--note-title);
-}
-
-.notice.note {
-  background: var(--note-content);
-}
-
-.notice.tip .notice-title {
-  background: var(--tip-title);
-}
-
-.notice.tip {
-  background: var(--tip-content);
-}
+.notice.warning { background: color-mix(in srgb, var(--notice-warning-color) var(--notice-bg-opacity), transparent); }
+.notice.info { background: color-mix(in srgb, var(--notice-info-color) var(--notice-bg-opacity), transparent); }
+.notice.note { background: color-mix(in srgb, var(--notice-note-color) var(--notice-bg-opacity), transparent); }
+.notice.tip { background: color-mix(in srgb, var(--notice-tip-color) var(--notice-bg-opacity), transparent); }
 
 .icon-notice {
   display: inline-flex;
