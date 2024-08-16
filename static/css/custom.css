@@ -1,7 +1,111 @@
-/* color and font overrides */
+/* define fonts */
 :root {
-  --code: var(--base06);
   --font-monospace: 'Berkeley Mono', 'IBM Plex Mono', 'Cascadia Mono', 'Roboto Mono', 'Source Code Pro', 'Fira Mono', 'Courier New', monospace;
+}
+
+/* dark/light theming */
+:root{
+  /* Default dark theme */
+  --bg: var(--dark-base00);
+  --code: var(--dark-base06);
+  --fg: var(--dark-base05);
+  --highlight: var(--dark-base0A);
+  --hover: var(--dark-base0C);
+  --inner-bg: var(--dark-base02);
+  --link: var(--dark-base0D);
+  --logo-text: var(--dark-base09);
+  --logo: var(--dark-base0B);
+  --muted: var(--dark-base03);
+  --off-bg: var(--dark-base01);
+  --off-fg: var(--dark-base04);
+  --root-prompt: var(--dark-base08);
+  --user-prompt: var(--dark-base07);
+}
+
+:root[data-theme="light"] {
+  --bg: var(--light-base00);
+  --off-bg: var(--light-base01);
+  --inner-bg: var(--light-base02);
+  --muted: var(--light-base03);
+  --off-fg: var(--light-base04);
+  --fg: var(--light-base05);
+  --code: var(--light-base06);
+  --user-prompt: var(--light-base07);
+  --root-prompt: var(--light-base08);
+  --logo-text: var(--light-base09);
+  --highlight: var(--light-base0A);
+  --logo: var(--light-base0B);
+  --hover: var(--light-base0C);
+  --link: var(--light-base0D);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: var(--light-base00);
+    --off-bg: var(--light-base01);
+    --inner-bg: var(--light-base02);
+    --muted: var(--light-base03);
+    --off-fg: var(--light-base04);
+    --fg: var(--light-base05);
+    --code: var(--light-base06);
+    --user-prompt: var(--light-base07);
+    --root-prompt: var(--light-base08);
+    --logo-text: var(--light-base09);
+    --highlight: var(--light-base0A);
+    --logo: var(--light-base0B);
+    --hover: var(--light-base0C);
+    --link: var(--light-base0D);
+  }
+}
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  z-index: 1000;
+  transition: opacity 0.3s ease;
+}
+
+.theme-toggle:hover {
+  opacity: 0.7;
+}
+
+.theme-toggle:focus {
+  outline: none;
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--hover);
+  outline-offset: 2px;
+}
+
+.theme-toggle__icon {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease, fill 0.3s ease;
+  fill: var(--off-fg);
+}
+
+.theme-toggle:hover .theme-toggle__icon {
+  fill: var(--hover);
+}
+
+[data-theme="dark"] .theme-toggle__icon {
+  transform: rotate(180deg);
+}
+
+.page__nav ul {
+  padding-right: 3rem;
 }
 
 /* load preferred font */
@@ -30,7 +134,7 @@
 
 /* logo tweaks */
 .page__logo {
-  color: var(--off-fg);
+  color: var(--logo-text);
 }
 
 .page__logo-inner {
@@ -70,59 +174,24 @@
 
 /* Notice CSS Built on hugo-notice by Nicolas Martignoni: https://github.com/martignoni/hugo-notice */
 .notice {
-  --root-color: #444;
-  --root-background: #eff;
-  --title-color: #fff;
-  --title-background: #7bd;
-  --warning-title: #c33;
-  --warning-content: #fee;
-  --info-title: #fb7;
-  --info-content: #fec;
-  --note-title: #6be;
-  --note-content: #e7f2fa;
-  --tip-title: #5a5;
-  --tip-content: #efe;
-}
+  --notice-title-color: #fff;
+  --notice-warn-color: #c33;
+  --notice-info-color: #fb7;
+  --notice-note-color: #6be;
+  --notice-tip-color: #5a5;
 
-@media (prefers-color-scheme: dark) {
-  .notice {
-    --root-color: #ddd;
-    --root-background: #eff;
-    --title-color: #fff;
-    --title-background: #7bd;
-    --warning-title: #800;
-    --warning-content: #400;
-    --info-title: #a50;
-    --info-content: #420;
-    --note-title: #069;
-    --note-content: #023;
-    --tip-title: #363;
-    --tip-content: #121;
-  }
-}
+  --notice-padding: 18px;
+  --notice-line-height: 24px;
+  --notice-margin-bottom: 24px;
+  --notice-border-radius: 4px;
+  --notice-title-margin: 12px;
+  --notice-bg-opacity: 10%;
 
-body.dark .notice {
-  --root-color: #ddd;
-  --root-background: #eff;
-  --title-color: #fff;
-  --title-background: #7bd;
-  --warning-title: #800;
-  --warning-content: #400;
-  --info-title: #a50;
-  --info-content: #420;
-  --note-title: #069;
-  --note-content: #023;
-  --tip-title: #363;
-  --tip-content: #121;
-}
-
-.notice {
-  padding: 18px;
-  line-height: 24px;
-  margin-bottom: 24px;
-  border-radius: 4px;
-  color: var(--root-color);
-  background: var(--root-background);
+  padding: var(--notice-padding);
+  line-height: var(--notice-line-height);
+  margin-bottom: var(--notice-margin-bottom);
+  border-radius: var(--notice-border-radius);
+  color: var(--fg);
 }
 
 .notice p:last-child {
@@ -130,45 +199,23 @@ body.dark .notice {
 }
 
 .notice-title {
-  margin: -18px -18px 12px;
-  padding: 4px 18px;
-  border-radius: 4px 4px 0 0;
+  margin: calc(-1 * var(--notice-padding));
+  margin-bottom: var(--notice-title-margin);
+  padding: 4px var(--notice-padding);
+  border-radius: var(--notice-border-radius) var(--notice-border-radius) 0 0;
   font-weight: 700;
-  color: var(--title-color);
-  background: var(--title-background);
+  color: var(--notice-title-color);
 }
 
-.notice.warning .notice-title {
-  background: var(--warning-title);
-}
+.notice.warning .notice-title { background: var(--notice-warning-color); }
+.notice.info .notice-title { background: var(--notice-info-color); }
+.notice.note .notice-title { background: var(--notice-note-color); }
+.notice.tip .notice-title { background: var(--notice-tip-color); }
 
-.notice.warning {
-  background: var(--warning-content);
-}
-
-.notice.info .notice-title {
-  background: var(--info-title);
-}
-
-.notice.info {
-  background: var(--info-content);
-}
-
-.notice.note .notice-title {
-  background: var(--note-title);
-}
-
-.notice.note {
-  background: var(--note-content);
-}
-
-.notice.tip .notice-title {
-  background: var(--tip-title);
-}
-
-.notice.tip {
-  background: var(--tip-content);
-}
+.notice.warning { background: color-mix(in srgb, var(--notice-warning-color) var(--notice-bg-opacity), transparent); }
+.notice.info { background: color-mix(in srgb, var(--notice-info-color) var(--notice-bg-opacity), transparent); }
+.notice.note { background: color-mix(in srgb, var(--notice-note-color) var(--notice-bg-opacity), transparent); }
+.notice.tip { background: color-mix(in srgb, var(--notice-tip-color) var(--notice-bg-opacity), transparent); }
 
 .icon-notice {
   display: inline-flex;

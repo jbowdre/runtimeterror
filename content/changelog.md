@@ -1,7 +1,7 @@
 ---
 title: "/changelog"
 date: "2024-05-26T21:19:08Z"
-lastmod: "2024-08-04T22:30:43Z"
+lastmod: "2024-08-15T21:21:05Z"
 description: "Maybe I should keep a log of all my site-related tinkering?"
 featured: false
 toc: false
@@ -9,6 +9,9 @@ timeless: true
 categories: slashes
 ---
 *Running list of config/layout changes to the site. The full changelog is of course [on GitHub](https://github.com/jbowdre/runtimeterror/commits/main/).*
+
+**2024-08-15:**
+- Implemented light/dark theme toggle
 
 **2024-08-04:**
 - Dynamically build `robots.txt` based on [ai.robots.txt](https://github.com/ai-robots-txt/ai.robots.txt)

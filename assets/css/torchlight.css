@@ -126,17 +126,17 @@ opacity: 1;
 Insert prompt indicators on interactive shells.
 */
 .cmd::before {
-  color: var(--base07);
+  color: var(--user-prompt);
   content: "$ ";
 }
 
 .cmd_root::before {
-  color: var(--base08);
+  color: var(--root-prompt);
   content: "# ";
 }
 
 .cmd_pwsh::before {
-  color: var(--base07);
+  color: var(--user-prompt);
   content: "PS> ";
 }
 
