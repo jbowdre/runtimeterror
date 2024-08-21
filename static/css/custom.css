@@ -529,7 +529,8 @@ p:has(+ ul) {
 
 /* Header anchor links */
 .hlink {
-  display: none;
+  opacity: 0.4;
+  color: var(--muted) !important;
 }
 
 h1:hover .hlink,
@@ -538,5 +539,6 @@ h3:hover .hlink,
 h4:hover .hlink,
 h5:hover .hlink,
 h6:hover .hlink {
-  display: inline-block;
+  opacity: 0.8;
+  color: var(--link) !important;
 }
