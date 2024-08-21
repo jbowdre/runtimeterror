@@ -526,3 +526,17 @@ p:has(+ ul) {
 .kudos-text.thanks {
   font-style: italic;
 }
+
+/* Header anchor links */
+.hlink {
+  display: none;
+}
+
+h1:hover .hlink,
+h2:hover .hlink,
+h3:hover .hlink,
+h4:hover .hlink,
+h5:hover .hlink,
+h6:hover .hlink {
+  display: inline-block;
+}
