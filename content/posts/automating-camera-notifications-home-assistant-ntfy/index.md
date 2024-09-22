@@ -24,7 +24,7 @@ I figured I could combine the excellent [Reolink integration for Home Assistant]
 
 ### Alert on motion detection
 {{% notice note "Ntfy Integration" %}}
-Since manually configuring ntfy in Home Assistant via the [RESTful Notifications integration](/easy-push-notifications-with-ntfy#notify-configuration), I found that a [ntfy-specific integration](https://github.com/ivanmihov/homeassistant-ntfy.sh) was available through the [Home Assistant Community Store](https://hacs.xyz/) addon. That setup is a bit more flexible so I've switched my setup to use it instead:
+Since manually configuring ntfy in Home Assistant via the [RESTful Notifications integration](/easy-push-notifications-with-ntfy/#notify-configuration), I found that a [ntfy-specific integration](https://github.com/ivanmihov/homeassistant-ntfy.sh) was available through the [Home Assistant Community Store](https://hacs.xyz/) addon. That setup is a bit more flexible so I've switched my setup to use it instead:
 ```yaml
 # configuration.yaml
 notify:

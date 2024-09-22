@@ -89,7 +89,7 @@ Cool! Now I just need to do that same thing, but from vRealize Orchestrator. Fir
 
 ### Template changes
 #### Cloud Template
-Similar to the template changes I made for [optionally joining deployed servers to the Active Directory domain](/joining-vms-to-active-directory-in-site-specific-ous-with-vra8#cloud-template), I'll just be adding a simple boolean checkbox to the `inputs` section of the template in Cloud Assembly:
+Similar to the template changes I made for [optionally joining deployed servers to the Active Directory domain](/joining-vms-to-active-directory-in-site-specific-ous-with-vra8/#cloud-template), I'll just be adding a simple boolean checkbox to the `inputs` section of the template in Cloud Assembly:
 ```yaml
 formatVersion: 1
 inputs:

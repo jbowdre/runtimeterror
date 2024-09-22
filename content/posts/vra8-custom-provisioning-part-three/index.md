@@ -17,7 +17,7 @@ Picking up after [Part Two](/vra8-custom-provisioning-part-two), I now have a pr
 
 ### Active Directory
 #### Adding an AD endpoint
-Remember how I [used the built-in vSphere plugin](/vra8-custom-provisioning-part-two#interlude-connecting-vro-to-vcenter) to let vRO query my vCenter(s) for VMs with a specific name? And how that required first configuring the vCenter endpoint(s) in vRO? I'm going to take a very similar approach here.
+Remember how I [used the built-in vSphere plugin](/vra8-custom-provisioning-part-two/#interlude-connecting-vro-to-vcenter) to let vRO query my vCenter(s) for VMs with a specific name? And how that required first configuring the vCenter endpoint(s) in vRO? I'm going to take a very similar approach here.
 
 So as before, I'll first need to run the preinstalled "Add an Active Directory server" workflow:
 ![Add an Active Directory server workflow](uUDJXtWKz.png)

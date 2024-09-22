@@ -28,7 +28,7 @@ Looking back, that's kind of a lot. I can see why I've been working on this for 
 In production, I'll want to be able to deploy to different computer clusters spanning multiple vCenters. That's a bit difficult to do on a single physical server, but I still wanted to be able to simulate that sort of dynamic resource selection. So for development and testing in my lab, I'll be using two sites - `BOW` and `DRE`. I ditched the complicated "just because I can" vSAN I'd built previously and instead spun up two single-host nested clusters, one for each of my sites:
 ![vCenter showing the BOW and DRE clusters](KUCwEgEhN.png)
 
-Those hosts have one virtual NIC each on a standard switch connected to my home network, and a second NIC each connected to the ["isolated" internal lab network](vmware-home-lab-on-intel-nuc-9#networking) with all the VLANs for the guests to run on:
+Those hosts have one virtual NIC each on a standard switch connected to my home network, and a second NIC each connected to the ["isolated" internal lab network](vmware-home-lab-on-intel-nuc-9/#networking) with all the VLANs for the guests to run on:
 ![dvSwitch showing attached hosts and dvPortGroups](y8vZEnWqR.png)
 
 ### vRA setup
