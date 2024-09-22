@@ -85,7 +85,7 @@ The last step before testing is to click that *Enable* button to activate the cu
 Cool! So it's dynamically generating the deployment name based on selections made on the form. Now that it works, I can go back to the custom form and set the "Deployment Name" field to be invisible just like the "Project" one.
 
 ### Per-site network selection
-So far, vRA has been automatically placing VMs on networks based solely on  [which networks are tagged as available](/vra8-custom-provisioning-part-one#using-tags-for-resource-placement)  for the selected site. I'd like to give my users a bit more control over which network their VMs get attached to, particularly as some networks may be set aside for different functions or have different firewall rules applied.
+So far, vRA has been automatically placing VMs on networks based solely on  [which networks are tagged as available](/vra8-custom-provisioning-part-one/#using-tags-for-resource-placement)  for the selected site. I'd like to give my users a bit more control over which network their VMs get attached to, particularly as some networks may be set aside for different functions or have different firewall rules applied.
 
 As a quick recap, I've got five networks available for vRA, split across my two sites using tags:
 

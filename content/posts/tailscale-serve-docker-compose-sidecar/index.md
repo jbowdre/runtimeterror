@@ -43,7 +43,7 @@ miniflux.runtimeterror.dev {
 
 *and so on...* You get the idea. This approach works well for services I want/need to be public, but it does require me to manage those DNS records and keep track of which app is on which port. That can be kind of tedious.
 
-And I don't really need all of these services to be public. Not because they're particularly sensitive, but I just don't really have a reason to share my personal [Miniflux](https://github.com/miniflux/v2) or [CyberChef](https://github.com/gchq/CyberChef) instances with the world at large. Those would be great candidates to proxy with [Tailscale Serve](/tailscale-ssh-serve-funnel#tailscale-serve) so they'd only be available on my tailnet. Of course, with that setup I'd then have to differentiate the services based on external port numbers since they'd all be served with the same hostname. That's not ideal either.
+And I don't really need all of these services to be public. Not because they're particularly sensitive, but I just don't really have a reason to share my personal [Miniflux](https://github.com/miniflux/v2) or [CyberChef](https://github.com/gchq/CyberChef) instances with the world at large. Those would be great candidates to proxy with [Tailscale Serve](/tailscale-ssh-serve-funnel/#tailscale-serve) so they'd only be available on my tailnet. Of course, with that setup I'd then have to differentiate the services based on external port numbers since they'd all be served with the same hostname. That's not ideal either.
 
 ```shell
 sudo tailscale serve --bg --https 8443 8180 # [tl! .cmd]

@@ -71,7 +71,7 @@ I can then go to Service Broker and drag the new fields onto the Custom Form can
 ![Service Broker form](unhgNySSzz.png)
 
 ### vRO workflow
-Okay, so I've got the information I want to pass on to vCenter. Now I need to whip up a new workflow in vRO that will actually do that (after [telling vRO how to connect to the vCenter](/vra8-custom-provisioning-part-two#interlude-connecting-vro-to-vcenter), of course). I'll want to call this after the VM has been provisioned, so I'll cleverly call the workflow "VM Post-Provisioning".
+Okay, so I've got the information I want to pass on to vCenter. Now I need to whip up a new workflow in vRO that will actually do that (after [telling vRO how to connect to the vCenter](/vra8-custom-provisioning-part-two/#interlude-connecting-vro-to-vcenter), of course). I'll want to call this after the VM has been provisioned, so I'll cleverly call the workflow "VM Post-Provisioning".
 ![Naming the new workflow](X9JhgWx8x.png)
 
 The workflow will have a single input from vRA, `inputProperties` of type `Properties`.

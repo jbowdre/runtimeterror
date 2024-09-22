@@ -52,7 +52,7 @@ I edited the apache config file to bind that new certificate on port 443, and to
 ```
 After restarting apache, I verified that hitting `http://ipam.lab.bowdre.net` redirected me to `https://ipam.lab.bowdre.net`, and that the connection was secured with the shiny new certificate.
 
-Remember how I've got a "Home" network as well as [several internal networks](/vmware-home-lab-on-intel-nuc-9#networking) which only exist inside the lab environment? I dropped the phpIPAM instance on the Home network to make it easy to connect to, but it doesn't know how to talk to the internal networks where vRA will actually be deploying the VMs. So I added a static route to let it know that traffic to `172.16.0.0/16` would have to go through the Vyos router at `192.168.1.100`.
+Remember how I've got a "Home" network as well as [several internal networks](/vmware-home-lab-on-intel-nuc-9/#networking) which only exist inside the lab environment? I dropped the phpIPAM instance on the Home network to make it easy to connect to, but it doesn't know how to talk to the internal networks where vRA will actually be deploying the VMs. So I added a static route to let it know that traffic to `172.16.0.0/16` would have to go through the Vyos router at `192.168.1.100`.
 
 This is Ubuntu, so I edited `/etc/netplan/99-netcfg-vmware.yaml` to add the `routes` section at the bottom:
 ```yaml
