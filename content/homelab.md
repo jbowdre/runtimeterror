@@ -1,7 +1,7 @@
 ---
 title: "/homelab"
 date: "2024-05-26T21:30:51Z"
-lastmod: "2024-08-13T02:12:54Z"
+lastmod: "2024-09-22T19:16:04Z"
 aliases:
   - playground
 description: "The systems I use for fun and enrichment."
@@ -30,12 +30,10 @@ Everything is connected to my [Tailscale](https://tailscale.com) tailnet, with a
 - [Unifi USW Flex XG 10GbE Switch](https://store.ui.com/us/en/collections/unifi-switching-utility-10-gbps-ethernet/products/unifi-flex-xg)
 
 The Proxmox cluster hosts a number of VMs and LXC containers:
-- `doc`: Ubuntu 22.04 Docker host for various on-prem container workloads, served via [Tailscale Serve](/tailscale-ssh-serve-funnel/#tailscale-serve) / [Cloudflare Tunnel](/publish-services-cloudflare-tunnel/):
+- `doc`: Ubuntu 22.04 Docker host for various on-prem container workloads, served via [Tailscale Serve](/tailscale-ssh-serve-funnel/#tailscale-serve) / [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
   - [Calibre Web](https://github.com/janeczku/calibre-web) for managing my ebooks
-  - [Crowdsec](https://www.crowdsec.net/) log processor
   - [Cyberchef](https://github.com/gchq/CyberChef), the Cyber Swiss Army Knife
   - [Hashicorp Vault](https://www.vaultproject.io/) for secrets management
-  - [Miniflux](https://miniflux.app/) feed reader
   - [RIPE Atlas Probe](https://www.ripe.net/analyse/internet-measurements/ripe-atlas/) for measuring internet connectivity
   - [SilverBullet](https://silverbullet.md), a web-based personal knowledge management system
   - [Tailscale Golink](https://github.com/tailscale/golink), a private shortlink service ([post](/tailscale-golink-private-shortlinks-tailnet/))
@@ -74,9 +72,8 @@ I like to know what's flying overhead, and I'm also feeding flight data to [flig
 - `smp1`: Ubuntu 22.04 [SimpleX](/simplex/) server
 
 **[Vultr](https://www.vultr.com)**
-- `volly`: Ubuntu 22.04 Docker host for various workloads, served either through [Caddy](https://caddyserver.com/) or [Cloudflare Tunnel](/publish-services-cloudflare-tunnel/):
+- `volly`: Ubuntu 22.04 Docker host for various workloads, served either through [Caddy](https://caddyserver.com/) or [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
   - [Agate](https://github.com/mbrubeck/agate) Gemini server ([post](/gemini-capsule-gempost-github-actions/))
-  - [Crowdsec](https://www.crowdsec.net) security engine
   - [Kineto](https://github.com/beelux/kineto) Gemini-to-HTTP proxy ([post](/gemini-capsule-gempost-github-actions/))
   - [Linkding](https://github.com/sissbruecker/linkding) bookmark manager serving [links.bowdre.net](https://links.bowdre.net/bookmarks/shared)
   - [ntfy](https://ntfy.sh/) notification service ([post](/easy-push-notifications-with-ntfy/))
