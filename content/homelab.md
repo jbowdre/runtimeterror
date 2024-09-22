@@ -14,6 +14,8 @@ categories: slashes
 
 Everything is connected to my [Tailscale](https://tailscale.com) tailnet, with a GitOps-managed ACL to allow access as needed. This lets me access and manage systems without really caring if they're local or remote. [Tailscale is magic](/secure-networking-made-simple-with-tailscale/).
 
+The Docker containers are (generally) managed with [Portainer](https://www.portainer.io/).
+
 ### On Premise
 
 **Proxmox VE 8 Cluster**
