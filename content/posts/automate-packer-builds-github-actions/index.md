@@ -135,7 +135,7 @@ For more examples and ideas, visit:
 So the Docker piece is sorted; now for setting up the runner.
 
 #### Install/Configure Runner
-I know I've been talking about a singular runner, but I'm actually seting up multiple instances of the runner on the same host to allow running jobs in parallel. I could probably support four simultaneous builds in my homelab but I'll settle two runners for now (after all, I only have two build flavors so far anyway).
+I know I've been talking about a singular runner, but I'm actually setting up multiple instances of the runner on the same host to allow running jobs in parallel. I could probably support four simultaneous builds in my homelab but I'll start with just two runners for now (after all, I only have two build flavors so far anyway).
 
 Each runner instance needs its own directory so I create those under `/opt/github/`:
 
