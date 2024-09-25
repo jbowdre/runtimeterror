@@ -438,6 +438,7 @@ If it fails for some reason, the `Retry on failure` step will try again, just in
 Here's the complete `.github/workflows/build.yml`, all in one code block:
 
 ```yaml
+# torchlight! {"lineNumbers":true}
 name: Build VM Templates
 
 on:
