@@ -8,6 +8,7 @@ toc: true
 categories: Backstage
 tags:
   - bunny
+  - cicd
   - cloudflare
   - hugo
   - meta
