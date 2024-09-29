@@ -1,8 +1,7 @@
 ---
 title: "Publishing SilverBullet Notes with Quartz and GitHub Actions"
-date: 2024-09-28
+date: "2024-09-29T20:27:03Z"
 # lastmod: 2024-09-28
-draft: true
 description: "A long note about how I publish short notes from SilverBullet using Quartz, Tailscale, Caddy, and GitHub Actions."
 featured: false
 toc: true
