@@ -1,7 +1,7 @@
 ---
 title: "/homelab"
 date: "2024-05-26T21:30:51Z"
-lastmod: "2024-09-22T19:16:04Z"
+lastmod: "2024-10-18T14:05:59Z"
 aliases:
   - playground
 description: "The systems I use for fun and enrichment."
@@ -36,6 +36,7 @@ The Proxmox cluster hosts a number of VMs and LXC containers:
   - [Calibre Web](https://github.com/janeczku/calibre-web) for managing my ebooks
   - [Cyberchef](https://github.com/gchq/CyberChef), the Cyber Swiss Army Knife
   - [Hashicorp Vault](https://www.vaultproject.io/) for secrets management
+  - [Linkding](https://github.com/sissbruecker/linkding) bookmark manager serving [links.bowdre.net](https://links.bowdre.net/bookmarks/shared)
   - [RIPE Atlas Probe](https://www.ripe.net/analyse/internet-measurements/ripe-atlas/) for measuring internet connectivity
   - [SilverBullet](https://silverbullet.md), a web-based personal knowledge management system ([post](https://srsbsns.lol/is-silverbullet-the-note-keeping-silver-bullet/))
   - [Tailscale Golink](https://github.com/tailscale/golink), a private shortlink service ([post](/tailscale-golink-private-shortlinks-tailnet/))
@@ -77,8 +78,6 @@ I like to know what's flying overhead, and I'm also feeding flight data to [flig
 - `volly`: Ubuntu 22.04 Docker host for various workloads, served either through [Caddy](https://caddyserver.com/) or [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
   - [Agate](https://github.com/mbrubeck/agate) Gemini server ([post](/gemini-capsule-gempost-github-actions/))
   - [Kineto](https://github.com/beelux/kineto) Gemini-to-HTTP proxy ([post](/gemini-capsule-gempost-github-actions/))
-  - [Linkding](https://github.com/sissbruecker/linkding) bookmark manager serving [links.bowdre.net](https://links.bowdre.net/bookmarks/shared)
   - [ntfy](https://ntfy.sh/) notification service ([post](/easy-push-notifications-with-ntfy/))
-  - [SearXNG](https://docs.searxng.org/) self-hosted metasearch engine serving [grep.vpota.to](https://grep.vpota.to) ([post](https://srsbsns.lol/post/self-hosting-a-search-engine-iyjdlk6y))
   - [Uptime Kuma](https://github.com/louislam/uptime-kuma) for monitoring internal services (via Tailscale)
   - [vault-unseal](https://github.com/lrstanley/vault-unseal) to auto-unseal my on-prem Vault instance
