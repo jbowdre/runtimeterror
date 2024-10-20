@@ -207,3 +207,7 @@ url = "https://social.lol/@jbowdre"
 [[verifyLinks]]
 title = "GitHub"
 url = "https://github.com/jbowdre"
+
+[[verifyLinks]]
+title = "GoToSocial"
+url = "https://goto.srsbsns.lol/@john"
