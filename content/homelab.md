@@ -76,8 +76,6 @@ I like to know what's flying overhead, and I'm also feeding flight data to [flig
 
 **[Vultr](https://www.vultr.com)**
 - `volly`: Ubuntu 22.04 Docker host for various workloads, served either through [Caddy](https://caddyserver.com/) or [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
-  - [Agate](https://github.com/mbrubeck/agate) Gemini server ([post](/gemini-capsule-gempost-github-actions/))
-  - [Kineto](https://github.com/beelux/kineto) Gemini-to-HTTP proxy ([post](/gemini-capsule-gempost-github-actions/))
   - [ntfy](https://ntfy.sh/) notification service ([post](/easy-push-notifications-with-ntfy/))
   - [Uptime Kuma](https://github.com/louislam/uptime-kuma) for monitoring internal services (via Tailscale)
   - [vault-unseal](https://github.com/lrstanley/vault-unseal) to auto-unseal my on-prem Vault instance

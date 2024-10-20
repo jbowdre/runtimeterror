@@ -148,11 +148,6 @@ title = "Weblog"
 url = "https://srsbsns.lol"
 
 [[socialLinks]]
-icon = "fa-solid fa-satellite"
-title = "Gemini Capsule"
-url = "gemini://capsule.jbowdre.lol"
-
-[[socialLinks]]
 icon = "fa-solid fa-circle-user"
 title = "CounterSocial"
 url = "https://counter.social/@john_b"

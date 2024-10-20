@@ -28,7 +28,6 @@ And in the free time I have left, I game on my Steam Deck.
 ### See what I've been up to on:
 - [GitHub](https://github.com/jbowdre)
 - [Weblog](https://srsbsns.lol)
-- [Gemlog](https://capsule.jbowdre.lol/gemlog/)
 - [status.lol](https://status.jbowdre.lol)
 - [social.lol](https://social.lol/@jbowdre)
 - [CounterSocial](https://counter.social/@john_b)
