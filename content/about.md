@@ -29,7 +29,7 @@ And in the free time I have left, I game on my Steam Deck.
 - [GitHub](https://github.com/jbowdre)
 - [Weblog](https://srsbsns.lol)
 - [status.lol](https://status.jbowdre.lol)
-- [social.lol](https://social.lol/@jbowdre)
+- [Fediverse](https://goto.srsbsns.lol/@john)
 - [CounterSocial](https://counter.social/@john_b)
 - [/now](https://now.jbowdre.lol)
 

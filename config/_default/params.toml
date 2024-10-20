@@ -155,7 +155,7 @@ url = "https://counter.social/@john_b"
 [[socialLinks]]
 icon = "fa fa-mastodon"
 title = "Mastodon"
-url = "https://social.lol/@jbowdre"
+url = "https://goto.srsbsns.lol/@john"
 
 [[socialLinks]]
 icon = "fa-solid fa-envelope"
@@ -201,13 +201,5 @@ title = "CounterSocial"
 url = "https://counter.social/@john_b"
 
 [[verifyLinks]]
-title = "Mastodon"
-url = "https://social.lol/@jbowdre"
-
-[[verifyLinks]]
 title = "GitHub"
 url = "https://github.com/jbowdre"
-
-[[verifyLinks]]
-title = "GoToSocial"
-url = "https://goto.srsbsns.lol/@john"
