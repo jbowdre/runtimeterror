@@ -34,7 +34,7 @@ And in the free time I have left, I game on my Steam Deck.
 - [/now](https://now.jbowdre.lol)
 
 ### Connect with me via:
-- [SimpleX Chat](/simplex/)
+- [SimpleX Chat](https://l.runtimeterror.dev/simplex-chat-invite)
 - [Signal](https://signal.me/#eu/lyHZbMnlM16O0w48j3rshYBofO0K-iXOt9LGwln7TS-fNKEHCrxH3La325q8IjRU)
 - [Matrix](https://matrix.to/#/@jbowdre:omg.lol)
 - [XMPP](https://conversations.im/i/jbowdre@omg.lol?omemo-sid-1374125881=a620f3c57733601a6646f6f13a71c86fc9be8dd4126fd158ef3e0a26beb0b434)
