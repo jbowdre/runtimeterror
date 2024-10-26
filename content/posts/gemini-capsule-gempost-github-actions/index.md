@@ -1,7 +1,7 @@
 ---
 title: "Self-Hosted Gemini Capsule with gempost and GitHub Actions"
 date: "2024-03-23T21:33:19Z"
-lastmod: "2024-04-05T21:07:38Z"
+lastmod: "2024-10-26T21:26:17Z"
 description: "Deploying a Gemini capsule, powered by Agate, gempost, kineto, Tailscale, and GitHub Actions"
 featured: false
 toc: true
@@ -13,11 +13,17 @@ tags:
   - selfhosting
   - tailscale
 ---
+
+{{% notice note "Exiting Geminispace..." %}}
+After several months of experimentation, I decided to stop exploring Gemini. I still think the concept is really neat but ultimately would rather focus my efforts here in the real world. I'll leave this article in place but my capsule has since been deorbited.
+{{% /notice %}}
+
+
 I've recently been exploring some indieweb/smolweb technologies, and one of the most interesting things I've come across is [Project Gemini](https://geminiprotocol.net/):
 
 > Gemini is a new internet technology supporting an electronic library of interconnected text documents. That's not a new idea, but it's not old fashioned either. It's timeless, and deserves tools which treat it as a first class concept, not a vestigial corner case. Gemini isn't about innovation or disruption, it's about providing some respite for those who feel the internet has been disrupted enough already. We're not out to change the world or destroy other technologies. We are out to build a lightweight online space where documents are just documents, in the interests of every reader's privacy, attention and bandwidth.
 
-I thought it was an interesting idea, so after a bit of experimentation with various hosted options I created a self-hosted [Gemini capsule (Gemini for "web site") to host a lightweight text-focused Gemlog ("weblog")](https://capsule.jbowdre.lol/gemlog/2024-03-05-hello-gemini.gmi). After further tinkering, I arranged to serve the capsule both on the Gemini network as well as the traditional HTTP-based web, and I set up a GitHub Actions workflow to handle posting updates. This post will describe how I did that.
+I thought it was an interesting idea, so after a bit of experimentation with various hosted options I created a self-hosted Gemini capsule (Gemini for "web site") to host a lightweight text-focused Gemlog ("weblog"). After further tinkering, I arranged to serve the capsule both on the Gemini network as well as the traditional HTTP-based web, and I set up a GitHub Actions workflow to handle posting updates. This post will describe how I did that.
 
 ### Gemini Server: Agate
 There are a number of different [Gemini server applications](https://github.com/kr1sp1n/awesome-gemini?tab=readme-ov-file#servers) to choose from. I decided to use [Agate](https://github.com/mbrubeck/agate), not just because it was at the top of the Awesome Gemini list but also because seems to be widely recommended, regularly updated, and easy to use. Plus it will automatically generates certs for me, which is nice since Gemini *requires* valid certificates for all connections.
@@ -602,5 +608,5 @@ And the capsule is live at both `https://capsule.jbowdre.lol` and `gemini://caps
 ![Gemini capsule served over gemini://](gemini-capsule.png)
 
 Come check it out!
-- [My Capsule on Gemini](gemini://capsule.jbowdre.lol)
-- [My Capsule on the web](https://capsule.jbowdre.lol)
+- My Capsule on Gemini
+- My Capsule on the web
