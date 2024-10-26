@@ -160,7 +160,8 @@ No users have added their keys to Gitea just yet so if you look at `/home/git/.s
 
 So I'll go ahead and create that extra command:
 ```shell
-cat <<"EOF" | sudo tee /usr/local/bin/gitea # [tl! .cmd]
+# [tl! .cmd:1,1]
+cat <<EOF | sudo tee /usr/local/bin/gitea
 #!/bin/sh
 ssh -p 2222 -o StrictHostKeyChecking=no git@127.0.0.1 "SSH_ORIGINAL_COMMAND=\"$SSH_ORIGINAL_COMMAND\" $0 $@"
 EOF

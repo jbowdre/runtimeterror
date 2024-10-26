@@ -1,7 +1,7 @@
 ---
 title: "/homelab"
 date: "2024-05-26T21:30:51Z"
-lastmod: "2024-09-22T19:16:04Z"
+lastmod: "2024-10-23T02:10:13Z"
 aliases:
   - playground
 description: "The systems I use for fun and enrichment."
@@ -14,7 +14,7 @@ categories: slashes
 
 Everything is connected to my [Tailscale](https://tailscale.com) tailnet, with a GitOps-managed ACL to allow access as needed. This lets me access and manage systems without really caring if they're local or remote. [Tailscale is magic](/secure-networking-made-simple-with-tailscale/).
 
-The Docker containers are (generally) managed with [Portainer](https://www.portainer.io/).
+The Docker containers are (generally) managed with [Portainer](https://www.portainer.io/) using configs [on GitHub](https://github.com/jbowdre/compositions).
 
 ### On Premise
 
@@ -35,9 +35,13 @@ The Proxmox cluster hosts a number of VMs and LXC containers:
 - `doc`: Ubuntu 22.04 Docker host for various on-prem container workloads, served via [Tailscale Serve](/tailscale-ssh-serve-funnel/#tailscale-serve) / [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
   - [Calibre Web](https://github.com/janeczku/calibre-web) for managing my ebooks
   - [Cyberchef](https://github.com/gchq/CyberChef), the Cyber Swiss Army Knife
+  - [Golink](https://github.com/tailscale/golink), a private shortlink service for tailnets
   - [Hashicorp Vault](https://www.vaultproject.io/) for secrets management
+  - [Heimdall](https://github.com/linuxserver/Heimdall), an application dashboard and launcher
+  - [IT-Tools](https://github.com/CorentinTh/it-tools) for handy online development-related tools
+  - [Linkding](https://github.com/sissbruecker/linkding) bookmark manager serving [links.bowdre.net](https://links.bowdre.net/bookmarks/shared)
   - [RIPE Atlas Probe](https://www.ripe.net/analyse/internet-measurements/ripe-atlas/) for measuring internet connectivity
-  - [SilverBullet](https://silverbullet.md), a web-based personal knowledge management system ([post](https://srsbsns.lol/is-silverbullet-the-note-keeping-silver-bullet/))
+  - [SilverBullet](https://silverbullet.md), a web-based personal knowledge management system ([post](/publish-silverbullet-notes-quartz/))
   - [Tailscale Golink](https://github.com/tailscale/golink), a private shortlink service ([post](/tailscale-golink-private-shortlinks-tailnet/))
 - `files`: Ubuntu 20.04 file server. Serves (selected) files semi-publicly through [Tailscale Funnel](/tailscale-ssh-serve-funnel/#tailscale-funnel)
 - `hassos`: [Home Assistant OS](https://www.home-assistant.io/installation/), manages all my "smart home" stuff ([post](/automating-camera-notifications-home-assistant-ntfy/))
@@ -63,11 +67,13 @@ This triad of cute little single-board computers will *eventually* be a combinat
 
 I like to know what's flying overhead, and I'm also feeding flight data to [flightaware.com](https://flightaware.com) and [adsb.fi](https://adsb.fi).
 
-### Cloud
+**Federated Raspberry Pi**
+- Raspberry Pi 4 Model B
+- 64GB Sandisk USB Drive
 
-**[Oracle Cloud Infrastructure](https://www.oracle.com/cloud/free/)**
-- `git`: Ubuntu 22.04 [Forgejo](https://forgejo.org/) server for [git.bowdre.net](https://git.bowdre.net/explore/repos)
-- `smp2`: Ubuntu 22.04 [SimpleX](/simplex/) server
+Runs [GoToSocial](https://gotosocial.org/) in Docker to host my personal Mastodon-compatible ActivityPub server, [goto.srsbsns.lol](https://goto.srsbsns.lol) ([post](https://srsbsns.lol/going-to-gotosocial/)).
+
+### Cloud
 
 **[Google Cloud Platform](https://cloud.google.com/free/docs/free-cloud-features)**
 - `smp`: Ubuntu 22.04 [SimpleX](/simplex/) server
@@ -75,10 +81,8 @@ I like to know what's flying overhead, and I'm also feeding flight data to [flig
 
 **[Vultr](https://www.vultr.com)**
 - `volly`: Ubuntu 22.04 Docker host for various workloads, served either through [Caddy](https://caddyserver.com/) or [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
-  - [Agate](https://github.com/mbrubeck/agate) Gemini server ([post](/gemini-capsule-gempost-github-actions/))
-  - [Kineto](https://github.com/beelux/kineto) Gemini-to-HTTP proxy ([post](/gemini-capsule-gempost-github-actions/))
-  - [Linkding](https://github.com/sissbruecker/linkding) bookmark manager serving [links.bowdre.net](https://links.bowdre.net/bookmarks/shared)
+  - [Forgejo](https://forgejo.org/) server for [git.bowdre.net](https://git.bowdre.net/explore/repos) ([post](/gitea-self-hosted-git-server/))
   - [ntfy](https://ntfy.sh/) notification service ([post](/easy-push-notifications-with-ntfy/))
-  - [SearXNG](https://docs.searxng.org/) self-hosted metasearch engine serving [grep.vpota.to](https://grep.vpota.to) ([post](https://srsbsns.lol/post/self-hosting-a-search-engine-iyjdlk6y))
+  - [SimpleX](/simplex/) server (`smp2`)
   - [Uptime Kuma](https://github.com/louislam/uptime-kuma) for monitoring internal services (via Tailscale)
   - [vault-unseal](https://github.com/lrstanley/vault-unseal) to auto-unseal my on-prem Vault instance

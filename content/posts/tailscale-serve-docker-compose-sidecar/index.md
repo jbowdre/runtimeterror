@@ -1,7 +1,7 @@
 ---
 title: "Tailscale Serve in a Docker Compose Sidecar"
 date: 2023-12-30
-lastmod: 2024-02-07
+lastmod: "2024-10-21T01:37:12Z"
 description: "Using Docker Compose to deploy containerized applications and make them available via Tailscale Serve and Tailscale Funnel"
 featured: false
 toc: true
@@ -85,6 +85,31 @@ Tailscale [just published a blog post](https://tailscale.com/blog/docker-tailsca
 ```
 
 Replace the ports and protocols and hostnames and such, and you'll be good to go.
+
+**Update 2024-10-20**: I recently learned that you can use the `${TS_CERT_DOMAIN}` placeholder to avoid having to hardcode a hostname into the `serve-config.json`. That makes the config even easier to reuse:
+
+```json
+// torchlight! {"lineNumbers": true}
+{ // [tl! collapse:start]
+  "TCP": {
+    "443": {
+      "HTTPS": true
+    }
+  },// [tl! collapse:end]
+  "Web": {
+    "${TS_CERT_DOMAIN}:443": { // [tl! collapse:start]
+      "Handlers": {
+        "/": {
+          "Proxy": "http://127.0.0.1:8000"
+        }
+      }
+    }
+  }//, uncomment to enable funnel [tl! collapse:end]
+  // "AllowFunnel": {
+  //   "${TS_CERT_DOMAIN}:443": true
+  // }
+}
+```
 
 A compose config using this setup might look something like this:
 

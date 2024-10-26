@@ -19,7 +19,7 @@ reply = true
 name = "John Bowdre"
 email = "jbowdre@omg.lol"
 username = "jbowdre"
-fedi = "@jbowdre@social.lol"
+fedi = "@john@srsbsns.lol"
 
 [theme]
 palette = "runtimeterror"
@@ -46,6 +46,7 @@ taglines = [
   "coding crimes",
   "connection reset by peer",
   "converting caffeine into code",
+  "cowardly refusing to display an empty web page",
   "creating new and exciting bugs",
   "cyclic dependency detected",
   "destructor cannot be overloaded",
@@ -123,6 +124,7 @@ taglines = [
   "write error: no space left on device",
   "you can't handle the exception",
   "you gotta stop letting your mama test you, man",
+  "your browser is deprecated. please upgrade.",
 ]
 
 # Sidebar: social links
@@ -146,11 +148,6 @@ title = "Weblog"
 url = "https://srsbsns.lol"
 
 [[socialLinks]]
-icon = "fa-solid fa-satellite"
-title = "Gemini Capsule"
-url = "gemini://capsule.jbowdre.lol"
-
-[[socialLinks]]
 icon = "fa-solid fa-circle-user"
 title = "CounterSocial"
 url = "https://counter.social/@john_b"
@@ -158,7 +155,7 @@ url = "https://counter.social/@john_b"
 [[socialLinks]]
 icon = "fa fa-mastodon"
 title = "Mastodon"
-url = "https://social.lol/@jbowdre"
+url = "https://goto.srsbsns.lol/@john"
 
 [[socialLinks]]
 icon = "fa-solid fa-envelope"
@@ -202,10 +199,6 @@ url = "https://proven.lol/cd10d3"
 [[verifyLinks]]
 title = "CounterSocial"
 url = "https://counter.social/@john_b"
-
-[[verifyLinks]]
-title = "Mastodon"
-url = "https://social.lol/@jbowdre"
 
 [[verifyLinks]]
 title = "GitHub"
