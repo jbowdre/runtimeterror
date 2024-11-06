@@ -18,6 +18,10 @@
 {{ end }}
 {{ end }}
 
+<!-- webmentions via webmention.io -->
+<link rel="me authn" href="mailto:{{ .Site.Params.webmentionEmail }}">
+<link rel="webmention" href="https://webmention.io/{{ (urls.Parse .Site.BaseURL).Host }}/webmention">
+
 {{ partialCached "favicon" . }}
 {{ partial "opengraph" . }}
 
