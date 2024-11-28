@@ -15,12 +15,14 @@ tags:
   - caddy
   - certs
   - chromeos
+  - cicd
   - cloud
   - cloudflare
   - containers
   - crostini
   - docker
   - gcp
+  - gitops
   - homeassistant
   - hugo
   - iac
