@@ -1,7 +1,7 @@
 ---
 title: "/about"
 date: "2024-05-26T21:19:08Z"
-lastmod: "2024-05-29"
+lastmod: "2024-11-28T19:40:30Z"
 description: "A brief introduction to me, this blog, and what you're likely to see here."
 timeless: true
 toc: false
