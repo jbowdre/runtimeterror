@@ -1,7 +1,7 @@
 ---
 title: "/homelab"
 date: "2024-05-26T21:30:51Z"
-lastmod: "2024-10-23T02:10:13Z"
+lastmod: "2024-11-28T14:00:20Z"
 aliases:
   - playground
 description: "The systems I use for fun and enrichment."
@@ -14,7 +14,7 @@ categories: slashes
 
 Everything is connected to my [Tailscale](https://tailscale.com) tailnet, with a GitOps-managed ACL to allow access as needed. This lets me access and manage systems without really caring if they're local or remote. [Tailscale is magic](/secure-networking-made-simple-with-tailscale/).
 
-The Docker containers are (generally) managed with [Portainer](https://www.portainer.io/) using configs [on GitHub](https://github.com/jbowdre/compositions).
+The Docker containers are (generally) managed with [Portainer](https://www.portainer.io/) using configs hosted [on GitHub](https://github.com/jbowdre/compositions).
 
 ### On Premise
 
@@ -40,6 +40,7 @@ The Proxmox cluster hosts a number of VMs and LXC containers:
   - [Heimdall](https://github.com/linuxserver/Heimdall), an application dashboard and launcher
   - [IT-Tools](https://github.com/CorentinTh/it-tools) for handy online development-related tools
   - [Linkding](https://github.com/sissbruecker/linkding) bookmark manager serving [links.bowdre.net](https://links.bowdre.net/bookmarks/shared)
+  - [Opengist](https://github.com/thomiceli/opengist), an open-source alternative to GitHub's Gists, serving [gist.runtimeterror.dev](https://gist.runtimeterror.dev) ([post](https://srsbsns.lol/opening-up-opengist/))
   - [RIPE Atlas Probe](https://www.ripe.net/analyse/internet-measurements/ripe-atlas/) for measuring internet connectivity
   - [SilverBullet](https://silverbullet.md), a web-based personal knowledge management system ([post](/publish-silverbullet-notes-quartz/))
   - [Tailscale Golink](https://github.com/tailscale/golink), a private shortlink service ([post](/tailscale-golink-private-shortlinks-tailnet/))
@@ -80,7 +81,7 @@ Runs [GoToSocial](https://gotosocial.org/) in Docker to host my personal Mastodo
 - `smp1`: Ubuntu 22.04 [SimpleX](/simplex/) server
 
 **[Vultr](https://www.vultr.com)**
-- `volly`: Ubuntu 22.04 Docker host for various workloads, served either through [Caddy](https://caddyserver.com/) or [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
+- `volly`: Ubuntu 22.04 Docker host for various workloads, served either locally through [Caddy](https://caddyserver.com/) or as a cloud proxy with [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
   - [Forgejo](https://forgejo.org/) server for [git.bowdre.net](https://git.bowdre.net/explore/repos) ([post](/gitea-self-hosted-git-server/))
   - [ntfy](https://ntfy.sh/) notification service ([post](/easy-push-notifications-with-ntfy/))
   - [SimpleX](/simplex/) server (`smp2`)
