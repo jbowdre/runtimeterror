@@ -40,7 +40,7 @@ The Proxmox cluster hosts a number of VMs and LXC containers:
   - [Heimdall](https://github.com/linuxserver/Heimdall), an application dashboard and launcher
   - [IT-Tools](https://github.com/CorentinTh/it-tools) for handy online development-related tools
   - [Linkding](https://github.com/sissbruecker/linkding) bookmark manager serving [links.bowdre.net](https://links.bowdre.net/bookmarks/shared)
-  - [Opengist](https://github.com/thomiceli/opengist), an open-source alternative to GitHub's Gists, serving [gist.runtimeterror.dev](https://gist.runtimeterror.dev) ([post](https://srsbsns.lol/opening-up-opengist/))
+  - [Opengist](https://github.com/thomiceli/opengist), an open-source alternative to GitHub's Gists ([post](https://srsbsns.lol/opening-up-opengist/))
   - [RIPE Atlas Probe](https://www.ripe.net/analyse/internet-measurements/ripe-atlas/) for measuring internet connectivity
   - [SilverBullet](https://silverbullet.md), a web-based personal knowledge management system ([post](/publish-silverbullet-notes-quartz/))
   - [Tailscale Golink](https://github.com/tailscale/golink), a private shortlink service ([post](/tailscale-golink-private-shortlinks-tailnet/))
