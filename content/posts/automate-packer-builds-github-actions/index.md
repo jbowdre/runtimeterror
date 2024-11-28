@@ -10,7 +10,7 @@ categories: Code
 tags:
   - api
   - automation
-  - cicd
+  - gitops
   - containers
   - docker
   - iac
