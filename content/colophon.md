@@ -1,7 +1,7 @@
 ---
 title: "/colophon"
 date: "2024-05-26T22:30:58Z"
-lastmod: "2024-10-20T03:51:35Z"
+lastmod: "2024-12-01T22:56:56Z"
 description: "There's a lot that goes into this site. Let me tell you how it works."
 featured: false
 toc: true
@@ -16,7 +16,7 @@ categories: slashes
 - performs syntax highlighting with [Torchlight](https://torchlight.dev) ([details](/spotlight-on-torchlight/)).
 - provides site search with [lunr](https://lunrjs.com/) based on an implementation detailed by [Victoria Drake](https://victoria.dev/blog/add-search-to-hugo-static-sites-with-lunr/).
 - fetches [ai.robots.txt](https://github.com/ai-robots-txt/ai.robots.txt) to dynamically generate a [robots.txt](/robots.txt) discouraging AI scrapers with Hugo's [`resources.GetRemote` capability](https://gohugo.io/functions/resources/getremote/).
-- leverages [Cabin](https://withcabin.com) for [privacy-friendly](https://withcabin.com/privacy/runtimeterror.dev) analytics.
+- leverages self-hosted [Bearlytics](https://github.com/HermanMartinus/bearlytics) for privacy-friendly minimalist analytics.
 - fetches recently-played music from [MusicThread](https://musicthread.app/).
 - displays my latest status from [omg.lol](https://home.omg.lol/referred-by/jbowdre).
 - resolves via [Bunny DNS](https://bunny.net/dns/).
