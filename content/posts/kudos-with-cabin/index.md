@@ -1,7 +1,7 @@
 ---
 title: "Kudos With Cabin"
 date: 2024-06-24
-lastmod: "2024-06-26T02:13:13Z"
+lastmod: "2024-12-01T22:49:24Z"
 description: "Using Cabin's event tracking to add a simple post upvote widget to my Hugo site."
 featured: false
 toc: true
@@ -13,6 +13,10 @@ tags:
   - meta
   - selfhosting
 ---
+
+{{% notice note "Closing my Cabin" %}}
+I've switched to a different [self-hosted analytics provider](https://github.com/HermanMartinus/bearlytics). It's much more minimal and lightweight, but doesn't (yet?) support event tracking so I've removed the kudos button from the blog. This post will remain in case anyone else wants to do something similar with Cabin.
+{{% /notice %}}
 
 I'm not one to really worry about page view metrics, but I do like to see which of my posts attract the most attention - and where that attention might be coming from. That insight has allowed me to find new blogs and sites that have linked to mine, and has tipped me off that maybe I should update that four-year-old post that's suddenly getting renewed traffic from Reddit.
 
@@ -181,5 +185,3 @@ You might have noticed that I'm not doing anything to display the upvote count o
 
 In any case, after clicking the 👍 button on a few pages I can see the `kudos` events recorded in my [Cabin portal](https://l.runtimeterror.dev/rterror-stats):
 ![A few hits against the 'kudos' event](kudos-in-cabin.png)
-
-Go on, try it out:

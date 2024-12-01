@@ -490,43 +490,6 @@ p:has(+ ul) {
   }
 }
 
-/* Cabin kudos styling */
-.kudos-container {
-  display: flex;
-  align-items: center;
-}
-
-.kudos-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;
-  padding: 0;
-  margin-right: 0.25rem;
-}
-
-.kudos-button:disabled {
-  cursor: default;
-  color: var(--fg);
-}
-
-.kudos-button .emoji {
-  display: inline-block;
-  transition: transform 0.3s ease;
-}
-
-.kudos-button.clicked .emoji {
-  transform: rotate(360deg);
-}
-
-.kudos-text {
-  transition: font-style 0.3s ease;
-}
-
-.kudos-text.thanks {
-  font-style: italic;
-}
-
 /* Header anchor links */
 .hlink {
   opacity: 0.4;
