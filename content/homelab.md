@@ -1,7 +1,7 @@
 ---
 title: "/homelab"
 date: "2024-05-26T21:30:51Z"
-lastmod: "2024-11-28T14:00:20Z"
+lastmod: "2024-12-04T02:34:01Z"
 aliases:
   - playground
 description: "The systems I use for fun and enrichment."
@@ -35,7 +35,6 @@ The Proxmox cluster hosts a number of VMs and LXC containers:
 - `doc`: Ubuntu 22.04 Docker host for various on-prem container workloads, served via [Tailscale Serve](/tailscale-ssh-serve-funnel/#tailscale-serve) / [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
   - [Calibre Web](https://github.com/janeczku/calibre-web) for managing my ebooks
   - [Cyberchef](https://github.com/gchq/CyberChef), the Cyber Swiss Army Knife
-  - [Golink](https://github.com/tailscale/golink), a private shortlink service for tailnets
   - [Hashicorp Vault](https://www.vaultproject.io/) for secrets management
   - [Heimdall](https://github.com/linuxserver/Heimdall), an application dashboard and launcher
   - [IT-Tools](https://github.com/CorentinTh/it-tools) for handy online development-related tools
@@ -82,6 +81,7 @@ Runs [GoToSocial](https://gotosocial.org/) in Docker to host my personal Mastodo
 
 **[Vultr](https://www.vultr.com)**
 - `volly`: Ubuntu 22.04 Docker host for various workloads, served either locally through [Caddy](https://caddyserver.com/) or as a cloud proxy with [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
+  - [Bearlytics](https://github.com/hermanmartinus/bearlytics/), a lightweight and privacy-friendly web analytics platform
   - [Forgejo](https://forgejo.org/) server for [git.bowdre.net](https://git.bowdre.net/explore/repos) ([post](/gitea-self-hosted-git-server/))
   - [ntfy](https://ntfy.sh/) notification service ([post](/easy-push-notifications-with-ntfy/))
   - [SimpleX](/simplex/) server (`smp2`)
