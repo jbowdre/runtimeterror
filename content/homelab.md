@@ -1,7 +1,7 @@
 ---
 title: "/homelab"
 date: "2024-05-26T21:30:51Z"
-lastmod: "2024-12-04T02:34:01Z"
+lastmod: "2024-12-11 09:16:57-06:00"
 aliases:
   - playground
 description: "The systems I use for fun and enrichment."
@@ -30,6 +30,7 @@ The Docker containers are (generally) managed with [Portainer](https://www.porta
   - 1x 512GB NVMe system drive
   - 1x 2TB NVMe drive (ZFS)
 - [Unifi USW Flex XG 10GbE Switch](https://store.ui.com/us/en/collections/unifi-switching-utility-10-gbps-ethernet/products/unifi-flex-xg)
+- [APC Back-UPS Pro 1500VA](https://www.apc.com/us/en/product/BR1500G/)
 
 The Proxmox cluster hosts a number of VMs and LXC containers:
 - `doc`: Ubuntu 22.04 Docker host for various on-prem container workloads, served via [Tailscale Serve](/tailscale-ssh-serve-funnel/#tailscale-serve) / [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
