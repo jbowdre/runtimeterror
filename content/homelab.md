@@ -1,7 +1,7 @@
 ---
 title: "/homelab"
 date: "2024-05-26T21:30:51Z"
-lastmod: "2024-12-11 09:16:57-06:00"
+lastmod: "2024-12-16 19:01:52-06:00"
 aliases:
   - playground
 description: "The systems I use for fun and enrichment."
@@ -33,7 +33,7 @@ The Docker containers are (generally) managed with [Portainer](https://www.porta
 - [APC Back-UPS Pro 1500VA](https://www.apc.com/us/en/product/BR1500G/)
 
 The Proxmox cluster hosts a number of VMs and LXC containers:
-- `doc`: Ubuntu 22.04 Docker host for various on-prem container workloads, served via [Tailscale Serve](/tailscale-ssh-serve-funnel/#tailscale-serve) / [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
+- `swarm`: 3-node Docker Swarm cluster for various on-prem container workloads, served via [TSDProxy](https://almeidapaulopt.github.io/tsdproxy/) / [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
   - [Calibre Web](https://github.com/janeczku/calibre-web) for managing my ebooks
   - [Cyberchef](https://github.com/gchq/CyberChef), the Cyber Swiss Army Knife
   - [Hashicorp Vault](https://www.vaultproject.io/) for secrets management
