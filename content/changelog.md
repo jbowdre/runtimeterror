@@ -1,7 +1,7 @@
 ---
 title: "/changelog"
 date: "2024-05-26T21:19:08Z"
-lastmod: "2024-12-01T22:56:07Z"
+lastmod: 2025-01-01 14:46:17-06:00
 description: "Maybe I should keep a log of all my site-related tinkering?"
 featured: false
 toc: false
@@ -9,6 +9,9 @@ timeless: true
 categories: slashes
 ---
 *Running list of config/layout changes to the site. The full changelog is of course [on GitHub](https://github.com/jbowdre/runtimeterror/commits/main/).*
+
+**2025-01-01:**
+- Convert feed from RSS to Atom
 
 **2024-12-01:**
 - Switch from Cabin analytics to lightweight-and-self-hosted [Bearlytics](https://github.com/HermanMartinus/bearlytics)
