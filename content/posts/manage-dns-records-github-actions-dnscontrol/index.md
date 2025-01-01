@@ -3,7 +3,6 @@ title: "Manage DNS Records with GitHub Actions and DNSControl"
 date: 2025-01-01 14:43:36-06:00
 # lastmod: 2024-11-28
 description: "It's DNS management for admins with trust issues: where every record change is validated, previewed, and documented in git blame."
-draft: true
 featured: false
 toc: true
 reply: true
