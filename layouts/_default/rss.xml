@@ -38,8 +38,8 @@
       <link>{{ .Permalink }}</link>
       <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
       {{ with .Site.Params.Author.name }}<dc:creator>{{.}}</dc:creator>{{ end }}
-      {{ with .Params.series }}<category>{{ . | lower }}</category>{{ end }}
-      {{ range (.GetTerms "tags") }}
+      {{- with .Params.series }}<category>{{ . | lower }}</category>{{ end -}}
+      {{- range (.GetTerms "tags") -}}
       <category>{{ .LinkTitle }}</category>{{ end }}
       <guid>{{ .Permalink }}</guid>
       {{- $content := replaceRE "a href=\"(#.*?)\"" (printf "%s%s%s" "a href=\"" .Permalink "$1\"") .Content -}}
