@@ -6,22 +6,27 @@ languageCode = "en"
 DefaultContentLanguage = "en"
 enableInlineShortcodes = true
 enableRobotsTXT = true
+copyright = "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International"
 
 # Automatically add content sections to main menu
 # sectionPagesMenu = "main"
 
 [outputs]
-  home = ['html', 'rss']
+  home = ['html', 'atom']
   section = ['html']
   taxonomy = ['html']
-  term = ['html', 'rss']
-  page = ['html', 'rss']
+  term = ['html', 'atom']
+  page = ['html']
 
 # rename rss output from index.xml to feed.xml
 [outputFormats]
-  [outputFormats.rss]
-    mediatype = "application/rss"
+  [outputFormats.atom]
+    mediatype = "application/atom+xml"
     baseName = "feed"
+		isPlainText = false
+
+[mediatypes."application/atom+xml"]
+	suffixes = ["xml"]
 
 [permalinks]
   posts = ":filename"
