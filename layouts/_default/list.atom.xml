@@ -11,7 +11,7 @@
 {{- $pages = $pages | first $limit -}}
 {{- end -}}
 {{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
-<!-- {{ printf "<?xml-stylesheet type=\"text/xsl\" href=\"/xml/feed.xsl\" media=\"all\"?>" | safeHTML }} -->
+{{ printf "<?xml-stylesheet type=\"text/xsl\" href=\"/xml/feed.xsl\" media=\"all\"?>" | safeHTML }}
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>{{ if eq .Title .Site.Title }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{.}} on {{ end }}{{ .Site.Title }}{{ end }}</title>
     <link href="{{ .Permalink }}" rel="alternate" {{- with .Site.LanguageCode }} hreflang="{{ . }}"{{ end -}}/>
