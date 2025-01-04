@@ -7,7 +7,7 @@
 {{ if or (.Site.Params.noindex) (.Params.noindex) }}<meta name="robots" content="noindex" /> {{ end }}
 
 <!-- RSS -->
-{{ with .OutputFormats.Get "rss" -}}
+{{ with .OutputFormats.Get "atom" -}}
   {{ printf `<link rel=%q type=%q href=%q title=%q>` .Rel .MediaType.Type .Permalink site.Title | safeHTML }}
 {{ end }}
 
