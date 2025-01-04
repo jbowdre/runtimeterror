@@ -1,17 +1,17 @@
 <script>
   window.store = {
-    {{range where.Site.Pages "Section" "posts"} }
-  "{{ .Permalink }}": {
-    "title": "{{ .Title }}",
-      "tags": [{{range .Params.Tags}} "{{ . }}", {{end}}],
-  "content": {{ .Content | plainify} },
-  "description": {{ .Description | plainify} },
-  "url": "{{ .Permalink }}"
+    {{ range where .Site.Pages "Section" "posts" }}
+    "{{ .Permalink }}": {
+      "title": "{{ .Title }}",
+      "tags": [{{ range .Params.Tags }}"{{ . }}",{{ end }}],
+      "content": {{ .Content | plainify }},
+      "description": {{ .Description | plainify }},
+      "url": "{{ .Permalink }}"
     },
-  {{end} }
+    {{ end }}
   }
 </script>
 {{ $jsLunr := resources.Get "js/lunr.js" | minify }}
-<script src="{{ $jsLunr.RelPermalink }}" defer></script>
+<script src="{{ $jsLunr.RelPermalink }}" async></script>
 {{ $jsSearch := resources.Get "js/search.js" | minify }}
-<script src="{{ $jsSearch.RelPermalink }}" defer></script>
+<script src="{{ $jsSearch.RelPermalink }}" async></script>
