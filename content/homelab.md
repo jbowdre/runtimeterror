@@ -1,7 +1,7 @@
 ---
 title: "/homelab"
 date: "2024-05-26T21:30:51Z"
-lastmod: "2024-12-16 19:01:52-06:00"
+lastmod: 2025-01-05 10:10:51-06:00
 aliases:
   - playground
 description: "The systems I use for fun and enrichment."
@@ -34,16 +34,19 @@ The Docker containers are (generally) managed with [Portainer](https://www.porta
 
 The Proxmox cluster hosts a number of VMs and LXC containers:
 - `swarm`: 3-node Docker Swarm cluster for various on-prem container workloads, served via [TSDProxy](https://almeidapaulopt.github.io/tsdproxy/) / [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
-  - [Calibre Web](https://github.com/janeczku/calibre-web) for managing my ebooks
-  - [Cyberchef](https://github.com/gchq/CyberChef), the Cyber Swiss Army Knife
-  - [Hashicorp Vault](https://www.vaultproject.io/) for secrets management
-  - [Heimdall](https://github.com/linuxserver/Heimdall), an application dashboard and launcher
-  - [IT-Tools](https://github.com/CorentinTh/it-tools) for handy online development-related tools
-  - [Linkding](https://github.com/sissbruecker/linkding) bookmark manager serving [links.bowdre.net](https://links.bowdre.net/bookmarks/shared)
-  - [Opengist](https://github.com/thomiceli/opengist), an open-source alternative to GitHub's Gists ([post](https://srsbsns.lol/opening-up-opengist/))
-  - [RIPE Atlas Probe](https://www.ripe.net/analyse/internet-measurements/ripe-atlas/) for measuring internet connectivity
-  - [SilverBullet](https://silverbullet.md), a web-based personal knowledge management system ([post](/publish-silverbullet-notes-quartz/))
-  - [Tailscale Golink](https://github.com/tailscale/golink), a private shortlink service ([post](/tailscale-golink-private-shortlinks-tailnet/))
+  - [Calibre Web](https://github.com/janeczku/calibre-web) for managing my ebooks ([compose.yaml](https://github.com/jbowdre/compositions/calibre/compose.yaml))
+  - [Cyberchef](https://github.com/gchq/CyberChef), the Cyber Swiss Army Knife ([compose.yaml](https://github.com/jbowdre/compositions/cyberchef/compose.yaml))
+  - [Hashicorp Vault](https://www.vaultproject.io/) for secrets management ([compose.yaml](https://github.com/jbowdre/compositions/vault/compose.yaml))
+  - [Heimdall](https://github.com/linuxserver/Heimdall), an application dashboard and launcher ([compose.yaml](https://github.com/jbowdre/compositions/heimdall/compose.yaml))
+  - [IT-Tools](https://github.com/CorentinTh/it-tools) for handy online development-related tools ([compose.yaml](https://github.com/jbowdre/compositions/it-tools/compose.yaml))
+  - [Linkding](https://github.com/sissbruecker/linkding) bookmark manager serving [links.bowdre.net](https://links.bowdre.net/bookmarks/shared) ([compose.yaml](https://github.com/jbowdre/compositions/linkding/compose.yaml))
+  - [Opengist](https://github.com/thomiceli/opengist), an open-source alternative to GitHub's Gists ([post](https://srsbsns.lol/opening-up-opengist/), [compose.yaml](https://github.com/jbowdre/compositions/opengist/compose.yaml))
+  - [RIPE Atlas Probe](https://www.ripe.net/analyse/internet-measurements/ripe-atlas/) for measuring internet connectivity ([compose.yaml](https://github.com/jbowdre/compositions/ripe-atlas/compose.yaml))
+  - [SilverBullet](https://silverbullet.md), a web-based personal knowledge management system ([post](/publish-silverbullet-notes-quartz/), [compose.yaml](https://github.com/jbowdre/compositions/silverbullet/compose.yaml))
+  - [Tailscale Golink](https://github.com/tailscale/golink), a private shortlink service ([post](/tailscale-golink-private-shortlinks-tailnet/), [compose.yaml](https://github.com/jbowdre/compositions/golink/compose.yaml))
+- `doc`: Ubuntu 22.04 Docker host for running containers outside of Swarm:
+  - [GoToSocial](https://gotosocial.org/) to host my personal Mastodon-compatible ActivityPub server, [goto.srsbsns.lol](https://goto.srsbsns.lol) ([post](https://srsbsns.lol/going-to-gotosocial/), [compose.yaml](https://github.com/jbowdre/compositions/gotosocial/compose.yaml))
+  - [Portainer](https://www.portainer.io/) for managing all of my container workloads.
 - `files`: Ubuntu 20.04 file server. Serves (selected) files semi-publicly through [Tailscale Funnel](/tailscale-ssh-serve-funnel/#tailscale-funnel)
 - `hassos`: [Home Assistant OS](https://www.home-assistant.io/installation/), manages all my "smart home" stuff ([post](/automating-camera-notifications-home-assistant-ntfy/))
 - `immich`: Ubuntu 22.04 [Immich](https://immich.app/) server
@@ -68,12 +71,6 @@ This triad of cute little single-board computers will *eventually* be a combinat
 
 I like to know what's flying overhead, and I'm also feeding flight data to [flightaware.com](https://flightaware.com) and [adsb.fi](https://adsb.fi).
 
-**Federated Raspberry Pi**
-- Raspberry Pi 4 Model B
-- 64GB Sandisk USB Drive
-
-Runs [GoToSocial](https://gotosocial.org/) in Docker to host my personal Mastodon-compatible ActivityPub server, [goto.srsbsns.lol](https://goto.srsbsns.lol) ([post](https://srsbsns.lol/going-to-gotosocial/)).
-
 ### Cloud
 
 **[Google Cloud Platform](https://cloud.google.com/free/docs/free-cloud-features)**
@@ -82,9 +79,9 @@ Runs [GoToSocial](https://gotosocial.org/) in Docker to host my personal Mastodo
 
 **[Vultr](https://www.vultr.com)**
 - `volly`: Ubuntu 22.04 Docker host for various workloads, served either locally through [Caddy](https://caddyserver.com/) or as a cloud proxy with [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
-  - [Bearlytics](https://github.com/hermanmartinus/bearlytics/), a lightweight and privacy-friendly web analytics platform
+  - [Bearlytics](https://github.com/hermanmartinus/bearlytics/), a lightweight and privacy-friendly web analytics platform ([compose.yaml](https://github.com/jbowdre/compositions/bearlytics/compose.yaml))
   - [Forgejo](https://forgejo.org/) server for [git.bowdre.net](https://git.bowdre.net/explore/repos) ([post](/gitea-self-hosted-git-server/))
-  - [ntfy](https://ntfy.sh/) notification service ([post](/easy-push-notifications-with-ntfy/))
+  - [ntfy](https://ntfy.sh/) notification service ([post](/easy-push-notifications-with-ntfy/), [compose.yaml](https://github.com/jbowdre/compositions/ntfy/compose.yaml))
   - [SimpleX](/simplex/) server (`smp2`)
-  - [Uptime Kuma](https://github.com/louislam/uptime-kuma) for monitoring internal services (via Tailscale)
-  - [vault-unseal](https://github.com/lrstanley/vault-unseal) to auto-unseal my on-prem Vault instance
+  - [Uptime Kuma](https://github.com/louislam/uptime-kuma) for monitoring internal services (via Tailscale) ([compose.yaml](https://github.com/jbowdre/compositions/uptime/compose.yaml))
+  - [vault-unseal](https://github.com/lrstanley/vault-unseal) to auto-unseal my on-prem Vault ([compose.yaml](https://github.com/jbowdre/compositions/vault-unseal/compose.yaml))
