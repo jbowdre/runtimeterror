@@ -47,6 +47,7 @@ The Proxmox cluster hosts a number of VMs and LXC containers:
 - `doc`: Ubuntu 22.04 Docker host for running containers outside of Swarm:
   - [GoToSocial](https://gotosocial.org/) to host my personal Mastodon-compatible ActivityPub server, [goto.srsbsns.lol](https://goto.srsbsns.lol) ([post](https://srsbsns.lol/going-to-gotosocial/), [compose.yaml](https://github.com/jbowdre/compositions/blob/main/gotosocial/compose.yaml))
   - [Portainer](https://www.portainer.io/) for managing all of my container workloads.
+  - [Prometheus](https://github.com/prometheus/prometheus) and [Grafana](https://github.com/grafana/grafana) for collecting metrics and creating pretty monitoring dashboards ([compose.yaml](https://github.com/jbowdre/compositions/blob/main/promgraf/compose.yaml))
 - `files`: Ubuntu 20.04 file server. Serves (selected) files semi-publicly through [Tailscale Funnel](/tailscale-ssh-serve-funnel/#tailscale-funnel)
 - `hassos`: [Home Assistant OS](https://www.home-assistant.io/installation/), manages all my "smart home" stuff ([post](/automating-camera-notifications-home-assistant-ntfy/))
 - `immich`: Ubuntu 22.04 [Immich](https://immich.app/) server
