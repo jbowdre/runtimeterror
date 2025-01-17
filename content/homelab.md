@@ -45,7 +45,7 @@ The Proxmox cluster hosts a number of VMs and LXC containers:
   - [SilverBullet](https://silverbullet.md), a web-based personal knowledge management system ([post](/publish-silverbullet-notes-quartz/), [compose.yaml](https://github.com/jbowdre/compositions/blob/main/silverbullet/compose.yaml))
   - [Tailscale Golink](https://github.com/tailscale/golink), a private shortlink service ([post](/tailscale-golink-private-shortlinks-tailnet/), [compose.yaml](https://github.com/jbowdre/compositions/blob/main/golink/compose.yaml))
 - `doc`: Ubuntu 22.04 Docker host for running containers outside of Swarm:
-  - [GoToSocial](https://gotosocial.org/) to host my personal Mastodon-compatible ActivityPub server, [goto.srsbsns.lol](https://goto.srsbsns.lol) ([post](https://srsbsns.lol/going-to-gotosocial/), [compose.yaml](https://github.com/jbowdre/compositions/blob/main/gotosocial/compose.yaml))
+  - [GoToSocial](https://gotosocial.org/) to host my (old) personal Mastodon-compatible ActivityPub server, [goto.srsbsns.lol](https://goto.srsbsns.lol) ([post](https://srsbsns.lol/going-to-gotosocial/), [compose.yaml](https://github.com/jbowdre/compositions/blob/main/gotosocial/compose.yaml))
   - [Portainer](https://www.portainer.io/) for managing all of my container workloads.
   - [Prometheus](https://github.com/prometheus/prometheus) and [Grafana](https://github.com/grafana/grafana) for collecting metrics and creating pretty monitoring dashboards ([compose.yaml](https://github.com/jbowdre/compositions/blob/main/promgraf/compose.yaml))
 - `files`: Ubuntu 20.04 file server. Serves (selected) files semi-publicly through [Tailscale Funnel](/tailscale-ssh-serve-funnel/#tailscale-funnel)
@@ -82,6 +82,7 @@ I like to know what's flying overhead, and I'm also feeding flight data to [flig
 - `volly`: Ubuntu 22.04 Docker host for various workloads, served either locally through [Caddy](https://caddyserver.com/) or as a cloud proxy with [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
   - [Bearlytics](https://github.com/hermanmartinus/bearlytics/), a lightweight and privacy-friendly web analytics platform ([compose.yaml](https://github.com/jbowdre/compositions/blob/main/bearlytics/compose.yaml))
   - [Forgejo](https://forgejo.org/) server for [git.bowdre.net](https://git.bowdre.net/explore/repos) ([post](/gitea-self-hosted-git-server/))
+  - [GoToSocial](https://gotosocial.org/) to host my *new* personal Mastodon-compatible ActivityPub server, [vim.wtf](https://vim.wtf) ([post](https://srsbsns.lol/going-to-gotosocial/), [compose.yaml](https://github.com/jbowdre/compositions/blob/main/gotosocial-vimwtf/compose.yaml))
   - [ntfy](https://ntfy.sh/) notification service ([post](/easy-push-notifications-with-ntfy/), [compose.yaml](https://github.com/jbowdre/compositions/blob/main/ntfy/compose.yaml))
   - [SimpleX](/simplex/) server (`smp2`)
   - [Uptime Kuma](https://github.com/louislam/uptime-kuma) for monitoring internal services (via Tailscale) ([compose.yaml](https://github.com/jbowdre/compositions/blob/main/uptime/compose.yaml))

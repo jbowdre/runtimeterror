@@ -20,7 +20,7 @@ reply = true
 name = "John Bowdre"
 email = "jbowdre@omg.lol"
 username = "jbowdre"
-fedi = "@john@srsbsns.lol"
+fedi = "@wq@vim.wtf"
 
 [theme]
 palette = "runtimeterror"
@@ -157,8 +157,8 @@ url = "https://counter.social/@john_b"
 
 [[socialLinks]]
 icon = "fa fa-mastodon"
-title = "Mastodon"
-url = "https://goto.srsbsns.lol/@john"
+title = "Fediverse"
+url = "https://vim.wtf/@wq"
 
 [[socialLinks]]
 icon = "fa-solid fa-envelope"
