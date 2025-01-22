@@ -151,11 +151,6 @@ title = "Weblog"
 url = "https://srsbsns.lol"
 
 [[socialLinks]]
-icon = "fa-solid fa-circle-user"
-title = "CounterSocial"
-url = "https://counter.social/@john_b"
-
-[[socialLinks]]
 icon = "fa fa-mastodon"
 title = "Fediverse"
 url = "https://vim.wtf/@wq"
