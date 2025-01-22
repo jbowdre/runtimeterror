@@ -1,9 +1,10 @@
-{{ if .Params.description }}<p>{{ .Params.description }}</p><hr>{{ end }}
+{{ if .Params.description }}<p>{{ .Params.description }}</p>
+<hr>{{ end }}
 {{ if and (gt .WordCount 400 ) (gt (len .TableOfContents) 180) }}
 <p>
-  <h3>on this page</h3>
-  {{ .TableOfContents }}
-  <hr>
+<h3>on this page</h3>
+{{ .TableOfContents }}
+<hr>
 </p>
 {{ end }}
 
@@ -32,7 +33,7 @@
   <li>
     <a href="/categories/{{ lower .Params.categories }}/"><i>See all {{ .Params.categories }}</i></a>
   </li>
-{{ end }}
+  {{ end }}
 </ul>
 {{ end }}
 <hr>
@@ -61,4 +62,6 @@
 <h3>current theme song</h3>
 <script src="https://res.runtimeterror.dev/js/theme-song.js?id={{ . }}" defer></script>
 {{ end }}
-
+<hr>
+<a href="https://people.pledge.party" title="The People Pledge"><img
+    src="images/people_pledge_badge_party_black_white.svg"></a>
