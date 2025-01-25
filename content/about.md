@@ -36,6 +36,7 @@ And in the free time I have left, I game on my Steam Deck.
 ### Connect with me via:
 - [SimpleX Chat](https://l.runtimeterror.dev/simplex-chat-invite)
 - [Signal](https://l.runtimeterror.dev/signal)
+- [Delta Chat](https://l.runtimeterror.dev/delta)
 - [Electronic Mail](mailto:jbowdre@omg.lol)
   - [PGP: 613F B70C 4FA7 A077](https://l.runtimeterror.dev/pgp)
 
