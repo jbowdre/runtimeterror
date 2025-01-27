@@ -30,7 +30,6 @@ And in the free time I have left, I game on my Steam Deck.
 - [Weblog](https://srsbsns.lol)
 - [status.lol](https://status.jbowdre.lol)
 - [Fediverse](https://vim.wtf/@wq)
-- [Pixelfed](https://pixtagram.social/wq)
 - [/now](https://now.jbowdre.lol)
 
 ### Connect with me via:
