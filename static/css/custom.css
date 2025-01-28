@@ -4,7 +4,7 @@
 }
 
 /* dark/light theming */
-:root{
+:root {
   /* Default dark theme */
   --bg: var(--dark-base00);
   --code: var(--dark-base06);
@@ -164,19 +164,23 @@ body {
   color: var(--muted);
 }
 
-.footer_slashes a:link, .footer_slashes a:visited {
+.footer_slashes a:link,
+.footer_slashes a:visited {
   color: var(--link);
   text-decoration: none;
 }
 
-.footer_links, .copyright {
+.footer_links,
+.copyright {
   font-size: 12px;
   line-height: 1.1rem;
   color: var(--muted);
 }
 
-.footer_links a:link, .footer_links a:visited,
-.copyright a:link, .copyright a:visited{
+.footer_links a:link,
+.footer_links a:visited,
+.copyright a:link,
+.copyright a:visited {
   color: var(--off-fg);
   text-decoration: none;
 }
@@ -223,15 +227,37 @@ body {
   color: var(--notice-title-color);
 }
 
-.notice.warning .notice-title { background: var(--notice-warning-color); }
-.notice.info .notice-title { background: var(--notice-info-color); }
-.notice.note .notice-title { background: var(--notice-note-color); }
-.notice.tip .notice-title { background: var(--notice-tip-color); }
+.notice.warning .notice-title {
+  background: var(--notice-warning-color);
+}
 
-.notice.warning { background: color-mix(in srgb, var(--notice-warning-color) var(--notice-bg-opacity), transparent); }
-.notice.info { background: color-mix(in srgb, var(--notice-info-color) var(--notice-bg-opacity), transparent); }
-.notice.note { background: color-mix(in srgb, var(--notice-note-color) var(--notice-bg-opacity), transparent); }
-.notice.tip { background: color-mix(in srgb, var(--notice-tip-color) var(--notice-bg-opacity), transparent); }
+.notice.info .notice-title {
+  background: var(--notice-info-color);
+}
+
+.notice.note .notice-title {
+  background: var(--notice-note-color);
+}
+
+.notice.tip .notice-title {
+  background: var(--notice-tip-color);
+}
+
+.notice.warning {
+  background: color-mix(in srgb, var(--notice-warning-color) var(--notice-bg-opacity), transparent);
+}
+
+.notice.info {
+  background: color-mix(in srgb, var(--notice-info-color) var(--notice-bg-opacity), transparent);
+}
+
+.notice.note {
+  background: color-mix(in srgb, var(--notice-note-color) var(--notice-bg-opacity), transparent);
+}
+
+.notice.tip {
+  background: color-mix(in srgb, var(--notice-tip-color) var(--notice-bg-opacity), transparent);
+}
 
 .icon-notice {
   display: inline-flex;
@@ -254,7 +280,7 @@ body {
 
 /* pagination overrides */
 ul.pagination li::marker {
-  content:'';
+  content: '';
 }
 
 ul.pagination li {
@@ -262,14 +288,14 @@ ul.pagination li {
 }
 
 .pagination {
-  display:flex;
+  display: flex;
   justify-content: center;
 }
 
 /* statuslol overrides */
 .statuslol {
   background: var(--off-bg) !important;
-  flex-direction:column
+  flex-direction: column
 }
 
 .statuslol_emoji_container {
@@ -282,7 +308,7 @@ ul.pagination li {
 .statuslol_content strong {
   overflow-wrap: inherit;
   font-size: 0.8em;
-  line-height:normal;
+  line-height: normal;
   margin: 0.8em auto;
   color: var(--fg);
 }
@@ -355,7 +381,7 @@ input {
 }
 
 form {
-  width:auto;
+  width: auto;
 }
 
 input:focus {
