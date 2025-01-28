@@ -4,7 +4,7 @@ date: "2018-09-26T08:34:30Z"
 lastmod: "2022-03-06"
 thumbnail: i0UKdXleC.png
 usePageBundles: true
-featured: true
+featured: false
 tags:
 - docker
 - linux

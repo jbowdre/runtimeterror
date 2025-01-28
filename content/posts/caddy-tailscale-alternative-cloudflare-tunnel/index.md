@@ -3,7 +3,7 @@ title: "Caddy + Tailscale as an Alternative to Cloudflare Tunnel"
 date: "2024-09-22T19:12:52Z"
 # lastmod: 2024-09-22
 description: "Combining the magic of Caddy and Tailscale to serve web content from my homelab - and declaring independence from Cloudflare in the process."
-featured: false
+featured: true
 toc: true
 reply: true
 categories: Self-Hosting
