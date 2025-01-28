@@ -1,7 +1,7 @@
 ---
 title: "/colophon"
 date: "2024-05-26T22:30:58Z"
-lastmod: "2024-12-01T22:56:56Z"
+lastmod: 2025-01-28 15:21:38-06:00
 description: "There's a lot that goes into this site. Let me tell you how it works."
 featured: false
 toc: true
@@ -19,6 +19,7 @@ categories: slashes
 - leverages self-hosted [Bearlytics](https://github.com/HermanMartinus/bearlytics) for privacy-friendly minimalist analytics.
 - fetches recently-played music from [MusicThread](https://musicthread.app/).
 - displays my latest status from [omg.lol](https://home.omg.lol/referred-by/jbowdre).
+- uses [RSS2HTML](https://rss2html.net/) to show recent posts from [my other blog](https://srsbsns.lol) in the sidebar.
 - resolves via [Bunny DNS](https://bunny.net/dns/).
 - is published to / hosted on [Bunny Storage](https://bunny.net/storage/) and [Bunny CDN](https://bunny.net/cdn/) with a [GitHub Actions workflow](//further-down-the-bunny-hole/).
 

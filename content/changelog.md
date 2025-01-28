@@ -1,7 +1,7 @@
 ---
 title: "/changelog"
 date: "2024-05-26T21:19:08Z"
-lastmod: 2025-01-01 14:46:17-06:00
+lastmod: 2025-01-28 15:20:08-06:00
 description: "Maybe I should keep a log of all my site-related tinkering?"
 featured: false
 toc: false
@@ -9,6 +9,9 @@ timeless: true
 categories: slashes
 ---
 *Running list of config/layout changes to the site. The full changelog is of course [on GitHub](https://github.com/jbowdre/runtimeterror/commits/main/).*
+
+**2025-01-28:**
+- Embed [srsbsns.lol](https://srsbsns.lol) feed in sidebar with [RSS2HTML](https://rss2html.net/)
 
 **2025-01-01:**
 - Convert feed from RSS to Atom
