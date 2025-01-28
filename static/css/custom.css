@@ -505,3 +505,10 @@ h6:hover .hlink {
   opacity: 0.8;
   color: var(--link) !important;
 }
+
+/* Style rss2html embed plug */
+ul.rss2html-embed>div:last-child {
+  margin-top: 0.5em;
+  font-size: 0.8em;
+  font-style: italic;
+}
