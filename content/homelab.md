@@ -1,7 +1,7 @@
 ---
 title: "/homelab"
 date: "2024-05-26T21:30:51Z"
-lastmod: 2025-01-05 10:10:51-06:00
+lastmod: 2025-02-07 20:06:14-06:00
 aliases:
   - playground
 description: "The systems I use for fun and enrichment."
@@ -51,7 +51,6 @@ The Proxmox cluster hosts a number of VMs and LXC containers:
 - `files`: Ubuntu 20.04 file server. Serves (selected) files semi-publicly through [Tailscale Funnel](/tailscale-ssh-serve-funnel/#tailscale-funnel)
 - `hassos`: [Home Assistant OS](https://www.home-assistant.io/installation/), manages all my "smart home" stuff ([post](/automating-camera-notifications-home-assistant-ntfy/))
 - `immich`: Ubuntu 22.04 [Immich](https://immich.app/) server
-- `ipam`: Ubuntu 20.04 [phpIPAM](https://phpipam.net/) server ([post](/integrating-phpipam-with-vrealize-automation-8/#step-0-phpipam-installation-and-base-configuration))
 - `salt`: Ubuntu 20.04 [Salt](https://saltproject.io/) Master server for configuration management
 - `unifi`: UniFi Network Application. Manages the Unifi switch.
 
