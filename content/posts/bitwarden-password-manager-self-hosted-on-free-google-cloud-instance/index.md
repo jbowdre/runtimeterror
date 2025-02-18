@@ -1,7 +1,7 @@
 ---
 categories: Self-Hosting
 date: "2018-09-26T08:34:30Z"
-lastmod: "2022-03-06"
+lastmod: "2025-01-05"
 thumbnail: i0UKdXleC.png
 usePageBundles: true
 featured: false
@@ -100,7 +100,7 @@ sudo apt-get update # [tl! .cmd]
 ```
 2. Install package management prereqs:
 ```shell
-sudo apt-get install \ # [tl! .cmd]
+sudo apt-get install \
     apt-transport-https \
     ca-certificates \
     curl \
@@ -113,7 +113,7 @@ curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add - # [
 ```
 4. Add the Docker repo:
 ```shell
-sudo add-apt-repository \ # [tl! .cmd]
+sudo add-apt-repository \
     "deb [arch=amd64] https://download.docker.com/linux/debian \
     $(lsb_release -cs) \
     stable"
@@ -148,7 +148,7 @@ sudo cp -p /etc/letsencrypt/live/${FQDN}/privkey.pem /ssl/keys/
 *Using the container image available [here](https://github.com/dani-garcia/vaultwarden).*
 1. Let's just get it up and running first:
 ```shell
-sudo docker run -d --name vaultwarden \ # [tl! .cmd]
+sudo docker run -d --name vaultwarden \
     -e ROCKET_TLS={certs='"/ssl/fullchain.pem", key="/ssl/privkey.pem"}' \
     -e ROCKET_PORT='8000' \
     -v /ssl/keys/:/ssl/ \
@@ -187,6 +187,7 @@ sudo vim /usr/local/bin/start-vaultwarden.sh # [tl! .cmd]
 
 docker stop vaultwarden
 docker rm vaultwarden
+docker volume prune --force
 docker pull vaultwarden/server
 
 docker run -d --name vaultwarden \
@@ -217,7 +218,7 @@ After=docker.service
 
 [Service]
 Restart=always
-ExecStart=/usr/local/bin/vaultwarden-start.sh # [tl! highlight]
+ExecStart=/usr/local/bin/start-vaultwarden.sh # [tl! highlight]
 ExecStop=/usr/bin/docker stop vaultwarden
 
 [Install]
@@ -237,7 +238,7 @@ sudo systemctl status vaultwarden # [tl! .cmd focus:start]
 ● bitwarden.service - BitWarden container # [tl! .nocopy:start]
     Loaded: loaded (/etc/systemd/system/vaultwarden.service; enabled; vendor preset: enabled)
     Active: deactivating (stop) since Sun 2018-09-09 03:43:20 UTC;   1s ago
-  Process: 13104 ExecStart=/usr/local/bin/bitwarden-start.sh (code=exited, status=0/SUCCESS) # [tl! focus:end]
+  Process: 13104 ExecStart=/usr/local/bin/start-vaultwarden.sh (code=exited, status=0/SUCCESS) # [tl! focus:end]
   Main PID: 13104 (code=exited, status=0/SUCCESS); Control PID:  13229 (docker)
     Tasks: 5 (limit: 4915)
     Memory: 9.7M
@@ -246,8 +247,8 @@ sudo systemctl status vaultwarden # [tl! .cmd focus:start]
             └─control
               └─13229 /usr/bin/docker stop vaultwarden
 
-Sep 09 03:43:20 vaultwarden vaultwarden-start.sh[13104]: Status: Image is up to date for vaultwarden/server:latest
-Sep 09 03:43:20 vaultwarden vaultwarden-start.sh[13104]:        ace64ca5294eee7e21be764ea1af9e328e944658b4335ce8721b99a33061d645 # [tl! .nocopy:end]
+Sep 09 03:43:20 vaultwarden start-vaultwarden.sh[13104]: Status: Image is up to date for vaultwarden/server:latest
+Sep 09 03:43:20 vaultwarden start-vaultwarden.sh[13104]:        ace64ca5294eee7e21be764ea1af9e328e944658b4335ce8721b99a33061d645 # [tl! .nocopy:end]
 ```
 
 ### Conclusion
