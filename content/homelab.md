@@ -1,7 +1,7 @@
 ---
 title: "/homelab"
 date: "2024-05-26T21:30:51Z"
-lastmod: 2025-02-07 20:06:14-06:00
+lastmod: 2025-03-05 18:47:14-06:00
 aliases:
   - playground
 description: "The systems I use for fun and enrichment."
@@ -87,3 +87,9 @@ I like to know what's flying overhead, and I'm also feeding flight data to [flig
   - [SimpleX](/simplex/) server (`smp2`)
   - [Uptime Kuma](https://github.com/louislam/uptime-kuma) for monitoring internal services (via Tailscale) ([compose.yaml](https://github.com/jbowdre/compositions/blob/main/uptime/compose.yaml))
   - [vault-unseal](https://github.com/lrstanley/vault-unseal) to auto-unseal my on-prem Vault ([compose.yaml](https://github.com/jbowdre/compositions/blob/main/vault-unseal/compose.yaml))
+
+**[Hetzner](https://www.hetzner.com/)**
+- `hezzy`: Ubuntu 24.04 Docker host for various workloads, served either locally through [Caddy](https://caddyserver.com/) or as a cloud proxy with [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
+  - [Forgejo](https://forgejo.org/) server (pending)
+  - [Phanpy](https://github.com/cheeaun/phanpy) Fediverse frontend
+
