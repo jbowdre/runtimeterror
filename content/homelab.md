@@ -1,7 +1,7 @@
 ---
 title: "/homelab"
 date: "2024-05-26T21:30:51Z"
-lastmod: 2025-03-05 18:47:14-06:00
+lastmod: 2025-03-08 17:50:14-06:00
 aliases:
   - playground
 description: "The systems I use for fun and enrichment."
@@ -66,11 +66,11 @@ The Proxmox cluster hosts a number of VMs and LXC containers:
 This triad of cute little single-board computers will *eventually* be a combination Nomad + Consul + Vault cluster, fully managed with Salt.
 
 **[PiAware](https://www.flightaware.com/adsb/piaware/build) ADS-B/MLAT Receiver**
-- Raspberry Pi 2 Model B
+- Raspberry Pi 4 Model B
 - 2x [RTL-SDR Blog V3 R860 RTL2832U 1PPM TCXO SMA Dongle](https://www.amazon.com/gp/product/B0129EBDS2)
 - [SIGNALPLUS 1090MHz 12dBi 1.1m ADS-B Antenna](https://www.amazon.com/gp/product/B08XYRMG3V/)
 
-I like to know what's flying overhead, and I'm also feeding flight data to [flightaware.com](https://flightaware.com) and [adsb.fi](https://adsb.fi).
+I like to know what's flying overhead, and I'm also feeding flight data to [flightaware.com](https://flightaware.com), [ADS-B Exchange](https://www.adsbexchange.com/), and [adsb.fi](https://adsb.fi).
 
 ### Cloud
 
@@ -90,6 +90,7 @@ I like to know what's flying overhead, and I'm also feeding flight data to [flig
 
 **[Hetzner](https://www.hetzner.com/)**
 - `hezzy`: Ubuntu 24.04 Docker host for various workloads, served either locally through [Caddy](https://caddyserver.com/) or as a cloud proxy with [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
-  - [Forgejo](https://forgejo.org/) server (pending)
+  - [CrowdSec Security Engine](https://github.com/crowdsecurity/crowdsec) to detect and respond to security threats
+  - [Forgejo](https://forgejo.org/) server for [git.vim.wtf](https://git.vim.wtf/explore/repos)
   - [Phanpy](https://github.com/cheeaun/phanpy) Fediverse frontend
 
