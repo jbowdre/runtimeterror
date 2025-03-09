@@ -1,7 +1,7 @@
 ---
 title: "/homelab"
 date: "2024-05-26T21:30:51Z"
-lastmod: 2025-03-08 17:50:14-06:00
+lastmod: 2025-03-09 15:02:18-05:00
 aliases:
   - playground
 description: "The systems I use for fun and enrichment."
@@ -80,17 +80,16 @@ I like to know what's flying overhead, and I'm also feeding flight data to [flig
 
 **[Vultr](https://www.vultr.com)**
 - `volly`: Ubuntu 22.04 Docker host for various workloads, served either locally through [Caddy](https://caddyserver.com/) or as a cloud proxy with [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
-  - [Bearlytics](https://github.com/hermanmartinus/bearlytics/), a lightweight and privacy-friendly web analytics platform ([compose.yaml](https://github.com/jbowdre/compositions/blob/main/bearlytics/compose.yaml))
-  - [Forgejo](https://forgejo.org/) server for [git.bowdre.net](https://git.bowdre.net/explore/repos) ([post](/gitea-self-hosted-git-server/))
   - [GoToSocial](https://gotosocial.org/) to host my *new* personal Mastodon-compatible ActivityPub server, [vim.wtf](https://vim.wtf) ([post](https://srsbsns.lol/going-to-gotosocial/), [compose.yaml](https://github.com/jbowdre/compositions/blob/main/gotosocial-vimwtf/compose.yaml))
-  - [ntfy](https://ntfy.sh/) notification service ([post](/easy-push-notifications-with-ntfy/), [compose.yaml](https://github.com/jbowdre/compositions/blob/main/ntfy/compose.yaml))
   - [SimpleX](/simplex/) server (`smp2`)
   - [Uptime Kuma](https://github.com/louislam/uptime-kuma) for monitoring internal services (via Tailscale) ([compose.yaml](https://github.com/jbowdre/compositions/blob/main/uptime/compose.yaml))
   - [vault-unseal](https://github.com/lrstanley/vault-unseal) to auto-unseal my on-prem Vault ([compose.yaml](https://github.com/jbowdre/compositions/blob/main/vault-unseal/compose.yaml))
 
 **[Hetzner](https://www.hetzner.com/)**
 - `hezzy`: Ubuntu 24.04 Docker host for various workloads, served either locally through [Caddy](https://caddyserver.com/) or as a cloud proxy with [Caddy + Tailscale](/caddy-tailscale-alternative-cloudflare-tunnel/):
+  - [Bearlytics](https://github.com/hermanmartinus/bearlytics/), a lightweight and privacy-friendly web analytics platform ([compose.yaml](https://git.vim.wtf/wq/compositions/blob/main/bearlytics/compose.yaml))
   - [CrowdSec Security Engine](https://github.com/crowdsecurity/crowdsec) to detect and respond to security threats
-  - [Forgejo](https://forgejo.org/) server for [git.vim.wtf](https://git.vim.wtf/explore/repos)
+  - [Forgejo](https://forgejo.org/) server for [git.vim.wtf](https://git.vim.wtf/explore/repos)([post](/gitea-self-hosted-git-server/))
+  - [ntfy](https://ntfy.sh/) notification service ([post](/easy-push-notifications-with-ntfy/), [compose.yaml](https://git.vim.wtf/wq/compositions/blob/main/ntfy/compose.yaml))
   - [Phanpy](https://github.com/cheeaun/phanpy) Fediverse frontend
 
