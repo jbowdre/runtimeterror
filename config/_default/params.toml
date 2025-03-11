@@ -8,7 +8,7 @@ numberOfRelatedPosts = 5
 
 indexTitle = ".-. ..- -. - .. -- . - . .-. .-. --- .-."
 
-omgUser = "jbowdre"
+omgUser = "jwq"
 musicThreadId = "2r5Q8KmDQsdKGuLxtt1kK4gst8o"
 
 # Comments
@@ -17,8 +17,8 @@ reply = true
 
 [author]
 name = "John Wq"
-email = "jbowdre@omg.lol"
-username = "jbowdre"
+email = "jwq@omg.lol"
+username = "jwq"
 fedi = "@wq@vim.wtf"
 
 [theme]
@@ -135,14 +135,14 @@ taglines = [
 # * Academicons <https://jpswalsh.github.io/academicons> ('ai ai-')
 
 [[socialLinks]]
-icon = "fa-brands fa-github"
-title = "GitHub"
-url = "https://github.com/jbowdre"
+icon = "fa-brands fa-git-alt"
+title = "Forgejo"
+url = "https://git.vim.wtf/wq"
 
 [[socialLinks]]
 icon = "fa-solid fa-heart"
 title = "omg.lol"
-url = "https://jbowdre.lol"
+url = "https://jwq.lol"
 
 [[socialLinks]]
 icon = "fa-solid fa-pen-to-square"
@@ -157,7 +157,7 @@ url = "https://vim.wtf/@wq"
 [[socialLinks]]
 icon = "fa-solid fa-envelope"
 title = "Email"
-url = "mailto:jbowdre@omg.lol"
+url = "mailto:jwq@omg.lol"
 
 [[slashPages]]
 title = "/about"

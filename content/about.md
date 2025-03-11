@@ -21,23 +21,21 @@ I'm now a platform architect at a smaller corporation, focused full-time on leve
 
 On my off time, I tinker with new [projects](/categories/self-hosting) in my little [homelab](/homelab) (and share some of those adventures here). I love experimenting with new (to me) technologies, and I've found that actually _using_ something is typically the best way to learn it.
 
-On weekends, I race my daily-driven 2014 Subaru BRZ in local [autocross events](https://l.runtimeterror.dev/my-autox-vids) or wrench on my 1974 Volkswagen Karmann Ghia.
+On weekends, I race my daily-driven 2014 Subaru BRZ in local [autocross events](https://srsbsns.lol/autocross/) or wrench on my 1974 Volkswagen Karmann Ghia.
 
 And in the free time I have left, I game on my Steam Deck.
 
 ### See what I've been up to on:
-- [GitHub](https://github.com/jbowdre)
+- [Forgejo](https://git.vim.wtf/wq)
 - [Weblog](https://srsbsns.lol)
-- [status.lol](https://status.jbowdre.lol)
+- [status.lol](https://status.jwq.lol)
 - [Fediverse](https://vim.wtf/@wq)
-- [/now](https://now.jbowdre.lol)
+- [/now](https://now.jwq.lol)
 
 ### Connect with me via:
 - [SimpleX Chat](https://l.runtimeterror.dev/simplex-chat-invite)
 - [Signal](https://l.runtimeterror.dev/signal)
 - [Delta Chat](https://l.runtimeterror.dev/delta)
-- [Electronic Mail](mailto:jbowdre@omg.lol)
-  - [PGP: 613F B70C 4FA7 A077](https://l.runtimeterror.dev/pgp)
 
 [^1]: Congrats? And also, *thank you.*
 [^2]: A bit. I'm still in the "fake it until you make" it phase of adulthood.
