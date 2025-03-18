@@ -1,18 +1,14 @@
 <title>{{ with .Title }}{{ . }} &ndash; {{end}}{{ .Site.Title }}</title>
-<meta name="description"
-  content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end }}">
-{{ with .Site.Params.Author.fedi }}
-<meta property="fediverse:creator" content="{{ . }}" />{{ end }}
+<meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end }}">
+{{ with .Site.Params.Author.fedi }}<meta property="fediverse:creator" content="{{ . }}" />{{ end }}
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta charset="UTF-8" />
-{{ if or (.Site.Params.noindex) (.Params.noindex) }}
-<meta name="robots" content="noindex" /> {{ end }}
+<meta charset="UTF-8"/>
+{{ if or (.Site.Params.noindex) (.Params.noindex) }}<meta name="robots" content="noindex" /> {{ end }}
 
 <!-- RSS -->
 {{ with .OutputFormats.Get "atom" -}}
-{{ printf `
-<link rel=%q type=%q href=%q title=%q>` .Rel .MediaType.Type .Permalink site.Title | safeHTML }}
+  {{ printf `<link rel=%q type=%q href=%q title=%q>` .Rel .MediaType.Type .Permalink site.Title | safeHTML }}
 {{ end }}
 
 <!-- verification links -->
@@ -25,12 +21,9 @@
 {{ partialCached "favicon" . }}
 {{ partial "opengraph" . }}
 
-<!-- webmentions -->
-<link rel="webmention" href="https://webmention.io/runtimeterror.dev/webmention" />
-
 <!-- load theme preference asap -->
 <script>
-  (function () {
+  (function() {
     var savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       document.documentElement.setAttribute('data-theme', savedTheme);
@@ -40,20 +33,16 @@
   })();
 </script>
 
-<!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-  integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-  crossorigin="anonymous" />
+ <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" />
 
 <!-- ForkAwesome <https://forkaweso.me/> -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css"
-  integrity="sha256-XoaMnoYC5TH6/+ihMEnospgm0J1PM/nioxbOUdnM8HY=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css" integrity="sha256-XoaMnoYC5TH6/+ihMEnospgm0J1PM/nioxbOUdnM8HY=" crossorigin="anonymous">
 
 <!-- risotto theme -->
-<link rel="stylesheet" href="{{ printf " css/palettes/%s.css" (.Site.Params.theme.palette | default "base16-dark" ) |
-  absURL }}">
-<link rel="stylesheet" href="{{ " css/risotto.css" | absURL }}">
-<link rel="stylesheet" href="{{ " css/custom.css" | absURL }}">
+<link rel="stylesheet" href="{{ printf "css/palettes/%s.css" (.Site.Params.theme.palette | default "base16-dark") | absURL }}">
+<link rel="stylesheet" href="{{ "css/risotto.css" | absURL }}">
+<link rel="stylesheet" href="{{ "css/custom.css" | absURL }}">
 
 <!-- CC BY-NC-SA 4.0 -->
 <link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
@@ -64,11 +53,12 @@
 {{ end }}
 
 <!-- syntax highlighting -->
-{{ if (findRE "<pre" .Content 1) }} {{ $syntax :=resources.Get "css/torchlight.css" | minify }} <link
-  href="{{ $syntax.RelPermalink }}" rel="stylesheet">
+{{ if (findRE "<pre" .Content 1) }}
+  {{ $syntax := resources.Get "css/torchlight.css" | minify }}
+  <link href="{{ $syntax.RelPermalink }}" rel="stylesheet">
   {{ $copyCss := resources.Get "css/code-copy-button.css" | minify }}
   <link href="{{ $copyCss.RelPermalink }}" rel="stylesheet">
-  {{ end }}
+{{ end }}
 
-  <!-- typo text animation -->
-  <script src="https://res.runtimeterror.dev/js/typo.js" defer></script>
+<!-- typo text animation -->
+<script src="https://res.runtimeterror.dev/js/typo.js" defer></script>
